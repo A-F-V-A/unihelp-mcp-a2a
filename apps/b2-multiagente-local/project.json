@@ -1,0 +1,32 @@
+{
+  "name": "b2-multiagente-local",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/b2-multiagente-local/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:b2"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "b2-multiagente-local:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "b2-multiagente-local:build:development"
+        },
+        "production": {
+          "buildTarget": "b2-multiagente-local:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

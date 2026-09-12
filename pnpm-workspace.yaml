@@ -1,0 +1,16 @@
+packages:
+  - 'apps/*'
+  - 'libs/*'
+
+# Angular 22 arrastra @babel/core 8, pero ts-jest / jest-preset-angular
+# todavia declaran peer ^7. Se fija la 7.x para que los tests unitarios corran.
+overrides:
+  '@babel/core': '^7.28.0'
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - nx
+  - unrs-resolver

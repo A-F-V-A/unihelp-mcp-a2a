@@ -1,0 +1,32 @@
+{
+  "name": "b1-mcp-agente",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/b1-mcp-agente/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:b1"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "b1-mcp-agente:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "b1-mcp-agente:build:development"
+        },
+        "production": {
+          "buildTarget": "b1-mcp-agente:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "dominio",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dominio/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido"],
+  "// targets": "to see all targets run: nx show project dominio --web",
+  "targets": {}
+}

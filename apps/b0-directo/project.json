@@ -1,0 +1,32 @@
+{
+  "name": "b0-directo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/b0-directo/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:b0"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "b0-directo:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "b0-directo:build:development"
+        },
+        "production": {
+          "buildTarget": "b0-directo:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1
+#
+# UniHelp - imagen del frontend Angular (app `web`)
+#
+# Una sola imagen sirve para las cuatro arquitecturas: la URL del backend NO se
+# compila dentro del bundle, se inyecta al arrancar el contenedor mediante la
+# variable de entorno BACKEND_URL (ver entrypoint-web.sh).
+#
+# Contexto de build: la RAIZ del monorepo.
+
+ARG NODE_VERSION=24-alpine
+ARG NGINX_VERSION=1.29-alpine
+ARG PNPM_VERSION=10.34.5
+
+# ---------------------------------------------------------------------------
+# Etapa 1: build del bundle Angular con Nx
+# ---------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS builder
+
+ARG PNPM_VERSION
+ENV NX_DAEMON=false \
+    CI=true
+
+WORKDIR /repo
+RUN npm install --global pnpm@${PNPM_VERSION}
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY nx.json tsconfig.base.json eslint.config.mjs jest.config.ts jest.preset.js ./
+COPY libs ./libs
+COPY apps/web ./apps/web
+
+RUN pnpm nx build web --configuration=production
+
+# ---------------------------------------------------------------------------
+# Etapa 2: servido como estaticos por nginx
+# ---------------------------------------------------------------------------
+FROM nginx:${NGINX_VERSION} AS runtime
+
+COPY infra/docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /repo/dist/apps/web/browser /usr/share/nginx/html
+
+# La imagen oficial de nginx ejecuta todo /docker-entrypoint.d/*.sh al arrancar:
+# ahi se reescribe config.json con el backend de la arquitectura activa.
+COPY infra/docker/entrypoint-web.sh /docker-entrypoint.d/40-unihelp-backend.sh
+RUN chmod +x /docker-entrypoint.d/40-unihelp-backend.sh
+
+ENV BACKEND_URL=http://localhost:3000
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=6 \
+  CMD wget --quiet --spider http://127.0.0.1:8080/config.json || exit 1

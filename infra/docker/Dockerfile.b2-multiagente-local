@@ -1,0 +1,63 @@
+# syntax=docker/dockerfile:1
+#
+# UniHelp - imagen de la app NestJS "b2-multiagente-local"
+# Arquitectura: B2 (multiagente coordinado en el mismo proceso)
+#
+# Contexto de build: la RAIZ del monorepo (ver infra/docker/docker-compose.yml).
+# Las siete apps de backend comparten esta misma plantilla; lo unico que cambia
+# es el nombre del proyecto Nx y el puerto.
+
+ARG NODE_VERSION=24-alpine
+ARG PNPM_VERSION=10.34.5
+
+# ---------------------------------------------------------------------------
+# Etapa 1: build con Nx sobre el workspace
+# ---------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS builder
+
+ARG PNPM_VERSION
+ENV NX_DAEMON=false \
+    CI=true
+
+WORKDIR /repo
+RUN npm install --global pnpm@${PNPM_VERSION}
+
+# Las dependencias van primero para que Docker reutilice la capa mientras el
+# codigo cambia.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Configuracion del workspace y SOLO el codigo que esta app necesita: las otras
+# arquitecturas ni entran a la imagen.
+COPY nx.json tsconfig.base.json eslint.config.mjs jest.config.ts jest.preset.js ./
+COPY libs ./libs
+COPY apps/b2-multiagente-local ./apps/b2-multiagente-local
+
+RUN pnpm nx build b2-multiagente-local
+
+# ---------------------------------------------------------------------------
+# Etapa 2: runtime con unicamente las dependencias de esta app
+# ---------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS runtime
+
+ENV NODE_ENV=production \
+    PORT=3002
+
+WORKDIR /app
+
+# `nx build` emite un package.json con las dependencias exactas que esta app
+# usa en tiempo de ejecucion, asi que la imagen no arrastra nada de las otras
+# tres arquitecturas.
+COPY --from=builder /repo/dist/apps/b2-multiagente-local/package.json ./package.json
+RUN npm install --omit=dev --no-audit --no-fund \
+ && npm cache clean --force
+
+COPY --from=builder /repo/dist/apps/b2-multiagente-local ./
+
+EXPOSE 3002
+USER node
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=15s --retries=6 \
+  CMD node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
+CMD ["node", "main.js"]

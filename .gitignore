@@ -1,0 +1,80 @@
+# ---------------------------------------------------------------------------
+# Node / pnpm
+# ---------------------------------------------------------------------------
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.npm
+
+# ---------------------------------------------------------------------------
+# Nx
+# ---------------------------------------------------------------------------
+.nx/cache
+.nx/workspace-data
+.nx/installation
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# ---------------------------------------------------------------------------
+# Artefactos de build (Nx / NestJS / Angular)
+# ---------------------------------------------------------------------------
+dist/
+tmp/
+out-tsc/
+build/
+.angular/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# Tests y cobertura
+# ---------------------------------------------------------------------------
+coverage/
+.nyc_output/
+test-output/
+playwright-report/
+test-results/
+
+# ---------------------------------------------------------------------------
+# Variables de entorno (nunca versionar credenciales)
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ---------------------------------------------------------------------------
+# Docker
+# ---------------------------------------------------------------------------
+docker-compose.override.yml
+infra/docker/.env
+*.pid
+
+# ---------------------------------------------------------------------------
+# Resultados del experimento (trazas y corridas son artefactos, no fuente)
+# ---------------------------------------------------------------------------
+# Se usa `dir/*` y no `dir/` para que git siga descendiendo y respete el
+# .gitkeep que conserva la carpeta en el repositorio.
+experiment/resultados/*
+experiment/trazas/*
+!experiment/resultados/.gitkeep
+!experiment/trazas/.gitkeep
+
+# ---------------------------------------------------------------------------
+# Editores y sistema operativo
+# ---------------------------------------------------------------------------
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+# Nx genera aqui una configuracion de depuracion por app: es util compartirla.
+!.vscode/launch.json
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.angular

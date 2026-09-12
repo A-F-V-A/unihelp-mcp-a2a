@@ -1,0 +1,15 @@
+{
+  "name": "contratos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/contratos/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido"],
+  "// targets": "to see all targets run: nx show project contratos --web",
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

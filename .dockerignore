@@ -1,0 +1,20 @@
+# Nunca enviar dependencias ni artefactos al contexto de build: la imagen los
+# reconstruye desde el lockfile.
+node_modules
+**/node_modules
+dist
+tmp
+out-tsc
+coverage
+.nx
+.angular
+.git
+.gitignore
+.vscode
+.idea
+docs
+experiment
+infra/docker/.env
+**/*.log
+**/.DS_Store
+**/Thumbs.db

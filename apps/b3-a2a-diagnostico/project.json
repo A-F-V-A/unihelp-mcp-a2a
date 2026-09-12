@@ -1,0 +1,32 @@
+{
+  "name": "b3-a2a-diagnostico",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/b3-a2a-diagnostico/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:b3"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "b3-a2a-diagnostico:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "b3-a2a-diagnostico:build:development"
+        },
+        "production": {
+          "buildTarget": "b3-a2a-diagnostico:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

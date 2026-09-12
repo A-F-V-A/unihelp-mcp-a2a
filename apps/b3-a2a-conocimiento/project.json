@@ -1,0 +1,32 @@
+{
+  "name": "b3-a2a-conocimiento",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/b3-a2a-conocimiento/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:b3"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "b3-a2a-conocimiento:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "b3-a2a-conocimiento:build:development"
+        },
+        "production": {
+          "buildTarget": "b3-a2a-conocimiento:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}
