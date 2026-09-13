@@ -31,6 +31,8 @@ build/
 # ---------------------------------------------------------------------------
 # Tests y cobertura
 # ---------------------------------------------------------------------------
+# Snapshots, capturas y logs que genera el MCP de Playwright al validar la UI
+.playwright-mcp/
 coverage/
 .nyc_output/
 test-output/
