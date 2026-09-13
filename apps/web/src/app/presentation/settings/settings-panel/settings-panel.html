@@ -1,0 +1,378 @@
+<div class="ajustes">
+  @switch (pantalla()) {
+    @case ('principal') {
+      <div class="ajustes__perfil">
+        <button
+          type="button"
+          class="ajustes__avatar"
+          aria-label="Editar perfil"
+          (click)="editarPerfil()"
+        >
+          @if (iniciales()) {
+            <span>{{ iniciales() }}</span>
+          } @else {
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21a8 8 0 0 1 16 0" />
+            </svg>
+          }
+          <span class="ajustes__lapiz" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+          </span>
+        </button>
+        <p class="ajustes__nombre">{{ nombreVisible() }}</p>
+        <p class="ajustes__detalle">{{ preferencias().perfil.correo || etiquetaRol() }}</p>
+      </div>
+
+      <h3 class="ajustes__seccion">Perfil</h3>
+      <div class="ajustes__grupo">
+        <button type="button" class="ajustes__fila" (click)="editarPerfil()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21a8 8 0 0 1 16 0" />
+          </svg>
+          <span class="ajustes__etiqueta">Datos del solicitante</span>
+          <span class="ajustes__valor">{{ etiquetaRol() }}</span>
+          <svg class="ajustes__chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+
+      <h3 class="ajustes__seccion">Apariencia</h3>
+      <div class="ajustes__grupo">
+        <div class="ajustes__fila ajustes__fila--apilada">
+          <span class="ajustes__rotulo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
+            </svg>
+            <span id="ajustes-tema">Tema</span>
+          </span>
+          <div class="segmentado" role="radiogroup" aria-labelledby="ajustes-tema">
+            @for (opcion of opcionesTema; track opcion.valor) {
+              <button
+                type="button"
+                role="radio"
+                class="segmentado__opcion"
+                [attr.aria-checked]="preferencias().tema === opcion.valor"
+                (click)="cambiarTema.emit(opcion.valor)"
+              >
+                {{ opcion.etiqueta }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="ajustes__fila ajustes__fila--apilada">
+          <span class="ajustes__rotulo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7V5h11v2M9.5 5v14M7 19h5M14 12v-1.5h7V12M17.5 10.5V19M15.5 19h4" />
+            </svg>
+            <span id="ajustes-texto">Tamaño del texto</span>
+          </span>
+          <div class="segmentado" role="radiogroup" aria-labelledby="ajustes-texto">
+            @for (opcion of opcionesTexto; track opcion.valor) {
+              <button
+                type="button"
+                role="radio"
+                class="segmentado__opcion"
+                [attr.aria-checked]="preferencias().tamanoTexto === opcion.valor"
+                (click)="cambiarTamanoTexto.emit(opcion.valor)"
+              >
+                {{ opcion.etiqueta }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <h3 class="ajustes__seccion">Modelo de IA</h3>
+      <div class="ajustes__grupo">
+        <button type="button" class="ajustes__fila" (click)="editarModelo()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="7" width="18" height="13" rx="3" />
+            <path d="M8 7V5a4 4 0 0 1 8 0v2M9 13h.01M15 13h.01" />
+          </svg>
+          <span class="ajustes__etiqueta">Proveedor</span>
+          <span
+            class="ajustes__valor"
+            [class.ajustes__valor--pendiente]="!modeloConfigurado()"
+            data-resumen-modelo
+          >
+            {{ resumenModelo() }}
+          </span>
+          <svg class="ajustes__chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+
+      <h3 class="ajustes__seccion">Datos</h3>
+      <div class="ajustes__grupo">
+        <div class="ajustes__fila">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z" />
+          </svg>
+          <span class="ajustes__etiqueta">Conversaciones guardadas</span>
+          <span class="ajustes__valor" data-conversaciones>{{ cantidadConversaciones() }}</span>
+        </div>
+        <button
+          type="button"
+          class="ajustes__fila ajustes__fila--peligro"
+          [disabled]="cantidadConversaciones() === 0"
+          (click)="pantalla.set('borrar')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+          </svg>
+          <span class="ajustes__etiqueta">Borrar todas las conversaciones</span>
+        </button>
+      </div>
+
+      <h3 class="ajustes__seccion">Acerca de</h3>
+      <div class="ajustes__grupo">
+        <div class="ajustes__fila">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="7" rx="2" />
+            <rect x="3" y="13" width="18" height="7" rx="2" />
+            <path d="M7 7.5h.01M7 16.5h.01" />
+          </svg>
+          <span class="ajustes__etiqueta">Arquitectura</span>
+          <app-backend-status />
+        </div>
+        <div class="ajustes__fila">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5M12 8h.01" />
+          </svg>
+          <span class="ajustes__etiqueta">Versión</span>
+          <span class="ajustes__valor">{{ version }}</span>
+        </div>
+      </div>
+    }
+
+    @case ('perfil') {
+      <button type="button" class="ajustes__volver" (click)="pantalla.set('principal')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg>
+        Configuración
+      </button>
+      <h2 class="ajustes__titulo">Datos del solicitante</h2>
+      <p class="ajustes__ayuda">
+        Ayudan a personalizar la atención. UniHelp nunca te pedirá tu contraseña.
+      </p>
+
+      <form
+        class="ajustes__formulario"
+        novalidate
+        (submit)="$event.preventDefault(); enviarPerfil()"
+      >
+        <label class="campo">
+          <span class="campo__rotulo">Nombre</span>
+          <input
+            #campoNombre
+            class="campo__entrada"
+            type="text"
+            autocomplete="name"
+            [attr.maxlength]="maximoNombre"
+            [attr.aria-invalid]="errores().nombre ? 'true' : null"
+            [value]="nombre()"
+            (input)="nombre.set(campoNombre.value)"
+          />
+        </label>
+        @if (errores().nombre; as error) {
+          <p class="campo__error" role="alert">{{ error }}</p>
+        }
+
+        <label class="campo">
+          <span class="campo__rotulo">Correo institucional</span>
+          <input
+            #campoCorreo
+            class="campo__entrada"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="nombre@universidad.edu.co"
+            [attr.aria-invalid]="errores().correo ? 'true' : null"
+            [value]="correo()"
+            (input)="correo.set(campoCorreo.value)"
+          />
+        </label>
+        @if (errores().correo; as error) {
+          <p class="campo__error" role="alert">{{ error }}</p>
+        }
+
+        <fieldset class="campo">
+          <legend class="campo__rotulo">Rol</legend>
+          <div class="segmentado segmentado--rejilla" role="radiogroup" aria-label="Rol">
+            @for (opcion of roles; track opcion.valor) {
+              <button
+                type="button"
+                role="radio"
+                class="segmentado__opcion"
+                [attr.aria-checked]="rol() === opcion.valor"
+                (click)="rol.set(opcion.valor)"
+              >
+                {{ opcion.etiqueta }}
+              </button>
+            }
+          </div>
+        </fieldset>
+
+        <button type="submit" class="boton-principal">Guardar</button>
+      </form>
+    }
+
+    @case ('modelo') {
+      <button type="button" class="ajustes__volver" (click)="pantalla.set('principal')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg>
+        Configuración
+      </button>
+      <h2 class="ajustes__titulo">Modelo de IA</h2>
+      <p class="ajustes__ayuda">
+        Elige qué proveedor debe responder tus solicitudes. Por ahora esta elección solo queda
+        guardada: las respuestas de esta demo siguen siendo simuladas.
+      </p>
+
+      <ul class="proveedores" role="radiogroup" aria-label="Proveedor de IA">
+        @for (descriptor of proveedores; track descriptor.id) {
+          <li>
+            <button
+              type="button"
+              role="radio"
+              class="proveedores__opcion"
+              [class.proveedores__opcion--activa]="proveedor() === descriptor.id"
+              [attr.aria-checked]="proveedor() === descriptor.id"
+              [attr.data-proveedor]="descriptor.id"
+              (click)="elegirProveedor(descriptor.id)"
+            >
+              <span class="proveedores__radio" aria-hidden="true"></span>
+              <span class="proveedores__texto">
+                <span class="proveedores__nombre">{{ descriptor.nombre }}</span>
+                <span class="proveedores__descripcion">{{ descriptor.descripcion }}</span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+
+      <form
+        class="ajustes__formulario"
+        novalidate
+        (submit)="$event.preventDefault(); enviarModelo()"
+      >
+        @if (descriptorSeleccionado().requiereUrl) {
+          <label class="campo">
+            <span class="campo__rotulo">URL del agente</span>
+            <input
+              #campoUrl
+              class="campo__entrada"
+              type="url"
+              inputmode="url"
+              placeholder="http://localhost:9000"
+              [attr.aria-invalid]="erroresModelo().urlAgenteLocal ? 'true' : null"
+              [value]="urlAgenteLocal()"
+              (input)="urlAgenteLocal.set(campoUrl.value)"
+            />
+          </label>
+          @if (erroresModelo().urlAgenteLocal; as error) {
+            <p class="campo__error" role="alert">{{ error }}</p>
+          }
+        }
+
+        <label class="campo">
+          <span class="campo__rotulo">
+            {{ descriptorSeleccionado().requiereUrl ? 'Token de acceso' : 'Clave de API' }}
+          </span>
+          <span class="campo__con-boton">
+            <input
+              #campoToken
+              class="campo__entrada"
+              [type]="mostrarToken() ? 'text' : 'password'"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="••••••••••••"
+              [attr.aria-invalid]="erroresModelo().token ? 'true' : null"
+              [value]="token()"
+              (input)="token.set(campoToken.value)"
+            />
+            <button
+              type="button"
+              class="campo__boton-ojo"
+              [attr.aria-label]="mostrarToken() ? 'Ocultar token' : 'Mostrar token'"
+              (click)="mostrarToken.set(!mostrarToken())"
+            >
+              @if (mostrarToken()) {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z" />
+                  <circle cx="12" cy="12" r="2.5" />
+                </svg>
+              } @else {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 3l18 18M10.6 10.6a2.5 2.5 0 0 0 3.5 3.5" />
+                  <path
+                    d="M6.6 6.7C4.3 8.2 3 12 3 12s3.5 6 9 6c1.6 0 3-.5 4.2-1.2M9.9 5.2A9 9 0 0 1 12 5c5.5 0 9 6 9 6a13 13 0 0 1-2.1 2.7"
+                  />
+                </svg>
+              }
+            </button>
+          </span>
+        </label>
+        @if (erroresModelo().token; as error) {
+          <p class="campo__error" role="alert">{{ error }}</p>
+        }
+        @if (token() && !erroresModelo().token) {
+          <p class="campo__ayuda-discreta">Guardado como {{ tokenEnmascarado() }}</p>
+        }
+
+        @if (descriptorSeleccionado().modelosSugeridos.length) {
+          <label class="campo">
+            <span class="campo__rotulo">Modelo (opcional)</span>
+            <input
+              #campoModelo
+              class="campo__entrada"
+              type="text"
+              [placeholder]="'Por defecto: ' + descriptorSeleccionado().modelosSugeridos[0]"
+              [value]="modelo()"
+              (input)="modelo.set(campoModelo.value)"
+            />
+          </label>
+          <div class="chips">
+            @for (sugerido of descriptorSeleccionado().modelosSugeridos; track sugerido) {
+              <button type="button" class="chips__opcion" (click)="usarModeloSugerido(sugerido)">
+                {{ sugerido }}
+              </button>
+            }
+          </div>
+        }
+
+        <button type="submit" class="boton-principal">Guardar</button>
+      </form>
+    }
+
+    @case ('borrar') {
+      <button type="button" class="ajustes__volver" (click)="pantalla.set('principal')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg>
+        Configuración
+      </button>
+      <div class="ajustes__confirmacion">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+        </svg>
+        <h2 class="ajustes__titulo">¿Borrar todas las conversaciones?</h2>
+        <p class="ajustes__ayuda">
+          Se eliminarán {{ cantidadConversaciones() }} conversaciones y su historial. Los tickets
+          que ya creaste siguen activos.
+        </p>
+        <button
+          type="button"
+          class="boton-principal boton-principal--peligro"
+          (click)="confirmarBorrado()"
+        >
+          Borrar conversaciones
+        </button>
+        <button type="button" class="boton-secundario" (click)="pantalla.set('principal')">
+          Cancelar
+        </button>
+      </div>
+    }
+  }
+</div>

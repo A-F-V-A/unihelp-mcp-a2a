@@ -1,0 +1,43 @@
+@if (mostrarContador()) {
+  <p class="contador" [class.contador--alerta]="cercaDelLimite()">{{ longitud() }}/{{ maxima }}</p>
+}
+
+<form class="compositor" (submit)="$event.preventDefault(); emitir()">
+  <button
+    type="button"
+    class="compositor__boton"
+    aria-label="Ver sugerencias"
+    title="Sugerencias"
+    (click)="abrirSugerencias.emit()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+  </button>
+
+  <label for="solicitud" class="visualmente-oculto">Describe tu problema o tu pregunta</label>
+  <span id="solicitud-ayuda" class="visualmente-oculto">
+    No necesitas elegir servicio, categoría ni prioridad.
+  </span>
+  <textarea
+    #campo
+    id="solicitud"
+    class="compositor__campo"
+    rows="1"
+    placeholder="Pregúntale a UniHelp"
+    aria-describedby="solicitud-ayuda"
+    [value]="texto()"
+    [attr.maxlength]="maxima"
+    [disabled]="deshabilitado()"
+    (input)="actualizar(campo)"
+    (keydown.enter)="alPresionarEnter($event)"
+  ></textarea>
+
+  <button
+    type="submit"
+    class="compositor__enviar"
+    aria-label="Enviar mensaje"
+    title="Enviar"
+    [disabled]="deshabilitado() || vacio()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
+  </button>
+</form>

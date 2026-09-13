@@ -1,0 +1,52 @@
+.escribiendo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+  background: var(--color-superficie);
+  box-shadow: 0 1px 2px rgb(20 33 61 / 8%);
+  color: var(--color-tenue);
+  font-size: 0.85rem;
+}
+
+.escribiendo__puntos {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.escribiendo__puntos i {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentcolor;
+  animation: rebote 1.2s infinite ease-in-out;
+}
+
+.escribiendo__puntos i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.escribiendo__puntos i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes rebote {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-0.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .escribiendo__puntos i {
+    animation: none;
+  }
+}

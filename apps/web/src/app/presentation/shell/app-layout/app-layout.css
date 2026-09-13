@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.disposicion {
+  --ancho-cajon: min(82vw, 20rem);
+
+  position: fixed;
+  top: var(--desfase-visible, 0);
+  right: 0;
+  left: 0;
+  height: var(--alto-visible, 100dvh);
+  overflow: hidden;
+  background: var(--fondo-cajon);
+}
+
+.disposicion__cajon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--ancho-cajon);
+  outline: none;
+  opacity: 0.4;
+  transform: translateX(-22%);
+  transition:
+    transform 420ms var(--curva-app),
+    opacity 420ms var(--curva-app);
+}
+
+.disposicion__principal {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--fondo-app);
+  touch-action: pan-y pinch-zoom;
+  transition:
+    transform 420ms var(--curva-app),
+    border-radius 420ms var(--curva-app),
+    box-shadow 420ms var(--curva-app);
+}
+
+.disposicion--abierta .disposicion__cajon,
+.disposicion--arrastrando .disposicion__cajon {
+  opacity: 1;
+  transform: none;
+}
+
+.disposicion--abierta .disposicion__principal {
+  transform: translateX(var(--ancho-cajon));
+}
+
+.disposicion--abierta .disposicion__principal,
+.disposicion--arrastrando .disposicion__principal {
+  border-radius: 1.75rem 0 0 1.75rem;
+  box-shadow: -14px 0 40px rgb(0 0 0 / 8%);
+}
+
+.disposicion--arrastrando .disposicion__cajon,
+.disposicion--arrastrando .disposicion__principal {
+  transition: none;
+}
+
+.disposicion__velo {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  /* El velo solo recibe el gesto de cerrar: sin esto el navegador se queda con el deslizamiento. */
+  touch-action: none;
+}
+
+.disposicion--abierta .disposicion__velo {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.disposicion--acoplada .disposicion__cajon {
+  width: 17.5rem;
+  border-right: 1px solid var(--color-borde);
+  opacity: 1;
+  transform: none;
+}
+
+.disposicion--acoplada .disposicion__principal {
+  left: 17.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disposicion__cajon,
+  .disposicion__principal {
+    transition-duration: 1ms;
+  }
+}

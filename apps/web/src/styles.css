@@ -1,12 +1,578 @@
 :root {
   color-scheme: light;
+
+  --color-texto: #14213d;
+  --color-tenue: #5b6478;
+  --color-borde: #dfe3ec;
+  --color-fondo: #f7f8fb;
+  --color-superficie: #fff;
+
+  /* Un color por clasificacion y por nivel de servicio: la UI los distingue siempre. */
+  --color-informativa: #1d4ed8;
+  --fondo-informativa: #eaf0ff;
+  --color-diagnostico: #a15c07;
+  --fondo-diagnostico: #fff4e0;
+  --color-compuesta: #6d28d9;
+  --fondo-compuesta: #f2ecff;
+  --color-fuera-alcance: #b42318;
+  --fondo-fuera-alcance: #fdeceb;
+  --color-ok: #15803d;
+  --fondo-ok: #e8f6ed;
+  --color-mantenimiento: #0e7490;
+  --fondo-mantenimiento: #e4f5f8;
+  --color-propuesta: #14213d;
+  --fondo-propuesta: #fffdf5;
+
+  --radio: 0.75rem;
+  --relleno-tarjeta: 0.95rem 1.05rem;
+
+  /* Lenguaje visual de app movil (cabecera y campo flotantes, menu y hojas inferiores). */
+  --color-acento: #2f7df6;
+  --fondo-app: #fff;
+  --fondo-cajon: #fbfbfc;
+  --fondo-burbuja-usuario: #f1f1f4;
+  --sombra-flotante: 0 2px 14px rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 4%);
+  --curva-app: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Superficies y textos que cambian con el tema. */
+  --texto-invertido: #fff;
+  --fondo-codigo: #eef1f7;
+  --fondo-hover: rgb(0 0 0 / 5%);
+  --fondo-grupo: #f2f2f5;
+  --fondo-segmentado: #e6e6eb;
+  --fondo-segmento-activo: #fff;
+  --fondo-deshabilitado: #e7e7ea;
+  --texto-deshabilitado: #a3a3ab;
+  --fondo-boton-principal: #0d0d0d;
+  --texto-boton-principal: #fff;
+  --fondo-cerrar-hoja: rgb(255 255 255 / 72%);
+  --color-asa: rgb(20 20 60 / 30%);
+  --degradado-hoja: linear-gradient(120deg, #b4b5e8 0%, #cdd0f1 45%, #9fc6e9 100%);
+  --fuente-mono: ui-monospace, sfmono-regular, menlo, consolas, monospace;
+
+  text-size-adjust: 100%;
+}
+
+@media (width <= 40rem) {
+  :root {
+    --relleno-tarjeta: 0.8rem 0.85rem;
+  }
+}
+
+/* Tema oscuro: elegido en Configuracion, o por el sistema si el tema es "Sistema". */
+:root[data-tema='oscuro'] {
+  color-scheme: dark;
+
+  --color-texto: #ececf1;
+  --color-tenue: #a0a0ab;
+  --color-borde: #34343b;
+  --color-fondo: #18181b;
+  --color-superficie: #212124;
+  --color-informativa: #82aaff;
+  --fondo-informativa: #1b2438;
+  --color-diagnostico: #f2b25c;
+  --fondo-diagnostico: #2f2413;
+  --color-compuesta: #bda4ff;
+  --fondo-compuesta: #271f3b;
+  --color-fuera-alcance: #ff8f85;
+  --fondo-fuera-alcance: #361b1b;
+  --color-ok: #5cd08c;
+  --fondo-ok: #142b1d;
+  --color-mantenimiento: #62cde2;
+  --fondo-mantenimiento: #112c34;
+  --color-propuesta: #d9d9e3;
+  --fondo-propuesta: #24231e;
+  --color-acento: #5b95ff;
+  --fondo-app: #151517;
+  --fondo-cajon: #0e0e10;
+  --fondo-burbuja-usuario: #2b2b30;
+  --sombra-flotante: 0 2px 14px rgb(0 0 0 / 45%), 0 0 0 1px rgb(255 255 255 / 7%);
+  --texto-invertido: #111114;
+  --fondo-codigo: #2b2b31;
+  --fondo-hover: rgb(255 255 255 / 7%);
+  --fondo-grupo: #2a2a2f;
+  --fondo-segmentado: #18181b;
+  --fondo-segmento-activo: #3b3b42;
+  --fondo-deshabilitado: #2c2c31;
+  --texto-deshabilitado: #6b6b75;
+  --fondo-boton-principal: #f2f2f5;
+  --texto-boton-principal: #111114;
+  --fondo-cerrar-hoja: rgb(255 255 255 / 12%);
+  --color-asa: rgb(255 255 255 / 25%);
+  --degradado-hoja: linear-gradient(120deg, #36326a 0%, #2d3561 45%, #1f4865 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-tema='sistema'] {
+    color-scheme: dark;
+
+    --color-texto: #ececf1;
+    --color-tenue: #a0a0ab;
+    --color-borde: #34343b;
+    --color-fondo: #18181b;
+    --color-superficie: #212124;
+    --color-informativa: #82aaff;
+    --fondo-informativa: #1b2438;
+    --color-diagnostico: #f2b25c;
+    --fondo-diagnostico: #2f2413;
+    --color-compuesta: #bda4ff;
+    --fondo-compuesta: #271f3b;
+    --color-fuera-alcance: #ff8f85;
+    --fondo-fuera-alcance: #361b1b;
+    --color-ok: #5cd08c;
+    --fondo-ok: #142b1d;
+    --color-mantenimiento: #62cde2;
+    --fondo-mantenimiento: #112c34;
+    --color-propuesta: #d9d9e3;
+    --fondo-propuesta: #24231e;
+    --color-acento: #5b95ff;
+    --fondo-app: #151517;
+    --fondo-cajon: #0e0e10;
+    --fondo-burbuja-usuario: #2b2b30;
+    --sombra-flotante: 0 2px 14px rgb(0 0 0 / 45%), 0 0 0 1px rgb(255 255 255 / 7%);
+    --texto-invertido: #111114;
+    --fondo-codigo: #2b2b31;
+    --fondo-hover: rgb(255 255 255 / 7%);
+    --fondo-grupo: #2a2a2f;
+    --fondo-segmentado: #18181b;
+    --fondo-segmento-activo: #3b3b42;
+    --fondo-deshabilitado: #2c2c31;
+    --texto-deshabilitado: #6b6b75;
+    --fondo-boton-principal: #f2f2f5;
+    --texto-boton-principal: #111114;
+    --fondo-cerrar-hoja: rgb(255 255 255 / 12%);
+    --color-asa: rgb(255 255 255 / 25%);
+    --degradado-hoja: linear-gradient(120deg, #36326a 0%, #2d3561 45%, #1f4865 100%);
+  }
+}
+
+/* Texto grande: toda la interfaz esta en rem, asi que escala completa. */
+:root[data-texto='grande'] {
+  font-size: 112.5%;
 }
 
 * {
   box-sizing: border-box;
 }
 
+button {
+  /* Sin retardo de doble toque en moviles. */
+  touch-action: manipulation;
+}
+
+/* La app ocupa la pantalla: la pagina no rebota ni se desplaza, solo sus paneles. */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
-  background: #f7f8fb;
+  background: var(--fondo-app);
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color-texto);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    roboto,
+    sans-serif;
+}
+
+code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  background: var(--fondo-codigo);
+  font-family: var(--fuente-mono);
+  font-size: 0.86em;
+}
+
+a {
+  color: var(--color-informativa);
+}
+
+.tenue {
+  color: var(--color-tenue);
+}
+
+.texto-error {
+  margin: 0.5rem 0 0;
+  color: var(--color-fuera-alcance);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sobretitulo {
+  margin: 0;
+  color: var(--color-tenue);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.boton-circular {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  box-shadow: var(--sombra-flotante);
+  color: var(--color-texto);
+  cursor: pointer;
+  transition:
+    transform 150ms var(--curva-app),
+    opacity 200ms ease;
+}
+
+.boton-circular:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.boton-circular:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.boton-circular svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.boton-circular:focus-visible,
+.boton-principal:focus-visible,
+.hoja-opcion:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+/* Accion principal de una hoja inferior. */
+.boton-principal {
+  display: block;
+  width: 100%;
+  min-height: 3.4rem;
+  margin-top: 1.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fondo-boton-principal);
+  color: var(--texto-boton-principal);
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 150ms var(--curva-app);
+}
+
+.boton-principal:active {
+  transform: scale(0.98);
+}
+
+/* Contenido de las hojas inferiores (se proyecta dentro de app-bottom-sheet). */
+.hoja-cabecera {
+  display: grid;
+  place-items: center;
+  margin: 0 -1.5rem;
+  padding: 3rem 1.5rem 2.25rem;
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0%) 45%, var(--color-superficie)),
+    var(--degradado-hoja);
+  touch-action: none;
+}
+
+.hoja-icono {
+  width: 4.25rem;
+  height: 4.25rem;
+  fill: none;
+  stroke: var(--color-texto);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hoja-icono--relleno {
+  fill: var(--color-texto);
+  stroke: none;
+}
+
+.hoja-titulo {
+  margin: 0.25rem 0 0.6rem;
+  font-size: 1.55rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.hoja-titulo--izquierda {
+  margin-top: 0;
+  font-size: 1.3rem;
+  text-align: left;
+}
+
+.hoja-texto {
+  margin: 0;
+  color: var(--color-tenue);
+  font-size: 1.02rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.hoja-cuerpo {
+  padding-top: 2.6rem;
+}
+
+.hoja-ficha {
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: var(--fondo-burbuja-usuario);
+}
+
+.hoja-lista {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoja-opcion {
+  width: 100%;
+  min-height: 3.1rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--fondo-burbuja-usuario);
+  color: inherit;
+  font: inherit;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 150ms var(--curva-app);
+}
+
+.hoja-opcion:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.hoja-opcion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boton-principal--peligro {
+  background: var(--color-fuera-alcance);
+  color: var(--texto-invertido);
+}
+
+.boton-secundario {
+  display: block;
+  width: 100%;
+  min-height: 3.2rem;
+  margin-top: 0.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fondo-grupo);
+  color: var(--color-texto);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hoja-texto--izquierda {
+  text-align: left;
+}
+
+.hoja-aviso {
+  margin-top: 1rem;
+}
+
+.hoja-opcion--peligro {
+  color: var(--color-fuera-alcance);
+}
+
+.hoja-opcion__principal {
+  display: block;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.hoja-opcion__secundario {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--color-tenue);
+  font-size: 0.86rem;
+}
+
+/* Marcador de carga: lineas que laten mientras llega el contenido. */
+.esqueleto {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.6rem 0.65rem;
+}
+
+.esqueleto span {
+  height: 0.95rem;
+  border-radius: 0.5rem;
+  background: var(--fondo-hover);
+  animation: latido 1.2s ease-in-out infinite;
+}
+
+.esqueleto span + span {
+  width: 70%;
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto span {
+    animation: none;
+  }
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Ficha de datos clave/valor usada por tarjetas de estado, propuesta y ticket. */
+.ficha {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0.8rem 0 0;
+  font-size: 0.9rem;
+}
+
+.ficha dt {
+  color: var(--color-tenue);
+}
+
+.ficha dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* En celular se conservan dos columnas compactas: apilar duplica la altura de cada tarjeta. */
+@media (width <= 40rem) {
+  .ficha {
+    grid-template-columns: minmax(5.75rem, max-content) 1fr;
+    gap: 0.3rem 0.75rem;
+    font-size: 0.88rem;
+  }
+}
+
+@media (width <= 20rem) {
+  .ficha {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  .ficha dd {
+    margin-bottom: 0.4rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .boton {
+    min-height: 2.5rem;
+  }
+
+  .boton-enlace {
+    padding-block: 0.4rem;
+  }
+}
+
+.boton {
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--color-texto);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-texto);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.boton:hover:not(:disabled) {
+  background: var(--color-texto);
+  color: var(--texto-invertido);
+}
+
+.boton--primario {
+  background: var(--color-texto);
+  color: var(--texto-invertido);
+}
+
+.boton--pequeno {
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.boton:disabled,
+.boton-decision:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boton-enlace {
+  margin-top: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-informativa);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Confirmar y Rechazar comparten tamano, peso y contraste (HU-FE-18). */
+.boton-decision {
+  min-height: 2.8rem;
+  padding: 0.6rem 1rem;
+  border: 2px solid;
+  border-radius: 0.55rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-decision--confirmar {
+  border-color: var(--color-ok);
+  background: var(--color-ok);
+  color: var(--texto-invertido);
+}
+
+.boton-decision--rechazar {
+  border-color: var(--color-fuera-alcance);
+  background: var(--color-superficie);
+  color: var(--color-fuera-alcance);
+}
+
+.boton-decision:focus-visible,
+.boton:focus-visible,
+.boton-enlace:focus-visible {
+  outline: 3px solid var(--color-informativa);
+  outline-offset: 2px;
 }

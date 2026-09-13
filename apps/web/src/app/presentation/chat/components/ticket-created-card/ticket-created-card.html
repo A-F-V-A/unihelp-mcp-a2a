@@ -1,0 +1,32 @@
+<section class="ticket" aria-label="Ticket creado">
+  <header class="ticket__encabezado">
+    <svg class="ticket__icono" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8 12 3 3 5-6" />
+    </svg>
+    <div>
+      <p class="sobretitulo">Ticket creado</p>
+      <p class="ticket__numero" data-numero>{{ ticket().numero }}</p>
+    </div>
+    <span class="ticket__estado" data-estado>{{ estado() }}</span>
+  </header>
+
+  <dl class="ficha">
+    <dt>Servicio</dt>
+    <dd>{{ servicio() }}</dd>
+
+    <dt>Categoría</dt>
+    <dd>{{ ticket().categoria }}</dd>
+
+    <dt>Prioridad</dt>
+    <dd>{{ prioridad() }}</dd>
+
+    <dt>Creado</dt>
+    <dd>{{ ticket().creadoEn | fecha }}</dd>
+
+    <dt>Primera atención</dt>
+    <dd>{{ ticket().atencionEstimada ?? 'Por definir' }}</dd>
+  </dl>
+
+  <p class="ticket__nota">Guarda este número para consultar el avance de tu solicitud.</p>
+</section>

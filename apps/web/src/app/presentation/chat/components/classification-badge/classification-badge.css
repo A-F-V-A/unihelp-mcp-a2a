@@ -1,0 +1,45 @@
+.clasificacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem 0.2rem 0.45rem;
+  border: 1px solid currentcolor;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.clasificacion--informativa {
+  color: var(--color-informativa);
+  background: var(--fondo-informativa);
+}
+
+.clasificacion--diagnostico {
+  color: var(--color-diagnostico);
+  background: var(--fondo-diagnostico);
+}
+
+.clasificacion--compuesta {
+  color: var(--color-compuesta);
+  background: var(--fondo-compuesta);
+}
+
+.clasificacion--fuera-de-alcance {
+  color: var(--color-fuera-alcance);
+  background: var(--fondo-fuera-alcance);
+}
+
+.clasificacion__icono {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.clasificacion__confianza {
+  font-weight: 400;
+  opacity: 0.75;
+}

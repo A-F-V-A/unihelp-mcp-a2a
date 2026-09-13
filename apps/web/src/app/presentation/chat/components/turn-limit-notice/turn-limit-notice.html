@@ -1,0 +1,14 @@
+<div class="limite" role="status">
+  <div>
+    <p class="limite__titulo">
+      Alcanzaste el límite de {{ turnosMaximos() }} {{ turnosMaximos() === 1 ? 'turno' : 'turnos' }}
+    </p>
+    <p class="limite__texto">
+      Para mantener las respuestas precisas, cada conversación tiene un número máximo de turnos. Tus
+      tickets y el historial de esta conversación se conservan.
+    </p>
+  </div>
+  <button type="button" class="boton boton--primario" (click)="nuevaConversacion.emit()">
+    Iniciar nueva conversación
+  </button>
+</div>

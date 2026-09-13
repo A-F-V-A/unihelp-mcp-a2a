@@ -1,0 +1,35 @@
+<div
+  class="disposicion"
+  [class.disposicion--abierta]="abiertoVisual()"
+  [class.disposicion--acoplada]="acoplado()"
+  [class.disposicion--arrastrando]="arrastre() !== null"
+>
+  <div
+    #cajon
+    class="disposicion__cajon"
+    tabindex="-1"
+    [attr.inert]="cajonInerte() ? '' : null"
+    [attr.aria-hidden]="cajonInerte() ? 'true' : null"
+  >
+    <ng-content select="[cajon]" />
+  </div>
+
+  <div
+    class="disposicion__principal"
+    [style.transform]="transformPrincipal()"
+    (pointerdown)="alTocar($event)"
+    (pointermove)="alMover($event)"
+    (touchmove)="alMoverTactil($event)"
+    (pointerup)="alSoltar($event)"
+    (pointercancel)="alSoltar($event)"
+  >
+    <ng-content />
+    <button
+      type="button"
+      class="disposicion__velo"
+      aria-label="Cerrar menú"
+      [attr.tabindex]="abiertoVisual() ? 0 : -1"
+      (click)="cerrar()"
+    ></button>
+  </div>
+</div>

@@ -32,13 +32,24 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kb",
-              "maximumError": "8kb"
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
             }
           ],
           "outputHashing": "all"
         },
         "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/web/src/environments/environment.ts",
+              "with": "apps/web/src/environments/environment.development.ts"
+            }
+          ]
+        },
+        "backend-real": {
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
@@ -49,12 +60,18 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "allowedHosts": ["localhost.afva.com.co"]
+      },
       "configurations": {
         "production": {
           "buildTarget": "web:build:production"
         },
         "development": {
           "buildTarget": "web:build:development"
+        },
+        "backend-real": {
+          "buildTarget": "web:build:backend-real"
         }
       }
     },

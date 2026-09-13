@@ -1,0 +1,76 @@
+.estado-servicio {
+  --acento: var(--color-ok);
+  --acento-fondo: var(--fondo-ok);
+
+  padding: var(--relleno-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-top: 4px solid var(--acento);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.estado-servicio--degradado {
+  --acento: var(--color-diagnostico);
+  --acento-fondo: var(--fondo-diagnostico);
+}
+
+.estado-servicio--interrumpido {
+  --acento: var(--color-fuera-alcance);
+  --acento-fondo: var(--fondo-fuera-alcance);
+}
+
+.estado-servicio--mantenimiento {
+  --acento: var(--color-mantenimiento);
+  --acento-fondo: var(--fondo-mantenimiento);
+}
+
+.estado-servicio__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.estado-servicio__encabezado > div {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.estado-servicio__punto {
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--acento);
+  box-shadow: 0 0 0 4px var(--acento-fondo);
+}
+
+.estado-servicio__nombre {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.estado-servicio__nivel {
+  margin-left: auto;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--acento-fondo);
+  color: var(--acento);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.estado-servicio__sin-ventana {
+  color: var(--color-tenue);
+  font-style: italic;
+}
+
+.estado-servicio__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+}

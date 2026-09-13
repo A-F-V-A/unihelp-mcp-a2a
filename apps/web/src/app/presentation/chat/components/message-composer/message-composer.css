@@ -1,0 +1,114 @@
+:host {
+  display: block;
+}
+
+.contador {
+  margin: 0 1rem 0.35rem;
+  color: var(--color-tenue);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.contador--alerta {
+  color: var(--color-fuera-alcance);
+  font-weight: 700;
+}
+
+.compositor {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.2rem;
+  padding: 0.3rem;
+  border-radius: 1.75rem;
+  background: var(--color-superficie);
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 9%),
+    0 0 0 1px rgb(0 0 0 / 5%);
+  transition: box-shadow 200ms ease;
+}
+
+.compositor:focus-within {
+  box-shadow:
+    0 6px 28px rgb(0 0 0 / 12%),
+    0 0 0 1px rgb(0 0 0 / 14%);
+}
+
+.compositor__boton,
+.compositor__enviar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform 150ms var(--curva-app),
+    background-color 200ms ease;
+}
+
+.compositor__boton {
+  background: transparent;
+  color: var(--color-texto);
+}
+
+.compositor__enviar {
+  background: var(--color-acento);
+  color: #fff;
+}
+
+.compositor__boton:active,
+.compositor__enviar:active:not(:disabled) {
+  transform: scale(0.9);
+}
+
+.compositor__enviar:disabled {
+  background: var(--fondo-deshabilitado);
+  color: var(--texto-deshabilitado);
+  cursor: not-allowed;
+}
+
+.compositor__boton:focus-visible,
+.compositor__enviar:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+.compositor__boton svg,
+.compositor__enviar svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.compositor__campo {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75rem;
+  max-height: 9.5rem;
+  padding: 0.62rem 0.35rem;
+  border: 0;
+  outline: 0;
+  resize: none;
+  overflow-y: auto;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  /* 16px evita que iOS haga zoom al enfocar el campo. */
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.compositor__campo::placeholder {
+  color: var(--color-tenue);
+}
+
+.compositor__campo:disabled {
+  cursor: progress;
+}

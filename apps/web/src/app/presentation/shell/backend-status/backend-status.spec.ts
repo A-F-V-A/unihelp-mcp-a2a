@@ -2,8 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import type { RespuestaSalud } from '@unihelp/contratos';
-import { App } from './app';
-import { CONFIGURACION_APP } from './nucleo/configuracion';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion';
+import { BackendStatus } from './backend-status';
 
 const BACKEND_URL = 'http://backend-de-prueba:3000';
 
@@ -21,26 +21,25 @@ const SALUD_B2: RespuestaSalud = {
   tiempoActividadSegundos: 12,
 };
 
-describe('App', () => {
+describe('BackendStatus', () => {
   let http: HttpTestingController;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [BackendStatus],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND_URL } },
       ],
-    }).compileComponents();
-
+    });
     http = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => http.verify());
 
   it('consulta /health del backend configurado, no de una URL fija', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(BackendStatus);
     fixture.detectChanges();
 
     http.expectOne(`${BACKEND_URL}/health`).flush(SALUD_B2);
@@ -49,8 +48,8 @@ describe('App', () => {
     expect(fixture.nativeElement.textContent).toContain('B2');
   });
 
-  it('avisa cuando la arquitectura no esta levantada', () => {
-    const fixture = TestBed.createComponent(App);
+  it('avisa cuando no hay arquitectura levantada', () => {
+    const fixture = TestBed.createComponent(BackendStatus);
     fixture.detectChanges();
 
     http
@@ -58,6 +57,8 @@ describe('App', () => {
       .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('No hay respuesta');
+    const boton: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    expect(boton.textContent).toContain('no detectada');
+    expect(boton.title).toContain('No hay respuesta');
   });
 });

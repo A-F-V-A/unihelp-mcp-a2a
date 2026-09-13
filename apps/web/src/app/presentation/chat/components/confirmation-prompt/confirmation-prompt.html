@@ -1,0 +1,94 @@
+<section
+  class="propuesta"
+  [class]="'propuesta propuesta--' + propuesta().estado"
+  [attr.aria-labelledby]="idTitulo"
+  [attr.data-estado]="propuesta().estado"
+>
+  <header class="propuesta__encabezado">
+    <svg class="propuesta__icono" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4V8Z"
+      />
+      <path d="M13 6v2M13 11v2M13 16v2" />
+    </svg>
+    <div class="propuesta__titulos">
+      <p class="sobretitulo">Propuesta de ticket</p>
+      <h4 class="propuesta__resumen" [id]="idTitulo">{{ propuesta().resumen }}</h4>
+    </div>
+    <span class="propuesta__estado">
+      @switch (propuesta().estado) {
+        @case ('pendiente') {
+          Requiere tu confirmación
+        }
+        @case ('confirmada') {
+          Confirmada
+        }
+        @case ('rechazada') {
+          Descartada
+        }
+      }
+    </span>
+  </header>
+
+  <dl class="ficha">
+    <dt>Servicio</dt>
+    <dd>{{ servicio() }}</dd>
+
+    <dt>Categoría</dt>
+    <dd>{{ propuesta().categoria }}</dd>
+
+    <dt>Prioridad</dt>
+    <dd>
+      <span class="prioridad" [class]="'prioridad prioridad--' + propuesta().prioridad">
+        {{ prioridad() }}
+      </span>
+    </dd>
+
+    <dt>Descripción</dt>
+    <dd class="propuesta__descripcion">{{ propuesta().descripcion }}</dd>
+  </dl>
+
+  @switch (propuesta().estado) {
+    @case ('pendiente') {
+      <p class="propuesta__aviso">
+        No se creará ningún ticket hasta que pulses <strong>Confirmar</strong>.
+      </p>
+
+      @if (error(); as e) {
+        <p class="texto-error" role="alert">{{ e.mensaje }}</p>
+      }
+
+      <div class="propuesta__acciones">
+        <button
+          type="button"
+          class="boton-decision boton-decision--confirmar"
+          data-accion="confirmar"
+          [disabled]="ocupada()"
+          (click)="confirmar.emit()"
+        >
+          {{ accion() === 'confirmando' ? 'Creando ticket…' : 'Confirmar y crear ticket' }}
+        </button>
+        <button
+          type="button"
+          class="boton-decision boton-decision--rechazar"
+          data-accion="rechazar"
+          [disabled]="ocupada()"
+          (click)="rechazar.emit()"
+        >
+          {{ accion() === 'rechazando' ? 'Descartando…' : 'Rechazar' }}
+        </button>
+      </div>
+    }
+    @case ('confirmada') {
+      <p class="propuesta__resolucion">
+        Resuelta: se creó el ticket <strong>{{ propuesta().ticketNumero }}</strong
+        >.
+      </p>
+    }
+    @case ('rechazada') {
+      <p class="propuesta__resolucion">
+        Descartaste esta propuesta. No se creó ningún ticket y ya no puede confirmarse.
+      </p>
+    }
+  }
+</section>

@@ -1,0 +1,63 @@
+.backend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  background: var(--color-superficie);
+  color: var(--color-tenue);
+  font: inherit;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+:host {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.backend {
+  max-width: 100%;
+}
+
+.backend__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.backend__punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-tenue);
+}
+
+.backend--activo {
+  color: var(--color-texto);
+}
+
+.backend--activo .backend__punto {
+  background: var(--color-ok);
+}
+
+@media (width <= 40rem) {
+  .backend {
+    padding-inline: 0.55rem;
+  }
+
+  .backend__largo {
+    display: none;
+  }
+}
+
+/* En pantallas muy angostas queda solo el punto; el nombre sigue en aria-label. */
+@media (width <= 22rem) {
+  .backend__texto {
+    display: none;
+  }
+}

@@ -1,0 +1,22 @@
+.limite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: var(--relleno-tarjeta);
+  border: 1px solid var(--color-diagnostico);
+  border-radius: var(--radio);
+  background: var(--fondo-diagnostico);
+}
+
+.limite__titulo {
+  margin: 0;
+  font-weight: 700;
+}
+
+.limite__texto {
+  margin: 0.2rem 0 0;
+  color: var(--color-tenue);
+  font-size: 0.88rem;
+}

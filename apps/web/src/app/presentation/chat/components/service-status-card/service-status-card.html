@@ -1,0 +1,54 @@
+<section
+  class="estado-servicio"
+  [class]="'estado-servicio estado-servicio--' + nivel()"
+  [attr.aria-label]="'Estado del servicio ' + estado().nombre"
+>
+  <header class="estado-servicio__encabezado">
+    <span class="estado-servicio__punto" aria-hidden="true"></span>
+    <div>
+      <p class="sobretitulo">Estado del servicio</p>
+      <h4 class="estado-servicio__nombre">{{ estado().nombre }}</h4>
+    </div>
+    <span class="estado-servicio__nivel">{{ etiquetaNivel() }}</span>
+  </header>
+
+  <dl class="ficha">
+    <dt>Componente afectado</dt>
+    <dd>{{ estado().componenteAfectado ?? 'Ninguno identificado' }}</dd>
+
+    <dt>Alcance</dt>
+    <dd>{{ estado().alcance ?? 'Sin afectación reportada' }}</dd>
+
+    <dt>Ventana estimada</dt>
+    <dd>
+      @if (ventana(); as texto) {
+        {{ texto }}
+      } @else {
+        <span class="estado-servicio__sin-ventana" data-sin-ventana>{{ textoSinVentana() }}</span>
+      }
+    </dd>
+
+    @if (estado().incidenteId; as incidente) {
+      <dt>Incidente</dt>
+      <dd>
+        <code>{{ incidente }}</code>
+      </dd>
+    }
+  </dl>
+
+  <footer class="estado-servicio__pie">
+    <span class="tenue">Actualizado a las {{ estado().actualizadoEn | fecha: 'hora' }}</span>
+    <button
+      type="button"
+      class="boton boton--pequeno"
+      [disabled]="actualizando()"
+      (click)="actualizar.emit()"
+    >
+      {{ actualizando() ? 'Actualizando…' : 'Actualizar estado' }}
+    </button>
+  </footer>
+
+  @if (error(); as e) {
+    <p class="texto-error" role="alert">{{ e.mensaje }}</p>
+  }
+</section>

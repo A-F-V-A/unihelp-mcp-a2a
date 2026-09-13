@@ -1,0 +1,21 @@
+<section class="mantenimiento" [attr.aria-label]="'Mantenimiento programado de ' + estado().nombre">
+  <svg class="mantenimiento__icono" viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M16 3v4M8 3v4M3 10h18M9 15l2 2 4-4" />
+  </svg>
+  <div>
+    <p class="sobretitulo">Mantenimiento programado</p>
+    <h4 class="mantenimiento__titulo">{{ estado().nombre }}</h4>
+    <p class="mantenimiento__ventana">
+      @if (ventana(); as texto) {
+        <strong>{{ texto }}</strong>
+      } @else {
+        <em>Ventana por confirmar</em>
+      }
+    </p>
+    @if (estado().alcance; as alcance) {
+      <p class="mantenimiento__texto">{{ alcance }}</p>
+    }
+    <p class="mantenimiento__sin-ticket">No necesitas crear un ticket por esto.</p>
+  </div>
+</section>

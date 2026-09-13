@@ -68,7 +68,8 @@ imagen distinta por arquitectura. En su lugar:
 3. nginx sirve `config.json` con `Cache-Control: no-store`.
 
 Resultado: **una sola imagen de `web` para las cuatro arquitecturas**, sin
-ninguna URL compilada. Hay dos pruebas en `apps/web/src/app/app.spec.ts` que
+ninguna URL compilada. Hay dos pruebas en
+`apps/web/src/app/presentation/shell/backend-status/backend-status.spec.ts` que
 verifican que el componente consulta la URL configurada y no una fija.
 
 Para desarrollo se acepta ademas `?backend=http://localhost:3002`, que apunta el
@@ -129,3 +130,68 @@ una misma plantilla de dos etapas. Se prefirio esto a un unico Dockerfile
 parametrizado para que cada artefacto sea autocontenido y legible por separado,
 y para poder hacer divergir una arquitectura (por ejemplo, agregarle un runtime
 distinto) sin tocar las otras seis.
+
+## 13. Frontend antes que backend: el contrato se fija primero
+
+La interfaz de chat se construyo cuando ninguna arquitectura tenia logica de
+triaje. Para que el backend se construya contra el frontend y no al reves, el
+contrato de red vive en `libs/contratos`:
+
+- `api.contrato.ts`: rutas (`RUTAS_API`) y cuerpo de error (`ErrorApiDto`) con
+  la tabla de codigos y status HTTP.
+- `conversacion.contrato.ts`, `ticket.contrato.ts`, `politica.contrato.ts`,
+  `servicio.contrato.ts`: DTOs de entrada y salida.
+
+El vocabulario nuevo (clasificaciones, niveles de estado de servicio, estados de
+propuesta, limites de texto y maximo de politicas) se agrego a `libs/dominio`,
+coherente con la decision 8: son tipos y constantes, no logica.
+
+`POST /api/tickets/propuestas/:id/confirmacion` exige
+`confirmacionExplicita: true` en el cuerpo. Deja escrito en el contrato que un
+ticket nunca se crea por inferencia sobre el texto (HU-17).
+
+## 14. Una sola decision entre backend simulado y real
+
+`apps/web` sigue Clean Architecture:
+
+| Capa              | Contiene                                             | Puede importar            |
+| ----------------- | ---------------------------------------------------- | ------------------------- |
+| `domain/`         | modelos, reglas, errores y puertos (interfaces)      | `@unihelp/*`              |
+| `application/`    | tokens de los puertos, casos de uso, store (signals) | `domain/`                 |
+| `infrastructure/` | repositorios `http/` y `mock/`, mappers              | todo lo anterior          |
+| `presentation/`   | componentes                                          | `application/`, `domain/` |
+
+La eleccion de implementacion ocurre en **un solo lugar**,
+`infrastructure/provide-data-layer.ts`: cada token de puerto se resuelve con una
+factory que lee el `InjectionToken` `USE_MOCK_BACKEND`. Su valor viene del
+entorno de compilacion:
+
+- `environment.development.ts` (`nx serve web`): `USE_MOCK_BACKEND: true`.
+- `environment.ts` (build de produccion, imagen Docker): `false`.
+- `nx serve web -c backend-real`: servidor de desarrollo contra el backend real.
+
+Esto es una excepcion **deliberada** a la decision 5: la URL del backend sigue
+resolviendose en ejecucion, pero "simulado o real" se fija al compilar. Una
+imagen de produccion que pudiera responder con datos simulados contaminaria las
+mediciones del experimento sin que nadie lo notara.
+
+La regla no depende de la disciplina: `apps/web/eslint.config.mjs` hace fallar
+el lint si `domain/` importa Angular o RxJS, o si `application/` o
+`presentation/` importan algo de `infrastructure/`.
+
+## 15. La simulacion se comporta como un servidor, no como un stub
+
+Los repositorios de `infrastructure/mock/` producen **los mismos DTOs del
+contrato** y los pasan por **los mismos mappers** que los repositorios HTTP.
+Asi, lo que se prueba con datos simulados ejercita tambien la traduccion
+DTO -> dominio que usara el backend real.
+
+- Latencia uniforme entre 300 y 1500 ms, respuestas serializadas (sin
+  referencias compartidas) y errores con la forma de `ErrorApiDto`.
+- Una "base de datos" en memoria con transacciones atomicas, persistida en
+  `sessionStorage` para sobrevivir a recargas.
+- Los datos viven en `mock/fixtures/`, tipados y separados de la logica: agregar
+  un caso es agregar un objeto a `escenarios.fixture.ts`.
+- Los fallos se provocan sin tocar codigo, por query string
+  (`?simular-error=timeout`) o escribiendo una directiva en el chat
+  (`#no-disponible`).

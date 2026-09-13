@@ -1,0 +1,27 @@
+<div class="bienvenida">
+  <svg class="bienvenida__icono" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M12 2.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5Z"
+    />
+  </svg>
+  <h2 class="bienvenida__titulo">¿En qué te ayudamos hoy?</h2>
+  <p class="bienvenida__texto">
+    Cuéntalo con tus palabras, sin elegir servicio ni categoría. UniHelp revisa el estado de los
+    servicios, cita la normativa y solo crea un ticket si tú lo confirmas.
+  </p>
+
+  <ul class="bienvenida__ejemplos" aria-label="Solicitudes de ejemplo">
+    @for (ejemplo of ejemplos(); track ejemplo) {
+      <li>
+        <button
+          type="button"
+          class="bienvenida__ejemplo"
+          [disabled]="deshabilitado()"
+          (click)="elegir.emit(ejemplo)"
+        >
+          {{ ejemplo }}
+        </button>
+      </li>
+    }
+  </ul>
+</div>

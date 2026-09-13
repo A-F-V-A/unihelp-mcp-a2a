@@ -1,0 +1,97 @@
+:host {
+  display: block;
+  margin-block: auto;
+}
+
+.bienvenida {
+  padding-block: 1rem;
+  text-align: center;
+}
+
+.bienvenida__icono {
+  width: 2.6rem;
+  height: 2.6rem;
+  fill: var(--color-acento);
+}
+
+.bienvenida__titulo {
+  margin: 0.6rem 0 0.4rem;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.bienvenida__texto {
+  max-width: 30rem;
+  margin: 0 auto 1.5rem;
+  color: var(--color-tenue);
+  line-height: 1.5;
+}
+
+.bienvenida__ejemplos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.bienvenida__ejemplo {
+  width: 100%;
+  height: 100%;
+  min-height: 3.25rem;
+  padding: 0.8rem 0.95rem;
+  border: 0;
+  border-radius: 1.1rem;
+  background: var(--fondo-burbuja-usuario);
+  color: inherit;
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 150ms var(--curva-app);
+}
+
+.bienvenida__ejemplo:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.bienvenida__ejemplo:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+/* En celular las sugerencias se deslizan en horizontal, como tarjetas. */
+@media (width <= 40rem) {
+  .bienvenida__titulo {
+    font-size: 1.4rem;
+  }
+
+  .bienvenida__texto {
+    font-size: 0.95rem;
+  }
+
+  .bienvenida__ejemplos {
+    display: flex;
+    gap: 0.55rem;
+    margin-inline: -0.85rem;
+    padding: 0 0.85rem 0.25rem;
+    overflow-x: auto;
+    scroll-padding-inline: 0.85rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  .bienvenida__ejemplos::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bienvenida__ejemplos li {
+    flex: 0 0 72%;
+    scroll-snap-align: start;
+  }
+}

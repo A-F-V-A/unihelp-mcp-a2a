@@ -1,0 +1,258 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.cajon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: env(safe-area-inset-top);
+  background: var(--fondo-cajon);
+  color: var(--color-texto);
+}
+
+.cajon__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 4.1rem;
+  padding: 0.6rem 0.9rem 0.4rem 1.25rem;
+}
+
+.cajon__marca {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cajon__busqueda {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  height: 2.9rem;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  background: var(--fondo-burbuja-usuario);
+}
+
+.cajon__busqueda svg,
+.cajon__item svg {
+  flex: none;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cajon__busqueda svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--color-tenue);
+}
+
+.cajon__campo-busqueda {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.cajon__cancelar {
+  padding: 0.5rem 0.2rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-acento);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cajon__desplazable {
+  flex: 1;
+  padding: 0.25rem 0.6rem 7rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cajon__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cajon__item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.02rem;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.cajon__item:hover,
+.cajon__item:active {
+  background: var(--fondo-hover);
+}
+
+.cajon__item:focus-visible,
+.cajon__opciones:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: -3px;
+}
+
+.cajon__item svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.cajon__contador {
+  margin-left: auto;
+  min-width: 1.5rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--fondo-ok);
+  color: var(--color-ok);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.cajon__seccion {
+  margin: 1.2rem 0 0.15rem;
+  padding: 0 0.65rem;
+  color: var(--color-tenue);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cajon__conversacion {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 0.8rem;
+}
+
+.cajon__conversacion--activa {
+  background: var(--fondo-hover);
+}
+
+.cajon__item--conversacion {
+  min-height: 2.75rem;
+  padding-right: 2.75rem;
+}
+
+.cajon__conversacion--activa .cajon__item--conversacion {
+  font-weight: 600;
+}
+
+.cajon__titulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cajon__opciones {
+  position: absolute;
+  right: 0.25rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-tenue);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.cajon__opciones svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentcolor;
+}
+
+.cajon__conversacion--activa .cajon__opciones,
+.cajon__conversacion:hover .cajon__opciones,
+.cajon__opciones:focus-visible {
+  opacity: 1;
+}
+
+.cajon__vacio {
+  margin: 0;
+  padding: 0.6rem 0.65rem;
+  color: var(--color-tenue);
+  font-size: 0.92rem;
+}
+
+.cajon__error {
+  margin: 0.75rem 0.65rem 0;
+  color: var(--color-fuera-alcance);
+  font-size: 0.9rem;
+}
+
+.cajon__error p {
+  margin: 0;
+}
+
+.cajon__pie {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1.75rem 0.9rem calc(0.9rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--fondo-cajon) 62%, transparent);
+}
+
+.cajon__chat {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3.1rem;
+  padding: 0 1.4rem 0 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-acento);
+  box-shadow: 0 8px 20px rgb(47 125 246 / 35%);
+  color: #fff;
+  font: inherit;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cajon__chat svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

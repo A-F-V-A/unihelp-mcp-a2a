@@ -1,0 +1,41 @@
+<header class="cabecera">
+  <button
+    type="button"
+    class="boton-circular cabecera__menu"
+    aria-label="Abrir menú"
+    (click)="abrirMenu.emit()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h16M4 15.5h10" /></svg>
+  </button>
+
+  <button
+    type="button"
+    class="cabecera__pastilla"
+    [attr.aria-label]="'Cómo funciona UniHelp' + (turnos() ? ', ' + turnos() : '')"
+    (click)="abrirAcerca.emit()"
+  >
+    <svg class="cabecera__destello" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5Z"
+      />
+    </svg>
+    <span class="cabecera__marca">UniHelp</span>
+    @if (turnos(); as texto) {
+      <span class="cabecera__turnos" data-turnos>{{ texto }}</span>
+    }
+  </button>
+
+  <button
+    type="button"
+    class="boton-circular cabecera__nueva"
+    aria-label="Nueva conversación"
+    title="Nueva conversación"
+    [disabled]="nuevaDeshabilitada()"
+    (click)="nuevaConversacion.emit()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z" />
+      <path d="M12 9v6M9 12h6" />
+    </svg>
+  </button>
+</header>

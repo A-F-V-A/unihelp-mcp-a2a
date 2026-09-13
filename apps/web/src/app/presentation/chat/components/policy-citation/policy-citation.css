@@ -1,0 +1,67 @@
+.cita {
+  padding: var(--relleno-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-informativa);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.cita__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cita__codigo,
+.cita__version {
+  padding: 0.1rem 0.45rem;
+  border-radius: 0.3rem;
+  font-family: var(--fuente-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.cita__codigo {
+  background: var(--color-texto);
+  color: var(--texto-invertido);
+}
+
+.cita__version {
+  border: 1px solid var(--color-texto);
+  color: var(--color-texto);
+}
+
+.cita__area {
+  color: var(--color-tenue);
+  font-size: 0.78rem;
+}
+
+.cita__titulo {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.cita__extracto {
+  margin: 0;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--color-borde);
+  color: var(--color-tenue);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.cita__detalle {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.cita__detalle p {
+  margin: 0 0 0.4rem;
+}
+
+.cita__pie {
+  color: var(--color-tenue);
+  font-size: 0.8rem;
+}

@@ -1,0 +1,93 @@
+.propuesta {
+  padding: var(--relleno-tarjeta);
+  border: 2px solid var(--color-propuesta);
+  border-radius: var(--radio);
+  background: var(--fondo-propuesta);
+  box-shadow: 0 6px 18px rgb(20 33 61 / 10%);
+}
+
+.propuesta--confirmada,
+.propuesta--rechazada {
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.propuesta--rechazada {
+  border-color: var(--color-borde);
+  background: var(--color-superficie);
+  opacity: 0.85;
+}
+
+.propuesta__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.propuesta__icono {
+  width: 1.6rem;
+  height: 1.6rem;
+  flex: none;
+  fill: none;
+  stroke: var(--color-propuesta);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.propuesta__titulos {
+  flex: 1 1 12rem;
+}
+
+.propuesta__resumen {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.propuesta__estado {
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--color-propuesta);
+  color: var(--texto-invertido);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.propuesta--rechazada .propuesta__estado {
+  background: var(--color-tenue);
+}
+
+.propuesta__descripcion {
+  line-height: 1.45;
+}
+
+.propuesta__aviso,
+.propuesta__resolucion {
+  margin: 0.9rem 0 0;
+  font-size: 0.88rem;
+}
+
+.propuesta__acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.prioridad {
+  font-weight: 700;
+}
+
+.prioridad--critica {
+  color: var(--color-fuera-alcance);
+}
+
+.prioridad--alta {
+  color: var(--color-diagnostico);
+}
+
+@media (width <= 30rem) {
+  .propuesta__acciones {
+    grid-template-columns: 1fr;
+  }
+}

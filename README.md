@@ -8,8 +8,10 @@ El objetivo del repositorio no es un producto, es un **banco de pruebas**: la
 misma funcionalidad se construye cuatro veces, cambiando unicamente como se
 integran los agentes, para medir el efecto de esa decision arquitectonica.
 
-> **Estado actual: esqueleto.** Cada arquitectura levanta una app NestJS que ya
-> responde su endpoint de salud, y el frontend Angular muestra cual esta activa.
+> **Estado actual: esqueleto de backend, frontend funcional.** Cada arquitectura
+> levanta una app NestJS que ya responde su endpoint de salud. El frontend
+> Angular tiene la interfaz de chat completa funcionando contra un backend
+> **simulado** (ver [Frontend sin backend](#frontend-sin-backend-datos-simulados)).
 > Todavia no hay logica de triaje, base de datos, MCP real ni A2A real.
 
 ---
@@ -161,6 +163,38 @@ otra arquitectura sin reconstruirlo, basta la query string:
 ```text
 http://localhost:4200/?backend=http://localhost:3002
 ```
+
+### Frontend sin backend (datos simulados)
+
+`pnpm dev:web` arranca la interfaz de chat con **repositorios simulados**: no
+necesita ninguna arquitectura levantada. La simulacion responde con latencia
+real (300-1500 ms) y datos variados para ver todos los estados de la UI.
+
+| Para                                     | Haz                                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| Usar el backend real en desarrollo       | `nx serve web -c backend-real`                                                      |
+| Pasar a backend real de forma permanente | `USE_MOCK_BACKEND: false` en `apps/web/src/environments/environment.development.ts` |
+| Forzar un error en todas las operaciones | `?simular-error=timeout` (`validacion`, `servicio-no-disponible`, `interno`)        |
+| Forzar un error solo en una operacion    | `?simular-error=interno&simular-error-en=confirmarTicket`                           |
+| Errores aleatorios                       | `?tasa-error=0.3`                                                                   |
+| Ver el aviso de limite de turnos rapido  | `?turnos-maximos=2`                                                                 |
+| Fallar un mensaje concreto               | escribir `#timeout`, `#validacion`, `#no-disponible` o `#interno` en el chat        |
+
+Frases que activan cada tipo de respuesta simulada:
+
+| Escribe algo como                               | Veras                                       |
+| ----------------------------------------------- | ------------------------------------------- |
+| "¿Hasta cuándo puedo cancelar una asignatura?"  | informativa con politicas citadas           |
+| "No puedo entregar la tarea en el aula virtual" | diagnostico, estado con ventana, propuesta  |
+| "Los correos institucionales no salen"          | diagnostico sin ventana estimada, propuesta |
+| "¿Puedo renovar libros de la biblioteca?"       | mantenimiento programado, sin ticket        |
+| "No puedo pagar la matrícula por PSE"           | compuesta: estado + politicas + propuesta   |
+| "¿Dónde parqueo la moto?"                       | fuera de alcance con el canal correcto      |
+| "Sí, crea el ticket"                            | recordatorio: solo el boton crea tickets    |
+
+Los casos viven en `apps/web/src/app/infrastructure/mock/fixtures/`. La
+simulacion **nunca** llega a la imagen Docker: el build de produccion usa
+siempre el backend real (ver `docs/decisiones-tecnicas.md`, decisiones 13 a 15).
 
 ### Comandos de calidad
 

@@ -1,0 +1,326 @@
+<app-layout [(menuAbierto)]="menuAbierto">
+  <app-side-drawer
+    cajon
+    [conversaciones]="conversaciones()"
+    [conversacionActivaId]="conversacionId()"
+    [cargando]="cargandoConversaciones()"
+    [error]="errorConversaciones()"
+    [cantidadTickets]="ticketsSesion().length"
+    (nuevaConversacion)="nuevaConversacion()"
+    (abrirConversacion)="abrirConversacion($event)"
+    (opcionesConversacion)="verOpciones($event)"
+    (abrirTickets)="abrirHoja('tickets')"
+    (abrirAjustes)="abrirHoja('ajustes')"
+    (reintentar)="recargarConversaciones()"
+  />
+
+  <div class="chat" [style.--alto-pie]="altoPie() ? altoPie() + 'px' : null">
+    <app-chat-header
+      class="chat__cabecera"
+      [turnos]="textoTurnos()"
+      [nuevaDeshabilitada]="conversacionVacia()"
+      (abrirMenu)="menuAbierto.set(true)"
+      (abrirAcerca)="abrirHoja('acerca')"
+      (nuevaConversacion)="nuevaConversacion()"
+    />
+
+    <section
+      #lista
+      class="chat__mensajes"
+      role="log"
+      aria-live="polite"
+      aria-label="Conversación"
+      (scroll)="alDesplazar()"
+    >
+      <div class="chat__columna">
+        @if (cargandoHistorial()) {
+          <p class="tenue chat__centro">Recuperando tu conversación&hellip;</p>
+        } @else if (conversacionVacia()) {
+          <app-welcome-panel
+            [ejemplos]="ejemplos"
+            [deshabilitado]="!puedeEscribir()"
+            (elegir)="enviar($event)"
+          />
+        }
+        @for (entrada of entradas(); track entrada.id) {
+          @switch (entrada.rol) {
+            @case ('usuario') {
+              <div class="fila fila--usuario" data-rol="usuario" data-entrada>
+                <div class="burbuja burbuja--usuario">
+                  <p>{{ entrada.texto }}</p>
+                </div>
+                <span class="fila__sello">
+                  Turno {{ entrada.turno }} &middot; {{ entrada.enviadoEn | fecha: 'hora' }}
+                </span>
+              </div>
+            }
+            @case ('asistente') {
+              <article
+                class="fila fila--asistente"
+                data-rol="asistente"
+                data-entrada
+                [attr.data-turno]="entrada.turno"
+              >
+                @if (entrada.clasificacion; as clasificacion) {
+                  <app-classification-badge [clasificacion]="clasificacion" />
+                }
+                @for (bloque of entrada.bloques; track $index) {
+                  @switch (bloque.tipo) {
+                    @case ('texto') {
+                      <div class="burbuja burbuja--asistente">
+                        <p>{{ bloque.texto }}</p>
+                      </div>
+                    }
+                    @case ('politicas') {
+                      <div class="grupo-politicas">
+                        <p class="sobretitulo">Políticas citadas</p>
+                        @for (cita of bloque.politicas; track cita.codigo) {
+                          <app-policy-citation
+                            [cita]="cita"
+                            [detalle]="detallePolitica(cita)"
+                            (consultar)="consultarPolitica(cita)"
+                          />
+                        }
+                      </div>
+                    }
+                    @case ('estado-servicio') {
+                      <app-service-status-card
+                        [estado]="estadoVigente(bloque.estado)"
+                        [actualizando]="recursoServicio(bloque.estado.servicio)?.cargando ?? false"
+                        [error]="recursoServicio(bloque.estado.servicio)?.error ?? null"
+                        (actualizar)="actualizarServicio(bloque.estado.servicio)"
+                      />
+                    }
+                    @case ('aviso-mantenimiento') {
+                      <app-maintenance-notice [estado]="bloque.estado" />
+                    }
+                    @case ('fuera-de-alcance') {
+                      <app-scope-warning-banner [motivo]="bloque.motivo" [canal]="bloque.canal" />
+                    }
+                    @case ('propuesta-ticket') {
+                      <app-confirmation-prompt
+                        [propuesta]="bloque.propuesta"
+                        [accion]="accionPropuesta(bloque.propuesta.id)"
+                        [error]="errorPropuesta(bloque.propuesta.id)"
+                        (confirmar)="confirmar(bloque.propuesta.id)"
+                        (rechazar)="rechazar(bloque.propuesta.id)"
+                      />
+                    }
+                    @case ('ticket-creado') {
+                      <app-ticket-created-card [ticket]="bloque.ticket" />
+                    }
+                  }
+                }
+              </article>
+            }
+            @case ('aclaracion') {
+              <div class="fila fila--asistente" data-rol="aclaracion" data-entrada>
+                <div class="burbuja burbuja--aclaracion">
+                  @if (entrada.textoOriginal) {
+                    <p class="burbuja__cita">Recibí: «{{ entrada.textoOriginal }}»</p>
+                  }
+                  <p>{{ entrada.mensaje }}</p>
+                </div>
+              </div>
+            }
+            @case ('error') {
+              <div class="fila fila--asistente" data-rol="error" data-entrada>
+                <app-error-message [error]="entrada.error" (reintentar)="reintentar(entrada.id)" />
+              </div>
+            }
+          }
+        }
+        @if (esperandoRespuesta()) {
+          <div class="fila fila--asistente">
+            <app-typing-indicator />
+          </div>
+        }
+      </div>
+    </section>
+
+    @if (avisoNuevo(); as aviso) {
+      <button type="button" class="chat__aviso-nuevo" (click)="verNuevo()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        {{ aviso }}
+      </button>
+    }
+
+    <footer #pie class="chat__pie">
+      <div class="chat__pie-contenido">
+        @if (limiteAlcanzado()) {
+          <app-turn-limit-notice
+            [turnosMaximos]="turnosMaximos() ?? 0"
+            (nuevaConversacion)="nuevaConversacion()"
+          />
+        } @else {
+          <app-message-composer
+            [deshabilitado]="!puedeEscribir()"
+            (enviar)="enviar($event)"
+            (abrirSugerencias)="abrirHoja('sugerencias')"
+          />
+        }
+      </div>
+    </footer>
+  </div>
+</app-layout>
+
+<app-bottom-sheet
+  etiqueta="Cómo funciona UniHelp"
+  [abierto]="hoja() === 'acerca'"
+  (cerrar)="cerrarHoja()"
+>
+  <div class="hoja-cabecera">
+    <svg class="hoja-icono hoja-icono--relleno" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5Z"
+      />
+    </svg>
+  </div>
+  <h2 class="hoja-titulo">UniHelp</h2>
+  <p class="hoja-texto">
+    Escribe tu problema con tus palabras. UniHelp entiende qué necesitas, revisa el estado de los
+    servicios, te cita la normativa que aplica y solo crea un ticket cuando tú lo confirmas.
+  </p>
+  <dl class="ficha hoja-ficha">
+    <dt>Conversación</dt>
+    <dd>{{ textoTurnos() ?? 'Sin iniciar' }}</dd>
+    <dt>Tickets creados</dt>
+    <dd>{{ ticketsSesion().length }}</dd>
+    <dt>Modelo de IA</dt>
+    <dd data-resumen-modelo-acerca>{{ resumenModeloIA() }}</dd>
+  </dl>
+  <button type="button" class="boton-secundario" (click)="configurarModeloDesdeChat()">
+    Elegir modelo de IA
+  </button>
+  <button type="button" class="boton-principal" (click)="cerrarHoja()">Continuar</button>
+</app-bottom-sheet>
+
+<app-bottom-sheet
+  etiqueta="Sugerencias"
+  [abierto]="hoja() === 'sugerencias'"
+  (cerrar)="cerrarHoja()"
+>
+  <div class="hoja-cuerpo">
+    <h2 class="hoja-titulo hoja-titulo--izquierda">Prueba con</h2>
+    <ul class="hoja-lista">
+      @for (ejemplo of ejemplos; track ejemplo) {
+        <li>
+          <button
+            type="button"
+            class="hoja-opcion"
+            [disabled]="!puedeEscribir()"
+            (click)="elegirSugerencia(ejemplo)"
+          >
+            {{ ejemplo }}
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet etiqueta="Mis tickets" [abierto]="hoja() === 'tickets'" (cerrar)="cerrarHoja()">
+  <div class="hoja-cuerpo">
+    <h2 class="hoja-titulo hoja-titulo--izquierda">Mis tickets</h2>
+    @if (ticketsSesion().length) {
+      <ul class="hoja-lista">
+        @for (ticket of ticketsSesion(); track ticket.numero) {
+          <li>
+            <button type="button" class="hoja-opcion" (click)="verTicket(ticket.numero)">
+              <span class="hoja-opcion__principal" data-ticket>{{ ticket.numero }}</span>
+              <span class="hoja-opcion__secundario">
+                {{ ticket.categoria }} &middot; {{ etiquetasEstado[ticket.estado] }}
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="hoja-texto hoja-texto--izquierda">
+        Cuando confirmes una propuesta de ticket, la encontrarás aquí con su número y estado.
+      </p>
+    }
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet
+  etiqueta="Detalle del ticket"
+  [abierto]="hoja() === 'ticket'"
+  (cerrar)="cerrarHoja()"
+>
+  <div class="hoja-cuerpo">
+    @if (ticketSeleccionado(); as ticket) {
+      <h2 class="hoja-titulo hoja-titulo--izquierda">Tu ticket</h2>
+      <app-ticket-created-card [ticket]="ticket" />
+    }
+    <button type="button" class="boton-principal" (click)="cerrarHoja()">Listo</button>
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet
+  etiqueta="Opciones de la conversación"
+  [abierto]="hoja() === 'opciones'"
+  (cerrar)="cerrarHoja()"
+>
+  <div class="hoja-cuerpo">
+    @if (conversacionOpciones(); as conversacion) {
+      <h2 class="hoja-titulo hoja-titulo--izquierda">{{ conversacion.titulo }}</h2>
+      <p class="hoja-texto hoja-texto--izquierda">
+        Turno {{ conversacion.turnos.usados }} de {{ conversacion.turnos.maximos }} &middot;
+        {{ conversacion.actualizadaEn | fecha }}
+      </p>
+      @if (confirmandoEliminar()) {
+        <p class="hoja-texto hoja-texto--izquierda hoja-aviso">
+          Se eliminará la conversación y su historial. Los tickets que creaste en ella siguen
+          activos.
+        </p>
+        <button
+          type="button"
+          class="boton-principal boton-principal--peligro"
+          (click)="eliminarConversacion(conversacion.id)"
+        >
+          Eliminar conversación
+        </button>
+        <button type="button" class="boton-secundario" (click)="confirmandoEliminar.set(false)">
+          Cancelar
+        </button>
+      } @else {
+        <ul class="hoja-lista">
+          <li>
+            <button type="button" class="hoja-opcion" (click)="abrirConversacion(conversacion.id)">
+              Abrir conversación
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="hoja-opcion hoja-opcion--peligro"
+              (click)="confirmandoEliminar.set(true)"
+            >
+              Eliminar
+            </button>
+          </li>
+        </ul>
+      }
+    }
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet
+  etiqueta="Configuración"
+  [completa]="true"
+  [abierto]="hoja() === 'ajustes'"
+  (cerrar)="cerrarHoja()"
+>
+  <app-settings-panel
+    [abierto]="hoja() === 'ajustes'"
+    [preferencias]="preferencias()"
+    [configuracionModelo]="configuracionModelo()"
+    [cantidadConversaciones]="conversaciones().length"
+    (cambiarTema)="cambiarTema($event)"
+    (cambiarTamanoTexto)="cambiarTamanoTexto($event)"
+    (guardarPerfil)="guardarPerfil($event)"
+    (guardarModeloIA)="guardarModeloIA($event)"
+    (borrarConversaciones)="borrarConversaciones()"
+  />
+</app-bottom-sheet>

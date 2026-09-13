@@ -1,0 +1,187 @@
+:host {
+  display: block;
+}
+
+.chat {
+  position: relative;
+  height: 100%;
+}
+
+.chat__cabecera {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.chat__mensajes {
+  position: relative;
+  height: 100%;
+  padding: calc(4.6rem + env(safe-area-inset-top)) 1rem calc(var(--alto-pie, 6.5rem) + 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+}
+
+.chat__columna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-height: 100%;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.chat__centro {
+  margin-block: auto;
+  text-align: center;
+}
+
+.chat__aviso-nuevo {
+  position: absolute;
+  bottom: calc(var(--alto-pie, 6.5rem) + 0.5rem);
+  left: 50%;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1.05rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-superficie);
+  box-shadow: var(--sombra-flotante);
+  color: var(--color-texto);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  cursor: pointer;
+  animation: aparecer 260ms var(--curva-app);
+}
+
+.chat__aviso-nuevo svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chat__pie {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  padding: 1.4rem 0.7rem calc(0.6rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--fondo-app) 68%, transparent);
+  pointer-events: none;
+}
+
+.chat__pie-contenido {
+  max-width: 46rem;
+  margin: 0 auto;
+  pointer-events: auto;
+}
+
+.fila {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  animation: entrar 280ms var(--curva-app) both;
+}
+
+.fila--usuario {
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.fila--asistente {
+  align-items: stretch;
+}
+
+.fila--asistente > app-classification-badge {
+  align-self: flex-start;
+}
+
+.fila__sello {
+  padding-right: 0.4rem;
+  color: var(--color-tenue);
+  font-size: 0.72rem;
+}
+
+.burbuja {
+  max-width: min(36rem, 85%);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.burbuja p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.burbuja--usuario {
+  padding: 0.62rem 1rem;
+  border-radius: 1.4rem;
+  background: var(--fondo-burbuja-usuario);
+}
+
+/* Como en las apps de chat modernas, el asistente escribe sin burbuja. */
+.burbuja--asistente {
+  align-self: flex-start;
+  max-width: 100%;
+  padding-inline: 0.15rem;
+  font-size: 1.02rem;
+}
+
+.burbuja--aclaracion {
+  align-self: flex-start;
+  padding: 0.65rem 1rem;
+  border-radius: 1.2rem;
+  background: var(--fondo-informativa);
+}
+
+.burbuja p.burbuja__cita {
+  margin-bottom: 0.3rem;
+  color: var(--color-tenue);
+  font-size: 0.85rem;
+}
+
+.grupo-politicas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem);
+  }
+}
+
+@media (width <= 40rem) {
+  .chat__mensajes {
+    padding-inline: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fila,
+  .chat__aviso-nuevo {
+    animation: none;
+  }
+}

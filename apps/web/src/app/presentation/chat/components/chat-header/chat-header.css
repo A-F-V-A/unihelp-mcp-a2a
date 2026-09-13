@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: calc(0.55rem + env(safe-area-inset-top)) 0.85rem 1.5rem;
+  background: linear-gradient(to bottom, var(--fondo-app) 48%, transparent);
+  pointer-events: none;
+}
+
+.cabecera > * {
+  pointer-events: auto;
+}
+
+.cabecera__pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  height: 2.9rem;
+  padding: 0 1.15rem 0 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-superficie);
+  box-shadow: var(--sombra-flotante);
+  color: var(--color-texto);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 150ms var(--curva-app);
+}
+
+.cabecera__pastilla:active {
+  transform: scale(0.97);
+}
+
+.cabecera__destello {
+  width: 1.3rem;
+  height: 1.3rem;
+  flex: none;
+  fill: var(--color-acento);
+}
+
+.cabecera__marca {
+  color: var(--color-acento);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.cabecera__turnos {
+  overflow: hidden;
+  color: var(--color-tenue);
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cabecera__nueva {
+  margin-left: auto;
+}
+
+/* En pantallas muy angostas la pastilla solo muestra la marca; el turno sigue en aria-label. */
+@media (width <= 23rem) {
+  .cabecera__turnos {
+    display: none;
+  }
+}
+
+@media (width >= 64rem) {
+  .cabecera__menu {
+    display: none;
+  }
+}

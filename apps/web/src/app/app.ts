@@ -1,31 +1,22 @@
-import { Component, computed, inject } from '@angular/core';
-import { CATALOGO_ARQUITECTURAS, esIdentificadorArquitectura } from '@unihelp/dominio';
-import { SaludService } from './nucleo/salud.service';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ModeloIAStore } from './application/state/modelo-ia.store';
+import { PreferenciasStore } from './application/state/preferencias.store';
+import { ChatPage } from './presentation/chat/chat-page/chat-page';
+import { aplicarApariencia } from './presentation/shared/apariencia';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+  imports: [ChatPage],
+  template: '<app-chat-page />',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  private readonly saludService = inject(SaludService);
-
-  protected readonly backendUrl = this.saludService.backendUrl;
-  protected readonly salud = this.saludService.salud;
-  protected readonly error = this.saludService.error;
-  protected readonly cargando = this.saludService.cargando;
-
-  /** Ficha del catalogo compartido, para mostrar el detalle de la arquitectura. */
-  protected readonly descriptor = computed(() => {
-    const arquitectura = this.salud()?.arquitectura;
-    return esIdentificadorArquitectura(arquitectura) ? CATALOGO_ARQUITECTURAS[arquitectura] : null;
-  });
-
   constructor() {
-    this.saludService.consultar();
-  }
+    const preferencias = inject(PreferenciasStore);
+    void preferencias.iniciar();
+    // Tema y tamano de texto afectan al documento completo, no a un componente.
+    effect(() => aplicarApariencia(preferencias.preferencias()));
 
-  protected refrescar(): void {
-    this.saludService.consultar();
+    void inject(ModeloIAStore).iniciar();
   }
 }

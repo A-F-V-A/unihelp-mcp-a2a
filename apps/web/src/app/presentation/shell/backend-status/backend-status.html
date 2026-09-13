@@ -1,0 +1,22 @@
+<button
+  type="button"
+  class="backend"
+  [class.backend--activo]="salud() !== null"
+  [disabled]="cargando()"
+  [attr.aria-label]="
+    salud() ? 'Arquitectura ' + salud()?.arquitectura : 'Arquitectura no detectada'
+  "
+  [attr.title]="(error() ?? 'Backend: ' + backendUrl) + ' — clic para volver a consultar /health'"
+  (click)="refrescar()"
+>
+  <span class="backend__punto" aria-hidden="true"></span>
+  <span class="backend__texto">
+    @if (cargando()) {
+      Consultando&hellip;
+    } @else if (salud(); as s) {
+      <span class="backend__largo">Arquitectura </span><strong>{{ s.arquitectura }}</strong>
+    } @else {
+      <span class="backend__largo">Arquitectura </span>no detectada
+    }
+  </span>
+</button>

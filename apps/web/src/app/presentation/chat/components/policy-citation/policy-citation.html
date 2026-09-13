@@ -1,0 +1,49 @@
+<article
+  class="cita"
+  [attr.aria-label]="'Política ' + cita().codigo + ' versión ' + cita().version"
+>
+  <header class="cita__encabezado">
+    <span class="cita__codigo">{{ cita().codigo }}</span>
+    <span class="cita__version">v{{ cita().version }}</span>
+    <span class="cita__area">{{ area() }}</span>
+  </header>
+
+  <h4 class="cita__titulo">{{ cita().titulo }}</h4>
+  <blockquote class="cita__extracto">{{ cita().extracto }}</blockquote>
+
+  <button
+    type="button"
+    class="boton-enlace"
+    [attr.aria-expanded]="expandida()"
+    (click)="alternar()"
+  >
+    {{ expandida() ? 'Ocultar texto completo' : 'Ver política completa' }}
+  </button>
+
+  @if (expandida()) {
+    <div class="cita__detalle">
+      @if (detalle(); as d) {
+        @if (d.valor; as politica) {
+          @for (parrafo of politica.contenido; track $index) {
+            <p>{{ parrafo }}</p>
+          }
+          <p class="cita__pie">
+            Vigente desde {{ politica.vigenteDesde | fecha: 'fecha' }} &middot;
+            {{ politica.dependenciaResponsable }}
+            @if (politica.enlace) {
+              &middot;
+              <a [href]="politica.enlace" target="_blank" rel="noopener">Documento oficial</a>
+            }
+          </p>
+        } @else if (d.error; as error) {
+          <p class="texto-error" role="alert">{{ error.mensaje }}</p>
+          <button type="button" class="boton-enlace" (click)="consultar.emit()">Reintentar</button>
+        } @else {
+          <p class="tenue">Consultando la política&hellip;</p>
+        }
+      } @else {
+        <p class="tenue">Consultando la política&hellip;</p>
+      }
+    </div>
+  }
+</article>

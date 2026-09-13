@@ -1,0 +1,48 @@
+.ticket {
+  padding: var(--relleno-tarjeta);
+  border: 1px solid var(--color-ok);
+  border-radius: var(--radio);
+  background: var(--fondo-ok);
+}
+
+.ticket__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ticket__icono {
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  fill: none;
+  stroke: var(--color-ok);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ticket__numero {
+  margin: 0;
+  font-family: var(--fuente-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ticket__estado {
+  margin-left: auto;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-ok);
+  color: var(--texto-invertido);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ticket__nota {
+  margin: 0.8rem 0 0;
+  color: var(--color-tenue);
+  font-size: 0.85rem;
+}

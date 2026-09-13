@@ -1,0 +1,18 @@
+<div class="error" role="alert" [attr.data-codigo]="error().codigo">
+  <svg class="error__icono" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v6M12 16.5h.01" />
+  </svg>
+  <div class="error__cuerpo">
+    <p class="error__titulo">
+      {{ titulo() }}
+      <code class="error__codigo">{{ error().codigo }}</code>
+    </p>
+    <p class="error__mensaje">{{ error().mensaje }}</p>
+  </div>
+  @if (error().reintentable) {
+    <button type="button" class="boton boton--pequeno" (click)="reintentar.emit()">
+      Reintentar
+    </button>
+  }
+</div>

@@ -1,0 +1,143 @@
+<nav class="cajon" aria-label="Menú de UniHelp">
+  <div class="cajon__cabecera">
+    @if (buscando()) {
+      <div class="cajon__busqueda">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+        <input
+          #busqueda
+          type="search"
+          class="cajon__campo-busqueda"
+          placeholder="Buscar conversaciones"
+          aria-label="Buscar conversaciones"
+          enterkeyhint="search"
+          [value]="consulta()"
+          (input)="consulta.set(busqueda.value)"
+          (keydown.escape)="cerrarBusqueda(); $event.stopPropagation()"
+        />
+      </div>
+      <button type="button" class="cajon__cancelar" (click)="cerrarBusqueda()">Cancelar</button>
+    } @else {
+      <p class="cajon__marca">UniHelp</p>
+      <button
+        type="button"
+        class="boton-circular"
+        aria-label="Buscar conversaciones"
+        (click)="abrirBusqueda()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+      </button>
+    }
+  </div>
+
+  <div class="cajon__desplazable">
+    @if (!buscando()) {
+      <ul class="cajon__lista">
+        <li>
+          <button type="button" class="cajon__item" (click)="nuevaConversacion.emit()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+            </svg>
+            Nueva conversación
+          </button>
+        </li>
+        <li>
+          <button type="button" class="cajon__item" (click)="abrirTickets.emit()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"
+              />
+            </svg>
+            Mis tickets
+            @if (cantidadTickets()) {
+              <span class="cajon__contador">{{ cantidadTickets() }}</span>
+            }
+          </button>
+        </li>
+      </ul>
+    }
+
+    @if (error()) {
+      <div class="cajon__error" role="alert">
+        <p>No se pudieron cargar tus conversaciones.</p>
+        <button type="button" class="boton-enlace" (click)="reintentar.emit()">Reintentar</button>
+      </div>
+    }
+
+    @if (mostrarEsqueleto()) {
+      <p class="cajon__seccion">Recientes</p>
+      <div class="esqueleto" aria-hidden="true"><span></span><span></span><span></span></div>
+    } @else {
+      @for (grupo of grupos(); track grupo.etiqueta) {
+        <p class="cajon__seccion">{{ grupo.etiqueta }}</p>
+        <ul class="cajon__lista">
+          @for (conversacion of grupo.conversaciones; track conversacion.id) {
+            <li
+              class="cajon__conversacion"
+              [class.cajon__conversacion--activa]="conversacion.id === conversacionActivaId()"
+            >
+              <button
+                type="button"
+                class="cajon__item cajon__item--conversacion"
+                [attr.aria-current]="conversacion.id === conversacionActivaId() ? 'page' : null"
+                (click)="alTocarConversacion(conversacion.id)"
+                (pointerdown)="iniciarPulsacion(conversacion.id, $event)"
+                (pointermove)="moverPulsacion($event)"
+                (pointerup)="cancelarPulsacion()"
+                (pointercancel)="cancelarPulsacion()"
+                (contextmenu)="$event.preventDefault()"
+              >
+                <span class="cajon__titulo">{{ conversacion.titulo }}</span>
+              </button>
+              <button
+                type="button"
+                class="cajon__opciones"
+                [attr.aria-label]="'Opciones de ' + conversacion.titulo"
+                (click)="opcionesConversacion.emit(conversacion.id)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6" />
+                  <circle cx="12" cy="12" r="1.6" />
+                  <circle cx="19" cy="12" r="1.6" />
+                </svg>
+              </button>
+            </li>
+          }
+        </ul>
+      } @empty {
+        @if (buscando() && consulta().trim()) {
+          <p class="cajon__vacio">No hay conversaciones que coincidan con «{{ consulta() }}».</p>
+        } @else if (!error()) {
+          <p class="cajon__vacio">Tus conversaciones aparecerán aquí.</p>
+        }
+      }
+    }
+  </div>
+
+  <div class="cajon__pie">
+    <button type="button" class="cajon__chat" (click)="nuevaConversacion.emit()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+      </svg>
+      Chat
+    </button>
+    <button
+      type="button"
+      class="boton-circular"
+      aria-label="Configuración"
+      (click)="abrirAjustes.emit()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"
+        />
+      </svg>
+    </button>
+  </div>
+</nav>

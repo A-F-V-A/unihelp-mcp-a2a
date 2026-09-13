@@ -1,0 +1,52 @@
+.fuera-alcance {
+  padding: var(--relleno-tarjeta);
+  border: 1px solid var(--color-fuera-alcance);
+  border-left-width: 6px;
+  border-radius: var(--radio);
+  background: var(--fondo-fuera-alcance);
+}
+
+.fuera-alcance__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fuera-alcance__icono {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: none;
+  fill: none;
+  stroke: var(--color-fuera-alcance);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fuera-alcance__titulo {
+  margin: 0;
+  color: var(--color-fuera-alcance);
+  font-size: 0.98rem;
+}
+
+.fuera-alcance__motivo {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.fuera-alcance__canal {
+  padding: 0.65rem 0.8rem;
+  border-radius: calc(var(--radio) - 0.2rem);
+  background: var(--color-superficie);
+}
+
+.fuera-alcance__nombre {
+  margin: 0.1rem 0 0.25rem;
+  font-weight: 700;
+}
+
+.fuera-alcance__contacto {
+  margin: 0;
+  font-size: 0.88rem;
+}

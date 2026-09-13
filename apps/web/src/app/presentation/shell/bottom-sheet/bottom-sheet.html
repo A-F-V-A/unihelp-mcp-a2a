@@ -1,0 +1,31 @@
+<div class="hoja" [class.hoja--abierta]="abierto()" [attr.inert]="abierto() ? null : ''">
+  <button
+    type="button"
+    class="hoja__fondo"
+    tabindex="-1"
+    aria-label="Cerrar"
+    (click)="cerrar.emit()"
+  ></button>
+
+  <section
+    #panel
+    class="hoja__panel"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+    [attr.aria-label]="etiqueta()"
+    [class.hoja__panel--arrastrando]="arrastrando()"
+    [class.hoja__panel--completa]="completa()"
+    [style.transform]="desplazamiento() > 0 ? 'translateY(' + desplazamiento() + 'px)' : null"
+    (pointerdown)="iniciarArrastre($event)"
+    (pointermove)="arrastrar($event)"
+    (pointerup)="soltar($event)"
+    (pointercancel)="soltar($event)"
+  >
+    <div class="hoja__asa" aria-hidden="true"><span></span></div>
+    <button type="button" class="hoja__cerrar" aria-label="Cerrar" (click)="cerrar.emit()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <ng-content />
+  </section>
+</div>

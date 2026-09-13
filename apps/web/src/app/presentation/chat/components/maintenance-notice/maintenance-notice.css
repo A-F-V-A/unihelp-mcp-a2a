@@ -1,0 +1,37 @@
+.mantenimiento {
+  display: flex;
+  gap: 0.8rem;
+  padding: var(--relleno-tarjeta);
+  border: 1px dashed var(--color-mantenimiento);
+  border-radius: var(--radio);
+  background: var(--fondo-mantenimiento);
+}
+
+.mantenimiento__icono {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: none;
+  fill: none;
+  stroke: var(--color-mantenimiento);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mantenimiento__titulo {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mantenimiento__ventana,
+.mantenimiento__texto {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+}
+
+.mantenimiento__sin-ticket {
+  margin: 0.5rem 0 0;
+  color: var(--color-mantenimiento);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
