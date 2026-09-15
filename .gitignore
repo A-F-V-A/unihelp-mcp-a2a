@@ -63,6 +63,18 @@ experiment/resultados/*
 experiment/trazas/*
 !experiment/resultados/.gitkeep
 !experiment/trazas/.gitkeep
+# Salidas del cuaderno de analisis y corrida sintetica: se regeneran con un comando.
+experiment/salidas/*
+!experiment/salidas/.gitkeep
+experiment/fixtures/sinteticas/
+
+# ---------------------------------------------------------------------------
+# Python (entorno uv del analisis)
+# ---------------------------------------------------------------------------
+experiment/.venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
 
 # ---------------------------------------------------------------------------
 # Editores y sistema operativo

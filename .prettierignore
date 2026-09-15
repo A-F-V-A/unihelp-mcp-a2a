@@ -10,4 +10,8 @@ pnpm-lock.yaml
 # la prueba de sincronia los compara byte a byte con la salida del generador.
 libs/trazas/src/lib/*.generado.ts
 
+# Salidas del analisis y datos sinteticos generados
+experiment/salidas
+experiment/fixtures/sinteticas
+
 .angular

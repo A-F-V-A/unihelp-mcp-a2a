@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:unihelp:esquema:registro-metricas:1.0.0",
+  "title": "RegistroMetricas",
+  "description": "Forma de experiment/metricas.yaml. Las reglas que el esquema no puede expresar (codigos unicos, familia coherente con el codigo, campos de traza existentes) las verifica experiment/analisis/registro.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version_registro",
+    "plan_de_medicion",
+    "arquitecturas",
+    "categorias",
+    "artefactos",
+    "identidad",
+    "procedencia",
+    "estados_finales",
+    "validaciones",
+    "inferencia",
+    "metricas"
+  ],
+  "properties": {
+    "version_registro": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "plan_de_medicion": { "type": "string" },
+    "arquitecturas": {
+      "type": "array",
+      "items": { "enum": ["B0", "B1", "B2", "B3"] },
+      "minItems": 2,
+      "uniqueItems": true
+    },
+    "categorias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campo", "valores"],
+      "properties": {
+        "campo": { "type": "string" },
+        "valores": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "artefactos": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/artefacto" }
+    },
+    "identidad": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ejecucion", "tarea", "arquitectura", "repeticion"],
+      "properties": {
+        "ejecucion": { "type": "string" },
+        "tarea": { "type": "string" },
+        "arquitectura": { "type": "string" },
+        "repeticion": { "type": "string" }
+      }
+    },
+    "procedencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semilla", "version_codigo", "modelo_id"],
+      "properties": {
+        "semilla": { "type": "string" },
+        "version_codigo": { "type": "string" },
+        "modelo_id": { "type": "string" }
+      }
+    },
+    "estados_finales": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campo", "tratamiento"],
+      "properties": {
+        "campo": { "type": "string" },
+        "tratamiento": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["efectividad", "latencia", "costo", "reejecutar"],
+            "properties": {
+              "efectividad": { "enum": ["incluye", "fallo", "excluye"] },
+              "latencia": { "enum": ["incluye", "excluye"] },
+              "costo": { "enum": ["incluye", "excluye"] },
+              "reejecutar": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "validaciones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["residuo_orquestacion", "consumo_tokens", "estado_inicial"],
+      "properties": {
+        "residuo_orquestacion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total", "componentes", "reportado", "tolerancia_ms", "aviso_proporcion"],
+          "properties": {
+            "total": { "type": "string" },
+            "componentes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "reportado": { "type": "string" },
+            "tolerancia_ms": { "type": "number", "minimum": 0 },
+            "aviso_proporcion": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+          }
+        },
+        "consumo_tokens": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["campos"],
+          "properties": {
+            "campos": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          }
+        },
+        "estado_inicial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["huella", "artefacto", "campo_huellas"],
+          "properties": {
+            "huella": { "type": "string" },
+            "artefacto": { "type": "string" },
+            "campo_huellas": { "type": "string" }
+          }
+        }
+      }
+    },
+    "inferencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metodo", "replicas", "nivel", "semilla", "contrastes"],
+      "properties": {
+        "metodo": { "const": "bootstrap_percentil_pareado_por_tarea" },
+        "replicas": { "type": "integer", "minimum": 1000 },
+        "nivel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "semilla": { "type": "integer" },
+        "contrastes": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "enum": ["B0", "B1", "B2", "B3"] },
+              { "enum": ["B0", "B1", "B2", "B3"] }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      }
+    },
+    "metricas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/metrica" },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "artefacto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["descripcion"],
+      "properties": {
+        "descripcion": { "type": "string" },
+        "archivo": { "type": ["string", "null"] },
+        "esquema": { "type": ["string", "null"] },
+        "clave": { "type": ["string", "null"] },
+        "provisional": { "type": "boolean" }
+      }
+    },
+    "fuente": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artefacto", "campos"],
+      "properties": {
+        "artefacto": { "type": "string" },
+        "campos": {
+          "description": "Alias logico -> campo exacto del artefacto. El codigo de calculo solo conoce el alias.",
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "unidad": {
+      "enum": [
+        "ejecucion",
+        "tarea",
+        "tarea_en_categoria",
+        "llamada_herramienta",
+        "intento_escritura",
+        "intento_invocacion",
+        "invocacion",
+        "transporte",
+        "arquitectura",
+        "vector_adversarial",
+        "implementacion_por_arquitectura",
+        "ejecucion_de_muestra",
+        "muestra",
+        "ejecucion_de_submuestra",
+        "submuestra",
+        "corrida_completa"
+      ]
+    },
+    "metrica": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codigo",
+        "familia",
+        "nombre",
+        "que_se_espera_medir",
+        "como_se_mide",
+        "formula",
+        "unidad_y_direccion",
+        "fuente",
+        "fuente_plan",
+        "unidad_observacion",
+        "unidad_analisis",
+        "agregacion",
+        "rol",
+        "hipotesis",
+        "tipo_valor_esperado",
+        "valor_esperado_plan",
+        "que_no_captura",
+        "implementacion"
+      ],
+      "properties": {
+        "codigo": { "type": "string", "pattern": "^M[1-7]\\.[0-9]+$" },
+        "familia": { "enum": ["M1", "M2", "M3", "M4", "M5", "M6", "M7"] },
+        "nombre": { "type": "string", "minLength": 1 },
+        "que_se_espera_medir": { "type": "string", "minLength": 1 },
+        "como_se_mide": { "type": "string", "minLength": 1 },
+        "formula": { "type": "string", "minLength": 1 },
+        "unidad_y_direccion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["unidad", "direccion"],
+          "properties": {
+            "unidad": { "type": "string", "minLength": 1 },
+            "direccion": { "enum": ["mayor_es_mejor", "menor_es_mejor", "sin_direccion"] }
+          }
+        },
+        "fuente": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fuente" },
+          "minItems": 1
+        },
+        "fuente_plan": {
+          "description": "Texto literal de la fuente en el plan de medicion, para rastreo.",
+          "type": "string"
+        },
+        "unidad_observacion": { "$ref": "#/$defs/unidad" },
+        "unidad_analisis": { "$ref": "#/$defs/unidad" },
+        "agregacion": { "type": "string", "minLength": 1 },
+        "rol": { "enum": ["primaria", "secundaria", "descriptiva", "control"] },
+        "hipotesis": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "oneOf": [
+            { "items": { "enum": ["H1", "H2", "H3", "H4"] } },
+            { "items": { "const": "ninguna" }, "maxItems": 1 }
+          ]
+        },
+        "tipo_valor_esperado": { "enum": ["umbral", "resultado_abierto"] },
+        "valor_esperado_plan": { "type": "string" },
+        "valor_umbral": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operador", "descripcion"],
+          "properties": {
+            "operador": { "enum": [">=", "<=", "<", ">", "==", "igual_entre_arquitecturas"] },
+            "valor": { "type": "number" },
+            "arquitecturas": {
+              "type": "array",
+              "items": { "enum": ["B0", "B1", "B2", "B3"] },
+              "minItems": 1
+            },
+            "alcance": { "type": "string" },
+            "descripcion": { "type": "string" },
+            "consecuencia": { "type": "string" }
+          }
+        },
+        "que_no_captura": { "type": "string", "minLength": 1 },
+        "implementacion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["estado"],
+          "properties": {
+            "estado": { "enum": ["implementada", "pendiente"] },
+            "bloqueada_por": { "type": "string" },
+            "poblacion": {
+              "description": "Columna de la tabla estados_finales que decide que ejecuciones entran al calculo.",
+              "enum": ["efectividad", "latencia", "costo"]
+            },
+            "agregacion_tareas": { "enum": ["media", "mediana"] },
+            "intervalo": { "enum": ["bootstrap_tareas", "ninguno"] },
+            "contrastes": { "type": "boolean" },
+            "parametros": { "type": "object" }
+          },
+          "if": { "properties": { "estado": { "const": "implementada" } } },
+          "then": { "required": ["intervalo", "contrastes"] },
+          "else": { "required": ["bloqueada_por"] }
+        }
+      },
+      "if": { "properties": { "tipo_valor_esperado": { "const": "umbral" } } },
+      "then": { "required": ["valor_umbral"] },
+      "else": { "not": { "required": ["valor_umbral"] } }
+    }
+  }
+}

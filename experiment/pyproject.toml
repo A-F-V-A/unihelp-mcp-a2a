@@ -1,0 +1,40 @@
+# Motor de calculo de metricas de UniHelp.
+#
+# Es el UNICO lugar del repositorio autorizado a calcular una metrica: el
+# backend produce trazas y el frontend lee resultados ya calculados
+# (decision 19). Las dependencias se gestionan con uv (decision 20).
+
+[project]
+name = "unihelp-analisis"
+version = "1.0.0"
+description = "Registro, carga, calculo e inferencia de las metricas del experimento UniHelp"
+requires-python = "==3.12.*"
+dependencies = [
+  "pandas>=2.2,<3",
+  "pyarrow>=17",
+  "numpy>=2.0,<3",
+  "scipy>=1.14",
+  "statsmodels>=0.14",
+  "scikit-learn>=1.5",
+  "jsonschema[format-nongpl]>=4.23",
+  "pyyaml>=6.0",
+  "matplotlib>=3.9",
+  "ipykernel>=6.29",
+  "nbformat>=5.10",
+  "papermill>=2.6",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "jupyterlab>=4.2",
+]
+
+[tool.uv]
+# No es una libreria publicable: se ejecuta desde `experiment/`.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["pruebas"]
+pythonpath = ["."]
+addopts = "-q"

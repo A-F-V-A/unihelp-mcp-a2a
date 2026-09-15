@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:unihelp:esquema:insumos:1.0.0",
+  "title": "InsumosAnalisis",
+  "description": "Artefactos distintos de la traza que consume el analisis. Los marcados `provisional` en experiment/metricas.yaml se fijan cuando exista su productor (juez, calificacion humana, microbenchmark, corrida de control); hoy solo los produce el generador sintetico.",
+  "$defs": {
+    "veredicto": {
+      "enum": ["aprobado", "reprobado"]
+    },
+    "puntuacion": {
+      "description": "Una linea de puntuaciones.jsonl: compuerta automatica + juez por ejecucion.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "exito"],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "exito": {
+          "description": "Supero la compuerta automatica (eliminatoria) y el juez la aprobo.",
+          "type": "boolean"
+        },
+        "compuerta_automatica": { "type": "boolean" },
+        "veredicto_juez": { "enum": ["aprobado", "reprobado", null] }
+      }
+    },
+    "huellasEsperadas": {
+      "description": "huellas-esperadas.json: huella de estado inicial esperada por tarea.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["huellas"],
+      "properties": {
+        "dataset_version": { "type": "string" },
+        "huellas": {
+          "type": "object",
+          "propertyNames": { "pattern": "^T-(INF|DIA|COM|ADV)-[0-9]{3}$" },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "benchTransporte": {
+      "description": "bench-transport.json. Guarda TODAS las iteraciones; el analisis descarta las de calentamiento.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["iteraciones_calentamiento", "transportes"],
+      "properties": {
+        "generado_en": { "type": "string", "format": "date-time" },
+        "iteraciones_calentamiento": { "type": "integer", "minimum": 0 },
+        "transportes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["nombre", "latencias_ms"],
+            "properties": {
+              "nombre": { "type": "string", "minLength": 1 },
+              "latencias_ms": {
+                "type": "array",
+                "items": { "type": "number", "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calificacionHumana": {
+      "description": "Una linea de calificacion-humana.jsonl: los dos revisores a ciegas y el veredicto adjudicado.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "task_id",
+        "veredicto_revisor_a",
+        "veredicto_revisor_b",
+        "veredicto_adjudicado"
+      ],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "task_id": { "type": "string", "pattern": "^T-(INF|DIA|COM|ADV)-[0-9]{3}$" },
+        "veredicto_revisor_a": { "$ref": "#/$defs/veredicto" },
+        "veredicto_revisor_b": { "$ref": "#/$defs/veredicto" },
+        "veredicto_adjudicado": { "$ref": "#/$defs/veredicto" }
+      }
+    },
+    "veredictoJuez": {
+      "description": "Una linea de veredictos-juez.jsonl.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "veredicto"],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "veredicto": { "$ref": "#/$defs/veredicto" },
+        "puntos_cubiertos": { "type": "array", "items": { "type": "string" } },
+        "prohibiciones_violadas": { "type": "array", "items": { "type": "string" } },
+        "abstencion": { "type": "boolean" }
+      }
+    },
+    "controlInstrumentacion": {
+      "description": "Una linea de control-instrumentacion.jsonl: la misma submuestra con instrumentacion completa y minima.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "repetition", "instrumentacion", "total_ms"],
+      "properties": {
+        "task_id": { "type": "string", "pattern": "^T-(INF|DIA|COM|ADV)-[0-9]{3}$" },
+        "repetition": { "type": "integer", "minimum": 1 },
+        "instrumentacion": { "enum": ["completa", "minima"] },
+        "total_ms": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

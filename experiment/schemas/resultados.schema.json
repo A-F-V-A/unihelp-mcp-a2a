@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:unihelp:esquema:resultados:1.0.0",
+  "title": "ResultadosAnalisis",
+  "description": "UNICO contrato entre el cuaderno de analisis y el panel de visualizacion. El panel no calcula nada: muestra estos valores tal cual. Si version_esquema_resultados no coincide con la que el panel conoce, el panel lo declara y no muestra datos parciales (HU-MET-09).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version_esquema_resultados", "generado_en", "corrida", "validacion", "metricas"],
+  "properties": {
+    "version_esquema_resultados": {
+      "const": "1.0.0"
+    },
+    "generado_en": {
+      "description": "Marca de tiempo de generacion, ISO 8601 UTC. Es el UNICO campo que cambia entre dos ejecuciones del cuaderno sobre los mismos datos.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "corrida": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semilla",
+        "version_codigo",
+        "modelo_id",
+        "version_registro",
+        "version_esquema_traza",
+        "arquitecturas",
+        "tareas",
+        "ejecuciones",
+        "inferencia"
+      ],
+      "properties": {
+        "semilla": {
+          "description": "Semilla de la corrida (provenance.semilla). null si no hay ejecuciones validas.",
+          "type": ["integer", "null"]
+        },
+        "version_codigo": { "type": ["string", "null"] },
+        "modelo_id": { "type": ["string", "null"] },
+        "version_registro": { "type": "string" },
+        "version_esquema_traza": { "type": "string" },
+        "arquitecturas": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/arquitectura" }
+        },
+        "tareas": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total", "por_categoria"],
+          "properties": {
+            "total": { "type": "integer", "minimum": 0 },
+            "por_categoria": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "ejecuciones": {
+          "description": "Unidad de OBSERVACION. Estos conteos nunca son el tamano de muestra de la inferencia.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["intentadas", "validas", "invalidas", "por_motivo"],
+          "properties": {
+            "intentadas": { "type": "integer", "minimum": 0 },
+            "validas": { "type": "integer", "minimum": 0 },
+            "invalidas": { "type": "integer", "minimum": 0 },
+            "por_motivo": {
+              "description": "Intentos invalidos por motivo de rechazo. Un intento puede tener varios motivos.",
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "inferencia": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["unidad", "tamano_muestra", "metodo", "replicas", "nivel", "semilla"],
+          "properties": {
+            "unidad": {
+              "description": "Unidad de ANALISIS: todo intervalo remuestrea tareas.",
+              "const": "tarea"
+            },
+            "tamano_muestra": {
+              "description": "Numero de TAREAS remuestreadas. Es el tamano de muestra que se cita.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "metodo": { "const": "bootstrap_percentil_pareado_por_tarea" },
+            "replicas": { "type": "integer", "minimum": 1 },
+            "nivel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+            "semilla": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "validacion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["umbral_aviso_residuo", "avisos_residuo", "rechazos"],
+      "properties": {
+        "umbral_aviso_residuo": { "type": "number" },
+        "avisos_residuo": {
+          "description": "Ejecuciones validas cuyo residuo de orquestacion supera el umbral de aviso.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ejecucion", "proporcion"],
+            "properties": {
+              "ejecucion": {
+                "description": "Identificador de la ejecucion (run_id de la traza).",
+                "type": "string"
+              },
+              "proporcion": { "type": "number" }
+            }
+          }
+        },
+        "rechazos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["origen", "ejecucion", "motivos", "detalle"],
+            "properties": {
+              "origen": {
+                "description": "Archivo y linea (o archivo de cuarentena) del intento rechazado.",
+                "type": "string"
+              },
+              "ejecucion": {
+                "description": "run_id de la traza; null si la linea no era legible.",
+                "type": ["string", "null"]
+              },
+              "motivos": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+              "detalle": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "metricas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/metrica" }
+    }
+  },
+  "$defs": {
+    "arquitectura": {
+      "enum": ["B0", "B1", "B2", "B3"]
+    },
+    "intervalo": {
+      "description": "Intervalo percentil por remuestreo pareado de tareas.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inferior", "superior", "nivel"],
+      "properties": {
+        "inferior": { "type": "number" },
+        "superior": { "type": "number" },
+        "nivel": { "type": "number" }
+      }
+    },
+    "dimensiones": {
+      "description": "Desglose de la fila: categoria, componente, tipo_fallo, transporte, tokens...",
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "fila": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arquitectura",
+        "dimensiones",
+        "estadistico",
+        "valor",
+        "intervalo",
+        "n_tareas",
+        "n_observaciones"
+      ],
+      "properties": {
+        "arquitectura": {
+          "description": "null cuando el valor es global (corrida completa, transporte, muestra).",
+          "enum": ["B0", "B1", "B2", "B3", null]
+        },
+        "dimensiones": { "$ref": "#/$defs/dimensiones" },
+        "estadistico": { "type": "string" },
+        "valor": { "type": ["number", "null"] },
+        "intervalo": {
+          "oneOf": [{ "$ref": "#/$defs/intervalo" }, { "type": "null" }]
+        },
+        "n_tareas": { "type": ["integer", "null"] },
+        "n_observaciones": { "type": ["integer", "null"] }
+      }
+    },
+    "contraste": {
+      "description": "Diferencia pareada por tarea (minuendo - sustraendo). Estimacion con intervalo, SIN decision.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minuendo",
+        "sustraendo",
+        "dimensiones",
+        "estadistico",
+        "diferencia",
+        "intervalo",
+        "n_tareas"
+      ],
+      "properties": {
+        "minuendo": { "$ref": "#/$defs/arquitectura" },
+        "sustraendo": { "$ref": "#/$defs/arquitectura" },
+        "dimensiones": { "$ref": "#/$defs/dimensiones" },
+        "estadistico": { "type": "string" },
+        "diferencia": { "type": ["number", "null"] },
+        "intervalo": {
+          "oneOf": [{ "$ref": "#/$defs/intervalo" }, { "type": "null" }]
+        },
+        "n_tareas": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "umbral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operador", "descripcion", "observado", "alcanza"],
+      "properties": {
+        "operador": { "enum": [">=", "<=", "<", ">", "==", "igual_entre_arquitecturas"] },
+        "valor": { "type": "number" },
+        "arquitecturas": { "type": "array", "items": { "$ref": "#/$defs/arquitectura" } },
+        "alcance": { "type": "string" },
+        "descripcion": { "type": "string" },
+        "consecuencia": { "type": "string" },
+        "observado": {
+          "description": "Valor que se comparo con el umbral: numero global o un valor por arquitectura.",
+          "oneOf": [
+            { "type": "number" },
+            { "type": "object", "additionalProperties": { "type": ["number", "null"] } },
+            { "type": "null" }
+          ]
+        },
+        "alcanza": {
+          "description": "null si no se pudo evaluar (metrica pendiente o sin datos).",
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "metrica": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codigo",
+        "familia",
+        "nombre",
+        "rol",
+        "hipotesis",
+        "tipo_valor_esperado",
+        "unidad",
+        "direccion",
+        "unidad_analisis",
+        "estado",
+        "motivo_estado",
+        "filas",
+        "contrastes",
+        "notas"
+      ],
+      "properties": {
+        "codigo": { "type": "string", "pattern": "^M[1-7]\\.[0-9]+$" },
+        "familia": { "enum": ["M1", "M2", "M3", "M4", "M5", "M6", "M7"] },
+        "nombre": { "type": "string" },
+        "rol": {
+          "description": "Solo las primarias sostienen conclusiones; ninguna secundaria o descriptiva puede usarse para afirmar que una arquitectura es mejor.",
+          "enum": ["primaria", "secundaria", "descriptiva", "control"]
+        },
+        "hipotesis": { "type": "array", "items": { "enum": ["H1", "H2", "H3", "H4", "ninguna"] } },
+        "tipo_valor_esperado": { "enum": ["umbral", "resultado_abierto"] },
+        "unidad": { "type": "string" },
+        "direccion": { "enum": ["mayor_es_mejor", "menor_es_mejor", "sin_direccion"] },
+        "unidad_analisis": { "type": "string" },
+        "estado": {
+          "description": "calculada; sin_datos (implementada pero falta su insumo); pendiente (declarada, sin implementar).",
+          "enum": ["calculada", "sin_datos", "pendiente"]
+        },
+        "motivo_estado": { "type": ["string", "null"] },
+        "filas": { "type": "array", "items": { "$ref": "#/$defs/fila" } },
+        "contrastes": { "type": "array", "items": { "$ref": "#/$defs/contraste" } },
+        "notas": { "type": "array", "items": { "type": "string" } },
+        "umbral": { "$ref": "#/$defs/umbral" }
+      },
+      "if": {
+        "type": "object",
+        "properties": { "tipo_valor_esperado": { "const": "umbral" } },
+        "required": ["tipo_valor_esperado"]
+      },
+      "then": { "required": ["umbral"] },
+      "else": { "not": { "required": ["umbral"] } }
+    }
+  }
+}
