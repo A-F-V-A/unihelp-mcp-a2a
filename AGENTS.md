@@ -33,8 +33,9 @@ cada arquitectura. Cualquier cambio que rompa esa simetria contamina las
 mediciones. Ante la duda, pregunta antes de compartir o duplicar codigo.
 
 Estado actual: frontend Angular completo contra un backend **simulado**;
-backends NestJS con solo el endpoint `/health`. Aun no hay logica de triaje,
-base de datos, MCP real ni A2A real.
+backends NestJS con solo el endpoint `/health`. La base de conocimiento
+(`libs/conocimiento`, PostgreSQL) funciona aislada con sus pruebas, pero ninguna
+app la importa todavia. Aun no hay logica de triaje, MCP real ni A2A real.
 
 El diseño completo del experimento esta especificado en `docs/00` a `docs/10`
 (anexo tecnico del seminario): historias de usuario, contrato MCP, agentes A2A,
@@ -111,6 +112,8 @@ apps/
   mcp-server/            NestJS  B1 y B3  tags: tipo:app, arq:compartido
   web/                   Angular, frontend UNICO  tags: tipo:app, arq:frontend
 libs/
+  conocimiento/          @unihelp/conocimiento: grafo de politicas en PostgreSQL, busqueda
+                         lexica determinista, restablecimiento con huella (solo backends)
   contratos/             @unihelp/contratos: DTOs y rutas de red (solo tipos)
   dominio/               @unihelp/dominio: vocabulario y catalogos (sin logica)
 experiment/              Arnes de medicion (vacio a proposito)
@@ -299,6 +302,9 @@ pnpm nx lint <proyecto> # lint de un proyecto
 pnpm nx test <proyecto> # tests de un proyecto
 pnpm verify             # lint + test + build de todo (obligatorio antes de cerrar)
 pnpm graph              # grafo de dependencias
+pnpm conocimiento:db    # PostgreSQL de la base de conocimiento (Docker)
+pnpm conocimiento:migrar && pnpm conocimiento:sembrar
+pnpm conocimiento:test-integracion  # pruebas de libs/conocimiento contra PostgreSQL
 ```
 
 ---
@@ -396,6 +402,7 @@ hasta que se registre una decision, no las "arregles" por tu cuenta.
 | Registro de decisiones | `docs/adr/ADR-NNN` y `deviations.md`                                                           | `docs/decisiones-tecnicas.md` numerado                                                              |
 | Codigos de HU          | `HU-01` a `HU-45`, `HU-MET-01` a `HU-MET-14` y `HU-KB-01` a `HU-KB-10` (documentos aparte)     | El codigo del frontend tambien cita `HU-FE-xx`, que no estan documentadas                           |
 | Estados de servicio    | HU-KB-09: `operativo`, `degradado`, `mantenimiento`, `caído`                                   | `libs/dominio` `NIVELES_ESTADO_SERVICIO`: `operativo`, `degradado`, `interrumpido`, `mantenimiento` |
+| Corpus de conocimiento | `docs/10`: 24 politicas, sin versiones historicas | `libs/conocimiento`: 39 politicas y 55 versiones (15 distractoras de HU-KB-04 y 3 adversariales redactadas; decision 18) |
 
 Cuando una se resuelva: registrar la decision, actualizar el documento que
 quede desactualizado y quitar la fila de esta tabla.

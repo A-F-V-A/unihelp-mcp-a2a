@@ -12,7 +12,9 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 > levanta una app NestJS que ya responde su endpoint de salud. El frontend
 > Angular tiene la interfaz de chat completa funcionando contra un backend
 > **simulado** (ver [Frontend sin backend](#frontend-sin-backend-datos-simulados)).
-> Todavia no hay logica de triaje, base de datos, MCP real ni A2A real.
+> La base de conocimiento ([`libs/conocimiento`](libs/conocimiento/README.md))
+> ya funciona sobre PostgreSQL con sus pruebas, pero ninguna arquitectura la
+> consume todavia. No hay logica de triaje, MCP real ni A2A real.
 
 ---
 
@@ -96,12 +98,13 @@ docker compose -f infra/docker/docker-compose.yml up --build
 
 ### Que levanta cada profile
 
-| Profile | Servicios                                                                                  |
-| ------- | ------------------------------------------------------------------------------------------ |
-| `b0`    | `b0-directo` + `web`                                                                       |
-| `b1`    | `mcp-server` + `b1-mcp-agente` + `web`                                                     |
-| `b2`    | `b2-multiagente-local` + `web`                                                             |
-| `b3`    | `mcp-server` + `b3-a2a-orquestador` + `b3-a2a-conocimiento` + `b3-a2a-diagnostico` + `web` |
+| Profile        | Servicios                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| `b0`           | `b0-directo` + `web`                                                                       |
+| `b1`           | `mcp-server` + `b1-mcp-agente` + `web`                                                     |
+| `b2`           | `b2-multiagente-local` + `web`                                                             |
+| `b3`           | `mcp-server` + `b3-a2a-orquestador` + `b3-a2a-conocimiento` + `b3-a2a-diagnostico` + `web` |
+| `conocimiento` | `postgres` (base de conocimiento; aun no participa en `b0`..`b3`)                          |
 
 ---
 
@@ -199,13 +202,25 @@ siempre el backend real (ver `docs/decisiones-tecnicas.md`, decisiones 13 a 15).
 ### Comandos de calidad
 
 ```bash
-pnpm lint            # ESLint en los 10 proyectos
+pnpm lint            # ESLint en los 11 proyectos
 pnpm test            # pruebas unitarias (Jest)
 pnpm build           # compila los 8 artefactos
 pnpm verify          # lint + test + build de todo el workspace
 pnpm format          # Prettier sobre los archivos afectados
 pnpm graph           # grafo de dependencias del monorepo
 ```
+
+### Base de conocimiento
+
+```bash
+pnpm conocimiento:db                # PostgreSQL 16 en :5432 (profile `conocimiento`)
+pnpm conocimiento:migrar            # crea el esquema
+pnpm conocimiento:sembrar           # carga la semilla (idempotente) e imprime la huella
+pnpm conocimiento:test-integracion  # pruebas contra PostgreSQL real
+```
+
+Detalle, variables de entorno y restablecimiento en
+[`libs/conocimiento/README.md`](libs/conocimiento/README.md).
 
 ---
 
@@ -223,6 +238,7 @@ unihelp/
 │   ├── mcp-server/              NestJS - servidor de herramientas MCP (B1 y B3)
 │   └── web/                     Angular - frontend unico para las cuatro
 ├── libs/
+│   ├── conocimiento/            Base de conocimiento (NestJS + TypeORM + PostgreSQL)
 │   ├── contratos/               DTOs y esquemas tipados compartidos entre apps
 │   └── dominio/                 Tipos y vocabulario de dominio: servicios,
 │                                estados, prioridades, catalogo de arquitecturas
@@ -247,6 +263,9 @@ unihelp/
   consumen las arquitecturas que hablan MCP, no pertenece a ninguna.
 - **`apps/web`** — **un solo** frontend Angular. Descubre la arquitectura activa
   consultando `/health`; la URL del backend llega por variable de entorno.
+- **`libs/conocimiento`** — politicas versionadas, servicios y componentes como
+  un grafo en PostgreSQL, con busqueda lexica determinista y restablecimiento
+  verificable por huella. Compartida por los backends; el frontend no la importa.
 - **`libs/contratos`** — el contrato que todas las apps cumplen. Garantiza que
   las cuatro arquitecturas se midan con la misma interfaz.
 - **`libs/dominio`** — vocabulario del problema (areas de servicio, estados,
@@ -288,7 +307,8 @@ al construir las imagenes, que es el artefacto que se evalua.
 
 - **TypeScript estricto** en todo el repositorio (`strict: true` y compañia en
   `tsconfig.base.json`).
-- **Alias de importacion**: `@unihelp/contratos` y `@unihelp/dominio`.
+- **Alias de importacion**: `@unihelp/contratos`, `@unihelp/dominio` y
+  `@unihelp/conocimiento` (solo backends).
 - **Endpoint de salud** en `/health`, fuera del prefijo `/api` que usara el
   resto de la API.
 - **Nombres de dominio en español**, nombres de framework en su idioma original

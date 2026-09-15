@@ -195,3 +195,138 @@ DTO -> dominio que usara el backend real.
 - Los fallos se provocan sin tocar codigo, por query string
   (`?simular-error=timeout`) o escribiendo una directiva en el chat
   (`#no-disponible`).
+
+## 16. La base de conocimiento es una libreria compartida sobre PostgreSQL
+
+Contexto: las cuatro arquitecturas y `mcp-server` necesitan citar politicas y
+consultar el estado de servicios y componentes (HU-05 a HU-10). Si cada una
+tuviera su propio buscador, una diferencia medida podria venir del buscador y no
+del protocolo. La base de conocimiento es la "API del dominio" que todas
+comparten (`docs/01-arquitectura-y-funcionalidades.md`, seccion 2), no la
+variable que se mide.
+
+Decision:
+
+- `libs/conocimiento` (`@unihelp/conocimiento`, tags `tipo:lib`, `arq:compartido`,
+  `alcance:backend`) expone `ConocimientoModule.forRoot()` y los casos de uso.
+  Ninguna app lo importa todavia.
+- El grafo se modela con **tablas de nodos y tablas de aristas en PostgreSQL 16**,
+  en un esquema propio `conocimiento`. La composicion politica -> version ->
+  extracto usa claves foraneas `NOT NULL`; las relaciones muchos a muchos
+  (servicio-componente, politica-categoria, politica-servicio) son tablas de
+  aristas con clave compuesta y `ON DELETE RESTRICT`.
+- **TypeORM** como acceso a datos: es el primer ORM del monorepo, no habia uno
+  decidido. La libreria abre su propio `DataSource`, con `synchronize`
+  desactivado y migraciones versionadas en TypeScript.
+- PostgreSQL corre en el profile `conocimiento` de Compose, con la imagen fijada
+  por digest y datos en tmpfs.
+- El frontend no puede importar la libreria: `eslint.config.mjs` prohibe a
+  `arq:frontend` depender de `alcance:backend`.
+- El estado de un componente usa `NivelEstadoServicio` de `@unihelp/dominio`
+  (`operativo`, `degradado`, `interrumpido`, `mantenimiento`). HU-KB-09 dice
+  `caído` donde el vocabulario compartido dice `interrumpido`; se eligio no
+  redefinir el vocabulario ni hacer un cambio rompiente en el frontend, asi que
+  `interrumpido` ocupa el lugar de `caído`. La fila de `AGENTS.md` §9 y la nota
+  de HU-KB-09 se pueden retirar si esta equivalencia se acepta para todo el backlog.
+
+Por que:
+
+- Neo4j y ArangoDB se descartaron: su ranking y el orden de sus recorridos
+  dependen del motor, mientras que en SQL el orden completo queda escrito en la
+  consulta. Ademas, PostgreSQL ya se usara para tickets y auditoria: un segundo
+  motor es mas infraestructura que un tercero debe levantar para replicar.
+- Prisma se descarto porque no modela columnas `tsvector` generadas, triggers ni
+  indices parciales sin SQL crudo, y agrega un paso de generacion de cliente al
+  build. Con TypeORM las entidades describen las tablas y las consultas que
+  importan para el experimento se escriben en SQL explicito.
+- No va en `libs/dominio` porque tiene dependencias de runtime (regla 4 de
+  `AGENTS.md`, que aplica a `contratos` y `dominio`, no a esta libreria).
+
+Consecuencias: es la primera libreria con dependencias de runtime (`typeorm`,
+`pg`, `@nestjs/common`). `resolveJsonModule` pasa a `tsconfig.base.json` porque la
+semilla viaja como JSON importado. Quedan pendientes: conectar la libreria a
+cada arquitectura, los estados iniciales de `docs/10` §4 como variantes de la
+semilla y las politicas adversariales, cuyo contenido no esta escrito.
+
+## 17. La busqueda de politicas y la huella del estado son deterministas por construccion
+
+Contexto: HU-08 exige que dos consultas identicas sobre el mismo estado
+devuelvan el mismo conjunto ordenado, sin modelos de representacion vectorial.
+HU-36 exige un restablecimiento transaccional con una huella verificable. El
+determinismo se puede perder en sitios poco evidentes: la collation de la base,
+la precision de los flotantes, la zona horaria o el orden fisico de las filas.
+
+Decision (detalle en `libs/conocimiento/README.md`):
+
+- Busqueda lexica con `tsvector` y `ts_rank` sobre una configuracion
+  `spanish` + `unaccent`. Relevancia = `ts_rank(tsv, consulta, 32)` x cobertura de
+  lexemas, redondeada a 6 decimales en `numeric`.
+- Maximo tres politicas, `ORDER BY relevancia DESC, codigo COLLATE "C" ASC`,
+  solo versiones marcadas como vigentes. Bajo el umbral
+  (`CONOCIMIENTO_UMBRAL_RELEVANCIA`, 0.05 por defecto) se devuelve una ausencia
+  explicita con motivo.
+- Todo `ORDER BY` de texto usa `COLLATE "C"`; en TypeScript se compara por punto
+  de codigo, nunca con `localeCompare`.
+- Los instantes viajan como texto ISO 8601 UTC con precision de segundos, no
+  como `Date`, y se leen con `to_char(... AT TIME ZONE 'UTC')`.
+- La huella es SHA-256 sobre una serializacion canonica versionada: tuplas con
+  columnas en orden fijo y filas ordenadas por clave primaria. Se puede
+  recalcular desde el archivo semilla sin base de datos.
+- El restablecimiento borra y repuebla en una transaccion `SERIALIZABLE`, relee
+  lo escrito y revierte si no es identico. Solo existe con
+  `UNIHELP_PERFIL=experimento` o `NODE_ENV=test`, y nunca con
+  `UNIHELP_PERFIL=produccion`.
+
+Por que: embeddings o BM25 externos introducen variabilidad o dependencias que
+no se atribuyen al protocolo. La cobertura se agrego porque `ts_rank` solo no
+distingue una consulta que coincide en una palabra de otra que coincide en todo,
+y eso llevaba a devolver la politica "mas cercana" en casos sin respuesta
+(HU-07). No se uso `NODE_ENV=production` para prohibir el restablecimiento
+porque las imagenes del experimento corren con ese valor.
+
+Consecuencias: cambiar la semilla o la serializacion cambia la huella a
+proposito; la huella dorada de `libs/conocimiento/src/aplicacion/huella.spec.ts`
+y el README se actualizan en el mismo cambio. Cambiar de version mayor o menor
+de PostgreSQL requiere volver a correr la prueba de integracion, porque los
+diccionarios de texto completo forman parte del resultado.
+
+## 18. La semilla reproduce los estados iniciales y el corpus de docs/10
+
+Contexto: `docs/10-conjunto-de-tareas.md` define 10 estados iniciales, 24
+politicas (3 adversariales sin texto) y 40 tareas que eligen un estado. La
+primera semilla tenia un solo estado inventado, un componente compartido que
+contradecia T-DIA-009 y ninguna politica adversarial. HU-KB-04 exige ademas
+cuatro distractoras por politica objetivo, y docs/10 solo trae una pareja por
+objetivo.
+
+Decision (detalle en `docs/base-de-conocimiento.md`):
+
+- `estados_servicio` guarda el estado publicado de cada servicio (estado,
+  alcance, comunicado, ventana, referencia) y `servicios.nivel_servicio` el nivel
+  que usa la tabla de prioridad. La fila `entorno` registra version de semilla,
+  estado inicial y corpus, y entra en la huella.
+- La semilla trae la variante base `todo_operativo` y los 10 estados de docs/10
+  §4. `RestablecerConocimientoUseCase.ejecutar({ estadoInicial, corpus })`
+  construye cualquiera; `calcularHuellasEsperadas` publica las 20 huellas.
+- Cada componente pertenece a un solo servicio.
+- Corpus `estandar` sin las politicas adversariales y corpus `adversarial` con
+  ellas (docs/01, 4.3). No se filtran en la consulta: simplemente no se insertan.
+- Las 3 politicas adversariales se redactaron desde T-ADV-001 a T-ADV-003. Se
+  agregaron 15 distractoras y 13 versiones historicas (`origen` en la base y
+  `notas` en la semilla). Comunicados, ventanas, referencias, instantes y nivel
+  de servicio son sinteticos y coherentes con cada tarea. Estas tres decisiones
+  las tomo el responsable del proyecto (RM-17).
+
+Por que: sin los estados iniciales no hay huella esperada por tarea y el
+ejecutor no puede abortar ante contaminacion (HU-36, M7.2). Filtrar las
+adversariales en la consulta habria dejado un parametro de busqueda que cada
+arquitectura podria usar distinto; excluirlas del corpus lo decide el ejecutor
+al restablecer. Un componente compartido hacia imposible que el aula virtual se
+viera operativa durante una caida de autenticacion.
+
+Consecuencias: el corpus ya no coincide con el conteo de 24 politicas de docs/10.
+Esa diferencia es una desviacion registrada: se resuelve actualizando la fuente
+de docs/10 o aceptandola. Las distractoras agregadas pueden hacer mas dificiles
+las tareas informativas; eso se decidio a proposito (HU-KB-04). Cambiar un
+estado inicial o una politica cambia su huella, y la tabla de
+`docs/base-de-conocimiento.md` se regenera en el mismo cambio.

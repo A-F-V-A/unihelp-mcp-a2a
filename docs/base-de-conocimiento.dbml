@@ -1,0 +1,178 @@
+// Esquema de la base de conocimiento de UniHelp (libs/conocimiento).
+// Se mantiene a mano junto con la migracion
+// libs/conocimiento/src/infraestructura/migraciones/1789344000000-crear-grafo-conocimiento.ts,
+// que es la fuente de verdad. Explicacion en docs/base-de-conocimiento.md.
+// Se puede visualizar pegandolo en https://dbdiagram.io.
+
+Project unihelp_conocimiento {
+  database_type: 'PostgreSQL'
+  Note: '''
+  Grafo de conocimiento sobre PostgreSQL 16 (decision 16): tablas de nodos y tablas
+  de aristas, con busqueda lexica determinista sobre las versiones vigentes
+  (decision 17) y variantes de estado inicial y corpus (decision 18).
+  '''
+}
+
+Enum conocimiento.nivel_estado_servicio {
+  operativo
+  degradado
+  interrumpido [note: 'FUERA_DE_SERVICIO en docs/10']
+  mantenimiento
+}
+
+Enum conocimiento.area_servicio {
+  "registro-academico"
+  "plataforma-virtual"
+  "soporte-tecnico"
+  biblioteca
+  "bienestar-universitario"
+  financiera
+  "infraestructura-fisica"
+}
+
+Enum conocimiento.nivel_servicio {
+  critico
+  alto
+  medio
+}
+
+Enum conocimiento.alcance_afectacion {
+  total
+  parcial
+  programado [note: 'solo y siempre para mantenimiento']
+}
+
+Enum conocimiento.corpus {
+  estandar [note: 'sin politicas adversariales']
+  adversarial
+}
+
+// ------------------------------------------------------------------ nodos
+
+Table conocimiento.servicios {
+  codigo text [pk, note: "snake_case: aula_virtual, autenticacion, correo_institucional, matricula"]
+  nombre text [not null]
+  descripcion text [not null]
+  unidad_responsable text [not null]
+  area conocimiento.area_servicio [not null]
+  nivel_servicio conocimiento.nivel_servicio [not null, note: 'entra en la tabla de prioridad']
+  Note: 'Nodo raiz del grafo.'
+}
+
+Table conocimiento.estados_servicio {
+  servicio_codigo text [pk, ref: - conocimiento.servicios.codigo]
+  estado conocimiento.nivel_estado_servicio [not null]
+  alcance conocimiento.alcance_afectacion [note: 'NULL si operativo']
+  mensaje text [note: 'comunicado; puede traer una instruccion incrustada (T-ADV-007)']
+  ventana_inicio timestamptz [note: 'NULL si no se publico']
+  ventana_fin timestamptz
+  incidente_ref text [note: 'INC-AAAA-NNNN o MNT-AAAA-NNNN']
+  desde timestamptz [not null]
+  Note: '''
+  Estado publicado de cada servicio, uno por servicio.
+  CHECK: operativo <=> sin alcance, mensaje, incidente ni ventana;
+  mantenimiento <=> alcance programado y ventana publicada; instantes en segundos.
+  '''
+}
+
+Table conocimiento.componentes {
+  codigo text [pk]
+  nombre text [not null]
+  estado conocimiento.nivel_estado_servicio [not null]
+  ventana_inicio timestamptz
+  ventana_fin timestamptz
+  incidente_ref text
+  actualizado_en timestamptz [not null]
+  Note: 'CHECK: ventana completa y ordenada; operativo sin ventana ni incidente; instantes en segundos.'
+}
+
+Table conocimiento.categorias {
+  codigo text [pk, note: 'acceso, plazos, soporte, datos_personales, academico']
+  nombre text [not null]
+  descripcion text [not null]
+}
+
+Table conocimiento.politicas {
+  codigo text [pk, note: 'POL-XX-NNN']
+  alcance text [not null]
+  dependencia_responsable text [not null]
+  enlace text [note: 'dominio reservado .example']
+  adversarial boolean [not null]
+  origen text [not null, note: 'conjunto-de-tareas | complemento-hu-kb-04 | redactada-desde-tareas']
+}
+
+Table conocimiento.versiones_politica {
+  politica_codigo text [not null, ref: > conocimiento.politicas.codigo]
+  version text [not null, note: 'mayor.menor']
+  titulo text [not null]
+  vigente_desde date [not null]
+  vigente boolean [not null]
+  contenido text [not null, note: 'extractos unidos por salto de linea']
+  tsv tsvector [note: "GENERATED: setweight(titulo,'A') || setweight(contenido,'D'), configuracion conocimiento.espanol"]
+
+  indexes {
+    (politica_codigo, version) [pk]
+    politica_codigo [unique, name: 'version_politica_una_vigente', note: 'indice parcial WHERE vigente']
+    tsv [type: gin, name: 'version_politica_tsv']
+  }
+}
+
+Table conocimiento.extractos {
+  politica_codigo text [not null]
+  version text [not null]
+  ordinal integer [not null, note: '>= 1']
+  inicio integer [not null, note: 'punto de codigo, base 0']
+  fin integer [not null, note: 'exclusivo; char_length(texto) = fin - inicio']
+  texto text [not null]
+  tsv tsvector [note: 'GENERATED']
+
+  indexes {
+    (politica_codigo, version, ordinal) [pk]
+    (politica_codigo, version, inicio) [unique, name: 'extracto_sin_solapes']
+  }
+  Note: 'Trigger extracto_posicion_exacta: substr(contenido, inicio + 1, fin - inicio) = texto.'
+}
+
+Ref: conocimiento.extractos.(politica_codigo, version) > conocimiento.versiones_politica.(politica_codigo, version)
+
+// ---------------------------------------------------------------- aristas
+
+Table conocimiento.servicio_componente {
+  servicio_codigo text [not null, ref: > conocimiento.servicios.codigo]
+  componente_codigo text [not null, ref: > conocimiento.componentes.codigo]
+
+  indexes {
+    (servicio_codigo, componente_codigo) [pk]
+    componente_codigo
+  }
+}
+
+Table conocimiento.politica_categoria {
+  politica_codigo text [not null, ref: > conocimiento.politicas.codigo]
+  categoria_codigo text [not null, ref: > conocimiento.categorias.codigo]
+
+  indexes {
+    (politica_codigo, categoria_codigo) [pk]
+    categoria_codigo
+  }
+}
+
+Table conocimiento.politica_servicio {
+  politica_codigo text [not null, ref: > conocimiento.politicas.codigo]
+  servicio_codigo text [not null, ref: > conocimiento.servicios.codigo]
+
+  indexes {
+    (politica_codigo, servicio_codigo) [pk]
+    servicio_codigo
+  }
+}
+
+// ---------------------------------------------------------------- entorno
+
+Table conocimiento.entorno {
+  unico boolean [pk, note: 'CHECK (unico): una sola fila']
+  version_semilla text [not null]
+  estado_inicial text [not null, note: 'codigo de docs/10 seccion 4']
+  corpus conocimiento.corpus [not null]
+  Note: 'Que variante de la semilla esta cargada. Entra en la huella.'
+}
