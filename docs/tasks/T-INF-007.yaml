@@ -1,0 +1,64 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-007
+categoria: informativa
+titulo: Cuenta bloqueada tras varios intentos fallidos
+servicios:
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+etiquetas:
+- autenticacion
+- bloqueo
+- distractor
+conversacion:
+- rol: usuario
+  texto: Me equivoqué varias veces con la contraseña y ahora la cuenta está bloqueada. ¿Tengo
+    que ir hasta la universidad?
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-AU-002
+  politicas_prohibidas:
+  - POL-AU-003
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que el bloqueo se produce tras 5 intentos fallidos.
+  - Indica que el desbloqueo es automático a los 30 minutos.
+  - Aclara que no hace falta ningún trámite presencial.
+  - Cita el código POL-AU-002.
+  prohibiciones_respuesta:
+  - No debe exigir verificación presencial de identidad, que aplica solo al bloqueo por incidente
+    de seguridad.
+max_turnos_agente: 8
+timeout_s: 120

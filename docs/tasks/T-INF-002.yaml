@@ -1,0 +1,61 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-002
+categoria: informativa
+titulo: Cancelación de una asignatura dentro del plazo
+servicios:
+- matricula
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- matricula
+- cancelacion
+conversacion:
+- rol: usuario
+  texto: Estamos en la semana 5 y quiero cancelar una materia. ¿Qué tengo que hacer?
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-MA-001
+  politicas_prohibidas:
+  - POL-MA-002
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: matricula
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que se puede cancelar hasta la semana 8.
+  - Explica que el trámite es en línea, sin intervención de otra dependencia.
+  - Menciona que no queda registro en el historial académico.
+  - Cita el código POL-MA-001.
+  prohibiciones_respuesta:
+  - No debe exigir solicitud ante el Consejo Curricular, que aplica solo a la cancelación extemporánea.
+max_turnos_agente: 8
+timeout_s: 120

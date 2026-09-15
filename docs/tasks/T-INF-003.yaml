@@ -1,0 +1,59 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-003
+categoria: informativa
+titulo: Requisitos para cambiar la contraseña institucional
+servicios:
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- autenticacion
+- contrasena
+conversacion:
+- rol: usuario
+  texto: ¿Cada cuánto tengo que cambiar la contraseña y qué requisitos debe cumplir?
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-AU-001
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que la contraseña debe tener al menos 12 caracteres.
+  - Indica que el cambio es obligatorio cada 180 días.
+  - Menciona que la propagación a los demás servicios tarda hasta 15 minutos.
+  - Cita el código POL-AU-001.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

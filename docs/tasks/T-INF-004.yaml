@@ -1,0 +1,61 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-004
+categoria: informativa
+titulo: Reapertura de un curso archivado
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- aula_virtual
+- docente
+- archivado
+conversacion:
+- rol: usuario
+  texto: Soy docente y necesito que me habiliten otra vez un curso del semestre pasado para descargar
+    unas entregas. ¿Cómo se pide?
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-AV-004
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que solo el docente titular puede solicitarlo.
+  - Indica que el curso se habilita por 15 días calendario.
+  - Menciona que la solicitud se presenta por escrito ante la Oficina de Tecnologías.
+  - Cita el código POL-AV-004.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

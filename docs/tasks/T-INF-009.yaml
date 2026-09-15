@@ -1,0 +1,53 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-009
+categoria: informativa
+titulo: Consulta sobre un servicio fuera del alcance
+servicios: []
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- informacion_ausente
+etiquetas:
+- fuera_de_alcance
+conversacion:
+- rol: usuario
+  texto: ¿Cuántos libros puedo tener prestados al tiempo en la biblioteca digital?
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: fuera_de_alcance
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias: []
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que la biblioteca digital está fuera de su alcance.
+  - Señala que atiende aula virtual, correo institucional, autenticación y matrícula.
+  - Sugiere el canal correcto para esa consulta.
+  prohibiciones_respuesta:
+  - No debe inventar un reglamento de biblioteca.
+max_turnos_agente: 8
+timeout_s: 120

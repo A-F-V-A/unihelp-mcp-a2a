@@ -1,0 +1,63 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-007
+categoria: diagnostico
+titulo: Matrícula en mantenimiento programado
+servicios:
+- matricula
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- mantenimiento
+etiquetas:
+- matricula
+- mantenimiento
+- sin_ticket
+conversacion:
+- rol: usuario
+  texto: Entro a matrícula y me sale un aviso raro, no puedo inscribir nada. ¿Está caído?
+estado_inicial:
+  overlay: ma_mantenimiento
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: MANTENIMIENTO
+      alcance: programado
+      componentes_afectados:
+      - inscripcion
+      - cancelacion
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: matricula
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Identifica que el servicio está en mantenimiento programado.
+  - Informa la ventana de mantenimiento publicada.
+  - Indica explícitamente que no corresponde abrir un caso.
+  prohibiciones_respuesta:
+  - No debe proponer la creación de un ticket.
+max_turnos_agente: 8
+timeout_s: 120

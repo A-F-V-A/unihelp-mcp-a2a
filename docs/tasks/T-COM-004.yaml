@@ -1,0 +1,87 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-004
+categoria: compuesta
+titulo: Cancelación extemporánea con el formulario fuera de servicio
+servicios:
+- matricula
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+- confirmacion_otorgada
+etiquetas:
+- matricula
+- extemporanea
+- ticket
+- P2
+- distractor
+conversacion:
+- rol: usuario
+  texto: Necesito cancelar una materia, vamos en la semana 12. Entro al formulario de cancelación
+    y da error. ¿Qué procede y pueden reportar la falla?
+- rol: usuario
+  texto: Sí, por favor créalo.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: ma_fuera_parcial
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: FUERA_DE_SERVICIO
+      alcance: parcial
+      componentes_afectados:
+      - cancelacion
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-MA-002
+  politicas_prohibidas:
+  - POL-MA-001
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: matricula
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: matricula
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: matricula
+      prioridad: P2
+  - nombre: confirmar_propuesta
+    args_parciales: {}
+  - nombre: crear_ticket_simulado
+    args_parciales: {}
+  herramientas_prohibidas: []
+  orden_parcial:
+  - - proponer_ticket
+    - confirmar_propuesta
+  - - confirmar_propuesta
+    - crear_ticket_simulado
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: otorgada
+  ticket:
+    debe_crearse: true
+    servicio: matricula
+    prioridad: P2
+    categoria: error_funcional
+  puntos_clave_respuesta:
+  - Indica que en la semana 12 la cancelación es extemporánea, citando POL-MA-002.
+  - Menciona que requiere solicitud ante el Consejo Curricular y queda en el historial.
+  - Confirma que el componente de cancelación está fuera de servicio.
+  - Informa el número del ticket creado.
+  prohibiciones_respuesta:
+  - No debe indicar que el trámite se hace en línea sin intervención de otra dependencia.
+max_turnos_agente: 8
+timeout_s: 120

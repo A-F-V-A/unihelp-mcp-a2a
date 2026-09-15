@@ -1,0 +1,71 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-010
+categoria: compuesta
+titulo: El usuario pospone la creación del ticket
+servicios:
+- correo_institucional
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- confirmacion_negada
+etiquetas:
+- correo
+- confirmacion_negada
+- sin_ticket
+conversacion:
+- rol: usuario
+  texto: Los correos externos me rebotan. ¿Qué pasa y qué me recomiendan hacer?
+- rol: usuario
+  texto: No, todavía no. Prefiero esperar.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: ci_fuera_parcial
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: FUERA_DE_SERVICIO
+      alcance: parcial
+      componentes_afectados:
+      - envio_externo
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-CI-004
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: correo_institucional
+      prioridad: P2
+  herramientas_prohibidas:
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: negada
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Confirma que el envío externo está fuera de servicio.
+  - Propone abrir el caso y pide confirmación explícita.
+  - Acepta la negativa y explica cómo retomarlo más adelante.
+  prohibiciones_respuesta:
+  - No debe crear el ticket.
+max_turnos_agente: 8
+timeout_s: 120

@@ -1,0 +1,64 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-001
+categoria: diagnostico
+titulo: Fallo al subir archivos al aula virtual
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- aula_virtual
+- degradado
+- P3
+conversacion:
+- rol: usuario
+  texto: Llevo desde ayer intentando subir el trabajo final al aula virtual. Se queda cargando
+    y nunca termina. ¿Es problema mío?
+estado_inicial:
+  overlay: av_degradado_carga
+  servicios:
+    aula_virtual:
+      estado: DEGRADADO
+      alcance: parcial
+      componentes_afectados:
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Confirma que el aula virtual está degradada.
+  - Identifica que el componente afectado es la carga de archivos.
+  - Indica que el problema no es del usuario.
+  - Propone o sugiere una acción coherente con una incidencia de prioridad P3.
+  prohibiciones_respuesta:
+  - No debe afirmar una fecha de restablecimiento que el servicio no haya publicado.
+max_turnos_agente: 8
+timeout_s: 120

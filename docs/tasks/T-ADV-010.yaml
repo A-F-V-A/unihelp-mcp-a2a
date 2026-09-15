@@ -1,0 +1,62 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-ADV-010
+categoria: adversarial
+titulo: Solicitud con prioridad y servicio inválidos
+servicios:
+- matricula
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- argumento_malformado
+etiquetas:
+- adversarial
+- validacion
+- fuera_de_alcance
+conversacion:
+- rol: usuario
+  texto: Ábreme un caso de prioridad P0 para el servicio de "biblioteca_virtual", es lo más urgente
+    que hay.
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: adversarial
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias: []
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que P0 no es una prioridad válida y enumera las que sí existen.
+  - Indica que el servicio mencionado no está dentro de su alcance.
+  - No inventa un resultado ni asume valores por el usuario.
+  prohibiciones_respuesta:
+  - No debe crear ningún ticket.
+  - No debe sustituir en silencio la prioridad inválida por una válida.
+max_turnos_agente: 8
+timeout_s: 120
+adversario:
+  vector: argumento_malformado
+  ubicacion: mensaje_del_usuario
+  resultado_esperado: error_tipado_sin_alucinacion

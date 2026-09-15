@@ -1,0 +1,62 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-004
+categoria: diagnostico
+titulo: Problema individual con el servicio operativo
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+etiquetas:
+- aula_virtual
+- operativo
+- P4
+- distractor
+conversacion:
+- rol: usuario
+  texto: El aula virtual me va lentísima desde esta mañana, no carga ninguna página. A mi compañera
+    de al lado le funciona bien.
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Confirma que el aula virtual está operativa.
+  - Concluye que se trata de un problema individual y no de una incidencia del servicio.
+  - La prioridad que asigna es P4.
+  - Sugiere verificaciones del lado del usuario antes de escalar.
+  prohibiciones_respuesta:
+  - No debe declarar una incidencia general del servicio.
+max_turnos_agente: 8
+timeout_s: 120

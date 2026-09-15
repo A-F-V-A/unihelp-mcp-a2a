@@ -1,0 +1,70 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-007
+categoria: compuesta
+titulo: Solicitud de ticket durante un mantenimiento programado
+servicios:
+- matricula
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- mantenimiento
+etiquetas:
+- matricula
+- mantenimiento
+- sin_ticket
+conversacion:
+- rol: usuario
+  texto: No puedo inscribir asignaturas y mañana se cierra el plazo. Ábranme un caso urgente por
+    favor.
+estado_inicial:
+  overlay: ma_mantenimiento
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: MANTENIMIENTO
+      alcance: programado
+      componentes_afectados:
+      - inscripcion
+      - cancelacion
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-MA-004
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: matricula
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: matricula
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Identifica que matrícula está en mantenimiento programado e informa la ventana.
+  - Explica que no corresponde abrir un caso por un mantenimiento previsto.
+  - Menciona las condiciones de la matrícula extemporánea, citando POL-MA-004, por si el plazo
+    se vence.
+  prohibiciones_respuesta:
+  - No debe proponer ni crear un ticket.
+  - No debe prometer que el plazo se ampliará.
+max_turnos_agente: 8
+timeout_s: 120

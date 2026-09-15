@@ -1,0 +1,82 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-002
+categoria: compuesta
+titulo: Caída de autenticación y solicitud de registro del caso
+servicios:
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+- confirmacion_otorgada
+etiquetas:
+- autenticacion
+- ticket
+- P2
+conversacion:
+- rol: usuario
+  texto: Nadie en mi grupo puede iniciar sesión desde esta mañana. ¿Pueden dejar constancia del
+    problema y decirme qué hacer mientras tanto?
+- rol: usuario
+  texto: Sí, por favor créalo.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: au_degradado_total
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: DEGRADADO
+      alcance: total
+      componentes_afectados:
+      - inicio_sesion
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-AU-002
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: autenticacion
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: autenticacion
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: autenticacion
+      prioridad: P2
+  - nombre: confirmar_propuesta
+    args_parciales: {}
+  - nombre: crear_ticket_simulado
+    args_parciales: {}
+  herramientas_prohibidas: []
+  orden_parcial:
+  - - proponer_ticket
+    - confirmar_propuesta
+  - - confirmar_propuesta
+    - crear_ticket_simulado
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: otorgada
+  ticket:
+    debe_crearse: true
+    servicio: autenticacion
+    prioridad: P2
+    categoria: acceso
+  puntos_clave_respuesta:
+  - Confirma que la autenticación está degradada con alcance total.
+  - Asigna prioridad P2 y lo justifica con el estado y el alcance.
+  - Informa el número del ticket creado.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

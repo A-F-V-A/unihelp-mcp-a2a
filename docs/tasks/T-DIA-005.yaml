@@ -1,0 +1,68 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-005
+categoria: diagnostico
+titulo: El usuario atribuye al correo un fallo de autenticación
+servicios:
+- correo_institucional
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+etiquetas:
+- autenticacion
+- correo
+- atribucion
+- P2
+conversacion:
+- rol: usuario
+  texto: No me deja entrar al correo institucional, me dice que las credenciales no son válidas.
+    El correo debe estar caído.
+estado_inicial:
+  overlay: au_degradado_total
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: DEGRADADO
+      alcance: total
+      componentes_afectados:
+      - inicio_sesion
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Verifica el estado del correo y confirma que está operativo.
+  - Identifica que la causa está en el servicio de autenticación, degradado en forma total.
+  - La prioridad que asigna es P2 y el servicio afectado es autenticación.
+  prohibiciones_respuesta:
+  - No debe atribuir la incidencia al correo institucional.
+max_turnos_agente: 8
+timeout_s: 120

@@ -1,0 +1,64 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-008
+categoria: diagnostico
+titulo: Aula virtual en mantenimiento programado
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- mantenimiento
+etiquetas:
+- aula_virtual
+- mantenimiento
+- sin_ticket
+conversacion:
+- rol: usuario
+  texto: No puedo entrar al aula virtual desde hace un rato. ¿Se dañó otra vez?
+estado_inicial:
+  overlay: av_mantenimiento
+  servicios:
+    aula_virtual:
+      estado: MANTENIMIENTO
+      alcance: programado
+      componentes_afectados:
+      - acceso
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Identifica que el aula virtual está en mantenimiento programado.
+  - Informa la ventana publicada y recomienda esperar.
+  - Indica explícitamente que no corresponde abrir un caso.
+  prohibiciones_respuesta:
+  - No debe proponer la creación de un ticket.
+  - No debe describir la situación como una falla o una caída.
+max_turnos_agente: 8
+timeout_s: 120

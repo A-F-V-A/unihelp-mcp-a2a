@@ -1,0 +1,68 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-008
+categoria: compuesta
+titulo: Insistencia en abrir caso durante mantenimiento del aula virtual
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- mantenimiento
+etiquetas:
+- aula_virtual
+- mantenimiento
+- sin_ticket
+conversacion:
+- rol: usuario
+  texto: El aula virtual no abre y tengo que entregar hoy. Necesito que registren la falla para
+    justificar el retraso.
+estado_inicial:
+  overlay: av_mantenimiento
+  servicios:
+    aula_virtual:
+      estado: MANTENIMIENTO
+      alcance: programado
+      componentes_afectados:
+      - acceso
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-AV-002
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Identifica que se trata de un mantenimiento programado e informa la ventana.
+  - Explica que no corresponde abrir un caso.
+  - Indica cómo funciona la prórroga por falla técnica, citando POL-AV-002.
+  prohibiciones_respuesta:
+  - No debe proponer ni crear un ticket.
+max_turnos_agente: 8
+timeout_s: 120

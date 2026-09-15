@@ -1,0 +1,62 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-002
+categoria: diagnostico
+titulo: Lentitud generalizada al iniciar sesión
+servicios:
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- autenticacion
+- degradado
+- P2
+conversacion:
+- rol: usuario
+  texto: Ni yo ni mis compañeros podemos entrar al portal, se queda pensando y al final da error.
+    ¿Qué está pasando?
+estado_inicial:
+  overlay: au_degradado_total
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: DEGRADADO
+      alcance: total
+      componentes_afectados:
+      - inicio_sesion
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Confirma que la autenticación está degradada y que el alcance es total.
+  - Explica que afecta a toda la comunidad, no solo a quien consulta.
+  - La prioridad que asigna es P2, coherente con un servicio crítico degradado en forma total.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

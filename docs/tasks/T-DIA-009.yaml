@@ -1,0 +1,69 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-009
+categoria: diagnostico
+titulo: Fallo del aula virtual causado por la autenticación
+servicios:
+- aula_virtual
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- multi_servicio
+etiquetas:
+- autenticacion
+- aula_virtual
+- P1
+- multiservicio
+conversacion:
+- rol: usuario
+  texto: No puedo entrar al aula virtual. Me manda a la pantalla de inicio de sesión y ahí se
+    queda dando vueltas.
+estado_inicial:
+  overlay: au_fuera_total
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: FUERA_DE_SERVICIO
+      alcance: total
+      componentes_afectados:
+      - inicio_sesion
+      - propagacion_de_contrasena
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Verifica ambos servicios y confirma que el aula virtual está operativa.
+  - Identifica que la autenticación está fuera de servicio con alcance total.
+  - La prioridad que asigna es P1 y el servicio afectado es autenticación.
+  prohibiciones_respuesta:
+  - No debe atribuir la incidencia al aula virtual.
+max_turnos_agente: 8
+timeout_s: 120

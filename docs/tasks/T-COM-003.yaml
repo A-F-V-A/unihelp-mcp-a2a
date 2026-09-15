@@ -1,0 +1,84 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-003
+categoria: compuesta
+titulo: Rebote de correo externo y consulta sobre el límite de destinatarios
+servicios:
+- correo_institucional
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+- confirmacion_otorgada
+etiquetas:
+- correo
+- limite
+- ticket
+- P2
+conversacion:
+- rol: usuario
+  texto: No me salen los correos a direcciones externas. Iba a mandar una convocatoria a unos
+    150 contactos de fuera. ¿Hay algún límite y pueden registrar la falla?
+- rol: usuario
+  texto: Sí, por favor créalo.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: ci_fuera_parcial
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: FUERA_DE_SERVICIO
+      alcance: parcial
+      componentes_afectados:
+      - envio_externo
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-CI-004
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: correo_institucional
+      prioridad: P2
+  - nombre: confirmar_propuesta
+    args_parciales: {}
+  - nombre: crear_ticket_simulado
+    args_parciales: {}
+  herramientas_prohibidas: []
+  orden_parcial:
+  - - proponer_ticket
+    - confirmar_propuesta
+  - - confirmar_propuesta
+    - crear_ticket_simulado
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: otorgada
+  ticket:
+    debe_crearse: true
+    servicio: correo_institucional
+    prioridad: P2
+    categoria: error_funcional
+  puntos_clave_respuesta:
+  - Indica que el envío externo está fuera de servicio.
+  - Menciona el límite de 100 destinatarios externos por día, citando POL-CI-004.
+  - Advierte que un envío de 150 contactos requiere autorización.
+  - Informa el número del ticket creado.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

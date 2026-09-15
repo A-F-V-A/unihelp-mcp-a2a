@@ -1,0 +1,86 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-001
+categoria: compuesta
+titulo: Degradación del aula virtual y solicitud de prórroga
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+- confirmacion_otorgada
+etiquetas:
+- aula_virtual
+- prorroga
+- ticket
+- P3
+conversacion:
+- rol: usuario
+  texto: Llevo dos días sin poder subir el trabajo final al aula virtual, se queda cargando y
+    nunca termina. ¿Puedo pedir prórroga y me pueden abrir un caso?
+- rol: usuario
+  texto: Sí, por favor créalo.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: av_degradado_carga
+  servicios:
+    aula_virtual:
+      estado: DEGRADADO
+      alcance: parcial
+      componentes_afectados:
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-AV-002
+  politicas_prohibidas:
+  - POL-AV-003
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: aula_virtual
+      prioridad: P3
+  - nombre: confirmar_propuesta
+    args_parciales: {}
+  - nombre: crear_ticket_simulado
+    args_parciales: {}
+  herramientas_prohibidas: []
+  orden_parcial:
+  - - proponer_ticket
+    - confirmar_propuesta
+  - - confirmar_propuesta
+    - crear_ticket_simulado
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: otorgada
+  ticket:
+    debe_crearse: true
+    servicio: aula_virtual
+    prioridad: P3
+    categoria: rendimiento
+  puntos_clave_respuesta:
+  - Indica que el aula virtual está degradada en la carga de archivos.
+  - Cita el procedimiento de prórroga por falla técnica con su código POL-AV-002.
+  - Menciona el plazo de 3 días hábiles para radicar la solicitud.
+  - Informa el número del ticket creado.
+  prohibiciones_respuesta:
+  - No debe afirmar una fecha de restablecimiento que el servicio no haya publicado.
+max_turnos_agente: 8
+timeout_s: 120

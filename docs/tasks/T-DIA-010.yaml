@@ -1,0 +1,67 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-DIA-010
+categoria: diagnostico
+titulo: No llegan los correos de recuperación de contraseña
+servicios:
+- correo_institucional
+- autenticacion
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- multi_servicio
+etiquetas:
+- correo
+- filtros
+- P3
+- multiservicio
+conversacion:
+- rol: usuario
+  texto: Pedí el correo para restablecer la contraseña y nunca me llegó. Ya revisé la bandeja
+    de no deseados.
+estado_inicial:
+  overlay: ci_degradado_filtros
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: DEGRADADO
+      alcance: parcial
+      componentes_afectados:
+      - filtros
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: diagnostico
+  politicas_requeridas: []
+  politicas_prohibidas: []
+  herramientas_obligatorias:
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: correo_institucional
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: autenticacion
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Confirma que el correo está degradado en el componente de filtros.
+  - Confirma que la autenticación está operativa.
+  - La prioridad que asigna es P3 y el servicio afectado es el correo institucional.
+  prohibiciones_respuesta: []
+max_turnos_agente: 8
+timeout_s: 120

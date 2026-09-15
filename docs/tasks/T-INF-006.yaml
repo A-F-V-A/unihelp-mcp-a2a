@@ -1,0 +1,66 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-006
+categoria: informativa
+titulo: Prórroga de entrega cuando la causa es una falla del sistema
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+etiquetas:
+- aula_virtual
+- prorroga
+- distractor
+conversacion:
+- rol: usuario
+  texto: No pude subir el trabajo porque el aula virtual estaba fallando. ¿Cómo pido más plazo?
+estado_inicial:
+  overlay: av_degradado_carga
+  servicios:
+    aula_virtual:
+      estado: DEGRADADO
+      alcance: parcial
+      componentes_afectados:
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-AV-002
+  politicas_prohibidas:
+  - POL-AV-003
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: aula_virtual
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que el plazo para radicar la solicitud es de 3 días hábiles.
+  - Menciona que se requiere el número del ticket que registra la falla.
+  - Indica que la aprueba el docente de la asignatura.
+  - Cita el código POL-AV-002.
+  prohibiciones_respuesta:
+  - No debe pedir soporte documental ni mencionar al Consejo de Facultad, que corresponden a la
+    prórroga por fuerza mayor personal.
+max_turnos_agente: 8
+timeout_s: 120

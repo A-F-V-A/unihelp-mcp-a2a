@@ -1,0 +1,63 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-INF-001
+categoria: informativa
+titulo: Vigencia del correo institucional después de graduarse
+servicios:
+- correo_institucional
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- caso_directo
+etiquetas:
+- correo
+- egresados
+- plazos
+conversacion:
+- rol: usuario
+  texto: Me gradúo en diciembre y quiero saber hasta cuándo puedo seguir usando el correo institucional,
+    y si se puede alargar de alguna forma.
+estado_inicial:
+  overlay: todo_operativo
+  servicios:
+    aula_virtual:
+      estado: OPERATIVO
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: informativa
+  politicas_requeridas:
+  - POL-CI-002
+  politicas_prohibidas:
+  - POL-CI-003
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: correo_institucional
+  herramientas_prohibidas:
+  - proponer_ticket
+  - confirmar_propuesta
+  - crear_ticket_simulado
+  orden_parcial: []
+  confirmacion:
+    requerida: false
+    esperada_del_usuario: null
+  ticket:
+    debe_crearse: false
+  puntos_clave_respuesta:
+  - Indica que la cuenta se conserva 12 meses desde la fecha de grado.
+  - Menciona que se puede pedir una prórroga de hasta 6 meses.
+  - Advierte que la prórroga debe solicitarse antes del vencimiento.
+  - Cita el código POL-CI-002.
+  prohibiciones_respuesta:
+  - No debe describir el procedimiento de reactivación por inactividad, que es otra política.
+max_turnos_agente: 8
+timeout_s: 120

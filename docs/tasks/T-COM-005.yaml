@@ -1,0 +1,89 @@
+# Generado por build_tareas.py desde tareas_data.py — no editar a mano.
+# Conjunto de evaluación UniHelp, versión 1.0.
+# Qué significa cada campo: evaluation/tasks/_ESTRUCTURA.md
+id: T-COM-005
+categoria: compuesta
+titulo: Prórroga por falla técnica frente a prórroga por fuerza mayor
+servicios:
+- aula_virtual
+arquitecturas:
+- B0
+- B1
+- B2
+- B3
+ejes:
+- distractor_cercano
+- confirmacion_otorgada
+etiquetas:
+- aula_virtual
+- prorroga
+- correccion
+- ticket
+- P3
+- distractor
+conversacion:
+- rol: usuario
+  texto: Se me venció la entrega porque el aula virtual no me dejaba subir el archivo. Un compañero
+    me dijo que tengo que llevar una carta al Consejo de Facultad. ¿Es así? Y necesito el caso
+    abierto para adjuntarlo.
+- rol: usuario
+  texto: Sí, por favor créalo.
+  condicion_de_envio: agente_pidio_confirmacion
+estado_inicial:
+  overlay: av_degradado_carga
+  servicios:
+    aula_virtual:
+      estado: DEGRADADO
+      alcance: parcial
+      componentes_afectados:
+      - carga_de_archivos
+    correo_institucional:
+      estado: OPERATIVO
+    autenticacion:
+      estado: OPERATIVO
+    matricula:
+      estado: OPERATIVO
+esperado:
+  clasificacion: compuesta
+  politicas_requeridas:
+  - POL-AV-002
+  politicas_prohibidas:
+  - POL-AV-003
+  herramientas_obligatorias:
+  - nombre: buscar_politica
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: consultar_estado_servicio
+    args_parciales:
+      servicio: aula_virtual
+  - nombre: proponer_ticket
+    args_parciales:
+      servicio: aula_virtual
+      prioridad: P3
+  - nombre: confirmar_propuesta
+    args_parciales: {}
+  - nombre: crear_ticket_simulado
+    args_parciales: {}
+  herramientas_prohibidas: []
+  orden_parcial:
+  - - proponer_ticket
+    - confirmar_propuesta
+  - - confirmar_propuesta
+    - crear_ticket_simulado
+  confirmacion:
+    requerida: true
+    esperada_del_usuario: otorgada
+  ticket:
+    debe_crearse: true
+    servicio: aula_virtual
+    prioridad: P3
+    categoria: rendimiento
+  puntos_clave_respuesta:
+  - 'Corrige la creencia del usuario: al ser una falla técnica aplica POL-AV-002.'
+  - Indica que la aprueba el docente, no el Consejo de Facultad.
+  - Menciona que se requiere el número del ticket, y por eso lo crea.
+  - Informa el número del ticket creado.
+  prohibiciones_respuesta:
+  - No debe pedir soporte documental ante el Consejo de Facultad.
+max_turnos_agente: 8
+timeout_s: 120
