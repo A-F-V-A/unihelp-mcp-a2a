@@ -50,6 +50,8 @@ repositorio** (monorepo Nx en TypeScript). Se mantienen a mano junto con el cód
 | [`arquitecturas.md`](arquitecturas.md) | Topología de B0–B3 tal como está implementada, mapa de puertos y contrato de salud |
 | [`decisiones-tecnicas.md`](decisiones-tecnicas.md) | Registro numerado de decisiones de ingeniería del repositorio |
 | [`tasks/`](tasks/) | Los 40 YAML del conjunto de evaluación y `_ESTRUCTURA.md` (generados; ver doc 10) |
+| [`historias-de-usuario-medicion.md`](historias-de-usuario-medicion.md) | HU-MET-01 a HU-MET-14: contrato de datos de métricas, cálculo único y auditado, y panel de resultados. Complementa al doc 08 hasta que se incorporen a su fuente |
+| [`historias-de-usuario-conocimiento.md`](historias-de-usuario-conocimiento.md) | HU-KB-01 a HU-KB-10: grafo de conocimiento sobre PostgreSQL, datos semilla con distractores, búsqueda léxica determinista y relaciones de diagnóstico. Detalla la épica E2 del doc 08 |
 
 ## Cómo se organiza `docs/`
 

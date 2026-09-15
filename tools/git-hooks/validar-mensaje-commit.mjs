@@ -13,7 +13,12 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const HISTORIAS = resolve(RAIZ, 'docs', '08-historias-de-usuario.md');
+/** Documentos que declaran historias con encabezados `### HU-xx`, `### HU-MET-xx` o `### HU-KB-xx`. */
+const DOCUMENTOS_HISTORIAS = [
+  resolve(RAIZ, 'docs', '08-historias-de-usuario.md'),
+  resolve(RAIZ, 'docs', 'historias-de-usuario-medicion.md'),
+  resolve(RAIZ, 'docs', 'historias-de-usuario-conocimiento.md'),
+];
 
 const TIPOS = ['feat', 'fix', 'exp', 'docs', 'refactor', 'test', 'perf', 'build', 'ci', 'chore'];
 const LARGO_MAXIMO_TITULO = 100;
@@ -48,10 +53,14 @@ function limpiar(crudo) {
 }
 
 function historiasDocumentadas() {
-  if (!existsSync(HISTORIAS)) {
+  const existentes = DOCUMENTOS_HISTORIAS.filter((ruta) => existsSync(ruta));
+  if (existentes.length === 0) {
     return null;
   }
-  return new Set([...readFileSync(HISTORIAS, 'utf8').matchAll(/^### (HU-\d+)/gm)].map((m) => m[1]));
+  const codigos = existentes.flatMap((ruta) =>
+    [...readFileSync(ruta, 'utf8').matchAll(/^### (HU-(?:[A-Z]+-)?\d+)/gm)].map((m) => m[1]),
+  );
+  return new Set(codigos);
 }
 
 function campo(mensaje, nombre) {
@@ -113,7 +122,7 @@ export function validar(crudo) {
       const desconocidas = codigos.filter((codigo) => !conocidas.has(codigo));
       if (desconocidas.length > 0) {
         errores.push(
-          `Historias que no existen en docs/08: ${desconocidas.join(', ')}. (Las HU-FE-xx aun no estan documentadas; ver AGENTS.md, discrepancias.)`,
+          `Historias que no existen en docs/08 ni en docs/historias-de-usuario-*.md: ${desconocidas.join(', ')}. (Las HU-FE-xx aun no estan documentadas; ver AGENTS.md, discrepancias.)`,
         );
       }
     }
