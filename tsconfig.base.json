@@ -18,7 +18,9 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "paths": {
+      "@unihelp/conocimiento": ["./libs/conocimiento/src/index.ts"],
       "@unihelp/contratos": ["./libs/contratos/src/index.ts"],
       "@unihelp/dominio": ["./libs/dominio/src/index.ts"]
     }

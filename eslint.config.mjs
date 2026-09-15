@@ -52,10 +52,12 @@ export default [
               sourceTag: 'arq:b3',
               onlyDependOnLibsWithTags: ['arq:compartido'],
             },
-            // El frontend es unico y solo conoce los contratos compartidos.
+            // El frontend es unico y solo conoce los contratos compartidos. Nunca
+            // una libreria de backend: arrastraria TypeORM al bundle (decision 16).
             {
               sourceTag: 'arq:frontend',
               onlyDependOnLibsWithTags: ['arq:compartido'],
+              notDependOnLibsWithTags: ['alcance:backend'],
             },
           ],
         },

@@ -1,0 +1,56 @@
+{
+  "name": "conocimiento",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/conocimiento/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {
+    "test-integracion": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm exec jest --config libs/conocimiento/jest.integracion.config.cts --runInBand"
+      }
+    },
+    "migrar": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/conocimiento/src/infraestructura/cli/conocimiento.cli.ts migrar",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    },
+    "sembrar": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/conocimiento/src/infraestructura/cli/conocimiento.cli.ts sembrar",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    },
+    "restablecer": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/conocimiento/src/infraestructura/cli/conocimiento.cli.ts restablecer",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    },
+    "huellas": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/conocimiento/src/infraestructura/cli/conocimiento.cli.ts huellas",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    },
+    "huella": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/conocimiento/src/infraestructura/cli/conocimiento.cli.ts huella",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    }
+  }
+}

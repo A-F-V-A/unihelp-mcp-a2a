@@ -1,0 +1,257 @@
+{
+  "descripcion": "Casos que fijan el comportamiento de la busqueda sobre la semilla. Cada objetivo es una politica que alguna tarea de docs/10 espera citar, con al menos cuatro distractoras (HU-KB-04). Los usan las pruebas; no se cargan en la base.",
+  "objetivos": [
+    {
+      "id": "prorroga-falla-tecnica",
+      "tareas": ["T-INF-006", "T-COM-001", "T-COM-005", "T-COM-008", "T-COM-009"],
+      "corpus": "estandar",
+      "consulta": "prórroga de entrega por falla técnica comprobada",
+      "esperada": "POL-AV-002",
+      "distractores": [
+        { "codigo": "POL-AV-003", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-002", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AV-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "prorroga-fuerza-mayor",
+      "tareas": [],
+      "corpus": "estandar",
+      "consulta": "prórroga de entrega por fuerza mayor personal",
+      "esperada": "POL-AV-003",
+      "distractores": [
+        { "codigo": "POL-AV-002", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-003", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AV-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "curso-archivado",
+      "tareas": ["T-INF-004"],
+      "corpus": "estandar",
+      "consulta": "apertura temporal de un curso archivado",
+      "esperada": "POL-AV-004",
+      "distractores": [
+        { "codigo": "POL-AV-004", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AV-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-010", "version": "1.0", "difiereEn": "categoria" },
+        { "codigo": "POL-AV-001", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "correo-egresados",
+      "tareas": ["T-INF-001"],
+      "corpus": "estandar",
+      "consulta": "vigencia del correo institucional para egresados",
+      "esperada": "POL-CI-002",
+      "distractores": [
+        { "codigo": "POL-CI-003", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-002", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-CI-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "correo-inactividad",
+      "tareas": [],
+      "corpus": "estandar",
+      "consulta": "reactivación del correo institucional por inactividad",
+      "esperada": "POL-CI-003",
+      "distractores": [
+        { "codigo": "POL-CI-002", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-003", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-CI-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "recuperar-acceso-correo",
+      "tareas": ["T-INF-010"],
+      "corpus": "estandar",
+      "consulta": "recuperación de acceso al correo institucional",
+      "esperada": "POL-CI-001",
+      "distractores": [
+        { "codigo": "POL-CI-001", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AU-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-003", "version": "1.1", "difiereEn": "categoria" },
+        { "codigo": "POL-CI-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "limite-destinatarios-externos",
+      "tareas": ["T-COM-003", "T-COM-010"],
+      "corpus": "estandar",
+      "consulta": "límite de envío a destinatarios externos",
+      "esperada": "POL-CI-004",
+      "distractores": [
+        { "codigo": "POL-CI-004", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-CI-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-CI-010", "version": "1.0", "difiereEn": "categoria" },
+        { "codigo": "POL-CI-011", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "cambio-contrasena",
+      "tareas": ["T-INF-003", "T-INF-010"],
+      "corpus": "estandar",
+      "consulta": "cambio de contraseña institucional",
+      "esperada": "POL-AU-001",
+      "distractores": [
+        { "codigo": "POL-AU-001", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AU-003", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "bloqueo-intentos-fallidos",
+      "tareas": ["T-INF-007", "T-COM-002"],
+      "corpus": "estandar",
+      "consulta": "desbloqueo de cuenta por intentos fallidos",
+      "esperada": "POL-AU-002",
+      "distractores": [
+        { "codigo": "POL-AU-003", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-002", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AU-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "bloqueo-incidente-seguridad",
+      "tareas": [],
+      "corpus": "estandar",
+      "consulta": "desbloqueo de cuenta por incidente de seguridad",
+      "esperada": "POL-AU-003",
+      "distractores": [
+        { "codigo": "POL-AU-002", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-003", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AU-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AU-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "cancelacion-ordinaria",
+      "tareas": ["T-INF-002"],
+      "corpus": "estandar",
+      "consulta": "cancelación de asignatura dentro del plazo ordinario",
+      "esperada": "POL-MA-001",
+      "distractores": [
+        { "codigo": "POL-MA-002", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-MA-001", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-MA-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-MA-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "cancelacion-extemporanea",
+      "tareas": ["T-INF-005", "T-COM-004"],
+      "corpus": "estandar",
+      "consulta": "cancelación extemporánea de asignatura",
+      "esperada": "POL-MA-002",
+      "distractores": [
+        { "codigo": "POL-MA-001", "version": "1.1", "difiereEn": "alcance" },
+        { "codigo": "POL-MA-002", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-MA-007", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-MA-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "matricula-extemporanea",
+      "tareas": ["T-COM-007"],
+      "corpus": "estandar",
+      "consulta": "matrícula extemporánea con recargo",
+      "esperada": "POL-MA-004",
+      "distractores": [
+        { "codigo": "POL-MA-004", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-MA-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-MA-002", "version": "1.1", "difiereEn": "categoria" },
+        { "codigo": "POL-MA-005", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "uso-responsable-aula-adversarial",
+      "tareas": ["T-ADV-001"],
+      "corpus": "adversarial",
+      "consulta": "normas de uso responsable del aula virtual",
+      "esperada": "POL-AV-006",
+      "distractores": [
+        { "codigo": "POL-AV-006", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-AV-005", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-009", "version": "1.0", "difiereEn": "alcance" },
+        { "codigo": "POL-AV-001", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "cuotas-correo-adversarial",
+      "tareas": ["T-ADV-002"],
+      "corpus": "adversarial",
+      "consulta": "espacio de almacenamiento del correo institucional",
+      "esperada": "POL-CI-006",
+      "distractores": [
+        { "codigo": "POL-CI-006", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-CI-002", "version": "1.1", "difiereEn": "categoria" },
+        { "codigo": "POL-CI-008", "version": "1.0", "difiereEn": "categoria" },
+        { "codigo": "POL-CI-001", "version": "1.1", "difiereEn": "categoria" }
+      ]
+    },
+    {
+      "id": "estado-matricula-adversarial",
+      "tareas": ["T-ADV-003"],
+      "corpus": "adversarial",
+      "consulta": "consultar el estado de la matrícula",
+      "esperada": "POL-MA-006",
+      "distractores": [
+        { "codigo": "POL-MA-006", "version": "1.0", "difiereEn": "version" },
+        { "codigo": "POL-MA-004", "version": "1.1", "difiereEn": "categoria" },
+        { "codigo": "POL-MA-005", "version": "1.0", "difiereEn": "categoria" },
+        { "codigo": "POL-AU-008", "version": "1.0", "difiereEn": "categoria" }
+      ]
+    }
+  ],
+  "sinResultados": [
+    {
+      "id": "pago-en-cuotas",
+      "tarea": "T-INF-008",
+      "corpus": "estandar",
+      "consulta": "¿Puedo pagar la matrícula en cuotas mensuales con tarjeta de crédito?",
+      "motivo": "bajo-umbral"
+    },
+    {
+      "id": "biblioteca-digital",
+      "tarea": "T-INF-009",
+      "corpus": "estandar",
+      "consulta": "¿Cuántos libros puedo tener prestados al tiempo en la biblioteca digital?",
+      "motivo": "bajo-umbral"
+    },
+    {
+      "id": "wifi-del-campus",
+      "tarea": "T-DIA-006",
+      "corpus": "estandar",
+      "consulta": "El wifi del bloque de ingeniería se cae cada diez minutos",
+      "motivo": "bajo-umbral"
+    },
+    {
+      "id": "talanquera-parqueadero",
+      "tarea": "T-COM-006",
+      "corpus": "estandar",
+      "consulta": "La talanquera del parqueadero no lee mi carné",
+      "motivo": "sin-coincidencias"
+    },
+    {
+      "id": "sin-vocabulario-comun",
+      "tarea": null,
+      "corpus": "estandar",
+      "consulta": "menú vegetariano de la cafetería",
+      "motivo": "sin-coincidencias"
+    },
+    {
+      "id": "solo-palabras-vacias",
+      "tarea": null,
+      "corpus": "estandar",
+      "consulta": "¿y de la el?",
+      "motivo": "consulta-sin-terminos"
+    }
+  ]
+}
