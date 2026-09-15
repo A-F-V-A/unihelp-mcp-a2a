@@ -51,7 +51,12 @@ funcionalidades F-1 a F-7 y requisitos RNF-01 a RNF-08 se definen ahi.
    documentos del repositorio.
 4. [`docs/08-historias-de-usuario.md`](docs/08-historias-de-usuario.md) — que
    debe hacer el sistema (HU-01 a HU-45), criterios de aceptacion y **fuera de
-   alcance**. Toda funcionalidad nace de una HU.
+   alcance**. Toda funcionalidad nace de una HU. Complementos del backlog:
+   - Medicion y visualizacion (HU-MET-01 a HU-MET-14):
+     [`docs/historias-de-usuario-medicion.md`](docs/historias-de-usuario-medicion.md).
+   - Base de conocimiento, grafo sobre PostgreSQL con busqueda lexica
+     (HU-KB-01 a HU-KB-10):
+     [`docs/historias-de-usuario-conocimiento.md`](docs/historias-de-usuario-conocimiento.md).
 5. [`docs/arquitecturas.md`](docs/arquitecturas.md) — topologia y puertos tal
    como estan implementados.
 6. [`docs/decisiones-tecnicas.md`](docs/decisiones-tecnicas.md) — **por que**
@@ -63,16 +68,18 @@ funcionalidades F-1 a F-7 y requisitos RNF-01 a RNF-08 se definen ahi.
 
 Segun la tarea, lee ademas:
 
-| Si vas a...                                       | Lee                                                                                                                                         |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tocar `apps/web` o crear una capacidad nueva      | [`.claude/skills/arquitectura-limpia/SKILL.md`](.claude/skills/arquitectura-limpia/SKILL.md)                                                |
-| Cambiar un DTO, una ruta, un tipo o un catalogo   | [`.claude/skills/contratos-y-dominio/SKILL.md`](.claude/skills/contratos-y-dominio/SKILL.md) y `docs/01` (modelo de dominio, contrato REST) |
-| Escribir comentarios, un README o algo en `docs/` | [`.claude/skills/documentar/SKILL.md`](.claude/skills/documentar/SKILL.md)                                                                  |
-| Implementar `mcp-server` o un agente B1           | `docs/02-servidor-mcp.md`                                                                                                                   |
-| Implementar B2 o B3 (orquestador, especialistas)  | `docs/03-agentes-a2a.md` y `docs/01` (B2 y B3 deben ser identicos salvo transporte)                                                         |
-| Trabajar en `experiment/` (runner, trazas, juez)  | `docs/04`, `docs/05`, `docs/09`, `docs/10` y `docs/tasks/_ESTRUCTURA.md`                                                                    |
-| Planear que construir y cuando                    | `docs/06-plan-10-semanas-detallado.md` y seccion 19 de `docs/08`                                                                            |
-| Tocar Docker o puertos                            | `infra/docker/docker-compose.yml` y `docs/arquitecturas.md`                                                                                 |
+| Si vas a...                                                                          | Lee                                                                                                                                         |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tocar `apps/web` o crear una capacidad nueva                                         | [`.claude/skills/arquitectura-limpia/SKILL.md`](.claude/skills/arquitectura-limpia/SKILL.md)                                                |
+| Cambiar un DTO, una ruta, un tipo o un catalogo                                      | [`.claude/skills/contratos-y-dominio/SKILL.md`](.claude/skills/contratos-y-dominio/SKILL.md) y `docs/01` (modelo de dominio, contrato REST) |
+| Escribir comentarios, un README o algo en `docs/`                                    | [`.claude/skills/documentar/SKILL.md`](.claude/skills/documentar/SKILL.md)                                                                  |
+| Implementar `mcp-server` o un agente B1                                              | `docs/02-servidor-mcp.md`                                                                                                                   |
+| Implementar B2 o B3 (orquestador, especialistas)                                     | `docs/03-agentes-a2a.md` y `docs/01` (B2 y B3 deben ser identicos salvo transporte)                                                         |
+| Trabajar en `experiment/` (runner, trazas, juez)                                     | `docs/04`, `docs/05`, `docs/09`, `docs/10`, `docs/tasks/_ESTRUCTURA.md` y las reglas RM-01 a RM-17                                          |
+| Metricas, cuaderno de analisis o panel de resultados                                 | `docs/historias-de-usuario-medicion.md` (HU-MET-01 a HU-MET-14), `docs/09` y las reglas RM-01 a RM-17                                       |
+| Base de conocimiento (esquema, semillas, busqueda de politicas, estado de servicios) | `docs/historias-de-usuario-conocimiento.md` (HU-KB-01 a HU-KB-10), skill `contratos-y-dominio` y reglas RM-01, RM-10, RM-17                 |
+| Planear que construir y cuando                                                       | `docs/06-plan-10-semanas-detallado.md` y seccion 19 de `docs/08`                                                                            |
+| Tocar Docker o puertos                                                               | `infra/docker/docker-compose.yml` y `docs/arquitecturas.md`                                                                                 |
 
 ### Que documento manda
 
@@ -162,6 +169,63 @@ siete; lo unico que cambia es `identidad.ts`). Dentro de `apps/web/src/app/`:
     `docs/10`, `docs/tasks/*.yaml`): se cambian en su fuente.
 13. **Datos solo sinteticos** (RNF-05): nada de nombres, correos o
     identificaciones reales en fixtures, seeds o tareas.
+
+### Reglas del experimento y de la medicion (RM-01 a RM-17)
+
+Protegen lo que las cifras del estudio significan. Se citan por codigo
+(`RM-17`). Las decisiones D1-D9 estan en `docs/09-plan-de-medicion.md`
+(seccion 12); las historias de medicion, en
+`docs/historias-de-usuario-medicion.md`.
+
+**Prohibiciones absolutas**
+
+- **RM-01.** NUNCA implementar busqueda semantica, embeddings o similitud
+  vectorial. La recuperacion es lexica y determinista por decision registrada
+  (HU-08).
+- **RM-02.** NUNCA calcular una metrica fuera del cuaderno de analisis en
+  Python. El frontend y NestJS solo leen resultados ya calculados (HU-MET-04,
+  HU-MET-09).
+- **RM-03.** NUNCA usar 800 como tamaño de muestra para inferencia. Son 40
+  tareas (HU-MET-05).
+- **RM-04.** NUNCA introducir paralelismo dentro de una ejecucion (D1).
+- **RM-05.** NUNCA calcular una duracion restando marcas de tiempo de procesos
+  distintos. Se restan duraciones reportadas por cada receptor (D5).
+- **RM-06.** NUNCA usar reloj de pared para medir duraciones. Siempre monotono
+  (D6).
+- **RM-07.** NUNCA habilitar cache de contexto en la corrida oficial (D2).
+
+**Obligaciones**
+
+- **RM-08.** Toda metrica declara su campo fuente en `metricas.yaml` antes de
+  implementarse. Si no esta en el registro, no se implementa (HU-MET-02).
+- **RM-09.** Toda operacion de escritura deja evento de auditoria con huella
+  criptografica del cuerpo, nunca el cuerpo.
+- **RM-10.** Toda consulta que devuelva resultados ordenados declara su
+  criterio de desempate explicito. Nunca orden implicito de insercion.
+- **RM-11.** Toda interaccion con la persona ocurre en español, incluidos
+  errores y rechazos (RNF-07).
+- **RM-12.** Un cambio que toque contratos actualiza esquemas e instantanea de
+  contrato en el mismo commit.
+- **RM-13.** Un cambio que toque el experimento ya congelado exige entrada en
+  el registro de desviaciones.
+
+**Distinciones que no se pueden borrar**
+
+- **RM-14.** Umbral de calidad ≠ resultado abierto. Nunca mostrar
+  aprobado/reprobado sobre un resultado abierto (HU-MET-03, HU-MET-10).
+- **RM-15.** Fallo de infraestructura (se reejecuta y excluye) ≠ cualquier otro
+  fallo (cuenta como fallo de la arquitectura) (HU-MET-06).
+- **RM-16.** Compuerta automatica eliminatoria ≠ veredicto del juez. El juez
+  solo puede quitar exito, nunca otorgarlo.
+
+**Cuando tengas duda**
+
+- **RM-17.** Si una decision afecta lo que las cifras significan, **no la
+  tomes**: pregunta y dejala registrada como decision, con su razon y su
+  consecuencia, al estilo de D1-D9 del plan de medicion. Esta es la regla mas
+  importante de la lista: evita que un asistente "resuelva" una ambiguedad
+  metodologica por su cuenta y el equipo se entere cuando ya no se puede
+  recoger el dato.
 
 ---
 
@@ -265,8 +329,10 @@ que no las cumple se rechaza.
    commit es la persona responsable del cambio. Si tu herramienta agrega esas
    lineas por defecto, desactivalo (Claude Code ya lo tiene desactivado en
    `.claude/settings.json`).
-2. **Todo commit referencia la historia de usuario** de
-   `docs/08-historias-de-usuario.md` que atiende, y **explica como se
+2. **Todo commit referencia la historia de usuario** que atiende
+   (`HU-xx` de `docs/08-historias-de-usuario.md`, `HU-MET-xx` de
+   `docs/historias-de-usuario-medicion.md` o `HU-KB-xx` de
+   `docs/historias-de-usuario-conocimiento.md`), y **explica como se
    resolvio**.
 3. Commits convencionales en español; un commit por cambio logico.
 
@@ -318,17 +384,18 @@ El anexo (`docs/00`-`docs/10`) se escribio antes de montar este monorepo y en
 varios puntos describe otra implementacion. **Ninguna esta resuelta todavia**;
 hasta que se registre una decision, no las "arregles" por tu cuenta.
 
-| Tema                   | Anexo dice                                                                                     | Repositorio tiene                                                                          |
-| ---------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Stack                  | API Java 21 / Spring Boot + PostgreSQL; agentes, MCP y runner en Python (`docs/01`, `docs/07`) | Todo TypeScript: NestJS + Angular en Nx                                                    |
-| Nombres de apps        | `baseline-direct`, `agent-mcp`, `multiagent-local`, `multiagent-a2a`, `unihelp-api`            | `b0-directo`, `b1-mcp-agente`, `b2-multiagente-local`, `b3-a2a-*`; no existe `unihelp-api` |
-| Puertos                | 8080-8084                                                                                      | 3000-3010 y 4200 (`docs/arquitecturas.md`)                                                 |
-| B2 y MCP               | B2 accede a capacidades por el servidor MCP (`docs/01`)                                        | El profile `b2` no levanta `mcp-server` (`docs/arquitecturas.md`)                          |
-| Profiles de Compose    | `base`, `b1`, `b2` (= B3), `full`                                                              | `b0`, `b1`, `b2`, `b3`                                                                     |
-| Interfaz grafica       | **Fuera de alcance** (`docs/08`, seccion 20)                                                   | Frontend Angular completo en `apps/web`                                                    |
-| Arnes experimental     | `evaluation/` (runner, judge, tasks, schemas)                                                  | `experiment/` (ejecutor, juez, trazas, resultados); tareas en `docs/tasks/`                |
-| Registro de decisiones | `docs/adr/ADR-NNN` y `deviations.md`                                                           | `docs/decisiones-tecnicas.md` numerado                                                     |
-| Codigos de HU          | `HU-01` a `HU-45`                                                                              | El codigo del frontend tambien cita `HU-FE-xx`, que no estan documentadas                  |
+| Tema                   | Anexo dice                                                                                     | Repositorio tiene                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Stack                  | API Java 21 / Spring Boot + PostgreSQL; agentes, MCP y runner en Python (`docs/01`, `docs/07`) | Todo TypeScript: NestJS + Angular en Nx                                                             |
+| Nombres de apps        | `baseline-direct`, `agent-mcp`, `multiagent-local`, `multiagent-a2a`, `unihelp-api`            | `b0-directo`, `b1-mcp-agente`, `b2-multiagente-local`, `b3-a2a-*`; no existe `unihelp-api`          |
+| Puertos                | 8080-8084                                                                                      | 3000-3010 y 4200 (`docs/arquitecturas.md`)                                                          |
+| B2 y MCP               | B2 accede a capacidades por el servidor MCP (`docs/01`)                                        | El profile `b2` no levanta `mcp-server` (`docs/arquitecturas.md`)                                   |
+| Profiles de Compose    | `base`, `b1`, `b2` (= B3), `full`                                                              | `b0`, `b1`, `b2`, `b3`                                                                              |
+| Interfaz grafica       | **Fuera de alcance** (`docs/08`, seccion 20)                                                   | Frontend Angular completo en `apps/web`                                                             |
+| Arnes experimental     | `evaluation/` (runner, judge, tasks, schemas)                                                  | `experiment/` (ejecutor, juez, trazas, resultados); tareas en `docs/tasks/`                         |
+| Registro de decisiones | `docs/adr/ADR-NNN` y `deviations.md`                                                           | `docs/decisiones-tecnicas.md` numerado                                                              |
+| Codigos de HU          | `HU-01` a `HU-45`, `HU-MET-01` a `HU-MET-14` y `HU-KB-01` a `HU-KB-10` (documentos aparte)     | El codigo del frontend tambien cita `HU-FE-xx`, que no estan documentadas                           |
+| Estados de servicio    | HU-KB-09: `operativo`, `degradado`, `mantenimiento`, `caído`                                   | `libs/dominio` `NIVELES_ESTADO_SERVICIO`: `operativo`, `degradado`, `interrumpido`, `mantenimiento` |
 
 Cuando una se resuelva: registrar la decision, actualizar el documento que
 quede desactualizado y quitar la fila de esta tabla.

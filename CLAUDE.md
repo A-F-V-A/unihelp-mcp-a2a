@@ -1,8 +1,13 @@
 # UniHelp — instrucciones para Claude Code
 
 Las reglas del proyecto (qué es, estructura, convenciones, comentarios,
-documentación y definición de terminado) están en `AGENTS.md`, compartido con
-cualquier otra IA. Este archivo solo agrega lo específico de Claude Code.
+documentación, definición de terminado y las reglas del experimento y de la
+medición RM-01 a RM-17) están en `AGENTS.md`, compartido con cualquier otra IA,
+y se cargan aquí con la importación de abajo. Este archivo solo agrega lo
+específico de Claude Code.
+
+Ante cualquier duda que afecte lo que significan las cifras del experimento,
+aplica **RM-17**: no decidas; pregunta y deja la decisión registrada.
 
 @AGENTS.md
 
