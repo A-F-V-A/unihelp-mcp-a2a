@@ -35,7 +35,10 @@ mediciones. Ante la duda, pregunta antes de compartir o duplicar codigo.
 Estado actual: frontend Angular completo contra un backend **simulado**;
 backends NestJS con solo el endpoint `/health`. La base de conocimiento
 (`libs/conocimiento`, PostgreSQL) funciona aislada con sus pruebas, pero ninguna
-app la importa todavia. Aun no hay logica de triaje, MCP real ni A2A real.
+app la importa todavia. Aun no hay logica de triaje, MCP real ni A2A real. El
+sistema de metricas (`experiment/`, Python) calcula M1, M4 y M7 de extremo a
+extremo sobre una corrida **sintetica**; `libs/trazas` valida trazas antes de
+persistir, pero ningun backend las produce todavia.
 
 El diseño completo del experimento esta especificado en `docs/00` a `docs/10`
 (anexo tecnico del seminario): historias de usuario, contrato MCP, agentes A2A,
@@ -116,9 +119,15 @@ libs/
                          lexica determinista, restablecimiento con huella (solo backends)
   contratos/             @unihelp/contratos: DTOs y rutas de red (solo tipos)
   dominio/               @unihelp/dominio: vocabulario y catalogos (sin logica)
-experiment/              Arnes de medicion (vacio a proposito)
+  trazas/                @unihelp/trazas: valida trazas con AJV antes de persistir (solo backends)
+experiment/              Sistema de metricas en Python (uv). UNICO lugar donde se calcula una metrica
+  metricas.yaml          Registro de las 43 metricas (fuente de todo nombre de campo)
+  schemas/               JSON Schema de traza, registro, insumos y resultados
+  analisis/              registro, carga, inferencia, familias/, salida
+  analisis.ipynb         Cuaderno unico (papermill); escribe salidas/resultados.json
+  fixtures/ pruebas/     Generador de corrida sintetica y pytest
   ejecutor/ juez/        Fuente del arnes (futuro)
-  trazas/ resultados/    Artefactos de corridas: NO se versionan
+  trazas/ resultados/ salidas/  Artefactos: NO se versionan
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
 docs/                    Documentacion (indice en docs/README.md)
   00-...10-*.md          Anexo tecnico: especificacion del experimento (08-10 generados)
@@ -305,6 +314,9 @@ pnpm graph              # grafo de dependencias
 pnpm conocimiento:db    # PostgreSQL de la base de conocimiento (Docker)
 pnpm conocimiento:migrar && pnpm conocimiento:sembrar
 pnpm conocimiento:test-integracion  # pruebas de libs/conocimiento contra PostgreSQL
+pnpm analisis:desde-cero  # uv sync + corrida sintetica + cuaderno de metricas completo
+pnpm analisis:test        # pytest del sistema de metricas (requiere uv)
+pnpm nx run trazas:generar  # tras cambiar experiment/schemas/traza.schema.json
 ```
 
 ---
@@ -403,6 +415,14 @@ hasta que se registre una decision, no las "arregles" por tu cuenta.
 | Codigos de HU          | `HU-01` a `HU-45`, `HU-MET-01` a `HU-MET-14` y `HU-KB-01` a `HU-KB-10` (documentos aparte)     | El codigo del frontend tambien cita `HU-FE-xx`, que no estan documentadas                           |
 | Estados de servicio    | HU-KB-09: `operativo`, `degradado`, `mantenimiento`, `caído`                                   | `libs/dominio` `NIVELES_ESTADO_SERVICIO`: `operativo`, `degradado`, `interrumpido`, `mantenimiento` |
 | Corpus de conocimiento | `docs/10`: 24 politicas, sin versiones historicas | `libs/conocimiento`: 39 politicas y 55 versiones (15 distractoras de HU-KB-04 y 3 adversariales redactadas; decision 18) |
+
+| Nombres de campo de la traza | `docs/05`: `seed`, `provenance.git_sha`, `model.id`; esquema en `evaluation/schemas/trace.schema.json` | `experiment/schemas/traza.schema.json` con `provenance.semilla`, `provenance.version_codigo`, `provenance.modelo_id` y `version_esquema` (decision 21) |
+| Estado `estado_inicial_incorrecto` | `docs/09` seccion 13 lo lista como septimo estado final | La traza admite solo seis estados; la huella incorrecta es un motivo de rechazo de la carga (decision 21) |
+| Origen de `exito` (M1) | Compuerta automatica + juez en `scores.parquet` | Se lee de `puntuaciones.jsonl`, formato provisional; hoy solo lo produce el generador sintetico (decision 22) |
+| Insumos de M4.3, M7.2 y M7.4 a M7.7 | `bench-transport.json`, planillas humanas, juez, casetes, corrida de control, sin formato fijado | Formatos provisionales en `experiment/schemas/insumos.schema.json`; sin el insumo la metrica queda `sin_datos` (decision 22) |
+| Numeracion de hipotesis | `docs/05` seccion 6.1: H1 no inferioridad, H2 compuestas, H3 confirmacion | `metricas.yaml` sigue `docs/09` seccion 14: H3 sobrecosto A2A, H4 confirmacion |
+| M7.3 reejecuciones | `reruns.md` y `outcome.status` | Solo `outcome.status` de los intentos; el cruce con `reruns.md` espera al ejecutor |
+| Validacion del residuo (HU-MET-07) | "Corre en cada ejecucion" | La corre la carga en Python, ejecucion por ejecucion, despues de la corrida; `libs/trazas` solo valida el esquema |
 
 Cuando una se resuelva: registrar la decision, actualizar el documento que
 quede desactualizado y quitar la fila de esta tabla.

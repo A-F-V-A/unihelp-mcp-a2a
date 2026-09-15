@@ -14,7 +14,9 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 > **simulado** (ver [Frontend sin backend](#frontend-sin-backend-datos-simulados)).
 > La base de conocimiento ([`libs/conocimiento`](libs/conocimiento/README.md))
 > ya funciona sobre PostgreSQL con sus pruebas, pero ninguna arquitectura la
-> consume todavia. No hay logica de triaje, MCP real ni A2A real.
+> consume todavia. No hay logica de triaje, MCP real ni A2A real. El sistema de
+> metricas ([`experiment/`](experiment/README.md)) calcula las familias M1, M4 y M7
+> de extremo a extremo sobre una corrida **sintetica**.
 
 ---
 
@@ -40,6 +42,7 @@ vengan de reimplementar el problema.
 | Node.js        | >= 22   | Ejecutar Nx y las apps en modo desarrollo |
 | pnpm           | >= 10   | Gestor de paquetes del workspace          |
 | Docker Desktop | >= 24   | Levantar las arquitecturas con Compose    |
+| uv             | >= 0.5  | Entorno Python 3.12 del analisis de metricas |
 
 No se requiere ninguna credencial de pago para levantar el esqueleto.
 
@@ -222,6 +225,19 @@ pnpm conocimiento:test-integracion  # pruebas contra PostgreSQL real
 Detalle, variables de entorno y restablecimiento en
 [`libs/conocimiento/README.md`](libs/conocimiento/README.md).
 
+### Analisis de metricas
+
+Ninguna metrica se calcula en TypeScript: todas salen de un unico cuaderno en
+Python que escribe `experiment/salidas/resultados.json`.
+
+```bash
+pnpm analisis:desde-cero   # uv sync + corrida sintetica + cuaderno completo
+pnpm analisis:test         # pruebas del sistema de metricas
+```
+
+Diseno, puntos de rechazo y contrato de resultados en
+[`docs/sistema-de-metricas.md`](docs/sistema-de-metricas.md).
+
 ---
 
 ## Estructura del repositorio
@@ -240,12 +256,17 @@ unihelp/
 ├── libs/
 │   ├── conocimiento/            Base de conocimiento (NestJS + TypeORM + PostgreSQL)
 │   ├── contratos/               DTOs y esquemas tipados compartidos entre apps
-│   └── dominio/                 Tipos y vocabulario de dominio: servicios,
-│                                estados, prioridades, catalogo de arquitecturas
-├── experiment/                  Arnes experimental (vacio por ahora)
-│   ├── ejecutor/                Corredor de casos contra las cuatro arquitecturas
-│   ├── trazas/                  Trazas crudas de cada corrida
-│   └── juez/                    Evaluacion automatica y metricas
+│   ├── dominio/                 Tipos y vocabulario de dominio: servicios,
+│   │                            estados, prioridades, catalogo de arquitecturas
+│   └── trazas/                  Validacion de trazas con AJV antes de persistir
+├── experiment/                  Sistema de metricas (Python, uv)
+│   ├── metricas.yaml            Registro de las 43 metricas
+│   ├── schemas/                 Esquemas de traza, registro, insumos y resultados
+│   ├── analisis/                Carga, inferencia y calculo por familia
+│   ├── analisis.ipynb           Cuaderno unico: genera salidas/resultados.json
+│   ├── fixtures/                Generador de corrida sintetica
+│   ├── ejecutor/                Corredor de casos (futuro)
+│   └── juez/                    Evaluacion automatica (futuro)
 ├── infra/
 │   └── docker/                  Un Dockerfile por app + compose con profiles
 ├── docs/                        Documentacion tecnica y decisiones
@@ -272,7 +293,10 @@ unihelp/
   prioridades) y catalogo de arquitecturas. Solo tipos y catalogos: la logica de
   triaje se implementa despues, por separado en cada arquitectura, porque es
   justamente lo que el experimento compara.
-- **`experiment/`** — arnes de medicion. Vacio por ahora.
+- **`libs/trazas`** — valida cada traza contra `experiment/schemas/traza.schema.json`
+  antes de persistirla; las invalidas van a cuarentena. Solo backends.
+- **`experiment/`** — sistema de metricas: registro, validacion de trazas,
+  remuestreo por tareas y el cuaderno unico que produce `resultados.json`.
 - **`infra/docker/`** — un `Dockerfile.<app>` por aplicacion y el
   `docker-compose.yml` con los cuatro profiles.
 

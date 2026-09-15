@@ -330,3 +330,95 @@ de docs/10 o aceptandola. Las distractoras agregadas pueden hacer mas dificiles
 las tareas informativas; eso se decidio a proposito (HU-KB-04). Cambiar un
 estado inicial o una politica cambia su huella, y la tabla de
 `docs/base-de-conocimiento.md` se regenera en el mismo cambio.
+
+## 19. Las metricas solo se calculan en Python, en un cuaderno unico
+
+Contexto: el experimento produce 43 metricas y un panel web las mostrara. Si una
+cifra se calcula en dos lugares (por ejemplo, el cuaderno y Angular), tarde o
+temprano dan resultados distintos y nadie sabe cual cito el manuscrito (HU-MET-04,
+HU-MET-09, RM-02).
+
+Decision: todo calculo vive en `experiment/analisis/` y se orquesta desde
+`experiment/analisis.ipynb`, que corre sin intervencion con papermill
+(`pnpm analisis:desde-cero`). Los backends solo producen trazas y las validan con
+`libs/trazas`; el panel solo leera `experiment/salidas/resultados.json`, cuyo
+contrato es `experiment/schemas/resultados.schema.json`. Cada tabla o figura sale de
+una celda con su etiqueta (`tabla_2`, `figura_1`) y queda en `manifiesto.json` con su
+SHA-256. Detalle en `docs/sistema-de-metricas.md`.
+
+Por que: un solo punto de calculo es auditable y reproducible. Para que dos
+ejecuciones den los mismos archivos salvo `generado_en`, el JSON se escribe con
+claves ordenadas y flotantes redondeados a 6 decimales, los SVG sin fecha y con
+`svg.hashsalt` fijo, y la semilla del remuestreo esta en el registro. Una prueba
+ejecuta el cuaderno dos veces y compara byte a byte.
+
+Consecuencias: ningun DTO de `libs/contratos` transportara metricas calculadas. Una
+metrica nueva se agrega al registro y a una familia de Python, nunca a una app.
+
+## 20. El entorno Python del analisis se gestiona con uv
+
+Contexto: el analisis necesita Python 3.12 con pandas, pyarrow, numpy, scipy,
+statsmodels, scikit-learn, jsonschema, pyyaml, matplotlib y papermill; se podia
+elegir uv o poetry.
+
+Decision: uv, con `experiment/pyproject.toml`, `experiment/uv.lock` y
+`experiment/.python-version`. `experiment/project.json` registra el proyecto Nx
+`analisis` con los targets `instalar`, `fixtures`, `ejecutar` y `test`.
+
+Por que: uv instala el propio interprete 3.12 (poetry no), su lockfile es
+multiplataforma y es rapido en Windows, donde se desarrolla. Registrar el proyecto
+en Nx hace que `pnpm verify` corra tambien las pruebas de Python.
+
+Consecuencias: `pnpm verify` y `pnpm analisis:test` requieren uv instalado. El
+cuaderno falla al inicio si no corre con Python 3.12.
+
+## 21. El esquema de traza vive en experiment/schemas y TypeScript lo genera
+
+Contexto: la traza la escribe TypeScript (NestJS) y la lee Python. Si cada lado
+declara su propio formato, se desincronizan (HU-MET-01).
+
+Decision: `experiment/schemas/traza.schema.json` (JSON Schema 2020-12,
+`version_esquema` 1.0.0) es la unica fuente. `pnpm nx run trazas:generar` produce
+`libs/trazas/src/lib/traza.generado.ts` (json-schema-to-typescript) y embebe el
+esquema en `esquema-traza.generado.ts`; `sincronia-esquema.spec.ts` falla si no se
+regenero. `PersistidorTrazas` valida con AJV antes de escribir y aparta las invalidas
+en `cuarentena/`; la carga de Python revalida con jsonschema y agrega las
+comprobaciones aritmeticas. Los casos de `experiment/schemas/ejemplos/` los juzgan
+igual AJV y jsonschema. Nombres de campo: los de `docs/05`, salvo la procedencia
+(`provenance.semilla`, `provenance.version_codigo`, `provenance.modelo_id`) y
+`version_esquema`, fijados para esta entrega. `estado_inicial_incorrecto` (docs/09,
+seccion 13) es un motivo de rechazo de la carga y no un estado de la traza, porque
+esa ejecucion se aborta antes de producir traza. La lib lleva el tag
+`alcance:backend`.
+
+Por que: se embebe el esquema en TypeScript en lugar de importar el JSON porque las
+imagenes Docker solo copian `libs/` y `apps/`. La aritmetica (residuo de
+orquestacion) no va en AJV para no calcular en TypeScript (decision 19).
+
+Consecuencias: cambiar el esquema exige subir `version_esquema` y regenerar en el
+mismo commit. La validacion del residuo corre en la carga, no al persistir: queda
+anotado en las discrepancias de `AGENTS.md`.
+
+## 22. El registro nombra los campos; el codigo solo usa alias
+
+Contexto: HU-MET-02 exige que el calculo lea su fuente del registro. Varias metricas
+de M1, M4 y M7 dependen de artefactos que todavia no existen (juez, calificacion
+humana, microbenchmark, reproduccion, corrida de control).
+
+Decision: en `experiment/metricas.yaml` cada fuente es `{artefacto, campos: {alias:
+campo}}` y las funciones piden columnas por alias. Pruebas de pytest verifican que
+registro y funciones coinciden, que todo campo de traza existe en el esquema y que
+ningun modulo escribe el nombre de un campo. La poblacion de cada metrica
+(efectividad, latencia o costo) y la tabla de estados finales de docs/09 estan en el
+registro. Los artefactos que aun no existen tienen un formato **provisional** en
+`experiment/schemas/insumos.schema.json`: `exito` (M1) se lee de
+`puntuaciones.jsonl`; sin el insumo, la metrica queda `sin_datos`, nunca en cero. Los
+contrastes entre arquitecturas se estiman con intervalo y no deciden hipotesis.
+
+Por que: renombrar un campo toca un solo archivo y no puede dejar una metrica leyendo
+un campo inexistente. Declarar los formatos provisionales permite probar todo el
+pipeline con la corrida sintetica antes de la primera ejecucion real (HU-MET-08).
+
+Consecuencias: cuando existan el juez y los demas productores, se fijan sus formatos,
+se quita `provisional` y se revisan los alias. Las familias M2, M3, M5 y M6 estan
+declaradas como `pendiente`.
