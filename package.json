@@ -11,6 +11,7 @@
   },
   "scripts": {
     "setup": "pnpm install",
+    "prepare": "node -e \"try{require('./tools/git-hooks/instalar.cjs')}catch(e){}\"",
     "b0": "docker compose -f infra/docker/docker-compose.yml --profile b0 up --build",
     "b1": "docker compose -f infra/docker/docker-compose.yml --profile b1 up --build",
     "b2": "docker compose -f infra/docker/docker-compose.yml --profile b2 up --build",

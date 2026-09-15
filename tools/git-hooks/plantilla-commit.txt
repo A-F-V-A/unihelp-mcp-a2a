@@ -1,0 +1,16 @@
+
+
+# ---------------------------------------------------------------------------
+# tipo(alcance): resumen en presente, sin punto final (max. 100 caracteres)
+#   tipos:    feat fix exp docs refactor test perf build ci chore
+#   alcance:  web, contratos, dominio, b0, b1, b2, b3, mcp, infra, experiment
+#
+# Historia: HU-xx[, HU-yy]      (de docs/08-historias-de-usuario.md)
+#           o "ninguna — motivo" (nunca en un feat)
+# Resolucion: como se resolvio la historia: que se cambio, en que capas o
+#           archivos, y por que se eligio esa solucion.
+# Pruebas: como se verifico (specs, pnpm verify, navegador).
+#
+# PROHIBIDO atribuir el commit a una IA: sin Co-Authored-By de IA, sin
+# "Generated with ...". El hook commit-msg lo rechaza.
+# ---------------------------------------------------------------------------

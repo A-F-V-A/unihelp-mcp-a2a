@@ -1,5 +1,10 @@
 {
   "enabledMcpjsonServers": ["playwright"],
+  "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": ["mcp__playwright"]
   }

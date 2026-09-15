@@ -1,0 +1,4 @@
+#!/bin/sh
+# Valida el mensaje de commit: formato, historia de usuario y sin atribucion a IA.
+# Reglas en AGENTS.md, seccion "Commits". Se instala con `pnpm install`.
+exec node "$(dirname "$0")/validar-mensaje-commit.mjs" "$1"
