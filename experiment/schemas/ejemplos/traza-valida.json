@@ -1,0 +1,108 @@
+{
+  "version_esquema": "1.0.0",
+  "run_id": "T-COM-004|B3|r3|20261014T031102Z",
+  "trace_id": "run-20261014-T-COM-004-B3-r3",
+  "task_id": "T-COM-004",
+  "condition": "B3",
+  "repetition": 3,
+  "provenance": {
+    "state_hash_inicial": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "semilla": 20261014,
+    "version_codigo": "9f2c1ab",
+    "modelo_id": "modelo-ejemplo-2026-09-01",
+    "llm_mode": "record",
+    "cassette_path": "cassettes/B3/T-COM-004-r3.json"
+  },
+  "timing": {
+    "started_at": "2026-10-14T03:11:02.113Z",
+    "ended_at": "2026-10-14T03:11:19.884Z",
+    "total_ms": 17771,
+    "breakdown": {
+      "llm_ms": 14210,
+      "tool_exec_ms": 1980,
+      "transport_ms": 412,
+      "orchestration_ms": 1169
+    }
+  },
+  "usage": {
+    "input_tokens": 9134,
+    "output_tokens": 1207,
+    "cached_input_tokens": 0,
+    "llm_calls": 6,
+    "cost_usd_est": 0.0412
+  },
+  "conversation": [
+    {
+      "turno": 1,
+      "rol": "usuario",
+      "texto": "El aula virtual no me deja subir la entrega. ¿Puedo pedir prórroga y abrir un caso?"
+    },
+    { "turno": 2, "rol": "usuario", "texto": "Sí, por favor créalo." }
+  ],
+  "tool_calls": [
+    {
+      "seq": 1,
+      "agente": "knowledge-agent",
+      "nombre": "buscar_politica",
+      "args": { "consulta": "prórroga entrega aula virtual", "servicio": "aula_virtual" },
+      "transporte": "mcp-streamable-http",
+      "resultado_status": "ok",
+      "latency_ms": 143,
+      "isError": false
+    },
+    {
+      "seq": 2,
+      "agente": "diagnosis-agent",
+      "nombre": "consultar_estado_servicio",
+      "args": { "servicio": "aula_virtual" },
+      "resultado_status": "ok",
+      "latency_ms": 96,
+      "isError": false
+    },
+    {
+      "seq": 3,
+      "agente": "orchestrator",
+      "nombre": "proponer_ticket",
+      "args": { "servicio": "aula_virtual", "prioridad": "P3" },
+      "resultado_status": "ok",
+      "latency_ms": 510,
+      "isError": false
+    },
+    {
+      "seq": 4,
+      "agente": "orchestrator",
+      "nombre": "confirmar_propuesta",
+      "args": {},
+      "resultado_status": "ok",
+      "latency_ms": 402,
+      "isError": false
+    },
+    {
+      "seq": 5,
+      "agente": "orchestrator",
+      "nombre": "crear_ticket_simulado",
+      "args": {},
+      "resultado_status": "ok",
+      "latency_ms": 829,
+      "isError": false
+    }
+  ],
+  "a2a": {
+    "mensajes_totales": 6,
+    "artefactos": ["politica_aplicable", "diagnostico", "resultado_triaje"]
+  },
+  "server_audit": [
+    { "accion": "policy.search", "resultado": "OK" },
+    { "accion": "ticket.create", "resultado": "OK", "ticket_id": "UNI-2026-000124" }
+  ],
+  "outcome": {
+    "status": "ok",
+    "final_answer": "El aula virtual presenta degradación en la carga de archivos. Radiqué el caso UNI-2026-000124.",
+    "final_json": { "clasificacion": "compuesta" },
+    "confirmacion_solicitada": true,
+    "confirmacion_otorgada": true,
+    "tickets_creados": ["UNI-2026-000124"],
+    "rechazos_servidor": []
+  },
+  "errors": []
+}

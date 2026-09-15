@@ -6,4 +6,8 @@ tmp
 .nx
 pnpm-lock.yaml
 
+# Generados desde experiment/schemas/traza.schema.json (pnpm nx run trazas:generar);
+# la prueba de sincronia los compara byte a byte con la salida del generador.
+libs/trazas/src/lib/*.generado.ts
+
 .angular

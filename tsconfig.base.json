@@ -22,7 +22,8 @@
     "paths": {
       "@unihelp/conocimiento": ["./libs/conocimiento/src/index.ts"],
       "@unihelp/contratos": ["./libs/contratos/src/index.ts"],
-      "@unihelp/dominio": ["./libs/dominio/src/index.ts"]
+      "@unihelp/dominio": ["./libs/dominio/src/index.ts"],
+      "@unihelp/trazas": ["./libs/trazas/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

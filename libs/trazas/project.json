@@ -1,0 +1,17 @@
+{
+  "name": "trazas",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/trazas/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {
+    "generar": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/trazas/generacion/generar-desde-esquema.ts",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "descripcion": "Casos compartidos entre el validador AJV (libs/trazas) y jsonschema (experiment/analisis). Ambos deben dar el mismo veredicto en cada caso. Cada caso aplica operaciones sobre la traza base; las rutas usan puntos y los indices de arreglo son numeros.",
+  "base": "traza-valida.json",
+  "casos": [
+    { "nombre": "traza del ejemplo trabajado del plan", "operaciones": [], "valida": true },
+    {
+      "nombre": "sin bloque de consumo",
+      "operaciones": [{ "eliminar": "usage" }],
+      "valida": false
+    },
+    {
+      "nombre": "cero tokens de entrada",
+      "operaciones": [{ "asignar": "usage.input_tokens", "valor": 0 }],
+      "valida": false
+    },
+    {
+      "nombre": "cero llamadas al modelo",
+      "operaciones": [{ "asignar": "usage.llm_calls", "valor": 0 }],
+      "valida": false
+    },
+    {
+      "nombre": "sin costo estimado",
+      "operaciones": [{ "eliminar": "usage.cost_usd_est" }],
+      "valida": false
+    },
+    {
+      "nombre": "estado final fuera de la lista cerrada",
+      "operaciones": [{ "asignar": "outcome.status", "valor": "cancelado" }],
+      "valida": false
+    },
+    {
+      "nombre": "B0 con mensajes entre agentes",
+      "operaciones": [{ "asignar": "condition", "valor": "B0" }],
+      "valida": false
+    },
+    {
+      "nombre": "B1 sin mensajes entre agentes",
+      "operaciones": [
+        { "asignar": "condition", "valor": "B1" },
+        { "asignar": "a2a.mensajes_totales", "valor": 0 }
+      ],
+      "valida": true
+    },
+    {
+      "nombre": "sin bloque a2a",
+      "operaciones": [{ "eliminar": "a2a" }],
+      "valida": false
+    },
+    {
+      "nombre": "falta un componente de la descomposicion",
+      "operaciones": [{ "eliminar": "timing.breakdown.transport_ms" }],
+      "valida": false
+    },
+    {
+      "nombre": "residuo reportado negativo",
+      "operaciones": [{ "asignar": "timing.breakdown.orchestration_ms", "valor": -5 }],
+      "valida": false
+    },
+    {
+      "nombre": "llamada a herramienta sin seq",
+      "operaciones": [{ "eliminar": "tool_calls.0.seq" }],
+      "valida": false
+    },
+    {
+      "nombre": "llamada a herramienta sin resultado_status",
+      "operaciones": [{ "eliminar": "tool_calls.1.resultado_status" }],
+      "valida": false
+    },
+    {
+      "nombre": "sin llamadas a herramienta",
+      "operaciones": [{ "asignar": "tool_calls", "valor": [] }],
+      "valida": true
+    },
+    {
+      "nombre": "timeout sin respuesta final",
+      "operaciones": [
+        { "asignar": "outcome.final_answer", "valor": null },
+        { "asignar": "outcome.status", "valor": "timeout" }
+      ],
+      "valida": true
+    },
+    {
+      "nombre": "sin confirmacion_solicitada",
+      "operaciones": [{ "eliminar": "outcome.confirmacion_solicitada" }],
+      "valida": false
+    },
+    {
+      "nombre": "huella de estado mal formada",
+      "operaciones": [{ "asignar": "provenance.state_hash_inicial", "valor": "abc" }],
+      "valida": false
+    },
+    {
+      "nombre": "procedencia sin semilla",
+      "operaciones": [{ "eliminar": "provenance.semilla" }],
+      "valida": false
+    },
+    {
+      "nombre": "procedencia sin modelo_id",
+      "operaciones": [{ "eliminar": "provenance.modelo_id" }],
+      "valida": false
+    },
+    {
+      "nombre": "campo desconocido en la raiz",
+      "operaciones": [{ "asignar": "campo_inventado", "valor": 1 }],
+      "valida": false
+    },
+    {
+      "nombre": "fecha de inicio que no es ISO 8601",
+      "operaciones": [{ "asignar": "timing.started_at", "valor": "ayer" }],
+      "valida": false
+    }
+  ]
+}
