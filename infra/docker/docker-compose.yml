@@ -167,6 +167,38 @@ services:
       - '${PUERTO_MCP:-3010}:3010'
 
   # =========================================================================
+  # PostgreSQL de la base de conocimiento (libs/conocimiento)
+  # =========================================================================
+  # Por ahora vive en su propio profile: ninguna arquitectura lo consume aun.
+  # La imagen se fija por digest (PostgreSQL 16.15) porque los diccionarios de
+  # busqueda de texto completo forman parte del resultado de `buscar_politica`:
+  # cambiar de version podria cambiar el ranking. Los datos viven en tmpfs, asi
+  # que cada `up` parte de una base vacia.
+  postgres:
+    profiles: ['conocimiento']
+    image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    container_name: unihelp-postgres
+    restart: unless-stopped
+    networks:
+      - unihelp
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-unihelp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-unihelp}
+      POSTGRES_DB: ${POSTGRES_DB:-unihelp}
+    ports:
+      - '${PUERTO_POSTGRES:-5432}:5432'
+    volumes:
+      # Crea la base `unihelp_test` para las pruebas de integracion.
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # =========================================================================
   # Frontend unico: participa en los cuatro profiles
   # =========================================================================
   # No lleva `depends_on` a proposito: el backend de entrada cambia segun el

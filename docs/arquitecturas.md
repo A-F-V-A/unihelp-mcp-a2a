@@ -68,18 +68,23 @@ En Docker el backend de entrada de la arquitectura activa queda **siempre** en
 el puerto `3000` del host. Eso es lo que permite que haya un solo frontend con
 una sola configuracion.
 
-| Servicio               | Puerto en contenedor | Puerto en host (Docker)  | Puerto en `nx serve` |
-| ---------------------- | -------------------- | ------------------------ | -------------------- |
-| `b0-directo`           | 3000                 | **3000** (entrada de B0) | 3000                 |
-| `b1-mcp-agente`        | 3001                 | **3000** (entrada de B1) | 3001                 |
-| `b2-multiagente-local` | 3002                 | **3000** (entrada de B2) | 3002                 |
-| `b3-a2a-orquestador`   | 3003                 | **3000** (entrada de B3) | 3003                 |
-| `b3-a2a-conocimiento`  | 3004                 | 3004 (solo inspeccion)   | 3004                 |
-| `b3-a2a-diagnostico`   | 3005                 | 3005 (solo inspeccion)   | 3005                 |
-| `mcp-server`           | 3010                 | 3010                     | 3010                 |
-| `web`                  | 8080                 | 4200                     | 4200                 |
+| Servicio               | Puerto en contenedor | Puerto en host (Docker)       | Puerto en `nx serve` |
+| ---------------------- | -------------------- | ----------------------------- | -------------------- |
+| `b0-directo`           | 3000                 | **3000** (entrada de B0)      | 3000                 |
+| `b1-mcp-agente`        | 3001                 | **3000** (entrada de B1)      | 3001                 |
+| `b2-multiagente-local` | 3002                 | **3000** (entrada de B2)      | 3002                 |
+| `b3-a2a-orquestador`   | 3003                 | **3000** (entrada de B3)      | 3003                 |
+| `b3-a2a-conocimiento`  | 3004                 | 3004 (solo inspeccion)        | 3004                 |
+| `b3-a2a-diagnostico`   | 3005                 | 3005 (solo inspeccion)        | 3005                 |
+| `mcp-server`           | 3010                 | 3010                          | 3010                 |
+| `web`                  | 8080                 | 4200                          | 4200                 |
+| `postgres`             | 5432                 | 5432 (profile `conocimiento`) | —                    |
 
 Todos los puertos del host se pueden cambiar desde `infra/docker/.env`.
+
+`postgres` aloja la base de conocimiento de
+[`libs/conocimiento`](../libs/conocimiento/README.md). Por ahora vive en su
+propio profile: ninguna arquitectura la consume todavia (decision 16).
 
 ## Contrato de salud
 
