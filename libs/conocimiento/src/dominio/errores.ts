@@ -8,6 +8,7 @@ export const CODIGOS_ERROR_CONOCIMIENTO = [
   'consulta-invalida',
   'servicio-no-encontrado',
   'categoria-no-encontrada',
+  'politica-no-encontrada',
   'restablecimiento-no-permitido',
   'seleccion-estado-invalida',
   'semilla-invalida',
@@ -44,6 +45,21 @@ export class ServicioNoEncontradoError extends ErrorConocimiento {
 export class CategoriaNoEncontradaError extends ErrorConocimiento {
   constructor(readonly categoriaCodigo: string) {
     super('categoria-no-encontrada', `No existe la categoría «${categoriaCodigo}».`);
+  }
+}
+
+/** No existe la politica, o no existe la version pedida de ella. */
+export class PoliticaNoEncontradaError extends ErrorConocimiento {
+  constructor(
+    readonly politicaCodigo: string,
+    readonly version: string | null,
+  ) {
+    super(
+      'politica-no-encontrada',
+      version === null
+        ? `No existe la política «${politicaCodigo}».`
+        : `No existe la versión ${version} de la política «${politicaCodigo}».`,
+    );
   }
 }
 

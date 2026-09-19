@@ -3,6 +3,8 @@ export * from './conocimiento.module';
 export * from './aplicacion/buscar-politica.use-case';
 export * from './aplicacion/consultar-componentes-de-servicio.use-case';
 export * from './aplicacion/consultar-politicas-de-categoria.use-case';
+export * from './aplicacion/listar-servicios.use-case';
+export * from './aplicacion/obtener-politica.use-case';
 export * from './aplicacion/restablecer-conocimiento.use-case';
 export * from './aplicacion/sembrar-conocimiento.use-case';
 export {
