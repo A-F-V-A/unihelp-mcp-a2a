@@ -4,8 +4,12 @@ import { type Observable, firstValueFrom, timeout } from 'rxjs';
 import { CONFIGURACION_APP } from '../../nucleo/configuracion';
 import { mapearFalloHttp } from './http-error.mapper';
 
-/** Tiempo maximo de espera de una peticion a la API. Un agente puede tardar. */
-export const TIEMPO_ESPERA_API_MS = 30_000;
+/**
+ * Tiempo maximo de espera de una peticion a la API. Un turno del agente puede
+ * procesar hasta 120 s antes de que el backend lo corte (RNF-04); se deja un
+ * margen para que el corte lo informe el backend y no el navegador.
+ */
+export const TIEMPO_ESPERA_API_MS = 130_000;
 
 /**
  * Envoltorio minimo sobre HttpClient: arma la URL con el `backendUrl` resuelto
