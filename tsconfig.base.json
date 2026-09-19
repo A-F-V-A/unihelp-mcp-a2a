@@ -23,6 +23,8 @@
       "@unihelp/conocimiento": ["./libs/conocimiento/src/index.ts"],
       "@unihelp/contratos": ["./libs/contratos/src/index.ts"],
       "@unihelp/dominio": ["./libs/dominio/src/index.ts"],
+      "@unihelp/herramientas": ["./libs/herramientas/src/index.ts"],
+      "@unihelp/tickets": ["./libs/tickets/src/index.ts"],
       "@unihelp/trazas": ["./libs/trazas/src/index.ts"]
     }
   },
