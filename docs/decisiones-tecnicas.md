@@ -422,3 +422,95 @@ pipeline con la corrida sintetica antes de la primera ejecucion real (HU-MET-08)
 Consecuencias: cuando existan el juez y los demas productores, se fijan sus formatos,
 se quita `provisional` y se revisan los alias. Las familias M2, M3, M5 y M6 estan
 declaradas como `pendiente`.
+
+## 23. B0 usa gpt-5.4-mini-2026-03-17 de OpenAI con temperatura 0.2
+
+Contexto: docs/00 (pregunta 4) exige fijar el modelo y su snapshot antes de
+construir B0; no existia `experiment.config.yaml` ni proveedor elegido.
+
+Decision (tomada por el responsable del proyecto): proveedor OpenAI, modelo
+`gpt-5.4-mini-2026-03-17`, Chat Completions con `temperature: 0.2`, `top_p: 1` y
+`max_completion_tokens: 2048` (docs/07, seccion 2), `parallel_tool_calls: false`
+(D1) y sin reintentos automaticos del SDK. Se configura con variables de entorno
+(`apps/b0-directo/.env.example`); la clave vive solo en `apps/b0-directo/.env`,
+que git ignora.
+
+Por que: con function calling este modelo solo admite `reasoning_effort: none`
+en Chat Completions, y en ese modo si acepta temperatura, asi que se respeta la
+temperatura 0.2 de docs/07. Sin reintentos, un `rtt` nunca mezcla dos peticiones (M4.2).
+
+Consecuencias: **OpenAI cachea automaticamente los prompts largos y no se puede
+desactivar**, lo que contradice D2 (RM-07). B0 registra `cached_input_tokens`
+tal como lo reporta el proveedor; en las primeras pruebas fue mas de la mitad de
+la entrada. Antes de la corrida oficial hay que decidir si se acepta la
+desviacion (declarandola en el registro de desviaciones) o se cambia de
+proveedor. Queda pendiente, por RM-17.
+
+## 24. Las cinco herramientas son las de docs/02, con tres ajustes de contrato
+
+Contexto: DP-01 de `apps/b0-directo/docs/ARQUITECTURA.md`: el encargo proponia un
+reporte agregado en lugar de `confirmar_propuesta`, y las 40 tareas usan las
+cinco de docs/02.
+
+Decision (tomada por el responsable del proyecto): `buscar_politica`,
+`consultar_estado_servicio`, `proponer_ticket`, `confirmar_propuesta` y
+`crear_ticket_simulado`, definidas una sola vez en
+`libs/herramientas/src/lib/definiciones-herramientas.ts`. Ajustes respecto de
+docs/02: `max_resultados` llega a 3 (HU-05), `consultar_estado_servicio` no tiene
+`incluir_historial` (la base no guarda historial) y `proponer_ticket` no pide
+`solicitante` (sin autenticacion el modelo solo podria inventarlo). Las salidas
+agregan `motivo_sin_resultados` (HU-07) y `ventana_estimada` (HU-10).
+
+Por que: las tareas, M2.1, M2.2 y M2.4 dependen de esos nombres. Los ajustes
+evitan campos que el sistema no puede llenar con verdad.
+
+Consecuencias: el reporte agregado (F-6, HU-23) sigue sin herramienta. Los
+ajustes son una discrepancia con docs/02 y se anotan en `AGENTS.md` seccion 9.
+
+## 25. La prioridad la escribe el modelo y la verifica el codigo
+
+Contexto: DP-02: HU-11 pide que la prioridad salga de la tabla y no del modelo,
+pero docs/02, las tareas (`args_parciales.prioridad`) y M3.5 esperan que el
+modelo la escriba.
+
+Decision (tomada por el responsable del proyecto): el modelo pasa la prioridad a
+`proponer_ticket`; `ProponerTicketUseCase` (`libs/tickets`) la rechaza con
+`VALIDACION_ENTRADA` si ninguna fila de la tabla de docs/01 F-3 la respalda para
+el estado publicado del servicio, e indica los valores admitidos. En
+mantenimiento no se propone ticket (HU-12). Las combinaciones que la tabla no
+cubre no reciben una prioridad inventada.
+
+Por que: ningun ticket queda con una prioridad improvisada (HU-11), y M3.5 y M2.3
+siguen midiendo si el modelo aplica la tabla.
+
+Consecuencias: la tabla vive en una libreria compartida, no en cada arquitectura.
+La decision 8 dice que priorizar es de cada arquitectura; aqui se interpreta que
+la tabla es una regla institucional publicada (dato del dominio) y que aplicarla
+al diagnostico sigue siendo del agente.
+
+## 26. Capacidades compartidas y confirmacion por turno real (provisional)
+
+Contexto: DP-05, DP-06 y DP-07: la garantia de H4, la validacion y el
+saneamiento tienen que ser el mismo codigo en B0 y B1, y la confirmacion no puede
+depender de lo que el modelo diga que escribio la persona.
+
+Decision (provisional, implementada con la opcion propuesta en la arquitectura de
+B0 y pendiente de ratificacion del equipo por RM-17):
+
+- `libs/tickets` y `libs/herramientas` (tags `arq:compartido`, `alcance:backend`)
+  contienen los casos de uso, la validacion, el saneamiento y la medicion del
+  receptor.
+- El controlador de entrada registra el texto literal de cada turno en
+  `tickets.turnos_usuario` antes de que el modelo lo vea, y
+  `ConfirmarPropuestaUseCase` solo emite token si el texto coincide con un turno
+  posterior a la propuesta.
+- La ruta del frontend `POST .../confirmacion` emite el token internamente a
+  partir de la accion explicita del boton, por los mismos casos de uso.
+- El marcador de delimitacion se deriva del `trace_id` (DP-04 sigue abierta: rompe
+  la reproduccion si el `trace_id` cambia entre grabacion y reproduccion).
+
+Por que: es la unica forma encontrada de que la garantia sea identica en B0 y B1
+y no dependa del modelo.
+
+Consecuencias: B1 tendra que registrar tambien los turnos en su controlador de
+entrada. Si el equipo elige otra opcion para DP-05, cambia lo que mide M5.1.
