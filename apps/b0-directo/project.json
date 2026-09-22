@@ -18,6 +18,9 @@
         "development": {
           "buildTarget": "b0-directo:build:development"
         },
+        "backend-real": {
+          "buildTarget": "b0-directo:build:development"
+        },
         "production": {
           "buildTarget": "b0-directo:build:production"
         }

@@ -8,15 +8,16 @@ El objetivo del repositorio no es un producto, es un **banco de pruebas**: la
 misma funcionalidad se construye cuatro veces, cambiando unicamente como se
 integran los agentes, para medir el efecto de esa decision arquitectonica.
 
-> **Estado actual: esqueleto de backend, frontend funcional.** Cada arquitectura
-> levanta una app NestJS que ya responde su endpoint de salud. El frontend
-> Angular tiene la interfaz de chat completa funcionando contra un backend
-> **simulado** (ver [Frontend sin backend](#frontend-sin-backend-datos-simulados)).
-> La base de conocimiento ([`libs/conocimiento`](libs/conocimiento/README.md))
-> ya funciona sobre PostgreSQL con sus pruebas, pero ninguna arquitectura la
-> consume todavia. No hay logica de triaje, MCP real ni A2A real. El sistema de
-> metricas ([`experiment/`](experiment/README.md)) calcula las familias M1, M4 y M7
-> de extremo a extremo sobre una corrida **sintetica**.
+> **Estado actual: B0 funcional, B1-B3 en esqueleto.** B0 ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md))
+> es un agente unico con function calling sobre OpenAI y cinco herramientas en
+> proceso, conectado al frontend: consulta la base de conocimiento
+> ([`libs/conocimiento`](libs/conocimiento/README.md)), propone y crea tickets solo
+> con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y deja
+> auditoria de solo agregar. B1, B2 y B3 solo responden su endpoint de salud; no
+> hay MCP real ni A2A real. B0 todavia no persiste trazas del experimento
+> (DP-09) y no corre en Docker (ver [B0 con el agente real](#b0-con-el-agente-real)).
+> El sistema de metricas ([`experiment/`](experiment/README.md)) calcula las
+> familias M1, M4 y M7 de extremo a extremo sobre una corrida **sintetica**.
 
 ---
 
@@ -37,11 +38,11 @@ vengan de reimplementar el problema.
 
 ## Requisitos
 
-| Herramienta    | Version | Para que                                  |
-| -------------- | ------- | ----------------------------------------- |
-| Node.js        | >= 22   | Ejecutar Nx y las apps en modo desarrollo |
-| pnpm           | >= 10   | Gestor de paquetes del workspace          |
-| Docker Desktop | >= 24   | Levantar las arquitecturas con Compose    |
+| Herramienta    | Version | Para que                                     |
+| -------------- | ------- | -------------------------------------------- |
+| Node.js        | >= 22   | Ejecutar Nx y las apps en modo desarrollo    |
+| pnpm           | >= 10   | Gestor de paquetes del workspace             |
+| Docker Desktop | >= 24   | Levantar las arquitecturas con Compose       |
 | uv             | >= 0.5  | Entorno Python 3.12 del analisis de metricas |
 
 No se requiere ninguna credencial de pago para levantar el esqueleto.
@@ -170,6 +171,26 @@ otra arquitectura sin reconstruirlo, basta la query string:
 http://localhost:4200/?backend=http://localhost:3002
 ```
 
+### B0 con el agente real
+
+B0 necesita PostgreSQL (conocimiento, tickets y auditoria) y una clave de OpenAI.
+La clave va SOLO en `apps/b0-directo/.env`, que git ignora; la plantilla es
+[`apps/b0-directo/.env.example`](apps/b0-directo/.env.example).
+
+```bash
+pnpm conocimiento:db          # PostgreSQL 16 en :5432 (Docker)
+pnpm conocimiento:preparar    # esquema y semilla de la base de conocimiento
+pnpm tickets:migrar           # esquemas `tickets` y `auditoria`
+cp apps/b0-directo/.env.example apps/b0-directo/.env   # y completar OPENAI_API_KEY
+pnpm dev:web:b0               # B0 en :3000 + frontend contra el backend real en :4200
+```
+
+Para reproducir el estado de una tarea (docs/10, seccion 4) antes de probar:
+`UNIHELP_PERFIL=experimento pnpm conocimiento:restablecer ma_fuera_parcial estandar`.
+
+`pnpm b0` (Docker) todavia no sirve para B0: el contenedor no tiene la base
+migrada ni las variables del modelo.
+
 ### Frontend sin backend (datos simulados)
 
 `pnpm dev:web` arranca la interfaz de chat con **repositorios simulados**: no
@@ -258,6 +279,10 @@ unihelp/
 │   ├── contratos/               DTOs y esquemas tipados compartidos entre apps
 │   ├── dominio/                 Tipos y vocabulario de dominio: servicios,
 │   │                            estados, prioridades, catalogo de arquitecturas
+│   ├── herramientas/            Contrato de las cinco herramientas, prompt base,
+│   │                            validador, saneador y ejecutor de capacidades
+│   ├── tickets/                 Propuesta, confirmacion con token, creacion,
+│   │                            tabla de prioridad y auditoria de solo agregar
 │   └── trazas/                  Validacion de trazas con AJV antes de persistir
 ├── experiment/                  Sistema de metricas (Python, uv)
 │   ├── metricas.yaml            Registro de las 43 metricas
@@ -293,6 +318,13 @@ unihelp/
   prioridades) y catalogo de arquitecturas. Solo tipos y catalogos: la logica de
   triaje se implementa despues, por separado en cada arquitectura, porque es
   justamente lo que el experimento compara.
+- **`libs/herramientas`** — el contrato de las cinco herramientas del agente y
+  el prompt base, compartidos para que B0 y B1 envien al modelo exactamente lo
+  mismo (RNF-01). Incluye la validacion de argumentos, el saneamiento del
+  contenido recuperado y la medicion del lado del receptor.
+- **`libs/tickets`** — registro controlado de tickets: la garantia de que sin
+  token de confirmacion no hay escritura (HU-16) es el mismo codigo en todas las
+  arquitecturas. Incluye la auditoria de solo agregar (HU-35).
 - **`libs/trazas`** — valida cada traza contra `experiment/schemas/traza.schema.json`
   antes de persistirla; las invalidas van a cuarentena. Solo backends.
 - **`experiment/`** — sistema de metricas: registro, validacion de trazas,

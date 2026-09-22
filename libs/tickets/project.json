@@ -1,0 +1,17 @@
+{
+  "name": "tickets",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/tickets/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {
+    "migrar": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node -r @swc-node/register libs/tickets/src/infraestructura/cli/tickets.cli.ts migrar",
+        "env": { "SWC_NODE_PROJECT": "tsconfig.base.json" }
+      }
+    }
+  }
+}
