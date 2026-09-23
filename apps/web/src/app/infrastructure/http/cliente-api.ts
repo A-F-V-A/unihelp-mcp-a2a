@@ -28,6 +28,10 @@ export class ClienteApi {
     return this.ejecutar(this.http.post<T>(this.url(ruta), cuerpo));
   }
 
+  put<T>(ruta: string, cuerpo: unknown = {}): Promise<T> {
+    return this.ejecutar(this.http.put<T>(this.url(ruta), cuerpo));
+  }
+
   delete<T>(ruta: string): Promise<T> {
     return this.ejecutar(this.http.delete<T>(this.url(ruta)));
   }

@@ -2,7 +2,7 @@ import { InjectionToken } from '@angular/core';
 import type { ChatRepository } from '../../domain/ports/chat.repository';
 import type { PoliticaRepository } from '../../domain/ports/politica.repository';
 import type { PreferenciasRepository } from '../../domain/ports/preferencias.repository';
-import type { ProveedorIARepository } from '../../domain/ports/proveedor-ia.repository';
+import type { ModeloIaRepository } from '../../domain/ports/modelo-ia.repository';
 import type { ServicioRepository } from '../../domain/ports/servicio.repository';
 import type { SesionConversacionPort } from '../../domain/ports/sesion-conversacion.port';
 import type { TicketRepository } from '../../domain/ports/ticket.repository';
@@ -25,9 +25,7 @@ export const PREFERENCIAS_REPOSITORY = new InjectionToken<PreferenciasRepository
   'PREFERENCIAS_REPOSITORY',
 );
 
-export const PROVEEDOR_IA_REPOSITORY = new InjectionToken<ProveedorIARepository>(
-  'PROVEEDOR_IA_REPOSITORY',
-);
+export const MODELO_IA_REPOSITORY = new InjectionToken<ModeloIaRepository>('MODELO_IA_REPOSITORY');
 
 export const SESION_CONVERSACION = new InjectionToken<SesionConversacionPort>(
   'SESION_CONVERSACION',

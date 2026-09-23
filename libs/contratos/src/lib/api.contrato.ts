@@ -26,6 +26,8 @@ export const RUTAS_API = {
   /** `POST` (sin cuerpo) -> {@link PropuestaTicketDto} en estado `rechazada`. */
   rechazarPropuesta: (propuestaId: string) =>
     `/api/tickets/propuestas/${encodeURIComponent(propuestaId)}/rechazo`,
+  /** `GET` -> {@link ConfiguracionModeloIaDto}. `PUT` {@link SeleccionModeloIaDto} -> {@link ConfiguracionModeloIaDto}. */
+  modeloIa: '/api/modelo-ia',
   /** `GET` con `?version=` opcional -> {@link PoliticaDto}. */
   politica: (codigo: string) => `/api/politicas/${encodeURIComponent(codigo)}`,
   /** `GET` -> {@link EstadoServicioDto}. */

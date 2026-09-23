@@ -21,11 +21,7 @@ import { PreferenciasStore } from '../../../application/state/preferencias.store
 import type { BloqueRespuesta } from '../../../domain/models/conversacion';
 import type { CitaPolitica } from '../../../domain/models/politica';
 import type { PerfilSolicitante, TamanoTexto, Tema } from '../../../domain/models/preferencias';
-import {
-  CATALOGO_PROVEEDORES_IA,
-  type ConfiguracionModeloIA,
-  modeloIAConfigurado,
-} from '../../../domain/models/proveedor-ia';
+import { type SeleccionModeloIa, modeloIaListo } from '../../../domain/models/modelo-ia';
 import type { EstadoServicio } from '../../../domain/models/servicio';
 import type { Ticket } from '../../../domain/models/ticket';
 import { SettingsPanel } from '../../settings/settings-panel/settings-panel';
@@ -121,7 +117,8 @@ export class ChatPage {
   protected readonly conversacionVacia = this.store.conversacionVacia;
   protected readonly ticketsSesion = this.store.ticketsSesion;
   protected readonly preferencias = this.preferenciasStore.preferencias;
-  protected readonly configuracionModelo = this.modeloIAStore.configuracion;
+  protected readonly catalogoModelo = this.modeloIAStore.catalogo;
+  protected readonly errorModelo = this.modeloIAStore.error;
   protected readonly ejemplos = EJEMPLOS;
   protected readonly etiquetasEstado = ETIQUETA_ESTADO_INCIDENTE;
 
@@ -132,9 +129,8 @@ export class ChatPage {
 
   /** Resumen del proveedor de IA, visible desde "Cómo funciona" sin entrar a Configuración. */
   protected readonly resumenModeloIA = computed(() => {
-    const configuracion = this.configuracionModelo();
-    const nombre = CATALOGO_PROVEEDORES_IA[configuracion.proveedor].nombre;
-    return modeloIAConfigurado(configuracion) ? nombre : `${nombre} (sin configurar)`;
+    const resumen = this.modeloIAStore.resumen();
+    return modeloIaListo(this.catalogoModelo()) ? resumen : `${resumen} (sin configurar)`;
   });
 
   protected readonly menuAbierto = signal(false);
@@ -159,6 +155,7 @@ export class ChatPage {
 
   constructor() {
     void this.store.iniciar();
+    void this.modeloIAStore.iniciar();
 
     afterRenderEffect(() => {
       this.acompanarConversacion(this.entradas(), this.esperandoRespuesta());
@@ -261,8 +258,8 @@ export class ChatPage {
     void this.preferenciasStore.guardarPerfil(perfil);
   }
 
-  protected guardarModeloIA(configuracion: ConfiguracionModeloIA): void {
-    void this.modeloIAStore.guardar(configuracion);
+  protected guardarModeloIA(seleccion: SeleccionModeloIa): void {
+    void this.modeloIAStore.seleccionar(seleccion);
   }
 
   /** Desde "Cómo funciona": va directo a Configuración a elegir el proveedor. */

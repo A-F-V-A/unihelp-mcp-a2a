@@ -15,6 +15,7 @@ import { InstrumentadorTrazas } from '../agente/instrumentador-trazas';
 import { PresupuestoEjecucion } from '../agente/presupuesto-ejecucion';
 import { CONFIGURACION_B0, type ConfiguracionB0 } from '../configuracion/configuracion-b0';
 import { ErrorApi } from '../http/error-api';
+import { ConfiguracionModeloRuntime } from '../modelo/configuracion-modelo-runtime';
 import { EnsambladorRespuesta } from './ensamblador-respuesta';
 import { type Conversacion, RepositorioConversaciones } from './repositorio-conversaciones';
 
@@ -54,6 +55,7 @@ export class AtenderTurnoUseCase {
     @Inject(EnsambladorRespuesta) private readonly ensamblador: EnsambladorRespuesta,
     @Inject(PresupuestoEjecucion) private readonly presupuesto: PresupuestoEjecucion,
     @Inject(InstrumentadorTrazas) private readonly instrumentador: InstrumentadorTrazas,
+    @Inject(ConfiguracionModeloRuntime) private readonly modeloIa: ConfiguracionModeloRuntime,
   ) {}
 
   async ejecutar(solicitud: SolicitudTurno): Promise<RespuestaMensajeDto> {
@@ -80,9 +82,12 @@ export class AtenderTurnoUseCase {
       actor: ACTOR_AGENTE_B0,
     };
     const historial = [...conversacion.historialModelo, { role: 'user' as const, content: texto }];
+    // Con `X-Trace-Id` la peticion viene del ejecutor: manda el modelo de la
+    // configuracion, no el que alguien haya elegido en la pantalla (RNF-01).
+    const modeloId = this.modeloIa.modeloVigente(solicitud.traceId !== null);
     let resultado: ResultadoBucle;
     try {
-      resultado = await this.bucle.atender(historial, contexto, inicioTurno);
+      resultado = await this.bucle.atender(historial, contexto, inicioTurno, modeloId);
     } finally {
       const duracion = ahoraMonotonoMs() - inicioTurno;
       this.presupuesto.cerrarTurno(conversacion.traceId, duracion);

@@ -66,10 +66,16 @@ describe('BucleAgente', () => {
       pideHerramienta('call-1', 'buscar_politica', { consulta: 'prórroga' }),
       responde('Fin'),
     ]);
-    const r = await m.bucle.atender([{ role: 'user', content: 'hola' }], contexto, 0);
+    const r = await m.bucle.atender([{ role: 'user', content: 'hola' }], contexto, 0, 'modelo-x');
 
     expect(r.motivo).toBe('respuesta');
     expect(r.contenidoFinal).toBe('Fin');
+    expect(m.modelo.completar).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.any(Number),
+      'modelo-x',
+    );
     expect(m.transporte.invocar).toHaveBeenCalledWith(
       'buscar_politica',
       { consulta: 'prórroga' },
@@ -81,7 +87,7 @@ describe('BucleAgente', () => {
 
   it('instrumenta tokens, tiempos y la secuencia de llamadas (HU-34, M2.4)', async () => {
     const m = montar([pideHerramienta('a', 'buscar_politica', { consulta: 'x' }), responde('ok')]);
-    await m.bucle.atender([], contexto, 0);
+    await m.bucle.atender([], contexto, 0, 'modelo-x');
     const medicion = m.instrumentador.de('t1');
     expect(medicion).toMatchObject({ llmMs: 150, toolExecMs: 3, llmCalls: 2, inputTokens: 20 });
     expect(medicion.transportMs).toBeCloseTo(1);
@@ -99,7 +105,7 @@ describe('BucleAgente', () => {
       durMs: 0,
       rttMs: 0,
     });
-    const r = await m.bucle.atender([], contexto, 0);
+    const r = await m.bucle.atender([], contexto, 0, 'modelo-x');
     expect(r.motivo).toBe('limite_herramientas');
     expect(m.instrumentador.de('t1').toolCalls[0]?.resultado_status).toBe('LIMITE_EXCEDIDO');
   });
@@ -107,10 +113,10 @@ describe('BucleAgente', () => {
   it('corta con timeout sin presupuesto o si se agota durante la peticion (RNF-04)', async () => {
     const sinTiempo = montar([responde('nunca')]);
     (sinTiempo.presupuesto.restanteMs as jest.Mock).mockReturnValue(0);
-    expect((await sinTiempo.bucle.atender([], contexto, 0)).motivo).toBe('timeout');
+    expect((await sinTiempo.bucle.atender([], contexto, 0, 'modelo-x')).motivo).toBe('timeout');
     expect(sinTiempo.modelo.completar).not.toHaveBeenCalled();
 
     const agotado = montar([new ErrorTiempoAgotado()]);
-    expect((await agotado.bucle.atender([], contexto, 0)).motivo).toBe('timeout');
+    expect((await agotado.bucle.atender([], contexto, 0, 'modelo-x')).motivo).toBe('timeout');
   });
 });

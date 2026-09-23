@@ -5,14 +5,37 @@ import {
   type PerfilSolicitante,
   PREFERENCIAS_POR_DEFECTO,
 } from '../../../domain/models/preferencias';
-import {
-  CONFIGURACION_MODELO_POR_DEFECTO,
-  type ConfiguracionModeloIA,
-} from '../../../domain/models/proveedor-ia';
+import type { CatalogoModeloIa, SeleccionModeloIa } from '../../../domain/models/modelo-ia';
 import { CONFIGURACION_APP } from '../../../nucleo/configuracion';
 import { SettingsPanel } from './settings-panel';
 
-function crear(configuracionModelo: ConfiguracionModeloIA = CONFIGURACION_MODELO_POR_DEFECTO) {
+const CATALOGO: CatalogoModeloIa = {
+  proveedores: [
+    {
+      id: 'chatgpt',
+      nombre: 'ChatGPT',
+      descripcion: 'Modelos GPT de OpenAI.',
+      disponible: true,
+      motivoNoDisponible: null,
+      modelos: ['gpt-a', 'gpt-b'],
+      modeloPorDefecto: 'gpt-a',
+    },
+    {
+      id: 'claude',
+      nombre: 'Claude',
+      descripcion: 'Modelos Claude de Anthropic.',
+      disponible: false,
+      motivoNoDisponible: 'B0 todavía no integra este proveedor.',
+      modelos: [],
+      modeloPorDefecto: null,
+    },
+  ],
+  seleccion: { proveedor: 'chatgpt', modelo: 'gpt-a' },
+  claveConfigurada: true,
+  editable: true,
+};
+
+function crear(catalogoModelo: CatalogoModeloIa = CATALOGO) {
   TestBed.configureTestingModule({
     imports: [SettingsPanel],
     providers: [
@@ -24,7 +47,7 @@ function crear(configuracionModelo: ConfiguracionModeloIA = CONFIGURACION_MODELO
   const fixture = TestBed.createComponent(SettingsPanel);
   fixture.componentRef.setInput('abierto', true);
   fixture.componentRef.setInput('preferencias', PREFERENCIAS_POR_DEFECTO);
-  fixture.componentRef.setInput('configuracionModelo', configuracionModelo);
+  fixture.componentRef.setInput('catalogoModelo', catalogoModelo);
   fixture.componentRef.setInput('cantidadConversaciones', 3);
   fixture.detectChanges();
   const el: HTMLElement = fixture.nativeElement;
@@ -106,124 +129,64 @@ describe('SettingsPanel', () => {
     expect(borrados).toBe(1);
   });
 
-  it('muestra "Sin configurar" mientras el proveedor no tenga clave de API', () => {
+  it('resume el proveedor y el modelo que reporta el backend', () => {
     const { el } = crear();
-    expect(el.querySelector('[data-resumen-modelo]')?.textContent?.trim()).toBe('Sin configurar');
+    expect(el.querySelector('[data-resumen-modelo]')?.textContent?.trim()).toBe('ChatGPT · gpt-a');
   });
 
-  it('muestra el nombre del proveedor una vez tiene clave de API', () => {
-    const { el } = crear({ proveedor: 'gemini', modelo: '', token: 'sk-123', urlAgenteLocal: '' });
-    expect(el.querySelector('[data-resumen-modelo]')?.textContent?.trim()).toBe('Gemini');
+  it('avisa "Sin configurar" cuando el backend no tiene la clave', () => {
+    const { el } = crear({ ...CATALOGO, claveConfigurada: false });
+    expect(el.querySelector('[data-resumen-modelo]')?.textContent?.trim()).toBe('ChatGPT');
   });
 
-  it('exige clave de API antes de guardar un proveedor en la nube', () => {
-    const { fixture, el, boton } = crear();
-    const guardados: ConfiguracionModeloIA[] = [];
-    fixture.componentInstance.guardarModeloIA.subscribe((config) => guardados.push(config));
-
+  it('no pide la clave de API: vive en el servidor (decision 27)', () => {
+    const { fixture, el } = crear();
     el.querySelector<HTMLButtonElement>('[data-resumen-modelo]')?.closest('button')?.click();
     fixture.detectChanges();
 
-    boton('Guardar').click();
-    fixture.detectChanges();
-    expect(el.querySelector('.campo__error')?.textContent).toMatch(/clave de API/);
-    expect(guardados).toEqual([]);
-    // El agente local, en cambio, no debe pedir URL mientras no este seleccionado.
+    expect(el.querySelector('input[type="password"]')).toBeNull();
     expect(el.querySelector('input[type="url"]')).toBeNull();
-
-    const campoToken = el.querySelector<HTMLInputElement>('input[type="password"]');
-    campoToken!.value = 'sk-abc';
-    campoToken!.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    boton('Guardar').click();
-    fixture.detectChanges();
-
-    expect(guardados).toEqual([
-      { proveedor: 'chatgpt', modelo: '', token: 'sk-abc', urlAgenteLocal: '' },
-    ]);
+    expect(el.textContent).toContain('La clave del proveedor vive en el servidor');
   });
 
-  it('el agente local exige ademas la URL, y un chip completa el modelo sugerido', () => {
+  it('emite proveedor y modelo elegidos entre los que habilita el servidor', () => {
     const { fixture, el, boton } = crear();
-    const guardados: ConfiguracionModeloIA[] = [];
-    fixture.componentInstance.guardarModeloIA.subscribe((config) => guardados.push(config));
+    const guardados: SeleccionModeloIa[] = [];
+    fixture.componentInstance.guardarModeloIA.subscribe((seleccion) => guardados.push(seleccion));
 
     el.querySelector<HTMLButtonElement>('[data-resumen-modelo]')?.closest('button')?.click();
     fixture.detectChanges();
-    el.querySelector<HTMLButtonElement>('[data-proveedor="local"]')?.click();
-    fixture.detectChanges();
-
-    expect(el.querySelector('input[type="url"]')).not.toBeNull();
-
-    boton('Guardar').click();
-    fixture.detectChanges();
-    const textosDeError = () => [...el.querySelectorAll('.campo__error')].map((e) => e.textContent);
-    expect(textosDeError()).toEqual([
-      expect.stringMatching(/URL/),
-      expect.stringMatching(/token de acceso/),
-    ]);
-
-    const campoUrl = el.querySelector<HTMLInputElement>('input[type="url"]');
-    campoUrl!.value = 'agente-sin-protocolo.local';
-    campoUrl!.dispatchEvent(new Event('input'));
-    const campoToken = el.querySelector<HTMLInputElement>('input[type="password"]');
-    campoToken!.value = 'tok-local';
-    campoToken!.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    boton('Guardar').click();
-    fixture.detectChanges();
-
-    expect(textosDeError()).toEqual([expect.stringMatching(/http/)]);
-    expect(guardados).toEqual([]);
-
-    campoUrl!.value = 'http://localhost:9000';
-    campoUrl!.dispatchEvent(new Event('input'));
+    el.querySelector<HTMLButtonElement>('[data-modelo="gpt-b"]')?.click();
     fixture.detectChanges();
     boton('Guardar').click();
 
-    expect(guardados).toEqual([
-      {
-        proveedor: 'local',
-        modelo: '',
-        token: 'tok-local',
-        urlAgenteLocal: 'http://localhost:9000',
-      },
-    ]);
+    expect(guardados).toEqual([{ proveedor: 'chatgpt', modelo: 'gpt-b' }]);
   });
 
-  it('un chip de modelo sugerido completa el campo de texto', () => {
-    const { fixture, el, boton } = crear();
+  it('un proveedor no disponible se muestra con su motivo y no se puede elegir', () => {
+    const { fixture, el } = crear();
     el.querySelector<HTMLButtonElement>('[data-resumen-modelo]')?.closest('button')?.click();
     fixture.detectChanges();
-    el.querySelector<HTMLButtonElement>('[data-proveedor="claude"]')?.click();
-    fixture.detectChanges();
 
-    boton('claude-sonnet-5').click();
-    fixture.detectChanges();
+    const claude = el.querySelector<HTMLButtonElement>('[data-proveedor="claude"]');
+    expect(claude?.disabled).toBe(true);
+    expect(claude?.textContent).toContain('todavía no integra');
 
-    expect(el.querySelector<HTMLInputElement>('.campo__entrada[type="text"]')?.value).toBe(
-      'claude-sonnet-5',
+    claude?.click();
+    fixture.detectChanges();
+    expect(el.querySelector('[data-proveedor="chatgpt"]')?.getAttribute('aria-checked')).toBe(
+      'true',
     );
   });
 
-  it('el boton de mostrar/ocultar alterna el tipo del campo de token', () => {
-    const { fixture, el } = crear({
-      proveedor: 'chatgpt',
-      modelo: '',
-      token: 'sk-secreto',
-      urlAgenteLocal: '',
-    });
+  it('bloquea la pantalla y muestra el error cuando el backend no admite cambios', () => {
+    const { fixture, el, boton } = crear({ ...CATALOGO, editable: false });
+    fixture.componentRef.setInput('errorModelo', 'El servidor rechazó el cambio.');
     el.querySelector<HTMLButtonElement>('[data-resumen-modelo]')?.closest('button')?.click();
     fixture.detectChanges();
 
-    const campo = () => el.querySelector<HTMLInputElement>('.campo__con-boton input');
-    expect(campo()?.type).toBe('password');
-
-    el.querySelector<HTMLButtonElement>('.campo__boton-ojo')?.click();
-    fixture.detectChanges();
-    expect(campo()?.type).toBe('text');
-    // Muestra solo los ultimos caracteres del token guardado, nunca el valor completo.
-    expect(el.querySelector('.campo__ayuda-discreta')?.textContent).toContain('reto');
-    expect(el.querySelector('.campo__ayuda-discreta')?.textContent).not.toContain('sk-secreto');
+    expect(el.querySelector('[data-modelo-bloqueado]')).not.toBeNull();
+    expect(el.querySelector('[data-error-modelo]')?.textContent).toContain('rechazó');
+    expect(boton('Guardar').disabled).toBe(true);
   });
 });

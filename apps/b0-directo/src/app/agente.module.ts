@@ -29,6 +29,8 @@ import { RegistroCapacidades } from './herramientas/registro-capacidades';
 import { TransporteHerramientasLocal } from './herramientas/transporte-herramientas-local';
 import { FiltroErrores } from './http/filtro-errores';
 import { CaseteModelo } from './modelo/casete-modelo';
+import { ConfiguracionModeloRuntime } from './modelo/configuracion-modelo-runtime';
+import { ModeloIaController } from './modelo/modelo-ia.controller';
 import { ClienteModelo } from './modelo/cliente-modelo';
 import { TicketsController } from './tickets/tickets.controller';
 
@@ -44,7 +46,12 @@ export class AgenteModule {
     return {
       module: AgenteModule,
       imports: [ConocimientoModule.forRoot(), TicketsModule.forRoot()],
-      controllers: [ConversacionController, TicketsController, ConsultasController],
+      controllers: [
+        ConversacionController,
+        TicketsController,
+        ConsultasController,
+        ModeloIaController,
+      ],
       providers: [
         { provide: CONFIGURACION_B0, useValue: configuracion },
         { provide: APP_FILTER, useClass: FiltroErrores },
@@ -61,6 +68,7 @@ export class AgenteModule {
         },
         CaseteModelo,
         ClienteModelo,
+        ConfiguracionModeloRuntime,
         CatalogoServicios,
         AdaptadorBuscarPolitica,
         AdaptadorConsultarEstadoServicio,
