@@ -653,79 +653,75 @@ las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
 sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
 de la corrida: quien valida es el ejecutor, con el mismo esquema.
 
-## 31. Entre ejecuciones se vacia el registro de tickets, nunca la auditoria
+## 33. Los sistemas universitarios se emulan en una app aparte, sin datos propios
 
-> Resuelve DP-15 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+Contexto: las 40 tareas de `docs/tasks` declaran en `estado_inicial.servicios` el
+estado de cuatro sistemas universitarios (aula virtual, correo institucional,
+autenticacion y matricula) en una de diez variantes (`estado_inicial.overlay`).
+En el caso de uso real cada uno seria un sistema distinto, operado por su
+dependencia y con su propio endpoint de salud. Aqui no existen, y hasta ahora la
+unica forma de ponerlos en un estado concreto era `pnpm conocimiento:restablecer`
+por linea de comandos o `POST /experimento/restablecer` de B0, que solo existe
+con `UNIHELP_PERFIL=experimento`.
 
-Contexto: `RestablecerConocimientoUseCase` deja la base de conocimiento en la
-variante que pide la tarea y devuelve su huella (HU-36), pero los tickets no se
-restablecian. Sin restablecerlos, la ejecucion numero 20 arranca con las
-propuestas y los tickets de las 19 anteriores, y `esperado.ticket.debe_crearse`
-deja de verificarse contra un estado conocido.
+Decision (tomada por el responsable del proyecto): se agrega
+`apps/simulador-servicios`, una app NestJS con tag `arq:compartido` en el puerto
+3020, que emula los cuatro sistemas con un controlador por sistema y publica su
+estado por HTTP bajo `/simulacion/*`. Tres puntos fijan su alcance:
 
-Decision (consultada con el responsable, RM-17): `RestablecerTicketsUseCase`
-vacia las cuatro tablas del esquema `tickets` y reinicia la secuencia de
-numeracion antes de cada ejecucion. **Nunca** toca `auditoria.eventos`.
+1. **No tiene datos propios.** Su unica fuente es `libs/conocimiento` sobre
+   PostgreSQL, exactamente la misma que leen los agentes. El simulador solo la
+   publica y permite conmutar de estado inicial.
+2. **Vive en su propio profile de Compose (`simulacion`)**, no en `b0`..`b3`: las
+   arquitecturas siguen leyendo el estado de servicios en proceso desde la
+   libreria, no por HTTP.
+3. **Esta pensado tambien para las corridas del experimento**, no solo para
+   demostracion: `POST /simulacion/estado-inicial` devuelve la misma huella que
+   `calcularHuellasEsperadas` (verificado sobre las diez variantes), asi que el
+   ejecutor puede usarlo como punto unico para dejar el entorno como la tarea
+   pide.
 
-Por que: la auditoria es de solo agregar (HU-35, RM-09) y es la fuente
-independiente contra la que se comprueba si hubo una escritura no autorizada
-(M5.1). Si se vaciara junto con los tickets, la verificacion se haria contra el
-mismo registro que el agente escribe, que es justo lo que la rubrica evita
-(docs/04, seccion 4: «verificado contra la auditoria del servidor y no contra lo
-que el agente afirme haber hecho»). Un disparador de la migracion ya rechaza
-`TRUNCATE` sobre esa tabla, asi que la regla esta sostenida por el esquema y no
-solo por el codigo.
+Por que asi y no de otra forma:
 
-Consecuencias: el caso de uso solo se registra con `UNIHELP_PERFIL=experimento`
-o `NODE_ENV=test`, igual que el de conocimiento, y fuera de ese perfil no existe
-como capacidad. El estado vacio de tickets **no** entra en
-`provenance.state_hash_inicial`, que sigue cubriendo solo la base de
-conocimiento: si mas adelante se quiere una huella del estado completo, hay que
-decidirla aparte. La auditoria crece entre corridas; como cada consulta filtra
-por `trace_id`, eso no afecta a ninguna medicion.
+- **Si el simulador tuviera su propio estado en memoria**, habria dos copias de
+  la semilla. La huella de HU-36 cubre lo que hay en PostgreSQL; lo que el
+  simulador mostrara por su cuenta quedaria fuera de ella, y las dos podrian
+  divergir sin que nadie lo notara.
+- **Si el agente consultara el estado por HTTP al simulador**, aparecerian
+  transporte y latencia de red donde hoy no hay ninguno. Eso cambia `M4` y
+  convierte a B0 en algo que ya no es "el agente llama a las capacidades como
+  funciones locales". Seria otra variable manipulada y exigiria rehacer la
+  comparacion.
 
-## 32. El backend entrega lo que midio; el ejecutor arma y valida la traza
+Consecuencias:
 
-> Resuelve DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`.
-
-Contexto: B0 mide tiempos, tokens y llamadas a herramientas en
-`InstrumentadorTrazas`, pero esas mediciones vivian solo en la memoria del
-proceso. Nadie las persistia, asi que el experimento no tenia trazas reales.
-B0 tampoco puede armar la `TrazaEjecucion` completo: no conoce la tarea, la
-repeticion ni la huella del estado inicial, que son del ejecutor.
-
-Decision (consultada con el responsable, RM-17): cada backend expone dos rutas
-para el ejecutor, declaradas en `libs/contratos/src/lib/experimento.contrato.ts`:
-
-- `POST /experimento/restablecer` deja el entorno en la variante de la tarea y
-  devuelve la huella;
-- `GET /experimento/trazas/:traceId` devuelve **solo lo que el backend sabe**:
-  desglose de latencia, consumo de tokens, `tool_calls[]`, el objeto final,
-  como termino cada turno, la auditoria de ese `trace_id` y los tickets creados.
-
-El ejecutor (`experiment/ejecutor/`, Python) junta eso con la identidad de la
-ejecucion, arma la traza, la valida contra `traza.schema.json` y solo entonces
-la persiste. La invalida va a `cuarentena/`.
-
-Por que: tres razones. Primera, el reparto de responsabilidades es el real: cada
-pieza aporta lo que efectivamente sabe y nadie inventa un campo. Segunda, el
-contrato esta en `libs/contratos` y no dentro de B0 para que las cuatro
-arquitecturas respondan exactamente lo mismo; si cada una entregara su traza a
-su manera, el ejecutor tendria cuatro clientes y una diferencia de medicion
-podria venir del ejecutor en vez del protocolo. Tercera, validar antes de
-persistir es el paso 7 de docs/05: elimina el riesgo de resultados incompletos
-en el momento de producirlos y no auditandolos al final (HU-38).
-
-Las rutas viven **fuera del prefijo `/api`**, como `/health` (decision 6):
-`/api` es el contrato del frontend y ningun componente de `apps/web` las llama.
-Sus campos usan los nombres del esquema de traza (`tool_calls`, `input_tokens`)
-y no la convencion en español del repositorio, porque son los nombres del
-registro de metricas y traducirlos dos veces solo agrega una forma de
-equivocarse (RM-08, decision 22).
-
-Consecuencias: el controlador solo se registra con `UNIHELP_PERFIL=experimento`;
-en cualquier otro perfil las rutas devuelven 404, de modo que restablecer una
-instancia con datos no es posible por accidente. B1, B2 y B3 deben implementar
-las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
-sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
-de la corrida: quien valida es el ejecutor, con el mismo esquema.
+- `libs/dominio` gana el vocabulario publicado (`ESTADOS_SERVICIO_PUBLICADOS`,
+  `ESTADO_SERVICIO_PUBLICADO`) y recibe `ALCANCES_AFECTACION` y
+  `NIVELES_SERVICIO`, que estaban en `libs/conocimiento` y ahora tambien viajan
+  por red. `libs/conocimiento` los reexporta: nadie tuvo que cambiar sus
+  importaciones. `RolServicio` gana `sistema-emulado` y `ProtocoloIntegracion`,
+  `ninguno`.
+- El adaptador de `consultar_estado_servicio` de B0 usa la tabla compartida en
+  vez de su copia. El comportamiento no cambia: era la misma tabla.
+- `libs/contratos` gana `simulacion.contrato.ts`. El bloque de estado por
+  sistema usa los nombres del YAML (`estado`, `alcance`,
+  `componentes_afectados`, en mayusculas) y no la convencion camelCase del
+  repositorio, por el mismo motivo que `TrazaParcialDto` (decision 22): el punto
+  es comparar la respuesta con la tarea sin traducir nada.
+- `libs/conocimiento` gana `ListarEstadosInicialesUseCase` (lee la semilla, no la
+  base) y `ConsultarEntornoUseCase` (lee la fila `entorno`; usa `leerEstado()`,
+  asi que no debe llamarse dentro del camino que se mide).
+- Conmutar el estado inicial **no** borra el estado en proceso de la
+  arquitectura que este corriendo (conversaciones, instrumentacion, tickets).
+  Eso lo sigue haciendo `POST /experimento/restablecer` en cada backend
+  (decision 32), que es lo que llama el ejecutor hoy
+  (`experiment/ejecutor/cliente.py`). **El ejecutor no se cambio aqui.** El
+  simulador esta listo para servirlo: devuelve exactamente las mismas huellas
+  que el ejecutor valida contra `huellas-variantes.json`, verificado sobre las
+  diez variantes. Apuntarlo alli exige decidir antes el orden de las dos
+  llamadas y, si para entonces el experimento ya esta congelado, entrada en el
+  registro de desviaciones (RM-13, RM-17).
+- El comunicado de un sistema viaja **sin sanear**: aqui es la salida de un
+  sistema externo, no la entrada de un modelo. Sanearlo borraria justamente lo
+  que mide `T-ADV-007`. Quien lo ponga en un prompt es responsable de
+  delimitarlo, como ya hace el adaptador de B0.
