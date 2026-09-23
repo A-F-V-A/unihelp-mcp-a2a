@@ -575,3 +575,80 @@ con datos simulados: el chat queda cubierto por las pruebas de sus piezas
 navegador contra B0. Lo que decian las decisiones 14 y 15 sobre elegir entre
 simulado y real ya no aplica; lo demas de la decision 14 (las capas de Clean
 Architecture y que la eleccion viva en un solo archivo) sigue vigente.
+
+## 31. Entre ejecuciones se vacia el registro de tickets, nunca la auditoria
+
+> Resuelve DP-15 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: `RestablecerConocimientoUseCase` deja la base de conocimiento en la
+variante que pide la tarea y devuelve su huella (HU-36), pero los tickets no se
+restablecian. Sin restablecerlos, la ejecucion numero 20 arranca con las
+propuestas y los tickets de las 19 anteriores, y `esperado.ticket.debe_crearse`
+deja de verificarse contra un estado conocido.
+
+Decision (consultada con el responsable, RM-17): `RestablecerTicketsUseCase`
+vacia las cuatro tablas del esquema `tickets` y reinicia la secuencia de
+numeracion antes de cada ejecucion. **Nunca** toca `auditoria.eventos`.
+
+Por que: la auditoria es de solo agregar (HU-35, RM-09) y es la fuente
+independiente contra la que se comprueba si hubo una escritura no autorizada
+(M5.1). Si se vaciara junto con los tickets, la verificacion se haria contra el
+mismo registro que el agente escribe, que es justo lo que la rubrica evita
+(docs/04, seccion 4: «verificado contra la auditoria del servidor y no contra lo
+que el agente afirme haber hecho»). Un disparador de la migracion ya rechaza
+`TRUNCATE` sobre esa tabla, asi que la regla esta sostenida por el esquema y no
+solo por el codigo.
+
+Consecuencias: el caso de uso solo se registra con `UNIHELP_PERFIL=experimento`
+o `NODE_ENV=test`, igual que el de conocimiento, y fuera de ese perfil no existe
+como capacidad. El estado vacio de tickets **no** entra en
+`provenance.state_hash_inicial`, que sigue cubriendo solo la base de
+conocimiento: si mas adelante se quiere una huella del estado completo, hay que
+decidirla aparte. La auditoria crece entre corridas; como cada consulta filtra
+por `trace_id`, eso no afecta a ninguna medicion.
+
+## 32. El backend entrega lo que midio; el ejecutor arma y valida la traza
+
+> Resuelve DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: B0 mide tiempos, tokens y llamadas a herramientas en
+`InstrumentadorTrazas`, pero esas mediciones vivian solo en la memoria del
+proceso. Nadie las persistia, asi que el experimento no tenia trazas reales.
+B0 tampoco puede armar la `TrazaEjecucion` completo: no conoce la tarea, la
+repeticion ni la huella del estado inicial, que son del ejecutor.
+
+Decision (consultada con el responsable, RM-17): cada backend expone dos rutas
+para el ejecutor, declaradas en `libs/contratos/src/lib/experimento.contrato.ts`:
+
+- `POST /experimento/restablecer` deja el entorno en la variante de la tarea y
+  devuelve la huella;
+- `GET /experimento/trazas/:traceId` devuelve **solo lo que el backend sabe**:
+  desglose de latencia, consumo de tokens, `tool_calls[]`, el objeto final,
+  como termino cada turno, la auditoria de ese `trace_id` y los tickets creados.
+
+El ejecutor (`experiment/ejecutor/`, Python) junta eso con la identidad de la
+ejecucion, arma la traza, la valida contra `traza.schema.json` y solo entonces
+la persiste. La invalida va a `cuarentena/`.
+
+Por que: tres razones. Primera, el reparto de responsabilidades es el real: cada
+pieza aporta lo que efectivamente sabe y nadie inventa un campo. Segunda, el
+contrato esta en `libs/contratos` y no dentro de B0 para que las cuatro
+arquitecturas respondan exactamente lo mismo; si cada una entregara su traza a
+su manera, el ejecutor tendria cuatro clientes y una diferencia de medicion
+podria venir del ejecutor en vez del protocolo. Tercera, validar antes de
+persistir es el paso 7 de docs/05: elimina el riesgo de resultados incompletos
+en el momento de producirlos y no auditandolos al final (HU-38).
+
+Las rutas viven **fuera del prefijo `/api`**, como `/health` (decision 6):
+`/api` es el contrato del frontend y ningun componente de `apps/web` las llama.
+Sus campos usan los nombres del esquema de traza (`tool_calls`, `input_tokens`)
+y no la convencion en español del repositorio, porque son los nombres del
+registro de metricas y traducirlos dos veces solo agrega una forma de
+equivocarse (RM-08, decision 22).
+
+Consecuencias: el controlador solo se registra con `UNIHELP_PERFIL=experimento`;
+en cualquier otro perfil las rutas devuelven 404, de modo que restablecer una
+instancia con datos no es posible por accidente. B1, B2 y B3 deben implementar
+las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
+sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
+de la corrida: quien valida es el ejecutor, con el mismo esquema.
