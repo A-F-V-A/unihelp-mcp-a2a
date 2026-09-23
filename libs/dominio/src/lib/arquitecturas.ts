@@ -22,10 +22,21 @@ export type ProtocoloIntegracion =
   /** B2: varios agentes coordinados en memoria, dentro del mismo proceso. */
   | 'en-proceso'
   /** B3: agentes como servicios independientes que hablan Agent2Agent. */
-  | 'a2a';
+  | 'a2a'
+  /**
+   * El servicio no integra agentes y no aporta ningun salto a la medicion: es
+   * el caso del simulador de sistemas universitarios, que solo publica estado.
+   */
+  | 'ninguno';
 
 /** Rol que cumple un servicio dentro de su arquitectura. */
-export type RolServicio = 'agente-unico' | 'orquestador' | 'especialista' | 'servidor-herramientas';
+export type RolServicio =
+  | 'agente-unico'
+  | 'orquestador'
+  | 'especialista'
+  | 'servidor-herramientas'
+  /** Emula un sistema universitario externo; no participa del triaje (decision 33). */
+  | 'sistema-emulado';
 
 /** Ficha descriptiva de una arquitectura, usada por la UI y por los reportes. */
 export interface DescriptorArquitectura {

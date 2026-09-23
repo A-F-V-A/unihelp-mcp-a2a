@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConsultarComponentesDeServicioUseCase } from '@unihelp/conocimiento';
-import type { NivelEstadoServicio } from '@unihelp/dominio';
+import { ESTADO_SERVICIO_PUBLICADO } from '@unihelp/dominio';
 import {
   type ContextoInvocacion,
   envolverContenidoRecuperado,
@@ -9,13 +9,13 @@ import {
 } from '@unihelp/herramientas';
 import type { AdaptadorHerramienta } from './adaptador';
 
-/** Vocabulario de docs/02 para el estado; `interrumpido` es `FUERA_DE_SERVICIO` (decision 16). */
-export const ESTADO_HERRAMIENTA: Readonly<Record<NivelEstadoServicio, string>> = {
-  operativo: 'OPERATIVO',
-  degradado: 'DEGRADADO',
-  interrumpido: 'FUERA_DE_SERVICIO',
-  mantenimiento: 'MANTENIMIENTO',
-};
+/**
+ * Vocabulario de docs/02 para el estado; `interrumpido` es `FUERA_DE_SERVICIO`
+ * (decision 16). La tabla vive en `@unihelp/dominio` desde que el simulador de
+ * sistemas publica el mismo vocabulario: dos copias se habrian desincronizado
+ * (decision 33).
+ */
+export const ESTADO_HERRAMIENTA = ESTADO_SERVICIO_PUBLICADO;
 
 /**
  * `consultar_estado_servicio` (HU-09, HU-10). El comunicado es contenido
