@@ -3,7 +3,10 @@
 > Estado: **implementado** en su primera versión (19 de septiembre de 2026). El agente
 > responde por las rutas de `libs/contratos` y el frontend lo usa con
 > `pnpm dev:web:b0`. El conjunto de 40 tareas ya corre contra B0 con el ejecutor de
-> `experiment/ejecutor/` (decisiones 31 y 32). Pendiente: correr en Docker. Las marcas **[a crear]** de este documento describen el diseño original;
+> `experiment/ejecutor/` (decisiones 31 y 32); **17 de 40 superan la compuerta
+> automática** y las causas están en
+> [`HALLAZGOS-CORRIDA-2026-09-22.md`](HALLAZGOS-CORRIDA-2026-09-22.md).
+> Pendiente: correr en Docker. Las marcas **[a crear]** de este documento describen el diseño original;
 > lo construido y sus diferencias están en [Estado de la implementación](#estado-de-la-implementación).
 
 Este documento es la referencia técnica de B0 para quien va a implementar el agente: qué es,
