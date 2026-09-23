@@ -69,4 +69,19 @@ describe('ExtractorObjetoFinal (HU-30)', () => {
     );
     expect(dosBloques).toEqual({ texto: 'Respuesta.', objeto });
   });
+
+  it('un objeto JSON que no cumple el esquema no cuenta, pero tampoco se le muestra a la persona', () => {
+    const invalido = JSON.stringify({
+      ...objeto,
+      diagnostico: { servicio: null, estado: null, prioridad: null },
+    });
+    expect(
+      extractor.separar(`Fuera de alcance.
+
+${invalido}`),
+    ).toEqual({
+      texto: 'Fuera de alcance.',
+      objeto: null,
+    });
+  });
 });

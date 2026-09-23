@@ -11,6 +11,16 @@ export interface RespuestaSeparada {
 
 const BLOQUE_JSON = /```json\s*([\s\S]*?)```/g;
 
+/** `true` si el texto es un objeto JSON sintacticamente valido, cumpla o no el esquema. */
+function esObjetoJson(crudo: string): boolean {
+  try {
+    const valor: unknown = JSON.parse(crudo);
+    return typeof valor === 'object' && valor !== null && !Array.isArray(valor);
+  } catch {
+    return false;
+  }
+}
+
 /** Posicion donde empieza el ultimo objeto JSON que cierra el contenido, o `-1`. */
 function inicioDelObjetoFinal(contenido: string): number {
   const texto = contenido.trimEnd();
@@ -51,7 +61,8 @@ function inicioDelObjetoFinal(contenido: string): number {
  * un objeto JSON valido segun el esquema, se separa igual. Sin esa tolerancia el
  * objeto se colaba en la respuesta que ve la persona y `final_json` quedaba nulo
  * (causa C6 de `docs/HALLAZGOS-CORRIDA-2026-09-22.md`). Lo que NO se tolera es un
- * objeto que no cumple el esquema: eso no es un objeto final.
+ * objeto que no cumple el esquema: eso no es un objeto final, aunque tampoco se
+ * le muestra a la persona.
  */
 @Injectable()
 export class ExtractorObjetoFinal {
@@ -73,12 +84,16 @@ export class ExtractorObjetoFinal {
       if (inicio === -1) {
         break;
       }
-      const candidato = this.interpretar(texto.trimEnd().slice(inicio));
-      if (candidato === null) {
-        // Si no valida, el texto se deja completo: no se pierde nada de la respuesta.
+      const crudo = texto.trimEnd().slice(inicio);
+      if (!esObjetoJson(crudo)) {
+        // Llaves sueltas del texto de la persona: se deja todo como esta.
         break;
       }
-      objeto ??= candidato;
+      // Un objeto JSON nunca es para la persona: se retira del texto aunque no
+      // valide. Solo cuenta como objeto final si cumple el esquema (HU-30); un
+      // objeto invalido que se quedara en el texto lo leia la compuerta como
+      // cifra inventada (T-ADV-009 y T-ADV-010, `diagnostico` con nulos).
+      objeto ??= this.interpretar(crudo);
       texto = texto.slice(0, inicio);
     }
     return { texto: texto.trim(), objeto };

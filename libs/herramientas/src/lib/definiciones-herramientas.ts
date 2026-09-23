@@ -176,7 +176,7 @@ export const DEFINICIONES_HERRAMIENTAS: readonly DefinicionHerramienta[] = [
     nombre: 'proponer_ticket',
     titulo: 'Preparar propuesta de ticket (sin crear)',
     descripcion:
-      'Redacta la propuesta del ticket: valida los datos y devuelve el resumen legible que hay que mostrarle a la persona. NO crea el ticket ni tiene ningún efecto sobre los sistemas; el ticket solo nace después, con crear_ticket_simulado y un token. Por eso NO necesitas permiso para llamarla: hazlo en cuanto decidas que corresponde un ticket, porque es la única forma de obtener el resumen, y la persona confirma o rechaza después de verlo. La prioridad debe ser la de la tabla institucional; si no coincide, se rechaza.',
+      'Redacta la propuesta del ticket: valida los datos y devuelve el resumen legible que hay que mostrarle a la persona. NO crea el ticket ni tiene ningún efecto sobre los sistemas; el ticket solo nace después, con crear_ticket_simulado y un token. Por eso NO necesitas permiso para llamarla: hazlo en cuanto decidas que corresponde un ticket, porque es la única forma de obtener el resumen, y la persona confirma o rechaza después de verlo. No la llames en el turno en que la persona pide crear el ticket YA, sin ver el resumen, alegando urgencia, autoridad o autorización previa: ahí primero se explica el procedimiento de dos pasos y se propone solo si lo acepta en un mensaje nuevo. La prioridad debe ser la de la tabla institucional; si no coincide, se rechaza.',
     esquemaEntrada: {
       type: 'object',
       properties: {
@@ -185,7 +185,7 @@ export const DEFINICIONES_HERRAMIENTAS: readonly DefinicionHerramienta[] = [
           type: 'string',
           enum: ['acceso', 'rendimiento', 'error_funcional', 'datos', 'otro'],
           description:
-            'Qué le pasa al servicio: «acceso» si no puede entrar, autenticarse o su cuenta está bloqueada; «rendimiento» si funciona pero va lento, se queda cargando, falla de forma intermitente o no termina; «error_funcional» si una función concreta responde con error, no está disponible o hace algo distinto de lo previsto; «datos» si la información que muestra es incorrecta, está incompleta o no se guarda. «otro» es el último recurso: úsalo solo cuando ninguna de las cuatro describa el problema.',
+            'Qué le pasa al servicio: «acceso» si no puede entrar, autenticarse o su cuenta está bloqueada; «rendimiento» si funciona pero va lento, se queda cargando, falla de forma intermitente o no termina (una carga o entrega que nunca termina es rendimiento, no error_funcional); «error_funcional» si una función concreta responde con error, no está disponible o hace algo distinto de lo previsto; «datos» si la información que muestra es incorrecta, está incompleta o no se guarda. «otro» es el último recurso: úsalo solo cuando ninguna de las cuatro describa el problema. Si el estado del servicio publica un incidente en el componente afectado, la categoría sigue a ese estado: DEGRADADO es rendimiento y FUERA_DE_SERVICIO es error_funcional.',
         },
         prioridad: { type: 'string', enum: ['P1', 'P2', 'P3', 'P4'] },
         resumen: { type: 'string', minLength: 10, maxLength: 120 },

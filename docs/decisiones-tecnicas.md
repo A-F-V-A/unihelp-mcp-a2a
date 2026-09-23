@@ -806,3 +806,33 @@ siguieron pasando despues del cambio. Si el equipo rechaza esa lectura, se quita
 la frase y esta decision se reemplaza. Cambiar el prompt cambia `prompt_hash` en
 todas las trazas: las corridas anteriores no son comparables con las posteriores
 (RM-13).
+
+## 36. El alcance del prompt nombra los tramites con el vocabulario de la normativa
+
+Contexto: la recuperacion es lexica y determinista (RM-01, HU-08). Al reproducir
+el ranking en `psql` se vio que las consultas que el agente arma con el relato
+de la persona no recuperan la politica correcta («habilitar curso del semestre
+pasado» no alcanza a «Apertura temporal de un curso archivado»; «no puedo
+inscribir asignaturas» no alcanza a «Matricula extemporanea»), mientras que las
+consultas con el vocabulario de los titulos la recuperan de primera. El
+problema no esta en `libs/conocimiento`: esta en que el modelo no conoce el
+vocabulario institucional.
+
+Decision: el prompt base (1.3.0) describe el alcance de cada servicio con la
+lista de tramites que la normativa regula, con el nombre que usa la normativa,
+para los cuatro servicios por igual y sin ningun codigo de politica; y agrega
+la correspondencia general entre una falla y su tramite cercano (no poder
+entrar es desbloqueo o recuperacion de acceso, no poder entregar es prorroga
+por falla tecnica). Ademas, el filtro `servicio` va siempre (la compuerta exige
+que la busqueda obligatoria lo lleve, `experiment/ejecutor/compuerta.py`) y el
+filtro `categoria` no se usa, porque excluye y escondia la politica (C2).
+
+Por que no es ensenarle las respuestas: la lista es el catalogo completo de
+tramites del corpus (39 politicas), no las de las tareas; una persona nueva en
+la mesa de ayuda recibiria el mismo catalogo. Lo que la tarea mide sigue siendo
+si el agente busca, si elige entre politicas parecidas y si cita la correcta.
+
+Consecuencias: el prompt base crece (mas tokens de entrada en las cuatro
+arquitecturas por igual, RNF-01) y `prompt_hash` cambia. Si el corpus agrega
+politicas, esta lista se actualiza en el mismo cambio; si el equipo considera
+que el catalogo facilita demasiado M1.2, se retira y esta decision se reemplaza.
