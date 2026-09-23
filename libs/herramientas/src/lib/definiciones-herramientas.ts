@@ -77,17 +77,20 @@ export const DEFINICIONES_HERRAMIENTAS: readonly DefinicionHerramienta[] = [
           type: 'string',
           minLength: 3,
           maxLength: 300,
-          description: 'Términos de búsqueda en español.',
+          description:
+            'Pocas palabras clave en español, como el título de la política que buscas: «prórroga de entrega por falla técnica», «desbloqueo de cuenta por intentos fallidos». La búsqueda es léxica y exige que la mayoría de las palabras aparezcan en el documento, así que una frase larga con el relato de la persona encuentra menos que tres o cuatro términos precisos.',
         },
         servicio: {
           type: 'string',
           enum: [...SERVICIOS_HERRAMIENTAS],
-          description: 'Filtro opcional por servicio.',
+          description:
+            'Filtro opcional. EXCLUYE: descarta toda política que no esté asociada a ese servicio. Omítelo si la respuesta puede estar en otro servicio o si no estás seguro.',
         },
         categoria: {
           type: 'string',
           enum: ['acceso', 'plazos', 'soporte', 'datos_personales', 'academico'],
-          description: 'Filtro opcional por tema.',
+          description:
+            'Filtro opcional por tema. EXCLUYE igual que el anterior, y el tema con el que está clasificada una política no siempre es el que parece: un procedimiento de consulta o de reapertura suele estar en «soporte» aunque trate de un asunto académico. Ante la duda, OMÍTELO: un filtro equivocado no empeora el resultado, lo deja vacío.',
         },
         max_resultados: { type: 'integer', minimum: 1, maximum: 3, default: 3 },
       },
@@ -173,7 +176,7 @@ export const DEFINICIONES_HERRAMIENTAS: readonly DefinicionHerramienta[] = [
     nombre: 'proponer_ticket',
     titulo: 'Preparar propuesta de ticket (sin crear)',
     descripcion:
-      'Valida los datos de un ticket y devuelve una propuesta con un resumen legible para mostrar al usuario. NO crea el ticket. La prioridad debe ser la de la tabla institucional; si no coincide, se rechaza. Es obligatorio mostrar el resumen al usuario y obtener confirmación explícita antes de crear.',
+      'Redacta la propuesta del ticket: valida los datos y devuelve el resumen legible que hay que mostrarle a la persona. NO crea el ticket ni tiene ningún efecto sobre los sistemas; el ticket solo nace después, con crear_ticket_simulado y un token. Por eso NO necesitas permiso para llamarla: hazlo en cuanto decidas que corresponde un ticket, porque es la única forma de obtener el resumen, y la persona confirma o rechaza después de verlo. La prioridad debe ser la de la tabla institucional; si no coincide, se rechaza.',
     esquemaEntrada: {
       type: 'object',
       properties: {
@@ -181,6 +184,8 @@ export const DEFINICIONES_HERRAMIENTAS: readonly DefinicionHerramienta[] = [
         categoria: {
           type: 'string',
           enum: ['acceso', 'rendimiento', 'error_funcional', 'datos', 'otro'],
+          description:
+            'Qué le pasa al servicio: «acceso» si no puede entrar, autenticarse o su cuenta está bloqueada; «rendimiento» si funciona pero va lento, se queda cargando, falla de forma intermitente o no termina; «error_funcional» si una función concreta responde con error, no está disponible o hace algo distinto de lo previsto; «datos» si la información que muestra es incorrecta, está incompleta o no se guarda. «otro» es el último recurso: úsalo solo cuando ninguna de las cuatro describa el problema.',
         },
         prioridad: { type: 'string', enum: ['P1', 'P2', 'P3', 'P4'] },
         resumen: { type: 'string', minLength: 10, maxLength: 120 },

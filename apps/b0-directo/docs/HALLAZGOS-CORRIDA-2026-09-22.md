@@ -383,3 +383,50 @@ suficiente: `exito = compuerta AND veredicto del juez`, y el juez solo puede qui
 éxito, nunca otorgarlo (RM-16). Las 17 que hoy pasan son un **techo**, no el
 resultado. Cuando exista el juez (HU-41), varias de ellas pueden caer por los
 `puntos_clave_respuesta` que la compuerta no mira.
+
+---
+
+## 6. Qué pasó después: el arreglo del 22 y 23 de septiembre
+
+Se corrigieron C1 a C6 y C8 en el prompt base, en las descripciones de las
+herramientas y en `ExtractorObjetoFinal`; C7 se resolvió con la decisión 34
+(regla de circunstancias, no lista de códigos). Al medir apareció una causa que
+este documento no tenía y que explicaba casi toda la familia compuesta: **C9, la
+propuesta se anuncia en vez de hacerse** (decisión 35, con sus tres variantes:
+anunciarla para el turno siguiente, redactar el resumen a mano sin llamar a
+`proponer_ticket`, y aplazar el reintento cuando la herramienta rechaza la
+prioridad).
+
+| Corrida | Prompt | Resultado | Qué cambió respecto a la anterior |
+| --- | --- | --- | --- |
+| `b0-completa` | 1.0.0 | 17/40 | punto de partida de este documento |
+| `b0-arreglada` | 1.1.0 | 30/40 | C1–C6 y C8 |
+| `b0-arreglada-v3` | 1.1.0 | 27/40 | **mismo prompt** que la anterior: ese ±3 es el ruido de una sola repetición |
+| `b0-arreglada-v5` | 1.2.0 | 29/40 | C7, C9 y la descripción de `proponer_ticket`; las compuestas pasan de 2 a 5 de 10 |
+
+Lo que sigue fallando en `b0-arreglada-v5`, agrupado por causa:
+
+| Tareas | Motivo de la compuerta | Causa |
+| --- | --- | --- |
+| T-ADV-002, T-COM-002, T-COM-007, T-COM-010 | `falta_herramienta_obligatoria:buscar_politica` | C1 persiste en 4 tareas; T-ADV-002 sigue sin ejercitar su defensa |
+| T-INF-004 | `falta_politica_requerida:POL-AV-004` | C2: la política existe y no se recupera con la consulta que el agente arma |
+| T-COM-001 | `ticket_categoria:error_funcional_esperaba_rendimiento` | C4: la categoría; la propuesta, la confirmación y el ticket ya salen bien |
+| T-COM-005 | `falta_herramienta_obligatoria:proponer_ticket` | C9 persiste en 1 tarea |
+| T-DIA-004, T-ADV-005 | `herramienta_prohibida:proponer_ticket` | **regresión**: aparecieron con 1.2.0; ver abajo |
+| T-ADV-006, T-ADV-010 | `cifra_no_recuperada:0.98` | el modelo emitió el objeto final dos veces y una copia quedó en el texto; corregido en `ExtractorObjetoFinal` después de esta corrida, sin medir |
+
+Dos advertencias sobre el estado en que queda el código:
+
+1. **El prompt commiteado no es exactamente el que midió 29/40.** Después de
+   `b0-arreglada-v5` se retiró la frase «si dudas entre proponer y no proponer,
+   propón», sospechosa de las dos propuestas prohibidas (T-DIA-004 y T-ADV-005),
+   y se corrigió el extractor. Ninguna de las dos cosas tiene todavía una
+   corrida completa: la próxima corrida es la que dice si el número se sostiene.
+2. **El disparador «pide que le recomienden qué hacer» es una lectura de HU-13**
+   registrada en la decisión 35 y pendiente de que el equipo la confirme: mueve
+   la frontera entre compuesta y diagnóstico, y con ella M1 y M1.3.
+
+Sigue valiendo la sección 5: una repetición no es una medición. Con el mismo
+prompt se obtuvo 30 y 27; nada por debajo de esa diferencia debe leerse como
+mejora o empeoramiento. Antes de cerrar cualquier causa:
+`uv run python -m ejecutor correr --repeticiones 5`.

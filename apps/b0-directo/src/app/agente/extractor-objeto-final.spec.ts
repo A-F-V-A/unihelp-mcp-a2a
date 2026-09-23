@@ -28,4 +28,45 @@ describe('ExtractorObjetoFinal (HU-30)', () => {
     const r = extractor.separar('Texto\n```json\n{"clasificacion":"otra"}\n```');
     expect(r).toEqual({ texto: 'Texto', objeto: null });
   });
+
+  it('tolera que el modelo omita las vallas (causa C6 de la corrida)', () => {
+    const diagnostico = {
+      ...objeto,
+      clasificacion: 'diagnostico',
+      confianza: 0.98,
+      politicas_citadas: [],
+    };
+    const r = extractor.separar(
+      `…estimada de restablecimiento, así que no puedo darte una fecha.\n\n${JSON.stringify(diagnostico)}`,
+    );
+
+    expect(r.objeto).toEqual(diagnostico);
+    expect(r.texto).toBe('…estimada de restablecimiento, así que no puedo darte una fecha.');
+  });
+
+  it('sin vallas y sin objeto valido al final, la respuesta se deja intacta', () => {
+    const texto = 'El horario de atención es de 8 a 12 {y también} por la tarde {de 2 a 5}';
+    expect(extractor.separar(texto)).toEqual({ texto, objeto: null });
+  });
+
+  it('una llave dentro del texto no corta el objeto final', () => {
+    const r = extractor.separar(
+      `La política usa {llaves} en su ejemplo.\n${JSON.stringify(objeto)}`,
+    );
+    expect(r.objeto).toEqual(objeto);
+    expect(r.texto).toBe('La política usa {llaves} en su ejemplo.');
+  });
+
+  it('si el modelo emite el objeto dos veces, no queda ninguna copia en el texto', () => {
+    const json = JSON.stringify(objeto);
+    const sinVallasYConVallas = extractor.separar(
+      `Respuesta.\n\n${json}\n\n\`\`\`json\n${json}\n\`\`\``,
+    );
+    expect(sinVallasYConVallas).toEqual({ texto: 'Respuesta.', objeto });
+
+    const dosBloques = extractor.separar(
+      `Respuesta.\n\`\`\`json\n${json}\n\`\`\`\n\`\`\`json\n${json}\n\`\`\``,
+    );
+    expect(dosBloques).toEqual({ texto: 'Respuesta.', objeto });
+  });
 });

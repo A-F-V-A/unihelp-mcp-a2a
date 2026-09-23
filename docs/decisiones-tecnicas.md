@@ -725,3 +725,84 @@ Consecuencias:
   sistema externo, no la entrada de un modelo. Sanearlo borraria justamente lo
   que mide `T-ADV-007`. Quien lo ponga en un prompt es responsable de
   delimitarlo, como ya hace el adaptador de B0.
+
+## 34. Ante dos politicas que se solapan, el agente elige por las circunstancias
+
+Contexto: causa C7 de
+`apps/b0-directo/docs/HALLAZGOS-CORRIDA-2026-09-22.md`. En T-INF-005 y T-INF-002
+la busqueda devuelve la pareja de distraccion completa (cancelacion ordinaria y
+extemporanea) y el agente cita la que la tarea declara prohibida. Escribir en el
+prompt "no cites POL-MA-001" seria ensenarle a pasar esa prueba concreta, no a
+distinguir, y ademas contaminaria M1.2 en las informativas.
+
+Decision (tomada por el responsable del proyecto, RM-17): el prompt base lleva
+una regla de criterio, no una lista de codigos: cuando dos politicas recuperadas
+regulan el mismo tramite en circunstancias distintas, el agente se queda con la
+que coincide con las circunstancias que la persona describio (la semana del
+semestre, el motivo, el estado del servicio) y, si no alcanzan para decidir, lo
+dice en vez de elegir al azar.
+
+Por que: distinguir dos politicas parecidas es lo que HU-05 y HU-06 piden del
+sistema, y la regla se enuncia sin nombrar ninguna politica ni ninguna tarea, asi
+que vale igual para las parejas de distraccion que el corpus ya tiene y para las
+que se agreguen despues.
+
+Consecuencias: al interpretar M1.2 en las informativas hay que declarar que el
+prompt guia la eleccion entre politicas solapadas; la diferencia entre
+arquitecturas sigue siendo comparable porque el prompt base es el mismo en las
+cuatro (RNF-01). Si el equipo concluye que la regla facilita demasiado la tarea,
+retirarla es cambiar una linea, y entonces esta decision se reemplaza.
+
+## 35. La propuesta de ticket se hace, no se anuncia
+
+Contexto: en la corrida `b0-arreglada-v3` (22 de septiembre de 2026), nueve de
+los trece fallos eran de la familia compuesta y casi todos por el mismo motivo,
+`falta_herramienta_obligatoria:proponer_ticket`. El agente entendia la regla de
+dos fases pero la convertia en tres. Al revisar las trazas aparecieron tres
+conductas distintas, no una:
+
+1. Anunciaba la propuesta en vez de hacerla: "si quieres, te preparo la
+   propuesta para que luego la confirmes".
+2. Redactaba el resumen de su cuenta y preguntaba "¿quieres que lo cree?" sin
+   haber llamado nunca a `proponer_ticket`.
+3. Llamaba a `proponer_ticket` con una prioridad que la tabla no admite, el caso
+   de uso la rechazaba (decision 25) y, en vez de reintentar con el valor que el
+   error le indicaba, aplazaba la correccion al turno siguiente.
+
+Las tres terminan igual: el backend no responde `accion_sugerida:
+proponer-ticket`, el ejecutor no envia el turno de confirmacion
+(`experiment/ejecutor/cliente.py`) y la tarea pierde ademas
+`confirmar_propuesta` y `crear_ticket_simulado`.
+
+Decision: se corrige en el prompt base (1.2.0) y en la descripcion de la
+herramienta, no en el bucle del agente:
+
+- `proponer_ticket` se describe por lo que hace: redacta la propuesta, no crea
+  nada y no necesita permiso, porque es la unica forma de obtener el resumen.
+- El prompt prohibe anunciar la propuesta, prohibe redactar un resumen de ticket
+  a mano y aclara que llamar a la herramienta no termina el turno.
+- Una herramienta que rechaza una llamada se vuelve a llamar corregida en el
+  mismo turno; aplazarlo es un fallo.
+- La tabla de prioridad dice explicitamente que el alcance parcial nunca llega a
+  P2, que era el error concreto que disparaba el rechazo.
+- Se precisa el disparador: ademas de pedir reportar, registrar, dejar
+  constancia o abrir un caso, tambien justifica proponer que la persona pida que
+  le recomienden que hacer ante una falla que el estado del servicio confirma.
+  Preguntar solo que esta pasando, por que le ocurre o si el problema es suyo no
+  lo justifica: eso es lo que separa la familia compuesta de la de diagnostico
+  (HU-13, HU-17).
+
+Por que en el prompt y no en el codigo: la garantia mecanica nunca estuvo en
+riesgo (sin token no hay ticket, decision 25) y meter en el bucle un detector de
+"pidio confirmacion sin propuesta" seria tocar justo la parte que el experimento
+mide, la coordinacion del agente. Si mas adelante se decide poner esa red, hay
+que ponerla igual en las cuatro arquitecturas y registrarlo aparte.
+
+Consecuencias: el disparador "pedir una recomendacion" es una lectura de HU-13
+que conviene confirmar con el equipo, porque mueve la frontera entre las
+categorias compuesta y diagnostico y con ella M1 y M1.3. Las dos tareas de
+control de diagnostico (T-DIA-001 y T-DIA-004, donde proponer esta prohibido)
+siguieron pasando despues del cambio. Si el equipo rechaza esa lectura, se quita
+la frase y esta decision se reemplaza. Cambiar el prompt cambia `prompt_hash` en
+todas las trazas: las corridas anteriores no son comparables con las posteriores
+(RM-13).
