@@ -113,6 +113,8 @@ apps/
   b3-a2a-conocimiento/   NestJS  B3  tags: tipo:app, arq:b3   (especialista)
   b3-a2a-diagnostico/    NestJS  B3  tags: tipo:app, arq:b3   (especialista)
   mcp-server/            NestJS  B1 y B3  tags: tipo:app, arq:compartido
+  simulador-servicios/   NestJS  emula los 4 sistemas universitarios cuyo estado
+                         consultan las tareas  tags: tipo:app, arq:compartido
   web/                   Angular, frontend UNICO  tags: tipo:app, arq:frontend
 libs/
   conocimiento/          @unihelp/conocimiento: grafo de politicas en PostgreSQL, busqueda
@@ -144,7 +146,7 @@ tools/git-hooks/         Hook commit-msg (valida HU y prohibe firma de IA), plan
 .mcp.json                Servidores MCP para asistentes (Playwright)
 ```
 
-Todas las apps NestJS tienen `src/app/salud/` (identico en las siete; lo unico
+Todas las apps NestJS tienen `src/app/salud/` (identico en las ocho; lo unico
 que cambia es `identidad.ts`). B0 agrega el agente: `agente/`, `modelo/`,
 `herramientas/`, `conversacion/`, `tickets/`, `consultas/` y `http/`, descritos
 en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
@@ -168,9 +170,10 @@ en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md
    priorizar). Solo tipos, constantes y catalogos (decision 8).
 4. **`libs/contratos` y `libs/dominio` no dependen de ningun framework** ni
    tienen dependencias de runtime: se usan desde NestJS y Angular.
-5. **El contrato manda.** Las siete apps de backend deben responder exactamente
-   las rutas y DTOs de `libs/contratos`. No se cambia un contrato para
-   acomodar una sola arquitectura.
+5. **El contrato manda.** Las siete apps de triaje (todas menos
+   `simulador-servicios`, que no participa del triaje) deben responder
+   exactamente las rutas y DTOs de `libs/contratos`. No se cambia un contrato
+   para acomodar una sola arquitectura.
 6. **Clean Architecture en `apps/web`**: `domain/` no importa Angular ni RxJS;
    `application/` y `presentation/` nunca importan `infrastructure/`. La
    union de puertos con implementaciones vive SOLO en
