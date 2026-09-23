@@ -6,7 +6,7 @@ const CLAVE = 'unihelp.preferencias';
 
 /**
  * Guarda las preferencias en `localStorage`: se conservan entre visitas en este
- * dispositivo. No depende del backend, asi que es igual con datos simulados o reales.
+ * dispositivo. No depende del backend.
  */
 @Injectable()
 export class PreferenciasNavegador implements PreferenciasRepository {

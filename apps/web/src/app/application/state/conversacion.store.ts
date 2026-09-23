@@ -93,7 +93,7 @@ function fusionarResumenes(
 /**
  * Estado de las conversaciones del solicitante: la lista (historial) y la
  * conversacion abierta. Orquesta casos de uso y expone todo como signals de
- * solo lectura; no sabe si detras hay un backend real o simulado.
+ * solo lectura; no conoce la implementacion que hay detras de los puertos.
  */
 @Injectable({ providedIn: 'root' })
 export class ConversacionStore {
