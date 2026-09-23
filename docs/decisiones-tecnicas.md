@@ -683,3 +683,49 @@ como capacidad. El estado vacio de tickets **no** entra en
 conocimiento: si mas adelante se quiere una huella del estado completo, hay que
 decidirla aparte. La auditoria crece entre corridas; como cada consulta filtra
 por `trace_id`, eso no afecta a ninguna medicion.
+
+## 32. El backend entrega lo que midio; el ejecutor arma y valida la traza
+
+> Resuelve DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: B0 mide tiempos, tokens y llamadas a herramientas en
+`InstrumentadorTrazas`, pero esas mediciones vivian solo en la memoria del
+proceso. Nadie las persistia, asi que el experimento no tenia trazas reales.
+B0 tampoco puede armar la `TrazaEjecucion` completo: no conoce la tarea, la
+repeticion ni la huella del estado inicial, que son del ejecutor.
+
+Decision (consultada con el responsable, RM-17): cada backend expone dos rutas
+para el ejecutor, declaradas en `libs/contratos/src/lib/experimento.contrato.ts`:
+
+- `POST /experimento/restablecer` deja el entorno en la variante de la tarea y
+  devuelve la huella;
+- `GET /experimento/trazas/:traceId` devuelve **solo lo que el backend sabe**:
+  desglose de latencia, consumo de tokens, `tool_calls[]`, el objeto final,
+  como termino cada turno, la auditoria de ese `trace_id` y los tickets creados.
+
+El ejecutor (`experiment/ejecutor/`, Python) junta eso con la identidad de la
+ejecucion, arma la traza, la valida contra `traza.schema.json` y solo entonces
+la persiste. La invalida va a `cuarentena/`.
+
+Por que: tres razones. Primera, el reparto de responsabilidades es el real: cada
+pieza aporta lo que efectivamente sabe y nadie inventa un campo. Segunda, el
+contrato esta en `libs/contratos` y no dentro de B0 para que las cuatro
+arquitecturas respondan exactamente lo mismo; si cada una entregara su traza a
+su manera, el ejecutor tendria cuatro clientes y una diferencia de medicion
+podria venir del ejecutor en vez del protocolo. Tercera, validar antes de
+persistir es el paso 7 de docs/05: elimina el riesgo de resultados incompletos
+en el momento de producirlos y no auditandolos al final (HU-38).
+
+Las rutas viven **fuera del prefijo `/api`**, como `/health` (decision 6):
+`/api` es el contrato del frontend y ningun componente de `apps/web` las llama.
+Sus campos usan los nombres del esquema de traza (`tool_calls`, `input_tokens`)
+y no la convencion en español del repositorio, porque son los nombres del
+registro de metricas y traducirlos dos veces solo agrega una forma de
+equivocarse (RM-08, decision 22).
+
+Consecuencias: el controlador solo se registra con `UNIHELP_PERFIL=experimento`;
+en cualquier otro perfil las rutas devuelven 404, de modo que restablecer una
+instancia con datos no es posible por accidente. B1, B2 y B3 deben implementar
+las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
+sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
+de la corrida: quien valida es el ejecutor, con el mismo esquema.

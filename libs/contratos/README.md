@@ -17,6 +17,7 @@ Contiene:
 | [`modelo-ia.contrato.ts`](src/lib/modelo-ia.contrato.ts)       | catalogo de proveedores y modelo elegido (decision 27) |
 | [`politica.contrato.ts`](src/lib/politica.contrato.ts)         | citas y politica completa                              |
 | [`servicio.contrato.ts`](src/lib/servicio.contrato.ts)         | estado de servicio y ventana estimada                  |
+| [`experimento.contrato.ts`](src/lib/experimento.contrato.ts)   | `RUTAS_EXPERIMENTO`: restablecer el entorno y entregar la traza de una ejecucion. Las consume el ejecutor, NO el frontend, y viven fuera de `/api` (decision 32) |
 
 Los contratos de triaje se fijaron **antes** de existir el backend: el frontend
 ya funciona contra ellos con datos simulados, y cada arquitectura debe

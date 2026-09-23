@@ -2,8 +2,8 @@
 
 > Estado: **implementado** en su primera versión (19 de septiembre de 2026). El agente
 > responde por las rutas de `libs/contratos` y el frontend lo usa con
-> `pnpm dev:web:b0`. Pendiente: persistir la traza del experimento (DP-09) y correr en
-> Docker. Las marcas **[a crear]** de este documento describen el diseño original;
+> `pnpm dev:web:b0`. El conjunto de 40 tareas ya corre contra B0 con el ejecutor de
+> `experiment/ejecutor/` (decisiones 31 y 32). Pendiente: correr en Docker. Las marcas **[a crear]** de este documento describen el diseño original;
 > lo construido y sus diferencias están en [Estado de la implementación](#estado-de-la-implementación).
 
 Este documento es la referencia técnica de B0 para quien va a implementar el agente: qué es,
@@ -1445,20 +1445,21 @@ cambia lo que significa la comparación con B1.**
 
 Lo que existe hoy frente a lo diseñado en las secciones anteriores:
 
-| Pieza del diseño                             | Implementación                                                                                                            |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Clases de B0 (sección 4.1)                   | Todas en `src/app/`: `conversacion/`, `agente/`, `modelo/`, `herramientas/`, `tickets/`, `consultas/`, `http/`.           |
-| `@unihelp/herramientas` y `@unihelp/tickets` | Creadas en `libs/` (decisión 26, provisional).                                                                            |
-| Cinco herramientas                           | Las de docs/02 con tres ajustes (DP-01 resuelta, decisión 24).                                                            |
-| Prioridad                                    | El modelo la escribe y `ProponerTicketUseCase` la verifica (DP-02 resuelta, decisión 25).                                 |
-| Modelo                                       | OpenAI `gpt-5.4-mini-2026-03-17`, temperatura 0.2 (decisión 23).                                                          |
-| Confirmación por turno real                  | Implementada con la opción 1 de DP-05 (provisional, decisión 26).                                                         |
-| Flujo del frontend                           | Opción (a) de DP-06: el botón emite el token por los mismos casos de uso.                                                 |
-| Instrumentación                              | `InstrumentadorTrazas` acumula tiempos y tokens por ejecución y los registra en el log; **no** persiste la traza (DP-09). |
-| Límite de turnos                             | 8 turnos de la persona por conversación, con `429 limite-turnos` del contrato (DP-08 sigue abierta para el ejecutor).     |
-| Casetes                                      | `CaseteModelo` con `live`, `record` y `replay`. DP-04 sigue abierta.                                                      |
-| Restablecimiento de tickets (DP-15)          | No implementado.                                                                                                          |
-| Docker (`pnpm b0`)                           | No funciona todavía: falta migrar la base dentro del profile y pasar las variables del modelo.                            |
+| Pieza del diseño                             | Implementación                                                                                                                                                                                                                   |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clases de B0 (sección 4.1)                   | Todas en `src/app/`: `conversacion/`, `agente/`, `modelo/`, `herramientas/`, `tickets/`, `consultas/`, `http/`.                                                                                                                  |
+| `@unihelp/herramientas` y `@unihelp/tickets` | Creadas en `libs/` (decisión 26, provisional).                                                                                                                                                                                   |
+| Cinco herramientas                           | Las de docs/02 con tres ajustes (DP-01 resuelta, decisión 24).                                                                                                                                                                   |
+| Prioridad                                    | El modelo la escribe y `ProponerTicketUseCase` la verifica (DP-02 resuelta, decisión 25).                                                                                                                                        |
+| Modelo                                       | OpenAI `gpt-5.4-mini-2026-03-17`, temperatura 0.2 (decisión 23).                                                                                                                                                                 |
+| Confirmación por turno real                  | Implementada con la opción 1 de DP-05 (provisional, decisión 26).                                                                                                                                                                |
+| Flujo del frontend                           | Opción (a) de DP-06: el botón emite el token por los mismos casos de uso.                                                                                                                                                        |
+| Instrumentación                              | `InstrumentadorTrazas` acumula tiempos, tokens, llamadas, objeto final y motivo de corte por ejecución. No arma ni persiste la traza: la entrega por `GET /experimento/trazas/:traceId` y el ejecutor la completa (decisión 32). |
+| Rutas del ejecutor                           | `ExperimentoController` **[existe]**: `POST /experimento/restablecer` y `GET /experimento/trazas/:traceId`, solo con `UNIHELP_PERFIL=experimento` (decisión 32).                                                                 |
+| Límite de turnos                             | 8 turnos de la persona por conversación, con `429 limite-turnos` del contrato (DP-08 sigue abierta para el ejecutor).                                                                                                            |
+| Casetes                                      | `CaseteModelo` con `live`, `record` y `replay`. DP-04 sigue abierta.                                                                                                                                                             |
+| Restablecimiento de tickets (DP-15)          | `RestablecerTicketsUseCase` de `@unihelp/tickets` **[existe]**: vacía el esquema `tickets` entre ejecuciones y nunca la auditoría (decisión 31). La huella sigue cubriendo solo `conocimiento`.                                  |
+| Docker (`pnpm b0`)                           | No funciona todavía: falta migrar la base dentro del profile y pasar las variables del modelo.                                                                                                                                   |
 
 Hallazgo nuevo, **DP-22 (pendiente)**: OpenAI cachea automáticamente los prompts largos y
 no permite desactivarlo. D2 (RM-07) no se puede cumplir con este proveedor; B0 registra
@@ -1618,7 +1619,23 @@ discrepancias de `AGENTS.md` §9.
   actualiza `estados_finales` (RM-12, HU-MET-01). (c) Registrarlo como `error_agente`.
 - **Qué está en juego.** M1.5 (fallos por tipo) y los denominadores de efectividad y latencia.
 
-### DP-09. Quién arma y persiste la traza
+### DP-09. Quién arma y persiste la traza — **RESUELTA (decisión 32)**
+
+> **Se eligió la opción 2.** B0 entrega su segmento por
+> `GET /experimento/trazas/:traceId` (`TrazaParcialDto` de
+> [`libs/contratos`](../../../libs/contratos/src/lib/experimento.contrato.ts)) y el
+> ejecutor de `experiment/ejecutor/` completa la identidad de la ejecución, arma la
+> traza, la valida contra el esquema y la persiste; la inválida va a `cuarentena/`.
+> El restablecimiento y su huella se piden por `POST /experimento/restablecer`.
+> Ambas rutas viven fuera del prefijo `/api` y solo existen con
+> `UNIHELP_PERFIL=experimento`. `server_audit[]` sigue leyéndose de la auditoría y
+> no del agente, de modo que M5.1 conserva su fuente independiente. La decisión 21
+> queda acotada: `libs/trazas` sigue siendo el validador de TypeScript, pero en el
+> camino de la corrida quien valida es el ejecutor, con el mismo esquema.
+>
+> Lo que sigue abierto: B0 tampoco persiste la traza por su cuenta, así que
+> `UNIHELP_DIRECTORIO_CORRIDA` no hace falta y DP-11 (qué entra en `total_ms`)
+> continúa sin resolver.
 
 - **Vacío.** La traza necesita datos que B0 no tiene o no debería tener:
   - la identidad de la tarea (`task_id`, `repetition`, `run_id`), que el agente no debería
@@ -1693,7 +1710,18 @@ discrepancias de `AGENTS.md` §9.
   `transport_ms` de B0 será casi cero. Es coherente con el encargo, pero cambia lo que el
   artículo puede afirmar sobre el costo de MCP frente a HTTP.
 
-### DP-15. Restablecimiento de tickets y huella del estado
+### DP-15. Restablecimiento de tickets y huella del estado — **RESUELTA A MEDIAS (decisión 31)**
+
+> **El restablecimiento existe; la huella no.** `RestablecerTicketsUseCase` vacía
+> las cuatro tablas del esquema `tickets` y reinicia la secuencia antes de cada
+> ejecución, y **nunca** toca `auditoria`, que es la fuente independiente de M5.1
+> (HU-35, RM-09). Con eso ninguna ejecución ve propuestas ni tickets de la
+> anterior, que era lo que rompía RNF-03.
+>
+> **Sigue abierto** lo que la huella cubre: `provenance.state_hash_inicial` sigue
+> siendo solo la del esquema `conocimiento`. Las opciones (a) y (b) de abajo
+> continúan vigentes, y con ellas los 60 tickets históricos de docs/01 §7, que
+> tampoco existen.
 
 - **Vacío.** La huella actual cubre solo el esquema `conocimiento`. RNF-03 y HU-24 exigen que los
   tickets también partan de un estado conocido, y docs/01 §7 prevé 60 tickets históricos. La
