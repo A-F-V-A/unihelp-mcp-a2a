@@ -10,7 +10,7 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 
 > **Estado actual: B0 funcional, B1-B3 en esqueleto.** B0 ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md))
 > es un agente unico con function calling sobre OpenAI y cinco herramientas en
-> proceso, conectado al frontend: consulta la base de conocimiento
+> proceso, y es el unico backend que responde el contrato que consume el frontend: consulta la base de conocimiento
 > ([`libs/conocimiento`](libs/conocimiento/README.md)), propone y crea tickets solo
 > con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y deja
 > auditoria de solo agregar. B1, B2 y B3 solo responden su endpoint de salud; no
@@ -185,43 +185,25 @@ cp apps/b0-directo/.env.example apps/b0-directo/.env   # y completar OPENAI_API_
 pnpm dev:web:b0               # B0 en :3000 + frontend contra el backend real en :4200
 ```
 
+Desde **Configuración → Modelo de IA** se elige el proveedor y el modelo entre
+los que habilita el servidor (`UNIHELP_MODELOS_PERMITIDOS`). La clave nunca sale
+del servidor, y una corrida del experimento ignora esa eleccion (decision 27).
+
 Para reproducir el estado de una tarea (docs/10, seccion 4) antes de probar:
 `UNIHELP_PERFIL=experimento pnpm conocimiento:restablecer ma_fuera_parcial estandar`.
 
 `pnpm b0` (Docker) todavia no sirve para B0: el contenedor no tiene la base
 migrada ni las variables del modelo.
 
-### Frontend sin backend (datos simulados)
+### El frontend siempre habla con un backend real
 
-`pnpm dev:web` arranca la interfaz de chat con **repositorios simulados**: no
-necesita ninguna arquitectura levantada. La simulacion responde con latencia
-real (300-1500 ms) y datos variados para ver todos los estados de la UI.
+`pnpm dev:web` levanta solo la interfaz: necesita una arquitectura respondiendo
+en `backendUrl` (hoy, B0). La capa de datos simulada se retiro cuando B0 empezo
+a responder el contrato completo (decision 28); antes servia para construir el
+frontend sin backend.
 
-| Para                                     | Haz                                                                                 |
-| ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| Usar el backend real en desarrollo       | `nx serve web -c backend-real`                                                      |
-| Pasar a backend real de forma permanente | `USE_MOCK_BACKEND: false` en `apps/web/src/environments/environment.development.ts` |
-| Forzar un error en todas las operaciones | `?simular-error=timeout` (`validacion`, `servicio-no-disponible`, `interno`)        |
-| Forzar un error solo en una operacion    | `?simular-error=interno&simular-error-en=confirmarTicket`                           |
-| Errores aleatorios                       | `?tasa-error=0.3`                                                                   |
-| Ver el aviso de limite de turnos rapido  | `?turnos-maximos=2`                                                                 |
-| Fallar un mensaje concreto               | escribir `#timeout`, `#validacion`, `#no-disponible` o `#interno` en el chat        |
-
-Frases que activan cada tipo de respuesta simulada:
-
-| Escribe algo como                               | Veras                                       |
-| ----------------------------------------------- | ------------------------------------------- |
-| "¿Hasta cuándo puedo cancelar una asignatura?"  | informativa con politicas citadas           |
-| "No puedo entregar la tarea en el aula virtual" | diagnostico, estado con ventana, propuesta  |
-| "Los correos institucionales no salen"          | diagnostico sin ventana estimada, propuesta |
-| "¿Puedo renovar libros de la biblioteca?"       | mantenimiento programado, sin ticket        |
-| "No puedo pagar la matrícula por PSE"           | compuesta: estado + politicas + propuesta   |
-| "¿Dónde parqueo la moto?"                       | fuera de alcance con el canal correcto      |
-| "Sí, crea el ticket"                            | recordatorio: solo el boton crea tickets    |
-
-Los casos viven en `apps/web/src/app/infrastructure/mock/fixtures/`. La
-simulacion **nunca** llega a la imagen Docker: el build de produccion usa
-siempre el backend real (ver `docs/decisiones-tecnicas.md`, decisiones 13 a 15).
+Para apuntar el frontend a otra arquitectura sin reconstruirlo:
+`http://localhost:4200/?backend=http://localhost:3002`.
 
 ### Comandos de calidad
 

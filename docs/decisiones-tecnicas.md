@@ -152,6 +152,8 @@ ticket nunca se crea por inferencia sobre el texto (HU-17).
 
 ## 14. Una sola decision entre backend simulado y real
 
+> Reemplazada en su parte de simulacion por la decision 28.
+
 `apps/web` sigue Clean Architecture:
 
 | Capa              | Contiene                                             | Puede importar            |
@@ -180,6 +182,8 @@ el lint si `domain/` importa Angular o RxJS, o si `application/` o
 `presentation/` importan algo de `infrastructure/`.
 
 ## 15. La simulacion se comporta como un servidor, no como un stub
+
+> Reemplazada por la decision 28: la simulacion se elimino.
 
 Los repositorios de `infrastructure/mock/` producen **los mismos DTOs del
 contrato** y los pasan por **los mismos mappers** que los repositorios HTTP.
@@ -514,3 +518,60 @@ y no dependa del modelo.
 
 Consecuencias: B1 tendra que registrar tambien los turnos en su controlador de
 entrada. Si el equipo elige otra opcion para DP-05, cambia lo que mide M5.1.
+
+## 27. La interfaz elige proveedor y modelo; la clave se queda en el servidor
+
+Contexto: la pantalla de Configuracion tenia un selector de proveedor con un
+campo de clave de API que solo se guardaba en `localStorage` y no cambiaba nada
+(el propio codigo lo advertia). Se pidio que funcionara de verdad.
+
+Decision (tomada por el responsable del proyecto):
+
+- La clave del proveedor vive SOLO en el servidor (`apps/b0-directo/.env`). La
+  interfaz nunca la envia ni la recibe; solo ve si esta configurada.
+- El backend publica el catalogo en `GET /api/modelo-ia`: que proveedores hay,
+  cuales estan disponibles y con que modelos (`UNIHELP_MODELOS_PERMITIDOS`,
+  todos con fecha de snapshot). `PUT` cambia la eleccion y vuelve a validarla.
+- B0 solo integra OpenAI; Gemini, Claude y el agente local aparecen en la lista
+  como no disponibles, con su motivo.
+- **Una corrida del experimento ignora la eleccion de la pantalla.** Si la
+  peticion trae `X-Trace-Id` (la manda el ejecutor), se usa el modelo de
+  `UNIHELP_MODELO_ID`. Asi las cuatro arquitecturas miden con el mismo modelo
+  (RNF-01) y la traza registra uno solo (RNF-08).
+- En modo `replay` la pantalla queda de solo lectura: los casetes estan grabados
+  con un modelo concreto.
+
+Por que: un token real no debe vivir en el navegador, y una eleccion visual que
+cambiara el modelo de una corrida oficial contaminaria la comparacion sin que
+nadie lo notara.
+
+Consecuencias: `libs/contratos` gana `modelo-ia.contrato.ts` y la ruta
+`RUTAS_API.modeloIa`; `libs/dominio`, el vocabulario `PROVEEDORES_MODELO`. B1,
+B2 y B3 tendran que responder esa ruta cuando existan (regla 5). Integrar otro
+proveedor exige un cliente nuevo y una decision aparte.
+
+## 28. El frontend ya no tiene capa de datos simulada
+
+> Reemplaza a las decisiones 14 y 15 en lo que toca a la simulacion.
+
+Contexto: el frontend se construyo antes que el backend y traia repositorios
+simulados (`infrastructure/mock/`, 23 archivos) con su propia base en memoria,
+latencia y escenarios. Desde que B0 responde el contrato completo, el chat se
+puede probar contra un backend real.
+
+Decision (tomada por el responsable del proyecto): se elimina la capa simulada,
+el token `USE_MOCK_BACKEND`, la configuracion `simulacion` de los entornos y las
+pruebas que la usaban como backend (`chat-page.spec.ts`,
+`provide-data-layer.spec.ts` y las del propio mock). `provideDataLayer()` enlaza
+cada puerto con su repositorio HTTP y nada mas.
+
+Por que: dos implementaciones del mismo contrato se desincronizan, y la
+simulacion ya no aporta: para ver la interfaz basta con levantar B0.
+
+Consecuencias: `pnpm dev:web` ya no funciona por si solo; hay que levantar un
+backend (`pnpm dev:web:b0`). Se pierde la prueba de extremo a extremo del chat
+con datos simulados: el chat queda cubierto por las pruebas de sus piezas
+(store, mappers, repositorios HTTP y componentes) y por la validacion en
+navegador contra B0. Lo que decian las decisiones 14 y 15 sobre elegir entre
+simulado y real ya no aplica; lo demas de la decision 14 (las capas de Clean
+Architecture y que la eleccion viva en un solo archivo) sigue vigente.

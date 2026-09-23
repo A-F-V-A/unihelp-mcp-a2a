@@ -131,8 +131,7 @@ Prioridad`), nunca `string`.
 4. **Actualiza los consumidores** que aplique:
    - `apps/web/.../domain/models/` (modelo equivalente)
    - `apps/web/.../infrastructure/mappers/` (mapper DTO -> modelo)
-   - `apps/web/.../infrastructure/http/` y `mock/` (ambos repositorios)
-   - `apps/web/.../infrastructure/mock/fixtures/` (datos simulados validos)
+   - `apps/web/.../infrastructure/http/` (repositorio del puerto)
    - `apps/web/.../presentation/shared/formato.ts` (etiquetas de nuevos valores)
    - backends que ya implementen esa ruta (hoy: solo `/health`, en las siete
      apps: `apps/*/src/app/salud/`)
@@ -161,6 +160,6 @@ Prioridad`), nunca `string`.
 - [ ] Sin dependencias de framework; `readonly`; `as const` + tipo derivado.
 - [ ] JSDoc en cada export, con `HU-xx` si aplica.
 - [ ] Exportado en `src/index.ts`; tabla del README actualizada.
-- [ ] Mappers, repos http y mock, fixtures y etiquetas actualizados.
+- [ ] Mappers, repositorios HTTP y etiquetas actualizados.
 - [ ] `pnpm verify` pasa.
 - [ ] Frontend validado en navegador.

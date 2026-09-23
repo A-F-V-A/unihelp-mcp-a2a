@@ -148,13 +148,13 @@ que cambia es `identidad.ts`). B0 agrega el agente: `agente/`, `modelo/`,
 `herramientas/`, `conversacion/`, `tickets/`, `consultas/` y `http/`, descritos
 en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
 
-| Carpeta           | Que contiene                                                             |
-| ----------------- | ------------------------------------------------------------------------ |
-| `domain/`         | Modelos, reglas puras, errores y puertos (interfaces). TS puro.          |
-| `application/`    | Tokens DI de los puertos, casos de uso y stores (signals).               |
-| `infrastructure/` | Repositorios `http/`, `mock/` y `browser/`, mappers, `provideDataLayer`. |
-| `presentation/`   | Componentes: `chat/`, `settings/`, `shell/`, `shared/`.                  |
-| `nucleo/`         | Arranque: configuracion en runtime y servicio de salud.                  |
+| Carpeta           | Que contiene                                                    |
+| ----------------- | --------------------------------------------------------------- |
+| `domain/`         | Modelos, reglas puras, errores y puertos (interfaces). TS puro. |
+| `application/`    | Tokens DI de los puertos, casos de uso y stores (signals).      |
+| `infrastructure/` | Repositorios `http/` y `browser/`, mappers, `provideDataLayer`. |
+| `presentation/`   | Componentes: `chat/`, `settings/`, `shell/`, `shared/`.         |
+| `nucleo/`         | Arranque: configuracion en runtime y servicio de salud.         |
 
 ---
 
@@ -172,9 +172,10 @@ en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md
    acomodar una sola arquitectura.
 6. **Clean Architecture en `apps/web`**: `domain/` no importa Angular ni RxJS;
    `application/` y `presentation/` nunca importan `infrastructure/`. La
-   eleccion simulado/real vive SOLO en `infrastructure/provide-data-layer.ts`.
-7. **La simulacion nunca llega a produccion**: `USE_MOCK_BACKEND` es `false`
-   en `environment.ts` (decision 14).
+   union de puertos con implementaciones vive SOLO en
+   `infrastructure/provide-data-layer.ts`.
+7. **El frontend siempre habla con un backend real.** La capa de datos simulada
+   se retiro (decision 28); no se vuelve a introducir sin una decision nueva.
 8. **Un ticket solo nace de una accion explicita del usuario** (HU-17). Nunca
    por inferencia sobre el texto.
 9. **No se versionan** credenciales (`.env`), ni trazas o resultados del
@@ -263,18 +264,17 @@ Protegen lo que las cifras del estudio significan. Se citan por codigo
 
 **Archivos** (kebab-case, el sufijo dice el rol)
 
-| Sufijo                                          | Rol                               | Donde                                   |
-| ----------------------------------------------- | --------------------------------- | --------------------------------------- |
-| `*.contrato.ts`                                 | DTOs/rutas de red                 | `libs/contratos/src/lib/`               |
-| `*.ts` (sin sufijo)                             | vocabulario/catalogo              | `libs/dominio/src/lib/`                 |
-| `*.repository.ts`/`*.port.ts`                   | puerto (interface)                | `web/.../domain/ports/`                 |
-| `*.rules.ts`                                    | reglas puras                      | `web/.../domain/rules/`                 |
-| `*.use-case.ts`                                 | caso de uso (`ejecutar()`)        | `web/.../application/use-cases/`        |
-| `*.store.ts`                                    | estado con signals                | `web/.../application/state/`            |
-| `*.mapper.ts`                                   | DTO -> modelo (`mapearX(dto)`)    | `web/.../infrastructure/mappers/`       |
-| `http-*.repository.ts` / `mock-*.repository.ts` | adaptadores                       | `web/.../infrastructure/`               |
-| `*.fixture.ts`                                  | datos simulados tipados           | `web/.../infrastructure/mock/fixtures/` |
-| `*.spec.ts`                                     | prueba unitaria, junto al archivo | al lado del codigo                      |
+| Sufijo                        | Rol                               | Donde                             |
+| ----------------------------- | --------------------------------- | --------------------------------- |
+| `*.contrato.ts`               | DTOs/rutas de red                 | `libs/contratos/src/lib/`         |
+| `*.ts` (sin sufijo)           | vocabulario/catalogo              | `libs/dominio/src/lib/`           |
+| `*.repository.ts`/`*.port.ts` | puerto (interface)                | `web/.../domain/ports/`           |
+| `*.rules.ts`                  | reglas puras                      | `web/.../domain/rules/`           |
+| `*.use-case.ts`               | caso de uso (`ejecutar()`)        | `web/.../application/use-cases/`  |
+| `*.store.ts`                  | estado con signals                | `web/.../application/state/`      |
+| `*.mapper.ts`                 | DTO -> modelo (`mapearX(dto)`)    | `web/.../infrastructure/mappers/` |
+| `http-*.repository.ts`        | adaptadores                       | `web/.../infrastructure/http/`    |
+| `*.spec.ts`                   | prueba unitaria, junto al archivo | al lado del codigo                |
 
 **TypeScript**
 
@@ -309,7 +309,8 @@ Detalle y plantillas en [`documentar`](.claude/skills/documentar/SKILL.md).
 
 ```bash
 pnpm setup              # instala dependencias
-pnpm dev:web            # frontend con backend simulado -> :4200
+pnpm dev:web            # solo el frontend -> :4200 (necesita un backend arriba)
+pnpm dev:web:b0         # B0 + frontend contra el backend real
 pnpm dev:b0             # (b1/b2/b3) backend en desarrollo
 pnpm b0                 # (b1/b2/b3) arquitectura completa en Docker
 pnpm down               # detiene Docker
@@ -388,7 +389,7 @@ solo el boton "Crear ticket" invoca ConfirmarTicketUseCase. El contrato exige
 confirmacionExplicita: true, asi que ningun texto del chat puede crear el
 ticket (criterio 2 de HU-17).
 Pruebas: confirmation-prompt.spec.ts y conversacion.store.spec.ts; validado
-en navegador con backend simulado.
+en navegador contra B0.
 ```
 
 Probar un mensaje sin hacer commit:

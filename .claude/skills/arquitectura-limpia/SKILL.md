@@ -1,6 +1,6 @@
 ---
 name: arquitectura-limpia
-description: Como aplicar Clean Architecture en UniHelp. Usar al crear o modificar cualquier cosa en apps/web (modelos, puertos, casos de uso, stores, repositorios http/mock, mappers, componentes) o al estructurar logica nueva en una app de backend NestJS. Incluye la receta paso a paso para agregar una capacidad de punta a punta y la checklist de revision.
+description: Como aplicar Clean Architecture en UniHelp. Usar al crear o modificar cualquier cosa en apps/web (modelos, puertos, casos de uso, stores, repositorios http, mappers, componentes) o al estructurar logica nueva en una app de backend NestJS. Incluye la receta paso a paso para agregar una capacidad de punta a punta y la checklist de revision.
 ---
 
 # Arquitectura limpia en UniHelp
@@ -23,12 +23,12 @@ presentation ──> application ──> domain <── infrastructure
                                    └──> @unihelp/dominio, @unihelp/contratos (solo tipos)
 ```
 
-| Capa              | Contiene                                                          | Puede importar                                   | Nunca importa                      |
-| ----------------- | ----------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------- |
-| `domain/`         | `models/`, `rules/`, `errors/`, `ports/`                          | `@unihelp/dominio`, `@unihelp/contratos` (tipos) | Angular, RxJS, cualquier otra capa |
-| `application/`    | `di/tokens.ts`, `use-cases/`, `state/` (stores signals)           | `domain/`, `@angular/core`                       | `infrastructure/`, `environments/` |
-| `infrastructure/` | `http/`, `mock/`, `browser/`, `mappers/`, `provide-data-layer.ts` | todo lo anterior + `@unihelp/contratos`          | `presentation/`                    |
-| `presentation/`   | componentes, pipes y utilidades de vista                          | `application/`, `domain/`                        | `infrastructure/`, `environments/` |
+| Capa              | Contiene                                                 | Puede importar                                   | Nunca importa                      |
+| ----------------- | -------------------------------------------------------- | ------------------------------------------------ | ---------------------------------- |
+| `domain/`         | `models/`, `rules/`, `errors/`, `ports/`                 | `@unihelp/dominio`, `@unihelp/contratos` (tipos) | Angular, RxJS, cualquier otra capa |
+| `application/`    | `di/tokens.ts`, `use-cases/`, `state/` (stores signals)  | `domain/`, `@angular/core`                       | `infrastructure/`, `environments/` |
+| `infrastructure/` | `http/`, `browser/`, `mappers/`, `provide-data-layer.ts` | todo lo anterior + `@unihelp/contratos`          | `presentation/`                    |
+| `presentation/`   | componentes, pipes y utilidades de vista                 | `application/`, `domain/`                        | `infrastructure/`, `environments/` |
 
 Las restricciones de `domain/`, `application/` y `presentation/` estan en
 `apps/web/eslint.config.mjs` y rompen `pnpm nx lint web`. **No las relajes ni
@@ -43,8 +43,8 @@ mal.
 - **Regla** (`domain/rules/x.rules.ts`): funciones puras y sincronas.
   Validaciones y decisiones que no dependen del backend. Faciles de probar.
 - **Error** (`domain/errors/error-backend.ts`): `ErrorBackend` es el **unico**
-  error que cruza la frontera de los repositorios. HTTP y mock traducen sus
-  fallos a el; nadie aguas arriba sabe de donde vino.
+  error que cruza la frontera de los repositorios: cada implementacion traduce
+  sus fallos a el; nadie aguas arriba sabe de donde vino.
 - **Puerto** (`domain/ports/x.repository.ts` o `x.port.ts`): interface con
   metodos que devuelven `Promise<Modelo>`. Documenta que garantiza cada metodo.
 - **Token** (`application/di/tokens.ts`): `InjectionToken<Puerto>`. Los puertos
@@ -54,16 +54,12 @@ mal.
 - **Store** (`application/state/x.store.ts`): estado de la vista con `signal`
   y `computed`. Llama casos de uso, convierte `ErrorBackend` en `ErrorVista`.
 - **Mapper** (`infrastructure/mappers/x.mapper.ts`): funciones `mapearX(dto)`
-  DTO -> modelo. Lo usan **tanto** HTTP como mock.
+  DTO -> modelo. Es el unico sitio donde el DTO se convierte en modelo.
 - **Repositorio HTTP** (`infrastructure/http/http-x.repository.ts`): implementa
   el puerto con `ClienteApi` y `RUTAS_API`, arma el DTO de entrada, mapea la
   salida.
-- **Repositorio mock** (`infrastructure/mock/mock-x.repository.ts`): implementa
-  el mismo puerto; produce **los mismos DTOs del contrato** via `SimuladorRed` y
-  `BaseDatosSimulada`, y los pasa por **el mismo mapper**. Errores con
-  `falloApi(codigo, mensaje, detalles)`. Datos en `mock/fixtures/`.
-- **`provideDataLayer`**: unico lugar que decide mock o real
-  (`segunBackend(TOKEN, Mock, Http)`).
+- **`provideDataLayer`**: unico lugar donde cada token de puerto se enlaza con
+  su implementacion. Todas hablan HTTP contra el backend real (decision 28).
 - **Componente** (`presentation/.../x/x.ts` + `.html` + `.css`): standalone,
   `ChangeDetectionStrategy.OnPush`, `input()`/`output()`, selector `app-`.
   Obtiene datos del store o de casos de uso; no conoce repositorios.
@@ -82,7 +78,6 @@ Ejemplo canonico a imitar: **tickets**. Abrelo antes de escribir.
 | 5    | `apps/web/src/app/application/use-cases/proponer-ticket.use-case.ts` |
 | 6    | `apps/web/src/app/infrastructure/mappers/ticket.mapper.ts`           |
 | 7    | `apps/web/src/app/infrastructure/http/http-ticket.repository.ts`     |
-| 8    | `apps/web/src/app/infrastructure/mock/mock-ticket.repository.ts`     |
 | 9    | `apps/web/src/app/infrastructure/provide-data-layer.ts`              |
 | 10   | `apps/web/src/app/application/state/conversacion.store.ts`           |
 | 11   | `apps/web/src/app/presentation/chat/components/ticket-created-card/` |
@@ -143,33 +138,26 @@ ISO -> `Date`; nada mas.
 puerto, usa `RUTAS_API` y el mapper. No atrapa errores: `ClienteApi` ya los
 traduce a `ErrorBackend`.
 
-**Paso 8 — Repositorio mock.** `@Injectable()`, mismo puerto, responde con
-`this.red.responder('nombreOperacion', () => ...)` construyendo el **DTO** y
-luego lo mapea. Agrega los datos a `mock/fixtures/` (tipados) y, si aplica, un
-escenario en `escenarios.fixture.ts`.
+**Paso 8 — Registro.** En `provideDataLayer`: agrega la clase a la lista y
+enlaza su token con `{ provide: ENCUESTA_REPOSITORY, useExisting: HttpEncuestaRepository }`.
 
-**Paso 9 — Registro.** En `provideDataLayer`: agrega ambas clases a la lista y
-`segunBackend(ENCUESTA_REPOSITORY, MockEncuestaRepository, HttpEncuestaRepository)`.
-
-**Paso 10 — Estado.** Si la vista necesita estado, amplia el store existente o
+**Paso 9 — Estado.** Si la vista necesita estado, amplia el store existente o
 crea `x.store.ts` con signals. Los errores se exponen como `ErrorVista`.
 
-**Paso 11 — Componente.** Standalone, OnPush, `input.required<Modelo>()`,
+**Paso 10 — Componente.** Standalone, OnPush, `input.required<Modelo>()`,
 `computed` para derivar etiquetas (usa `presentation/shared/formato.ts`).
 
-**Paso 12 — Pruebas.** Spec de reglas, del caso de uso o store, del mapper y de
-ambos repositorios (ver `http-repositories.spec.ts` y
-`mock-repositories.spec.ts`).
+**Paso 11 — Pruebas.** Spec de reglas, del caso de uso o store, del mapper y del
+repositorio HTTP (ver `http-repositories.spec.ts`, que usa `HttpTestingController`).
 
-**Paso 13 — Validar.** `pnpm nx lint web`, `pnpm nx test web`, `pnpm nx build
-web` y validacion en navegador (camino feliz, error con `?simular-error=...`,
-ancho 400px).
+**Paso 12 — Validar.** `pnpm nx lint web`, `pnpm nx test web`, `pnpm nx build
+web` y validacion en navegador contra B0 (camino feliz, camino de error con el
+backend detenido, ancho 400px).
 
 ## 4. Errores: flujo completo
 
 ```text
 HTTP 4xx/5xx o timeout ──> ClienteApi / http-error.mapper ──┐
-falloApi() en el mock ─────> SimuladorRed ──────────────────┤
                                                             ▼
                                                      ErrorBackend (domain)
                                                             ▼
@@ -203,20 +191,19 @@ apps/bX-.../src/app/<capacidad>/
 
 ## 6. Anti-patrones (rechazar en revision)
 
-- Inyectar `HttpTicketRepository` o `MockXRepository` en un componente, store o
-  caso de uso.
-- Leer `environment` o `USE_MOCK_BACKEND` fuera de `provideDataLayer`.
+- Inyectar `HttpTicketRepository` en un componente, store o caso de uso: se
+  inyecta el token del puerto.
+- Leer `environment` fuera de `provideDataLayer`.
 - Usar el DTO como modelo en `presentation/` (fechas `string`, campos de red).
 - Logica de negocio en un componente o en un mapper.
-- Un mock que devuelve modelos directamente sin pasar por DTO + mapper.
-- `if (mock) ... else ...` en cualquier parte.
+- Un repositorio que devuelve modelos sin pasar por DTO + mapper.
 - Mover logica de triaje a `libs/` "para reutilizarla" entre arquitecturas.
 
 ## 7. Checklist antes de dar por terminado
 
 - [ ] Ningun import cruza capas en direccion prohibida (`pnpm nx lint web` limpio).
 - [ ] El puerto documenta sus garantias; los errores son `ErrorBackend`.
-- [ ] HTTP y mock implementan el mismo puerto y usan el mismo mapper.
+- [ ] El repositorio HTTP implementa el puerto y pasa por su mapper.
 - [ ] Registrado en `provideDataLayer` con `segunBackend`.
 - [ ] Specs de reglas, casos de uso/store, mapper y repositorios.
 - [ ] Referencias `HU-xx` en los JSDoc donde aplique.
