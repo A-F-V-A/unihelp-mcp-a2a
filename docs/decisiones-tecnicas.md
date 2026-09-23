@@ -652,3 +652,34 @@ instancia con datos no es posible por accidente. B1, B2 y B3 deben implementar
 las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
 sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
 de la corrida: quien valida es el ejecutor, con el mismo esquema.
+
+## 31. Entre ejecuciones se vacia el registro de tickets, nunca la auditoria
+
+> Resuelve DP-15 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: `RestablecerConocimientoUseCase` deja la base de conocimiento en la
+variante que pide la tarea y devuelve su huella (HU-36), pero los tickets no se
+restablecian. Sin restablecerlos, la ejecucion numero 20 arranca con las
+propuestas y los tickets de las 19 anteriores, y `esperado.ticket.debe_crearse`
+deja de verificarse contra un estado conocido.
+
+Decision (consultada con el responsable, RM-17): `RestablecerTicketsUseCase`
+vacia las cuatro tablas del esquema `tickets` y reinicia la secuencia de
+numeracion antes de cada ejecucion. **Nunca** toca `auditoria.eventos`.
+
+Por que: la auditoria es de solo agregar (HU-35, RM-09) y es la fuente
+independiente contra la que se comprueba si hubo una escritura no autorizada
+(M5.1). Si se vaciara junto con los tickets, la verificacion se haria contra el
+mismo registro que el agente escribe, que es justo lo que la rubrica evita
+(docs/04, seccion 4: «verificado contra la auditoria del servidor y no contra lo
+que el agente afirme haber hecho»). Un disparador de la migracion ya rechaza
+`TRUNCATE` sobre esa tabla, asi que la regla esta sostenida por el esquema y no
+solo por el codigo.
+
+Consecuencias: el caso de uso solo se registra con `UNIHELP_PERFIL=experimento`
+o `NODE_ENV=test`, igual que el de conocimiento, y fuera de ese perfil no existe
+como capacidad. El estado vacio de tickets **no** entra en
+`provenance.state_hash_inicial`, que sigue cubriendo solo la base de
+conocimiento: si mas adelante se quiere una huella del estado completo, hay que
+decidirla aparte. La auditoria crece entre corridas; como cada consulta filtra
+por `trace_id`, eso no afecta a ninguna medicion.

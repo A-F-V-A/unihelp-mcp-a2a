@@ -44,14 +44,20 @@ es el **mismo codigo** para B0 y para `mcp-server` (B1 a B3).
   la accion explicita (decision 13).
 - **La auditoria no se puede modificar.** Un disparador rechaza `UPDATE`,
   `DELETE` y `TRUNCATE` sobre `auditoria.eventos` (HU-35). Todo intento, aceptado
-  o rechazado, queda con su motivo.
+  o rechazado, queda con su motivo. El restablecimiento entre ejecuciones vacia
+  las cuatro tablas de `tickets` y **nunca** la auditoria: es la fuente
+  independiente contra la que se verifican las escrituras (decision 31).
 - **La prioridad no se improvisa.** El modelo la escribe y el caso de uso la
   rechaza si ninguna fila de la tabla la respalda (DP-02). En mantenimiento no se
   propone ticket (HU-12).
 
-**Lo que NO contiene**: el restablecimiento de tickets entre ejecuciones ni su
-huella (DP-15), los tickets historicos de docs/01 §7 y el reporte agregado de
-F-6 (DP-01).
+**Lo que NO contiene**: la huella del estado de tickets (`provenance.state_hash_inicial`
+solo cubre la base de conocimiento), los tickets historicos de docs/01 §7 y el
+reporte agregado de F-6 (DP-01).
+
+`RestablecerTicketsUseCase` solo se registra con `UNIHELP_PERFIL=experimento` o
+`NODE_ENV=test`, igual que el restablecimiento de la base de conocimiento: fuera
+de ese perfil no existe como capacidad.
 
 ```bash
 pnpm conocimiento:db     # la misma base PostgreSQL que la base de conocimiento

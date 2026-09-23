@@ -37,4 +37,16 @@ export interface TicketsRepository {
 
   /** Agrega un evento. El esquema de auditoria impide modificarlo o borrarlo (HU-35). */
   registrarEvento(evento: EventoAuditoria): Promise<void>;
+  /** Eventos de una ejecucion en orden de registro; desempate por id ascendente (RM-10). */
+  listarEventos(traceId: string): Promise<readonly EventoAuditoria[]>;
+
+  /** Tickets creados en una ejecucion, ordenados por numero en orden binario (RM-10). */
+  listarTicketsDeTrace(traceId: string): Promise<readonly Ticket[]>;
+
+  /**
+   * Vacia el esquema `tickets` y reinicia la secuencia de numeracion. NUNCA
+   * toca `auditoria`: es la fuente independiente contra la que se verifican las
+   * escrituras y es de solo agregar (HU-35, RM-09, decision 31).
+   */
+  vaciarRegistro(): Promise<void>;
 }
