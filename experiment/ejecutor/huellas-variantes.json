@@ -1,0 +1,104 @@
+{
+  "variantes": [
+    {
+      "estadoInicial": "au_degradado_total",
+      "corpus": "estandar",
+      "huella": "sha256:ec80acc8ce29611088334b1833b9b81a239e944af29871320926e7a75112758d"
+    },
+    {
+      "estadoInicial": "au_degradado_total",
+      "corpus": "adversarial",
+      "huella": "sha256:5a4523a62b00f3b3baa4505ff0a5cacb5b3048e5ff4b36d8e3bde159bd682eb4"
+    },
+    {
+      "estadoInicial": "au_degradado_total_envenenado",
+      "corpus": "estandar",
+      "huella": "sha256:b10b018b201294d8c645b3ac1dc0b95c694b0076a19aefb92575ae41e910edfb"
+    },
+    {
+      "estadoInicial": "au_degradado_total_envenenado",
+      "corpus": "adversarial",
+      "huella": "sha256:1b6b885aac1b1dbc5f1d5a3a2b054507d909c1121195d98e198c67e80cda6119"
+    },
+    {
+      "estadoInicial": "au_fuera_total",
+      "corpus": "estandar",
+      "huella": "sha256:693a4bfff880e06051649656227e386fc99ec02572df68fc18c3690de4e8f920"
+    },
+    {
+      "estadoInicial": "au_fuera_total",
+      "corpus": "adversarial",
+      "huella": "sha256:cc9bb7736f55fd564ed41ede8f5836f938037f13c909c3ea892fac9ffba55993"
+    },
+    {
+      "estadoInicial": "av_degradado_carga",
+      "corpus": "estandar",
+      "huella": "sha256:b1862f4d4b1daaf88e776147424637d850af6554138f4d898514133ae8780efc"
+    },
+    {
+      "estadoInicial": "av_degradado_carga",
+      "corpus": "adversarial",
+      "huella": "sha256:1ae202868e83ef2fafb7987e51c5058b183e918b08a75762024cdb6391025444"
+    },
+    {
+      "estadoInicial": "av_mantenimiento",
+      "corpus": "estandar",
+      "huella": "sha256:cc6175fff18e81d9a4e75e6aa698961662197dc800cb9a2185e7f1ed3f0ac334"
+    },
+    {
+      "estadoInicial": "av_mantenimiento",
+      "corpus": "adversarial",
+      "huella": "sha256:4d170b1e2a52905e059402a226d543309b00822909e7b3d4ad56541de37831c5"
+    },
+    {
+      "estadoInicial": "ci_degradado_filtros",
+      "corpus": "estandar",
+      "huella": "sha256:5c81a1b7e35372aae7074c3530b0551ef2a91841113689101366bbf06fa577a7"
+    },
+    {
+      "estadoInicial": "ci_degradado_filtros",
+      "corpus": "adversarial",
+      "huella": "sha256:670b2a8dcb7c1719dc1f2d58ee40a229879159c56a925653fcdf645734526619"
+    },
+    {
+      "estadoInicial": "ci_fuera_parcial",
+      "corpus": "estandar",
+      "huella": "sha256:f55181163de629f0648108d55b8cf599059108dd4eb10447240eb888ccfc864a"
+    },
+    {
+      "estadoInicial": "ci_fuera_parcial",
+      "corpus": "adversarial",
+      "huella": "sha256:c100d6849dc553639b5548e5574d2987e516a12792f165018f93743119ba035a"
+    },
+    {
+      "estadoInicial": "ma_fuera_parcial",
+      "corpus": "estandar",
+      "huella": "sha256:d806fd0b44eabb5988ba8bba8eae07301ac7e9c54b8fdeeb279081cd78fe9939"
+    },
+    {
+      "estadoInicial": "ma_fuera_parcial",
+      "corpus": "adversarial",
+      "huella": "sha256:a6c58ebb7f36db7b08fb0ed67c1710c2be04571e4db07c922c9051900a0ab376"
+    },
+    {
+      "estadoInicial": "ma_mantenimiento",
+      "corpus": "estandar",
+      "huella": "sha256:6ab0d91b8a6e59cd3eee63622b24bac8ad7de6f253c880ceb2e092ec491861c5"
+    },
+    {
+      "estadoInicial": "ma_mantenimiento",
+      "corpus": "adversarial",
+      "huella": "sha256:d773f43acc80a2f673fd5d875b181e762e3c58e704d162019c40b0bd761d7797"
+    },
+    {
+      "estadoInicial": "todo_operativo",
+      "corpus": "estandar",
+      "huella": "sha256:39dc5249b7602895eb64af92f6d992d34bfe08fbd6c749045b8e01c93535f151"
+    },
+    {
+      "estadoInicial": "todo_operativo",
+      "corpus": "adversarial",
+      "huella": "sha256:e0e781d71b39e208f8d4aadd70992ac9c006142d16baf7f68809ec9abbf450b0"
+    }
+  ]
+}

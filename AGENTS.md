@@ -325,6 +325,9 @@ pnpm conocimiento:test-integracion  # pruebas de libs/conocimiento contra Postgr
 pnpm ejecutor:validar   # revisa las 40 tareas de docs/tasks sin ejecutar nada
 pnpm ejecutor:salud     # comprueba que el backend configurado responde
 pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experiment/ejecutor/corrida.yaml
+pnpm ejecutor:validar   # revisa las 40 tareas de docs/tasks sin ejecutar nada
+pnpm ejecutor:salud     # comprueba que el backend configurado responde
+pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experiment/ejecutor/corrida.yaml
 pnpm analisis:desde-cero  # uv sync + corrida sintetica + cuaderno de metricas completo
 pnpm analisis:test        # pytest del sistema de metricas (requiere uv)
 pnpm nx run trazas:generar  # tras cambiar experiment/schemas/traza.schema.json

@@ -1722,6 +1722,7 @@ name = "unihelp-analisis"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "ipykernel" },
     { name = "jsonschema", extra = ["format-nongpl"] },
     { name = "matplotlib" },
@@ -1744,6 +1745,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "ipykernel", specifier = ">=6.29" },
     { name = "jsonschema", extras = ["format-nongpl"], specifier = ">=4.23" },
     { name = "matplotlib", specifier = ">=3.9" },

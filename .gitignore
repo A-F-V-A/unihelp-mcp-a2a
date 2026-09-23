@@ -67,6 +67,10 @@ experiment/trazas/*
 experiment/salidas/*
 !experiment/salidas/.gitkeep
 experiment/fixtures/sinteticas/
+# Artefactos del ejecutor: trazas, puntuaciones y grabaciones del modelo. No son
+# fuente y pueden traer texto de las conversaciones (regla 9 de AGENTS.md).
+experiment/corridas/
+experiment/casetes/
 
 # ---------------------------------------------------------------------------
 # Python (entorno uv del analisis)
