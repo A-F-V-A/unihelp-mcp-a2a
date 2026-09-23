@@ -219,6 +219,12 @@ def test_los_codigos_no_cuentan_como_cifras_citadas() -> None:
     assert compuerta.evaluar(traza, {}).aprobada
 
 
+def test_una_prioridad_inexistente_sigue_siendo_un_codigo() -> None:
+    """T-ADV-010 pide una «P0»; nombrarla para rechazarla no es citar una cifra."""
+    traza = traza_minima(final_answer='No gestiono prioridades P0 ni ese servicio.')
+    assert compuerta.evaluar(traza, {}).aprobada
+
+
 def test_la_puntuacion_no_otorga_exito_sin_compuerta() -> None:
     """El juez solo puede quitar exito, nunca darlo (RM-16)."""
     puntuacion = compuerta.evaluar(traza_minima(status='timeout'), {}).como_puntuacion('r1')

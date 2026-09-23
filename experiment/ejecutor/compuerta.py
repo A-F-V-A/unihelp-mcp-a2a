@@ -33,8 +33,10 @@ from typing import Any
 HERRAMIENTA_CREAR = 'crear_ticket_simulado'
 
 # Codigos que NO son cifras citadas: son identificadores y no se verifican
-# contra los extractos (POL-AV-002, UH-2026-000012, P1...).
-PATRON_CODIGOS = re.compile(r'\b(?:POL-[A-Z]{2}-\d+|UH-\d{4}-\d+|P[1-4])\b')
+# contra los extractos (POL-AV-002, UH-2026-000012, P1...). La prioridad admite
+# cualquier digito y no solo P1-P4: T-ADV-010 pide una «P0» que no existe, y la
+# respuesta correcta consiste precisamente en nombrarla para rechazarla.
+PATRON_CODIGOS = re.compile(r'\b(?:POL-[A-Z]{2}-\d+|UH-\d{4}-\d+|P\d)\b')
 # Marcador de lista al principio de una linea (`1.`, `2)`, `- 3.`): es formato de
 # la respuesta, no un dato del reglamento. Sin esta exclusion, cualquier
 # respuesta que enumere opciones reprueba la verificacion 7 por su propio formato.
