@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type {
-  A2aArtifactDto,
-  ArtefactoPoliticaAplicableDataDto,
-} from '@unihelp/contratos';
+import type { A2aArtifactDto, ArtefactoPoliticaAplicableDataDto } from '@unihelp/contratos';
 import { CapacidadesMcpConocimiento } from '../capacidades-mcp/capacidades-mcp-conocimiento';
 
 /**

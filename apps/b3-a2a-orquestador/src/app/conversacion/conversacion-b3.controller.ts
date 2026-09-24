@@ -34,11 +34,7 @@ export class ConversacionB3Controller {
     @Body() dto: EnviarMensajeDto,
     @Headers(CABECERA_TRACE_ID) traceId?: string,
   ): Promise<RespuestaMensajeDto> {
-    const res = await this.triajeService.procesarTurno(
-      dto.conversacionId,
-      dto.texto,
-      traceId,
-    );
+    const res = await this.triajeService.procesarTurno(dto.conversacionId, dto.texto, traceId);
     return res.respuestaMensaje;
   }
 

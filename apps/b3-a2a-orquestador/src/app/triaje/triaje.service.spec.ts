@@ -320,6 +320,8 @@ describe('TriajeService (HU-01 a HU-17, HU-29 a HU-34)', () => {
 
     expect(resultado.tareaA2a.status).toBe('completed');
     expect(mockCapacidadesMcp.proponerTicket).not.toHaveBeenCalled();
-    expect(resultado.respuestaMensaje.respuesta.bloques.some((b) => b.tipo === 'aviso-mantenimiento')).toBe(true);
+    expect(
+      resultado.respuestaMensaje.respuesta.bloques.some((b) => b.tipo === 'aviso-mantenimiento'),
+    ).toBe(true);
   });
 });

@@ -5,16 +5,8 @@ import type { FetchLike, Transport } from '@modelcontextprotocol/sdk/shared/tran
 import { normalizeHeaders } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { Inject, Injectable, Logger, type OnModuleDestroy, Optional } from '@nestjs/common';
-import type {
-  ContextoMcpDto,
-  ErrorHerramientaMcpDto,
-} from '@unihelp/contratos';
-import {
-  CABECERA_AGENT_ID,
-  CABECERA_TRACE_ID,
-  META_MCP,
-  RUTA_MCP,
-} from '@unihelp/contratos';
+import type { ContextoMcpDto, ErrorHerramientaMcpDto } from '@unihelp/contratos';
+import { CABECERA_AGENT_ID, CABECERA_TRACE_ID, META_MCP, RUTA_MCP } from '@unihelp/contratos';
 import {
   ahoraMonotonoMs,
   ErrorHerramienta,
@@ -83,10 +75,9 @@ export class CapacidadesMcpOrquestador implements OnModuleDestroy {
     this.fabrica =
       fabrica ??
       ((fetchConTraza) =>
-        new StreamableHTTPClientTransport(
-          new URL(RUTA_MCP, `${configuracion.urlServidorMcp}/`),
-          { fetch: fetchConTraza },
-        ));
+        new StreamableHTTPClientTransport(new URL(RUTA_MCP, `${configuracion.urlServidorMcp}/`), {
+          fetch: fetchConTraza,
+        }));
   }
 
   /**

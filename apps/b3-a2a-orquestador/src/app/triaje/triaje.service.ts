@@ -146,7 +146,9 @@ export class TriajeService {
         tarea.agentesConsultados.push('knowledge_lookup');
         const resA2a = await this.clienteA2a.enviarMensaje(cardConocimiento, texto, traceId, 1);
         if (resA2a && resA2a.task.status === 'completed') {
-          const artPolitica = resA2a.task.artifacts.find((a) => a.artifactId === 'politica_aplicable');
+          const artPolitica = resA2a.task.artifacts.find(
+            (a) => a.artifactId === 'politica_aplicable',
+          );
           if (artPolitica && artPolitica.parts[0]?.kind === 'data') {
             const data = artPolitica.parts[0].data as ArtefactoPoliticaAplicableDataDto;
             tarea.politicaAplicable = data;
@@ -167,13 +169,15 @@ export class TriajeService {
             resumenTexto += `${data.resumen} `;
           }
         } else {
-          resumenTexto += 'No se pudo consultar la política institucional en este momento. ';
+          tarea.estado = 'failed';
+          resumenTexto +=
+            'No se pudo consultar la política institucional: especialista no disponible. ';
         }
       }
     }
 
     // 4.2 Especialista de Diagnóstico
-    if (tipo === 'diagnostico' || tipo === 'compuesta') {
+    if ((tipo === 'diagnostico' || tipo === 'compuesta') && tarea.estado !== 'failed') {
       const cardDiagnostico = this.registroA2a.resolverAgentePorHabilidad('incident_diagnosis');
       if (cardDiagnostico) {
         tarea.agentesConsultados.push('incident_diagnosis');
@@ -210,7 +214,9 @@ export class TriajeService {
             resumenTexto += `${data.justificacion_prioridad}. `;
           }
         } else {
-          resumenTexto += 'No se pudo diagnosticar el estado del servicio en este momento. ';
+          tarea.estado = 'failed';
+          resumenTexto +=
+            'No se pudo diagnosticar el estado del servicio: especialista no disponible. ';
         }
       }
     }
@@ -218,7 +224,9 @@ export class TriajeService {
     // 5. Evaluar si amerita propuesta de ticket o finalizar
     let accionSugerida: 'proponer-ticket' | null = null;
 
-    if (tarea.diagnostico && tarea.diagnostico.accion_recomendada === 'crear_ticket') {
+    if (tarea.estado === 'failed') {
+      accionSugerida = null;
+    } else if (tarea.diagnostico && tarea.diagnostico.accion_recomendada === 'crear_ticket') {
       // Proponer ticket via MCP con rol orquestador (HU-13, HU-20)
       const resPropuesta = await this.capacidadesMcp.proponerTicket(
         {
@@ -255,7 +263,8 @@ export class TriajeService {
     } else {
       tarea.estado = 'completed';
       if (!resumenTexto.trim()) {
-        resumenTexto = 'Solicitud atendida. No se detectaron fallas activas ni acciones pendientes.';
+        resumenTexto =
+          'Solicitud atendida. No se detectaron fallas activas ni acciones pendientes.';
       }
     }
 
@@ -341,7 +350,8 @@ export class TriajeService {
       }
     } else {
       tarea.estado = 'completed';
-      textoRespuesta = 'Entendido, he cancelado la creación del ticket. ¿Deseas consultar algo más?';
+      textoRespuesta =
+        'Entendido, he cancelado la creación del ticket. ¿Deseas consultar algo más?';
     }
 
     bloques.unshift({ tipo: 'texto', texto: textoRespuesta });
@@ -481,7 +491,10 @@ export class TriajeService {
       const ultimoMensaje = mensajes[mensajes.length - 1];
       resumenes.push({
         id,
-        titulo: primerMensaje && 'texto' in primerMensaje ? primerMensaje.texto.slice(0, 30) : 'Conversación',
+        titulo:
+          primerMensaje && 'texto' in primerMensaje
+            ? primerMensaje.texto.slice(0, 30)
+            : 'Conversación',
         creadaEn: primerMensaje?.enviadoEn ?? new Date().toISOString(),
         actualizadaEn: ultimoMensaje?.enviadoEn ?? new Date().toISOString(),
         turnos,

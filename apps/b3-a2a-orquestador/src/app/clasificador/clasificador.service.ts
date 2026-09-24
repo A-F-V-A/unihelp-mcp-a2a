@@ -23,6 +23,7 @@ export class ClasificadorService {
       t.includes('caída') ||
       t.includes('error') ||
       t.includes('falla') ||
+      t.includes('fallo') ||
       t.includes('funciona') ||
       t.includes('no puedo') ||
       t.includes('problema') ||
@@ -64,7 +65,9 @@ export class ClasificadorService {
     }
 
     // Por defecto informativa si no hay indicios de falla
-    this.logger.log(`Solicitud clasificada por defecto como «informativa»: «${texto.slice(0, 40)}...»`);
+    this.logger.log(
+      `Solicitud clasificada por defecto como «informativa»: «${texto.slice(0, 40)}...»`,
+    );
     return 'informativa';
   }
 }

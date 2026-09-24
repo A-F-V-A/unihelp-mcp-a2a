@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type {
-  A2aTaskDto,
-  AgentCardDto,
-} from '@unihelp/contratos';
+import type { A2aTaskDto, AgentCardDto } from '@unihelp/contratos';
 import { CABECERA_TRACE_ID } from '@unihelp/contratos';
 import { ahoraMonotonoMs } from '@unihelp/herramientas';
 

@@ -1,9 +1,6 @@
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { CABECERA_AGENT_ID } from '@unihelp/contratos';
 import { CapacidadesMcpDiagnostico } from './capacidades-mcp-diagnostico';
 

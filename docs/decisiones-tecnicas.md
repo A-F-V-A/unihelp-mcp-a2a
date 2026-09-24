@@ -1016,7 +1016,7 @@ Decision:
 
 - `libs/agente-nucleo` (`@unihelp/agente-nucleo`, `arq:compartido`) contiene el
   nucleo completo del agente unico y `AgenteNucleoModule.forRoot({ identidad,
-  imports, puertoCapacidades })`. El bucle depende de la interfaz
+imports, puertoCapacidades })`. El bucle depende de la interfaz
   `PuertoCapacidades` (`listar()` e `invocar()`, declarada en
   `libs/herramientas`) y pide las capacidades al puerto ANTES de cada llamada
   al modelo. La traduccion al formato de function calling ocurre en un unico
@@ -1122,4 +1122,3 @@ protocolo A2A v1.0.
 Consecuencias: la simetria de contratos externos con el frontend se mantiene intacta
 a traves de `@unihelp/contratos`, pero la logica de orquestacion interna es propia de B3,
 respetando estrictamente la comparabilidad cientifica (H3, RNF-01).
-

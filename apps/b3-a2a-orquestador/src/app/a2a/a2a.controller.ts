@@ -1,16 +1,5 @@
-import {
-  Body,
-  Controller,
-  Headers,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  Post,
-} from '@nestjs/common';
-import type {
-  A2aMessageDto,
-  A2aTaskDto,
-} from '@unihelp/contratos';
+import { Body, Controller, Headers, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import type { A2aMessageDto, A2aTaskDto } from '@unihelp/contratos';
 import { CABECERA_TRACE_ID, RUTA_A2A } from '@unihelp/contratos';
 import { TriajeService } from '../triaje/triaje.service';
 
@@ -70,10 +59,8 @@ export class A2aOrquestadorController {
     }
 
     const mensaje = peticion.params?.message;
-    const conversacionId =
-      peticion.params?.conversacionId ?? peticion.params?.taskId ?? null;
-    const traceId =
-      trazaCabecera ?? mensaje?.metadata?.traceId ?? `trace-a2a-${Date.now()}`;
+    const conversacionId = peticion.params?.conversacionId ?? peticion.params?.taskId ?? null;
+    const traceId = trazaCabecera ?? mensaje?.metadata?.traceId ?? `trace-a2a-${Date.now()}`;
 
     const parteTexto = mensaje?.parts?.find((p) => p.kind === 'text');
     const texto = parteTexto && 'text' in parteTexto ? parteTexto.text : '';

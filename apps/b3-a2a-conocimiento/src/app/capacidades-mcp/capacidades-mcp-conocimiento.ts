@@ -11,12 +11,7 @@ import type {
   ErrorHerramientaMcpDto,
   PoliticaCitadaDto,
 } from '@unihelp/contratos';
-import {
-  CABECERA_AGENT_ID,
-  CABECERA_TRACE_ID,
-  META_MCP,
-  RUTA_MCP,
-} from '@unihelp/contratos';
+import { CABECERA_AGENT_ID, CABECERA_TRACE_ID, META_MCP, RUTA_MCP } from '@unihelp/contratos';
 import {
   ahoraMonotonoMs,
   ErrorHerramienta,
@@ -62,10 +57,9 @@ export class CapacidadesMcpConocimiento implements OnModuleDestroy {
     this.fabrica =
       fabrica ??
       ((fetchConTraza) =>
-        new StreamableHTTPClientTransport(
-          new URL(RUTA_MCP, `${configuracion.urlServidorMcp}/`),
-          { fetch: fetchConTraza },
-        ));
+        new StreamableHTTPClientTransport(new URL(RUTA_MCP, `${configuracion.urlServidorMcp}/`), {
+          fetch: fetchConTraza,
+        }));
   }
 
   /**

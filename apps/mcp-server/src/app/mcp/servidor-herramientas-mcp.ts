@@ -95,7 +95,6 @@ export function sinPrivilegio(
   return null;
 }
 
-
 /**
  * Reconstruye en el receptor el contexto de la invocacion: la traza viaja en la
  * cabecera HTTP (HU-33) y el resto en `_meta` de la peticion. Si un cliente que

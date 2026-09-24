@@ -40,9 +40,9 @@ export const CABECERA_AGENT_ID = 'x-agent-id';
  * `undefined` como clave significa "sin cabecera" (B1, inspector): sin restriccion.
  */
 export const PERMISOS_AGENTE: Readonly<Record<string, readonly string[]>> = {
-  conocimiento:  ['buscar_politica'],
-  diagnostico:   ['consultar_estado_servicio'],
-  orquestador:   ['proponer_ticket', 'confirmar_propuesta', 'crear_ticket_simulado'],
+  conocimiento: ['buscar_politica'],
+  diagnostico: ['consultar_estado_servicio'],
+  orquestador: ['proponer_ticket', 'confirmar_propuesta', 'crear_ticket_simulado'],
 } as const;
 
 /**

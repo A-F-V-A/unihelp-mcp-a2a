@@ -9,10 +9,30 @@ import { SimulacionModule } from './simulacion.module';
  * comprobar sin arrancar NestJS ni tocar PostgreSQL.
  */
 function controladores(entorno: Readonly<Record<string, string | undefined>>): unknown[] {
-  return [...(SimulacionModule.forRoot(entorno).controllers ?? [])];
+  return [
+    ...(SimulacionModule.forRoot({
+      CONOCIMIENTO_DATABASE_URL: 'postgresql://unihelp:unihelp@localhost:5432/unihelp',
+      ...entorno,
+    }).controllers ?? []),
+  ];
 }
 
 describe('SimulacionModule', () => {
+  const urlOriginal = process.env['CONOCIMIENTO_DATABASE_URL'];
+
+  beforeAll(() => {
+    process.env['CONOCIMIENTO_DATABASE_URL'] =
+      'postgresql://unihelp:unihelp@localhost:5432/unihelp';
+  });
+
+  afterAll(() => {
+    if (urlOriginal) {
+      process.env['CONOCIMIENTO_DATABASE_URL'] = urlOriginal;
+    } else {
+      delete process.env['CONOCIMIENTO_DATABASE_URL'];
+    }
+  });
+
   it('sin perfil de experimento el simulador queda de solo lectura (HU-36)', () => {
     const registrados = controladores({});
 

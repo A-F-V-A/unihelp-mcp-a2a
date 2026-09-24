@@ -21,13 +21,31 @@ export type ServicioSoportado = (typeof SERVICIOS_SOPORTADOS)[number];
  */
 export function detectarServicio(texto: string): ServicioSoportado {
   const t = texto.toLowerCase();
-  if (t.includes('correo') || t.includes('email') || t.includes('buzon') || t.includes('inbox') || t.includes('mensaje')) {
+  if (
+    t.includes('correo') ||
+    t.includes('email') ||
+    t.includes('buzon') ||
+    t.includes('inbox') ||
+    t.includes('mensaje')
+  ) {
     return 'correo_institucional';
   }
-  if (t.includes('matricula') || t.includes('inscripci') || t.includes('asignatura') || t.includes('cupo')) {
+  if (
+    t.includes('matricula') ||
+    t.includes('inscripci') ||
+    t.includes('asignatura') ||
+    t.includes('cupo')
+  ) {
     return 'matricula';
   }
-  if (t.includes('contrase') || t.includes('clave') || t.includes('login') || t.includes('autentica') || t.includes('acceso') || t.includes('cuenta')) {
+  if (
+    t.includes('contrase') ||
+    t.includes('clave') ||
+    t.includes('login') ||
+    t.includes('autentica') ||
+    t.includes('acceso') ||
+    t.includes('cuenta')
+  ) {
     return 'autenticacion';
   }
   return 'aula_virtual';
@@ -57,13 +75,20 @@ export class IncidentDiagnosisService {
     durMs: number;
     rttMs: number;
   }> {
-    const servicio = servicioEspecificado && (SERVICIOS_SOPORTADOS as readonly string[]).includes(servicioEspecificado)
-      ? (servicioEspecificado as ServicioSoportado)
-      : detectarServicio(sintomas);
+    const servicio =
+      servicioEspecificado &&
+      (SERVICIOS_SOPORTADOS as readonly string[]).includes(servicioEspecificado)
+        ? (servicioEspecificado as ServicioSoportado)
+        : detectarServicio(sintomas);
 
-    this.logger.log(`Consultando estado para servicio «${servicio}» (síntomas: «${sintomas.slice(0, 50)}...»)`);
+    this.logger.log(
+      `Consultando estado para servicio «${servicio}» (síntomas: «${sintomas.slice(0, 50)}...»)`,
+    );
 
-    const { estado, durMs, rttMs } = await this.capacidadesMcp.consultarEstadoServicio(servicio, traceId);
+    const { estado, durMs, rttMs } = await this.capacidadesMcp.consultarEstadoServicio(
+      servicio,
+      traceId,
+    );
 
     let prioridadSugerida: string;
     let justificacionPrioridad: string;

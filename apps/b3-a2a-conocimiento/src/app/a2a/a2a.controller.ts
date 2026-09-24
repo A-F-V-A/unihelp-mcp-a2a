@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Headers,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
 import type {
   A2aArtifactDto,
   A2aMessageDto,
@@ -74,9 +66,9 @@ export class A2aController {
 
     const mensaje = peticion.params?.message;
     const taskId =
-      peticion.params?.taskId ?? `task-conocimiento-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    const traceId =
-      trazaCabecera ?? mensaje?.metadata?.traceId ?? `trace-a2a-${Date.now()}`;
+      peticion.params?.taskId ??
+      `task-conocimiento-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const traceId = trazaCabecera ?? mensaje?.metadata?.traceId ?? `trace-a2a-${Date.now()}`;
 
     // Extraer la consulta de texto de las partes del mensaje
     const parteTexto = mensaje?.parts?.find((p) => p.kind === 'text');
@@ -112,9 +104,10 @@ export class A2aController {
         parts: [
           {
             kind: 'text',
-            text: resultado.artefacto.parts[0]?.kind === 'data'
-              ? (resultado.artefacto.parts[0].data as { resumen?: string }).resumen ?? ''
-              : '',
+            text:
+              resultado.artefacto.parts[0]?.kind === 'data'
+                ? ((resultado.artefacto.parts[0].data as { resumen?: string }).resumen ?? '')
+                : '',
           },
         ],
         metadata: metadataRespuesta,

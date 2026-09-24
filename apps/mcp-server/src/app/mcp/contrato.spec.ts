@@ -253,17 +253,17 @@ describe('filtro de privilegios por agente B3 (HU-20)', () => {
   it('agente diagnostico no puede buscar_politica', () => {
     const rechazo = sinPrivilegio({ 'x-agent-id': 'diagnostico' }, 'buscar_politica');
     expect(rechazo?.isError).toBe(true);
-    expect(
-      (rechazo?._meta as Record<string, unknown>)['unihelp/error'],
-    ).toMatchObject({ codigo: 'SIN_AUTORIZACION' });
+    expect((rechazo?._meta as Record<string, unknown>)['unihelp/error']).toMatchObject({
+      codigo: 'SIN_AUTORIZACION',
+    });
   });
 
   it('agente desconocido recibe SIN_AUTORIZACION en cualquier herramienta', () => {
     const rechazo = sinPrivilegio({ 'x-agent-id': 'agente-extrano' }, 'buscar_politica');
     expect(rechazo?.isError).toBe(true);
-    expect(
-      (rechazo?._meta as Record<string, unknown>)['unihelp/error'],
-    ).toMatchObject({ codigo: 'SIN_AUTORIZACION' });
+    expect((rechazo?._meta as Record<string, unknown>)['unihelp/error']).toMatchObject({
+      codigo: 'SIN_AUTORIZACION',
+    });
   });
 
   it('el rechazo es isError, nunca lanza una excepcion del protocolo (RM-15)', () => {
