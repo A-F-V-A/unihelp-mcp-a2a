@@ -32,10 +32,13 @@ logica de triaje y la coordinacion de agentes) se implementa por separado en
 cada arquitectura. Cualquier cambio que rompa esa simetria contamina las
 mediciones. Ante la duda, pregunta antes de compartir o duplicar codigo.
 
-Estado actual: B0 es un agente unico real (OpenAI, function calling) con sus
-cinco herramientas en proceso, conectado al frontend Angular; consume
-`libs/conocimiento` y `libs/tickets` sobre PostgreSQL. B1, B2 y B3 solo tienen
-`/health`; aun no hay MCP real ni A2A real. El sistema de metricas
+Estado actual: B0 y B1 son el MISMO agente unico real (OpenAI, function
+calling), cuyo nucleo vive en `libs/agente-nucleo` y cuyas cinco capacidades en
+`libs/capacidades`; B0 las invoca en proceso y B1 por MCP contra `mcp-server`
+(`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25), la unica
+diferencia entre ambos (decisiones 41 y 42). Ambos consumen `libs/conocimiento` y
+`libs/tickets` sobre PostgreSQL y responden el mismo contrato al frontend y al
+ejecutor. B2 y B3 solo tienen `/health`; aun no hay A2A real. El sistema de metricas
 (`experiment/`, Python) calcula M1, M4 y M7 de extremo a extremo sobre una
 corrida **sintetica**; B0 mide tiempos y tokens pero todavia no persiste trazas
 (DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`).
@@ -77,7 +80,7 @@ Segun la tarea, lee ademas:
 | Tocar `apps/web` o crear una capacidad nueva                                         | [`.claude/skills/arquitectura-limpia/SKILL.md`](.claude/skills/arquitectura-limpia/SKILL.md)                                                |
 | Cambiar un DTO, una ruta, un tipo o un catalogo                                      | [`.claude/skills/contratos-y-dominio/SKILL.md`](.claude/skills/contratos-y-dominio/SKILL.md) y `docs/01` (modelo de dominio, contrato REST) |
 | Escribir comentarios, un README o algo en `docs/`                                    | [`.claude/skills/documentar/SKILL.md`](.claude/skills/documentar/SKILL.md)                                                                  |
-| Implementar `mcp-server` o un agente B1                                              | `docs/02-servidor-mcp.md`                                                                                                                   |
+| Implementar `mcp-server` o un agente B1                                              | `docs/02-servidor-mcp.md`, `apps/b1-mcp-agente/docs/ARQUITECTURA.md` y los README de `libs/agente-nucleo` y `libs/capacidades`              |
 | Implementar B2 o B3 (orquestador, especialistas)                                     | `docs/03-agentes-a2a.md` y `docs/01` (B2 y B3 deben ser identicos salvo transporte)                                                         |
 | Trabajar en `experiment/` (runner, trazas, juez)                                     | `docs/04`, `docs/05`, `docs/09`, `docs/10`, `docs/tasks/_ESTRUCTURA.md` y las reglas RM-01 a RM-17                                          |
 | Metricas, cuaderno de analisis o panel de resultados                                 | `docs/historias-de-usuario-medicion.md` (HU-MET-01 a HU-MET-14), `docs/09` y las reglas RM-01 a RM-17                                       |
@@ -119,6 +122,11 @@ apps/
                          vez, y transmite su progreso (decision 39)  tags: tipo:app, arq:compartido
   web/                   Angular, frontend UNICO  tags: tipo:app, arq:frontend
 libs/
+  agente-nucleo/         @unihelp/agente-nucleo: nucleo del agente unico (bucle, modelo, casetes,
+                         instrumentacion, rutas del contrato y del ejecutor), compartido por B0 y B1;
+                         depende del puerto PuertoCapacidades (solo backends)
+  capacidades/           @unihelp/capacidades: logica de las 5 capacidades, registro aditivo,
+                         invocador del receptor y puerto en proceso (B0, mcp-server) (solo backends)
   conocimiento/          @unihelp/conocimiento: grafo de politicas en PostgreSQL, busqueda
                          lexica determinista, restablecimiento con huella (solo backends)
   contratos/             @unihelp/contratos: DTOs y rutas de red (solo tipos)
@@ -150,9 +158,13 @@ tools/git-hooks/         Hook commit-msg (valida HU y prohibe firma de IA), plan
 ```
 
 Todas las apps NestJS tienen `src/app/salud/` (identico en las ocho; lo unico
-que cambia es `identidad.ts`). B0 agrega el agente: `agente/`, `modelo/`,
-`herramientas/`, `conversacion/`, `tickets/`, `consultas/` y `http/`, descritos
-en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
+que cambia es `identidad.ts`). B0 y B1 no tienen mas codigo propio que el
+cableado de `AgenteNucleoModule` con su puerto: B0 con `CapacidadesLocales`
+(`libs/capacidades`) y B1 con `CapacidadesMcp` (`src/app/capacidades-mcp/`).
+`mcp-server` agrega `src/app/mcp/` (sesiones, `tools/list`, `tools/call`) y la
+instantanea `contrato/tools-list.instantanea.json`. Detalle en
+[`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md) y
+[`apps/b1-mcp-agente/docs/ARQUITECTURA.md`](apps/b1-mcp-agente/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
 
 | Carpeta           | Que contiene                                                    |
 | ----------------- | --------------------------------------------------------------- |
@@ -320,7 +332,9 @@ pnpm dev:web            # solo el frontend -> :4200 (necesita un backend arriba)
 pnpm dev:web:b0         # B0 + frontend contra el backend real
 pnpm dev:panel          # B0 + consola del experimento + frontend: correr desde el panel
 pnpm dev:consola        # solo la consola del experimento -> :3030
-pnpm dev:b0             # (b1/b2/b3) backend en desarrollo
+pnpm dev:b0             # (b1/b2/b3) backend en desarrollo; dev:b1 levanta mcp-server (:3010) + b1 (:3001)
+pnpm nx e2e b1-mcp-agente  # T-COM-001 de punta a punta por MCP (exige dev:b1 con UNIHELP_PERFIL=experimento)
+UNIHELP_ACTUALIZAR_INSTANTANEA=1 pnpm nx test mcp-server  # regenera la instantanea de tools/list (RM-12)
 pnpm b0                 # (b1/b2/b3) arquitectura completa en Docker
 pnpm down               # detiene Docker
 pnpm nx lint <proyecto> # lint de un proyecto

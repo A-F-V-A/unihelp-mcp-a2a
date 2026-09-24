@@ -8,14 +8,18 @@ El objetivo del repositorio no es un producto, es un **banco de pruebas**: la
 misma funcionalidad se construye cuatro veces, cambiando unicamente como se
 integran los agentes, para medir el efecto de esa decision arquitectonica.
 
-> **Estado actual: B0 funcional, B1-B3 en esqueleto.** B0 ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md))
-> es un agente unico con function calling sobre OpenAI y cinco herramientas en
-> proceso, y es el unico backend que responde el contrato que consume el frontend: consulta la base de conocimiento
-> ([`libs/conocimiento`](libs/conocimiento/README.md)), propone y crea tickets solo
-> con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y deja
-> auditoria de solo agregar. B1, B2 y B3 solo responden su endpoint de salud; no
-> hay MCP real ni A2A real. B0 todavia no persiste trazas del experimento
-> (DP-09) y no corre en Docker (ver [B0 con el agente real](#b0-con-el-agente-real)).
+> **Estado actual: B0 y B1 funcionales, B2-B3 en esqueleto.** B0
+> ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md)) y B1
+> ([`apps/b1-mcp-agente`](apps/b1-mcp-agente/docs/ARQUITECTURA.md)) son el mismo
+> agente unico con function calling sobre OpenAI ([`libs/agente-nucleo`](libs/agente-nucleo/README.md))
+> y las mismas cinco capacidades ([`libs/capacidades`](libs/capacidades/README.md)):
+> B0 las invoca en proceso y B1 las descubre e invoca por MCP contra
+> [`apps/mcp-server`](apps/mcp-server/README.md). Ambos consultan la base de conocimiento
+> ([`libs/conocimiento`](libs/conocimiento/README.md)), proponen y crean tickets solo
+> con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y dejan
+> auditoria de solo agregar. B2 y B3 solo responden su endpoint de salud; no hay
+> A2A real. Ninguna arquitectura corre todavia en Docker con el agente real (ver
+> [B0 con el agente real](#b0-con-el-agente-real)).
 > El sistema de metricas ([`experiment/`](experiment/README.md)) calcula las
 > familias M1, M4 y M7 de extremo a extremo sobre una corrida **sintetica**.
 
@@ -159,7 +163,7 @@ Nx permite levantar y probar cada app de forma independiente:
 
 ```bash
 pnpm dev:b0     # nx serve b0-directo              -> :3000
-pnpm dev:b1     # mcp-server + b1-mcp-agente       -> :3010, :3001
+pnpm dev:b1     # mcp-server + b1-mcp-agente       -> :3010, :3001 (necesita apps/mcp-server/.env y apps/b1-mcp-agente/.env)
 pnpm dev:b2     # nx serve b2-multiagente-local    -> :3002
 pnpm dev:b3     # mcp-server + los tres de B3      -> :3010, :3003, :3004, :3005
 pnpm dev:web    # nx serve web                     -> :4200
@@ -351,6 +355,13 @@ unihelp/
   `libs/conocimiento`, la misma fuente que leen los agentes.
 - **`apps/web`** — **un solo** frontend Angular. Descubre la arquitectura activa
   consultando `/health`; la URL del backend llega por variable de entorno.
+- **`libs/agente-nucleo`** — el nucleo del agente unico (bucle, cliente del
+  modelo con casetes, instrumentacion, rutas del contrato y del ejecutor),
+  compartido por B0 y B1. Depende de un puerto de capacidades; cada arquitectura
+  aporta solo su implementacion (decision 41).
+- **`libs/capacidades`** — la logica de las cinco capacidades, su registro
+  aditivo y el invocador del receptor. B0 las invoca en proceso y `mcp-server`
+  las publica como herramientas: el mismo codigo en ambos.
 - **`libs/conocimiento`** — politicas versionadas, servicios y componentes como
   un grafo en PostgreSQL, con busqueda lexica determinista y restablecimiento
   verificable por huella. Compartida por los backends; el frontend no la importa.
