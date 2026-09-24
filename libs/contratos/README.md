@@ -21,6 +21,7 @@ Contiene:
 | [`consola-experimento.contrato.ts`](src/lib/consola-experimento.contrato.ts) | `RUTAS_CONSOLA`: lanzar el ejecutor o el cuaderno desde el panel, seguir su salida por SSE y cancelar. Las atiende `apps/consola-experimento`, fuera de `/api` (decision 39)                    |
 | [`experimento.contrato.ts`](src/lib/experimento.contrato.ts)                 | `RUTAS_EXPERIMENTO`: restablecer el entorno y entregar la traza de una ejecucion. Las consume el ejecutor, NO el frontend, y viven fuera de `/api` (decision 32)                                |
 | [`mcp.contrato.ts`](src/lib/mcp.contrato.ts)                                 | `RUTA_MCP`, `CABECERA_TRACE_ID` y las claves `_meta` que `mcp-server` y los agentes MCP (B1, B3) leen igual: contexto, duracion del servidor, resultado sin sanear y error tipado (decision 42) |
+| [`a2a.contrato.ts`](src/lib/a2a.contrato.ts)                                 | `RUTA_AGENT_CARD`, `AgentCardDto`, `AgentSkillDto`, ciclo de vida de tareas A2A, mensajes y artefactos de triaje para la condicion B3 (HU-29, HU-30, doc 03)                                    |
 
 Los contratos de triaje se fijaron **antes** de existir el backend: el frontend
 ya funciona contra ellos con datos simulados, y cada arquitectura debe

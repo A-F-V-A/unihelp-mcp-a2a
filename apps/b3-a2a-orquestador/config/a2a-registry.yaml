@@ -1,0 +1,7 @@
+# Registro de agentes especialistas A2A (HU-29).
+# El orquestador lee este archivo al arrancar, descubre cada Agent Card
+# via GET /.well-known/agent-card.json y construye su tabla de ruteo por skills[].id.
+# No codificar URLs de especialistas en el prompt (docs/03 §2, HU-29).
+agentes:
+  - url: '${A2A_CONOCIMIENTO_URL:-http://localhost:3004}'
+  - url: '${A2A_DIAGNOSTICO_URL:-http://localhost:3005}'

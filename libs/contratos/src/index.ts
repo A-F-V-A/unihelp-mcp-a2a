@@ -1,3 +1,4 @@
+export * from './lib/a2a.contrato';
 export * from './lib/api.contrato';
 export * from './lib/consola-experimento.contrato';
 export * from './lib/conversacion.contrato';
