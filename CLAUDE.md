@@ -79,3 +79,15 @@ observó (arquitectura mostrada, errores de consola, peticiones de red).
   `--browser chromium` en `.mcp.json`.
 - Si aun así no se puede, informarlo al usuario; no sustituir la validación en
   navegador por solo tests unitarios sin avisar.
+
+## Autoría de los commits: quién firma qué
+
+Cada commit lo firma la persona responsable del cambio; el usuario indica con
+quién hacerlo y esta tabla es la referencia. Si no dice nada, aplica la fila
+"por defecto" del área tocada. Se pasan como `git -c user.name=... -c
+user.email=... commit` (autor y committer), nunca como firma de IA.
+
+| Desarrollador     | Correo                         | Área por defecto                                                                                          |
+| ----------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Felipe Gabino     | jfgabinov@uqvirtual.edu.co     | B0 (`apps/b0-directo`, `libs/herramientas`, `libs/tickets`), sus corridas, docs y decisiones, y todo el trabajo de mejora del modelo y del panel a partir del 23 de septiembre de 2026 |
+| Andrés Villarraga | usuario de git de la máquina   | Resto del repositorio, salvo indicación                                                                   |
