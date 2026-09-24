@@ -1106,11 +1106,12 @@ de confirmacion de tickets como el estado nativo del protocolo `input-required` 
 y utiliza las herramientas de tickets en `mcp-server` con la cabecera `X-Agent-Id: orquestador` (HU-20).
 
 Decision:
-`b3-a2a-orquestador` no importa ni instancia el bucle iterativo de `AgenteNucleoModule`.
-En su lugar, implementa un servicio dedicado `TriajeService` con maquina de estados A2A
-y ruteo tipado. El orquestador expone las mismas rutas REST de triaje (`/api/conversaciones`)
-con los mismos contratos compartidos (`@unihelp/contratos`), permitiendo que el frontend
-interactue de manera indistinguible.
+
+- `b3-a2a-orquestador` no importa ni instancia el bucle iterativo de `AgenteNucleoModule`.
+  En su lugar, implementa un servicio dedicado `TriajeService` con maquina de estados A2A
+  y ruteo tipado. El orquestador expone las mismas rutas REST de triaje (`/api/conversaciones`)
+  con los mismos contratos compartidos (`@unihelp/contratos`), permitiendo que el frontend
+  interactue de manera indistinguible.
 
 Por que: el nucleo de B0/B1 asume un unico agente que consulta herramientas locales o MCP.
 Obligar a B3 a forzar la coordinacion A2A dentro de ese mismo bucle contaminaria la variable
