@@ -12,4 +12,10 @@ Forma parte de la condicion experimental **B3** (A2A distribuido, HU-29, HU-30).
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts) | Publica la Agent Card A2A en `/.well-known/agent-card.json` (HU-29).  |
 | [`src/app/agent-card/agent-card.module.ts`](src/app/agent-card/agent-card.module.ts)         | Modulo NestJS que empaqueta el controlador de la Agent Card.          |
+| [`src/app/capacidades-mcp/capacidades-mcp-diagnostico.ts`](src/app/capacidades-mcp/capacidades-mcp-diagnostico.ts) | Cliente MCP con cabecera `X-Agent-Id: diagnostico` para `consultar_estado_servicio` (HU-20). |
+| [`src/app/capacidades-mcp/capacidades-mcp-diagnostico.module.ts`](src/app/capacidades-mcp/capacidades-mcp-diagnostico.module.ts) | Modulo NestJS del cliente MCP de diagnostico. |
+| [`src/app/capacidades-mcp/configuracion-diagnostico.ts`](src/app/capacidades-mcp/configuracion-diagnostico.ts) | Lectura de `MCP_SERVER_URL` desde el entorno. |
+| [`src/app/a2a/incident-diagnosis.service.ts`](src/app/a2a/incident-diagnosis.service.ts) | Ejecuta el diagnostico, evalua prioridad institucional y estructura el artefacto `diagnostico` (HU-09 a HU-12, HU-30). |
+| [`src/app/a2a/a2a.controller.ts`](src/app/a2a/a2a.controller.ts) | Endpoint `POST /a2a` JSON-RPC 2.0 (`message/send`). |
+| [`src/app/a2a/a2a.module.ts`](src/app/a2a/a2a.module.ts) | Modulo NestJS de comunicacion A2A del especialista. |
 | [`src/app/salud/salud.controller.ts`](src/app/salud/salud.controller.ts)                     | Endpoint `GET /health` con identidad del especialista de diagnostico. |
