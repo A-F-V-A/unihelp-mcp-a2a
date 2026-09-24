@@ -32,3 +32,17 @@ export function esCodigoErrorHerramienta(valor: unknown): valor is CodigoErrorHe
     typeof valor === 'string' && (CODIGOS_ERROR_HERRAMIENTA as readonly string[]).includes(valor)
   );
 }
+
+/**
+ * Fallo que NO es de la arquitectura evaluada: el proveedor del modelo no
+ * respondio, la base no responde, el servidor MCP no contesta o falta la
+ * grabacion de un casete. La ejecucion termina como `error_infraestructura`, se
+ * reejecuta y se excluye; nunca cuenta como fallo del agente (RM-15; DP-17
+ * provisional). La subclase de cada componente solo aporta el nombre.
+ */
+export class ErrorInfraestructura extends Error {
+  constructor(mensaje: string) {
+    super(mensaje);
+    this.name = new.target.name;
+  }
+}
