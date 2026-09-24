@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "noPropertyAccessFromIndexSignature": true,
+    "paths": {
+      "@unihelp/contratos": ["../../libs/contratos/src/index.ts"],
+      "@unihelp/dominio": ["../../libs/dominio/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "pruebas/**/*.ts", "playwright.config.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}

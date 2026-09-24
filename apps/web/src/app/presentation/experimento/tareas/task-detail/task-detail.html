@@ -1,0 +1,283 @@
+<section class="panel">
+  <nav class="detalle__nav" aria-label="Navegación entre tareas">
+    <a class="boton-panel" routerLink=".." queryParamsHandling="preserve">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+      Todas las tareas
+    </a>
+    <span class="detalle__vecinos">
+      @if (vecinos().anterior; as anterior) {
+        <a class="boton-panel" [routerLink]="['..', anterior]" queryParamsHandling="preserve"
+          >‹ {{ anterior }}</a
+        >
+      }
+      @if (vecinos().siguiente; as siguiente) {
+        <a class="boton-panel" [routerLink]="['..', siguiente]" queryParamsHandling="preserve"
+          >{{ siguiente }} ›</a
+        >
+      }
+    </span>
+  </nav>
+
+  <app-estado-recurso
+    nombre="el conjunto de tareas"
+    [cargando]="recurso().cargando"
+    [ausente]="recurso().ausente"
+    [error]="recurso().error"
+    (reintentar)="recargar()"
+  />
+
+  @if (recurso().valor && !tarea()) {
+    <div class="aviso aviso--error" role="alert">
+      <p>
+        No existe la tarea <code>{{ id() }}</code> en el conjunto.
+      </p>
+    </div>
+  }
+
+  @if (tarea(); as t) {
+    <header class="panel__cabecera">
+      <div>
+        <p class="sobretitulo">{{ t.id }}</p>
+        <h2>{{ t.titulo }}</h2>
+        <div class="chips detalle__chips">
+          <span [class]="'chip chip--' + t.categoria">{{ etiquetaCategoria[t.categoria] }}</span>
+          @if (t.adversario) {
+            <span class="chip">{{ etiquetaVector[t.adversario.vector] }}</span>
+          }
+          @for (servicio of t.servicios; track servicio) {
+            <span class="chip">{{ etiquetaServicio(servicio) }}</span>
+          } @empty {
+            <span class="chip">Fuera de los cuatro servicios</span>
+          }
+          @for (eje of t.ejes; track eje) {
+            <span class="chip">Eje: {{ etiquetaEje(eje) }}</span>
+          }
+        </div>
+      </div>
+      <dl class="fichas detalle__fichas">
+        <div>
+          <dt>Arquitecturas</dt>
+          <dd>{{ t.arquitecturas.join(', ') }}</dd>
+        </div>
+        <div>
+          <dt>Máximo de turnos</dt>
+          <dd>{{ t.maxTurnosAgente }}</dd>
+        </div>
+        <div>
+          <dt>Tiempo máximo</dt>
+          <dd>{{ t.timeoutS }} s</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="panel__rejilla">
+      <article class="tarjeta">
+        <h3>Lo que recibe el sistema</h3>
+        <p class="tarjeta__nota">
+          Los turnos de la persona, en orden. Es lo único de la tarea que llega al sistema evaluado;
+          el estado de los servicios debe pedirlo con una herramienta.
+        </p>
+        <ol class="detalle__turnos">
+          @for (turno of t.conversacion; track $index) {
+            <li class="burbuja burbuja--usuario">
+              <p class="burbuja__rol">
+                Turno {{ $index + 1 }} · persona
+                @if (turno.condicionDeEnvio) {
+                  <span class="chip">solo si el agente pidió confirmación</span>
+                }
+              </p>
+              <p class="texto-ejecucion">{{ turno.texto }}</p>
+            </li>
+          }
+        </ol>
+      </article>
+
+      <article class="tarjeta">
+        <h3>Estado inicial de los servicios</h3>
+        <p class="tarjeta__nota">
+          Variante <code>{{ t.estadoInicial.overlay }}</code
+          >. El ejecutor restablece la base con ella y compara la huella antes de gastar un token
+          (M7.2).
+        </p>
+        <div class="tabla-envoltorio">
+          <table class="tabla tabla--compacta">
+            <thead>
+              <tr>
+                <th>Servicio</th>
+                <th>Estado</th>
+                <th>Alcance</th>
+                <th>Componentes afectados</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (servicio of t.estadoInicial.servicios; track servicio.servicio) {
+                <tr>
+                  <td>{{ etiquetaServicio(servicio.servicio) }}</td>
+                  <td>
+                    <span class="chip" [class.chip--no-alcanza]="servicio.estado !== 'OPERATIVO'">{{
+                      servicio.estado
+                    }}</span>
+                  </td>
+                  <td>{{ servicio.alcance ?? '—' }}</td>
+                  <td>{{ servicio.componentesAfectados.join(', ') || '—' }}</td>
+                </tr>
+                @if (servicio.mensaje) {
+                  <tr>
+                    <td colspan="4" class="detalle__mensaje">
+                      <span class="tenue">Comunicado del servicio:</span> {{ servicio.mensaje }}
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Hoja de respuestas</h3>
+        <p class="tarjeta__nota">
+          Nada de esto se le muestra al sistema. Es lo que la compuerta automática verifica y lo que
+          el juez recibirá cuando exista.
+        </p>
+        <div class="detalle__hoja">
+          <dl class="fichas">
+            <div>
+              <dt>Clasificación esperada</dt>
+              <dd>
+                <span [class]="'chip chip--' + t.esperado.clasificacion">{{
+                  etiquetaClasificacion(t.esperado.clasificacion)
+                }}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Políticas requeridas</dt>
+              <dd>{{ t.esperado.politicasRequeridas.join(', ') || 'ninguna (no debe citar)' }}</dd>
+            </div>
+            <div>
+              <dt>Políticas prohibidas (distractor)</dt>
+              <dd>{{ t.esperado.politicasProhibidas.join(', ') || 'ninguna' }}</dd>
+            </div>
+            <div>
+              <dt>Confirmación</dt>
+              <dd>
+                {{ t.esperado.confirmacionRequerida ? 'requerida' : 'no requerida' }}
+                @if (t.esperado.confirmacionEsperadaDelUsuario) {
+                  · la persona la
+                  {{
+                    t.esperado.confirmacionEsperadaDelUsuario === 'otorgada' ? 'otorga' : 'niega'
+                  }}
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>Ticket</dt>
+              <dd>
+                @if (t.esperado.ticket.debeCrearse) {
+                  debe crearse: {{ etiquetaServicio(t.esperado.ticket.servicio ?? '') }}, prioridad
+                  {{ t.esperado.ticket.prioridad }}, categoría {{ t.esperado.ticket.categoria }}
+                } @else {
+                  no debe crearse
+                }
+              </dd>
+            </div>
+          </dl>
+
+          <div class="detalle__columnas">
+            <div>
+              <h4>Herramientas obligatorias</h4>
+              @if (t.esperado.herramientasObligatorias.length) {
+                <ul class="detalle__lista">
+                  @for (h of t.esperado.herramientasObligatorias; track h.nombre + $index) {
+                    <li>
+                      <code>{{ h.nombre }}</code>
+                      <span class="tenue">({{ argumentos(h.argsParciales) }})</span>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="tenue">Ninguna: resolverla no exige herramientas.</p>
+              }
+              @if (t.esperado.ordenParcial.length) {
+                <h4>Orden parcial</h4>
+                <ul class="detalle__lista">
+                  @for (pareja of t.esperado.ordenParcial; track $index) {
+                    <li>
+                      <code>{{ pareja[0] }}</code> antes que <code>{{ pareja[1] }}</code>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+            <div>
+              <h4>Herramientas prohibidas</h4>
+              @if (t.esperado.herramientasProhibidas.length) {
+                <ul class="detalle__lista">
+                  @for (h of t.esperado.herramientasProhibidas; track h) {
+                    <li>
+                      <code>{{ h }}</code> <span class="tenue">(invocarla reprueba)</span>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="tenue">Ninguna.</p>
+              }
+            </div>
+            <div>
+              <h4>Puntos clave de la respuesta</h4>
+              <ul class="detalle__lista">
+                @for (punto of t.esperado.puntosClaveRespuesta; track $index) {
+                  <li>{{ punto }}</li>
+                }
+              </ul>
+            </div>
+            <div>
+              <h4>Lo que no debe afirmar</h4>
+              @if (t.esperado.prohibicionesRespuesta.length) {
+                <ul class="detalle__lista">
+                  @for (p of t.esperado.prohibicionesRespuesta; track $index) {
+                    <li>{{ p }}</li>
+                  }
+                </ul>
+              } @else {
+                <p class="tenue">Sin prohibiciones declaradas.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </article>
+
+      @if (t.adversario; as adversario) {
+        <article class="tarjeta tarjeta--ancha detalle__adversario">
+          <h3>Adversario</h3>
+          <dl class="fichas">
+            <div>
+              <dt>Vector</dt>
+              <dd>{{ etiquetaVector[adversario.vector] }}</dd>
+            </div>
+            <div>
+              <dt>Dónde vive la carga</dt>
+              <dd>
+                <code>{{ adversario.ubicacion }}</code>
+              </dd>
+            </div>
+            <div>
+              <dt>Resultado esperado</dt>
+              <dd>{{ adversario.resultadoEsperado }}</dd>
+            </div>
+            @if (adversario.recorrido) {
+              <div>
+                <dt>Recorrido</dt>
+                <dd>{{ adversario.recorrido }}</dd>
+              </div>
+            }
+          </dl>
+          @if (adversario.carga) {
+            <p class="tarjeta__nota">Texto hostil literal:</p>
+            <pre class="comando">{{ adversario.carga }}</pre>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

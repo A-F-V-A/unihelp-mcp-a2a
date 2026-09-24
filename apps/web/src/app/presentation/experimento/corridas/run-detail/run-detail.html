@@ -1,0 +1,253 @@
+<section class="panel">
+  <nav class="corrida__nav">
+    <a class="boton-panel" routerLink=".." queryParamsHandling="preserve">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+      Todas las corridas
+    </a>
+  </nav>
+
+  <app-estado-recurso
+    [nombre]="'la corrida ' + nombre()"
+    [cargando]="corrida().cargando"
+    [ausente]="corrida().ausente"
+    [error]="corrida().error"
+    comoGenerarlo="No hay trazas.jsonl en ese directorio."
+    (reintentar)="recargar()"
+  />
+
+  @if (corrida().valor; as c) {
+    <header class="panel__cabecera">
+      <div>
+        <p class="sobretitulo">Corrida</p>
+        <h2 class="corrida__nombre">{{ c.nombre }}</h2>
+        @if (!c.manifiesto) {
+          <p>
+            Se interrumpió antes de escribir el manifiesto: se muestran las trazas que alcanzó a
+            dejar.
+          </p>
+        }
+      </div>
+      @if (consolaDisponible() === 'disponible') {
+        <button
+          type="button"
+          class="boton-panel boton-panel--principal"
+          (click)="calcularResultados()"
+          [disabled]="consolaOcupada()"
+          title="Corre el cuaderno de análisis sobre esta corrida y reescribe experiment/salidas"
+        >
+          Calcular resultados con el cuaderno
+        </button>
+      }
+    </header>
+
+    <app-job-monitor />
+
+    @if (c.manifiesto; as m) {
+      <div class="corrida__resumen">
+        <div class="tarjeta">
+          <p class="cifra">
+            {{ m.compuertaSuperada }}<small>de {{ m.ejecuciones }} superaron la compuerta</small>
+          </p>
+          <p class="tarjeta__nota">
+            Conteo del ejecutor sobre esta corrida. La tasa con su intervalo la calcula el cuaderno
+            y está en Resultados.
+          </p>
+        </div>
+        <dl class="fichas tarjeta">
+          <div>
+            <dt>Arquitecturas</dt>
+            <dd class="chips">
+              @for (a of m.arquitecturas; track a) {
+                <span [class]="claseArquitectura(a)">{{ a }}</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Tareas · repeticiones</dt>
+            <dd>{{ m.tareas }} · {{ m.repeticiones }}</dd>
+          </div>
+          <div>
+            <dt>Trazas válidas · en cuarentena</dt>
+            <dd>{{ m.trazasValidas }} · {{ m.enCuarentena }}</dd>
+          </div>
+          <div>
+            <dt>Modo del modelo</dt>
+            <dd>{{ m.modoLlm }}</dd>
+          </div>
+          <div>
+            <dt>Semilla</dt>
+            <dd>{{ m.semilla }}</dd>
+          </div>
+          <div>
+            <dt>Código</dt>
+            <dd>
+              <code>{{ m.versionCodigo }}</code>
+            </dd>
+          </div>
+          <div>
+            <dt>Huella de configuración</dt>
+            <dd>
+              <code [title]="m.configHash">{{ huellaCorta(m.configHash) }}</code>
+            </dd>
+          </div>
+          <div>
+            <dt>Generada</dt>
+            <dd>{{ formatearFechaHora(m.generadoEn) }}</dd>
+          </div>
+          <div>
+            <dt>Tarifa</dt>
+            <dd>
+              {{
+                m.tarifaConfigurada
+                  ? 'fijada'
+                  : 'sin fijar: el costo estimado no es un costo medido'
+              }}
+            </dd>
+          </div>
+          <div>
+            <dt>Juez</dt>
+            <dd>{{ m.juez === 'no_ejecutado' ? 'no ejecutado' : m.juez }}</dd>
+          </div>
+        </dl>
+      </div>
+    }
+
+    @if (c.reejecuciones) {
+      <div class="aviso aviso--error corrida__reejecuciones">
+        <p>
+          <strong>Hubo fallos de infraestructura.</strong> Se reejecutan y se excluyen (RM-15); el
+          ejecutor dejó el comando:
+        </p>
+        <pre>{{ c.reejecuciones }}</pre>
+      </div>
+    }
+
+    <div class="filtros" role="search">
+      <input
+        class="filtros__busqueda"
+        type="search"
+        placeholder="Buscar por tarea, run_id o motivo"
+        aria-label="Buscar ejecuciones"
+        [value]="filtro().texto"
+        (input)="buscar($any($event.target).value)"
+      />
+      @for (v of veredictos; track v) {
+        <button
+          type="button"
+          class="conmutador"
+          [attr.aria-pressed]="filtro().veredictos.includes(v)"
+          (click)="alternarVeredicto(v)"
+        >
+          {{ etiquetaVeredicto[v] }}
+        </button>
+      }
+      @for (cat of categorias; track cat) {
+        <button
+          type="button"
+          class="conmutador"
+          [attr.aria-pressed]="filtro().categorias.includes(cat)"
+          (click)="alternarCategoria(cat)"
+        >
+          {{ etiquetaCategoria[cat] }}
+        </button>
+      }
+      @if (arquitecturas().length > 1) {
+        @for (a of arquitecturas(); track a) {
+          <button
+            type="button"
+            class="conmutador"
+            [attr.aria-pressed]="filtro().arquitecturas.includes(a)"
+            (click)="alternarArquitectura(a)"
+          >
+            {{ a }}
+          </button>
+        }
+      }
+      @if (hayFiltro()) {
+        <button type="button" class="boton-panel" (click)="limpiar()">Limpiar</button>
+      }
+    </div>
+
+    <p class="tenue corrida__conteo" role="status">
+      {{ filtradas().length }} de {{ c.ejecuciones.length }} ejecuciones en
+      {{ grupos().length }} tareas
+    </p>
+
+    <div class="tarjeta tabla-envoltorio">
+      <table class="tabla corrida__matriz">
+        <thead>
+          <tr>
+            <th>Tarea</th>
+            @for (a of arquitecturas(); track a) {
+              <th>
+                <span [class]="claseArquitectura(a)">{{ a }}</span>
+              </th>
+            }
+            <th>Motivos de la compuerta</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (grupo of grupos(); track grupo.tareaId) {
+            <tr>
+              <td class="corrida__tarea">
+                <a
+                  [routerLink]="['../../tareas', grupo.tareaId]"
+                  queryParamsHandling="preserve"
+                  class="corrida__id"
+                  >{{ grupo.tareaId }}</a
+                >
+                @if (grupo.tarea; as t) {
+                  <span [class]="'chip chip--' + t.categoria">{{
+                    etiquetaCategoria[t.categoria]
+                  }}</span>
+                  <span class="corrida__titulo tenue">{{ t.titulo }}</span>
+                }
+              </td>
+              @for (a of arquitecturas(); track a) {
+                <td class="corrida__celda">
+                  @for (e of celda(grupo.ejecuciones, a); track e.runId) {
+                    <a
+                      [class]="'chip chip--' + veredictoDe(e)"
+                      [routerLink]="['ejecuciones', e.runId]"
+                      queryParamsHandling="preserve"
+                      [title]="
+                        etiquetaVeredicto[veredictoDe(e)] +
+                        ' · ' +
+                        formatearMs(e.duracionMs) +
+                        ' · ' +
+                        e.consumo.tokensEntrada +
+                        '+' +
+                        e.consumo.tokensSalida +
+                        ' tokens'
+                      "
+                    >
+                      r{{ e.repeticion }} · {{ etiquetaVeredictoCorta[veredictoDe(e)] }}
+                    </a>
+                  } @empty {
+                    <span class="tenue">—</span>
+                  }
+                </td>
+              }
+              <td class="corrida__motivos">
+                @for (motivo of motivosDe(grupo.ejecuciones); track motivo) {
+                  <span class="corrida__motivo" [title]="motivo">
+                    {{ interpretarMotivo(motivo).etiqueta }}
+                    @if (interpretarMotivo(motivo).detalle; as d) {
+                      <code>{{ d }}</code>
+                    }
+                  </span>
+                } @empty {
+                  <span class="tenue">—</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="99" class="tenue">Ninguna ejecución coincide con el filtro.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,0 +1,168 @@
+<div class="latencia">
+  <figure class="figura">
+    <svg
+      #svg
+      class="grafica"
+      [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
+      role="img"
+      aria-label="Descomposición de la latencia por arquitectura"
+    >
+      <title>Descomposición de la latencia por arquitectura</title>
+      <g class="eje">
+        @for (marca of marcasY(); track marca.valor) {
+          <line
+            class="rejilla"
+            [attr.x1]="margen.izquierda"
+            [attr.x2]="ancho - margen.derecha"
+            [attr.y1]="marca.y"
+            [attr.y2]="marca.y"
+          />
+          <text [attr.x]="margen.izquierda - 8" [attr.y]="marca.y + 4" text-anchor="end">
+            {{ formatearMs(marca.valor) }}
+          </text>
+        }
+        <text class="tenue" [attr.x]="margen.izquierda" [attr.y]="12">Mediana entre tareas</text>
+      </g>
+      @for (d of dibujadas(); track d.barra.arquitectura) {
+        <g class="marca">
+          <title>{{ d.texto }}</title>
+          @for (s of d.segmentos; track s.etiqueta) {
+            <rect
+              [attr.x]="d.x"
+              [attr.y]="s.y"
+              [attr.width]="anchoBarra"
+              [attr.height]="s.alto"
+              [style.fill]="s.color"
+              rx="2"
+            />
+          }
+          @if (d.yMediana !== null) {
+            <line
+              [attr.x1]="d.x - 8"
+              [attr.x2]="d.x + anchoBarra + 8"
+              [attr.y1]="d.yMediana"
+              [attr.y2]="d.yMediana"
+              class="mediana-anillo"
+            />
+            <line
+              [attr.x1]="d.x - 8"
+              [attr.x2]="d.x + anchoBarra + 8"
+              [attr.y1]="d.yMediana"
+              [attr.y2]="d.yMediana"
+              class="mediana"
+            />
+          } @else {
+            <text
+              class="tenue"
+              [attr.x]="d.x + anchoBarra / 2"
+              [attr.y]="alto - margen.abajo - 8"
+              text-anchor="middle"
+            >
+              sin datos
+            </text>
+          }
+          <text
+            [attr.x]="d.x + anchoBarra / 2"
+            [attr.y]="alto - margen.abajo + 20"
+            text-anchor="middle"
+          >
+            {{ d.barra.arquitectura }}
+          </text>
+          @if (d.barra.proporcionResiduo !== null) {
+            <text
+              class="tenue"
+              [attr.x]="d.x + anchoBarra / 2"
+              [attr.y]="alto - margen.abajo + 34"
+              text-anchor="middle"
+            >
+              residuo {{ formatearPorcentaje(d.barra.proporcionResiduo) }}
+            </text>
+          }
+        </g>
+      }
+    </svg>
+    <ul class="leyenda">
+      @for (c of componentes; track c) {
+        <li><i [style.--serie]="colorComponente[c]"></i>{{ etiquetaComponente[c] }}</li>
+      }
+      <li><span class="patron leyenda__mediana"></span>mediana de extremo a extremo (M4.1)</li>
+    </ul>
+    <app-chart-toolbar
+      [tablaVisible]="tablaVisible()"
+      (tabla)="alternarTabla()"
+      (descargarSvg)="exportarSvg()"
+      (descargarPng)="exportarPng()"
+      (descargarCsv)="exportarCsv()"
+    />
+    @if (tablaVisible()) {
+      <div class="tabla-envoltorio">
+        <table class="tabla tabla--compacta">
+          <thead>
+            <tr>
+              <th>Arquitectura</th>
+              <th>Componente</th>
+              <th class="num">Mediana</th>
+              <th>Intervalo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of barras(); track b.arquitectura) {
+              @for (s of b.segmentos; track s.componente) {
+                <tr>
+                  <td>{{ b.arquitectura }}</td>
+                  <td>{{ etiquetaComponente[s.componente] }}</td>
+                  <td class="num">
+                    {{ s.medianaMs === null ? 'sin datos' : formatearMs(s.medianaMs) }}
+                  </td>
+                  <td>{{ s.medianaMs === null ? '—' : formatearIntervalo(s.intervalo, 'ms') }}</td>
+                </tr>
+              }
+              <tr class="latencia__total">
+                <td>{{ b.arquitectura }}</td>
+                <td>Extremo a extremo (M4.1)</td>
+                <td class="num">
+                  {{ b.medianaTotalMs === null ? 'sin datos' : formatearMs(b.medianaTotalMs) }}
+                </td>
+                <td>
+                  {{ b.medianaTotalMs === null ? '—' : formatearIntervalo(b.intervaloTotal, 'ms') }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </figure>
+  <aside class="latencia__piso">
+    <h4>Piso de latencia del transporte (M4.3)</h4>
+    @if (piso().length) {
+      <table class="tabla tabla--compacta">
+        <thead>
+          <tr>
+            <th>Transporte</th>
+            <th>Estadístico</th>
+            <th class="num">ms</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of piso(); track p.transporte + p.estadistico) {
+            <tr>
+              <td>{{ p.transporte }}</td>
+              <td>{{ p.estadistico }}</td>
+              <td class="num">{{ formatearMs(p.valorMs) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="tenue">
+        Sin datos: la corrida no trae el microbenchmark de transporte (corre justo antes de la
+        corrida oficial, D9).
+      </p>
+    }
+    <p class="tenue latencia__nota">
+      Las medianas no son aditivas: la pila muestra cada componente por separado y el marcador es la
+      mediana total medida, no la suma.
+    </p>
+  </aside>
+</div>

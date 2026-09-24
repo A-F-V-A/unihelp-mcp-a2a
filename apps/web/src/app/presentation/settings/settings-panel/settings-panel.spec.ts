@@ -41,7 +41,7 @@ function crear(catalogoModelo: CatalogoModeloIa = CATALOGO) {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
-      { provide: CONFIGURACION_APP, useValue: { backendUrl: 'http://localhost:3000' } },
+      { provide: CONFIGURACION_APP, useValue: { backendUrl: 'http://localhost:3000', consolaUrl: 'http://consola:3030' } },
     ],
   });
   const fixture = TestBed.createComponent(SettingsPanel);

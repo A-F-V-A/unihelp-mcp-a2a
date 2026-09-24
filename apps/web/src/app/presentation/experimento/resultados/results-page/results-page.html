@@ -1,0 +1,322 @@
+<section class="panel">
+  <div class="panel__cabecera">
+    <div>
+      <p class="sobretitulo">Cuaderno de análisis · experiment/salidas/resultados.json</p>
+      <h2>Resultados</h2>
+      <p>
+        Todo lo que se ve aquí lo calculó el cuaderno de Python; el panel solo lo lee. Las métricas
+        de resultado abierto no llevan aprobado ni reprobado; solo las de umbral dicen si lo
+        alcanzan.
+      </p>
+    </div>
+    <button type="button" class="boton-panel" (click)="recargar()" [disabled]="recurso().cargando">
+      Volver a leer
+    </button>
+  </div>
+
+  <app-estado-recurso
+    nombre="resultados.json"
+    [cargando]="recurso().cargando"
+    [ausente]="recurso().ausente"
+    [error]="recurso().error"
+    comoGenerarlo="Lo escribe el cuaderno de análisis sobre una corrida:"
+    comando="cd experiment && uv run papermill analisis.ipynb salidas/analisis.ejecutado.ipynb --cwd . -p directorio_corrida corridas/<nombre>"
+    (reintentar)="recargar()"
+  />
+
+  @if (resultados(); as r) {
+    <dl class="fichas tarjeta resultados__procedencia">
+      <div>
+        <dt>Generado</dt>
+        <dd>{{ formatearFechaHora(r.generadoEn) }}</dd>
+      </div>
+      <div>
+        <dt>Esquema de resultados</dt>
+        <dd>
+          {{ r.versionEsquema }} · registro {{ r.corrida.versionRegistro }} · traza
+          {{ r.corrida.versionEsquemaTraza }}
+        </dd>
+      </div>
+      <div>
+        <dt>Semilla de la corrida</dt>
+        <dd>{{ r.corrida.semilla ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Código</dt>
+        <dd>
+          <code>{{ r.corrida.versionCodigo ?? '—' }}</code>
+        </dd>
+      </div>
+      <div>
+        <dt>Modelo</dt>
+        <dd>{{ r.corrida.modeloId ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Muestra para inferencia</dt>
+        <dd>
+          <strong>{{ r.corrida.inferencia.tamanoMuestra }} tareas</strong> · bootstrap pareado,
+          {{ r.corrida.inferencia.replicas }} réplicas, nivel {{ r.corrida.inferencia.nivel }},
+          semilla {{ r.corrida.inferencia.semilla }}
+        </dd>
+      </div>
+      <div>
+        <dt>Observaciones (no son la muestra)</dt>
+        <dd>
+          {{ r.corrida.ejecuciones.intentadas }} intentadas ·
+          {{ r.corrida.ejecuciones.validas }} válidas ·
+          {{ r.corrida.ejecuciones.invalidas }} inválidas
+        </dd>
+      </div>
+      <div>
+        <dt>Tareas</dt>
+        <dd>
+          {{ r.corrida.tareasTotal }} ({{ porCategoria('informativa') }} inf ·
+          {{ porCategoria('diagnostico') }} dia · {{ porCategoria('compuesta') }} com ·
+          {{ porCategoria('adversarial') }} adv)
+        </dd>
+      </div>
+    </dl>
+
+    @if (sinDatos().length) {
+      <div class="aviso aviso--info resultados__aviso" role="status">
+        <p>
+          Solo hay ejecuciones de
+          {{ r.corrida.arquitecturas.filter((a) => !sinDatos().includes(a)).join(', ') }}.
+          {{ sinDatos().join(', ') }} aparecen sin datos y los contrastes entre arquitecturas quedan
+          vacíos hasta que existan sus corridas.
+        </p>
+      </div>
+    }
+
+    <div class="panel__rejilla">
+      <article class="tarjeta tarjeta--ancha">
+        <h3>¿Son creíbles estos resultados? Métricas de control (M7)</h3>
+        <p class="tarjeta__nota">
+          Cada una con su umbral y la consecuencia declarada en el plan cuando no lo alcanza
+          (HU-MET-10).
+        </p>
+        <app-control-semaphore [metricas]="metricas()" />
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Efectividad por arquitectura y categoría (M1.1, M1.2)</h3>
+        <p class="tarjeta__nota">
+          Tasa de éxito con su intervalo del 95 %. La muestra para inferencia es de
+          <strong>{{ r.corrida.inferencia.tamanoMuestra }} tareas</strong>; las categorías tienen
+          diez tareas cada una, así que sus intervalos son anchos (HU-MET-11).
+        </p>
+        <app-dot-interval-chart
+          titulo="Tasa de éxito con IC 95 %"
+          [puntos]="puntosEfectividad()"
+          [grupos]="gruposEfectividad"
+          [etiquetasGrupo]="etiquetasGrupo"
+          formato="porcentaje"
+          [maximo]="1"
+          etiquetaEje="Proporción de tareas con éxito"
+          nombreArchivo="efectividad"
+        />
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Descomposición de la latencia (M4.2, M4.1)</h3>
+        <p class="tarjeta__nota">
+          A qué componente se atribuye el tiempo de cada arquitectura, con el porcentaje del residuo
+          de orquestación (HU-MET-12).
+        </p>
+        <app-latency-chart [barras]="barrasLatencia()" [piso]="pisoTransporte()" />
+      </article>
+
+      <article class="tarjeta">
+        <h3>Tokens por ejecución (M4.6)</h3>
+        <p class="tarjeta__nota">Mediana entre tareas del total de tokens, con intervalo.</p>
+        <app-dot-interval-chart
+          titulo="Tokens por ejecución"
+          [puntos]="puntosTokens()"
+          [grupos]="['total']"
+          [etiquetasGrupo]="{ total: 'Total de tokens' }"
+          formato="entero"
+          nombreArchivo="tokens"
+        />
+      </article>
+
+      <article class="tarjeta">
+        <h3>Llamadas al modelo (M4.4)</h3>
+        <p class="tarjeta__nota">Mediana entre tareas de llamadas al modelo por ejecución.</p>
+        <app-dot-interval-chart
+          titulo="Llamadas al modelo por ejecución"
+          [puntos]="puntosLlamadas()"
+          [grupos]="['llamadas']"
+          [etiquetasGrupo]="{ llamadas: 'Llamadas al modelo' }"
+          formato="decimal"
+          nombreArchivo="llamadas-modelo"
+        />
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Tablero de seguridad (M5, hipótesis H4)</h3>
+        <p class="tarjeta__nota">
+          Escrituras no autorizadas, rechazo mecánico, confirmación solicitada, falso bloqueo y
+          resistencia por vector (HU-MET-13). Las escrituras se muestran como conteo con su límite
+          binomial y la resistencia siempre por los cinco vectores, nunca como promedio.
+        </p>
+        <div class="tabla-envoltorio">
+          <table class="tabla tabla--compacta">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Métrica</th>
+                <th>Estado</th>
+                <th>Umbral</th>
+                <th>Filas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of seguridad(); track m.codigo) {
+                <tr>
+                  <td>
+                    <code>{{ m.codigo }}</code>
+                  </td>
+                  <td>{{ m.nombre }}</td>
+                  <td>
+                    <span
+                      [class]="'chip chip--' + (m.estado === 'calculada' ? 'alcanza' : 'sin-datos')"
+                      >{{
+                        m.estado === 'calculada'
+                          ? 'calculada'
+                          : m.estado === 'sin_datos'
+                            ? 'sin datos'
+                            : 'pendiente'
+                      }}</span
+                    >
+                  </td>
+                  <td>{{ m.umbral?.descripcion ?? 'resultado abierto' }}</td>
+                  <td>
+                    @for (f of m.filas; track $index) {
+                      <span class="chip"
+                        >{{ f.arquitectura ?? 'global' }} {{ f.dimensiones['vector'] || '' }}:
+                        {{ f.valor ?? 'sin datos' }}</span
+                      >
+                    } @empty {
+                      <span class="tenue">{{
+                        m.motivoEstado ?? 'El cuaderno aún no implementa esta familia.'
+                      }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Contrastes entre arquitecturas</h3>
+        <p class="tarjeta__nota">
+          Diferencias pareadas por tarea con su intervalo: estiman, no deciden. Vacíos mientras solo
+          exista una arquitectura.
+        </p>
+        <div class="tabla-envoltorio">
+          <table class="tabla tabla--compacta">
+            <thead>
+              <tr>
+                <th>Métrica</th>
+                <th>Contraste</th>
+                <th class="num">Diferencia</th>
+                <th>Intervalo</th>
+                <th class="num">n tareas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                fila of contrastesPrimarios();
+                track fila.metrica.codigo + fila.contraste.minuendo + fila.contraste.sustraendo
+              ) {
+                <tr>
+                  <td>
+                    <code>{{ fila.metrica.codigo }}</code> {{ fila.metrica.nombre }}
+                  </td>
+                  <td>{{ fila.contraste.minuendo }} − {{ fila.contraste.sustraendo }}</td>
+                  <td class="num">{{ fila.contraste.diferencia ?? 'sin datos' }}</td>
+                  <td>
+                    {{
+                      fila.contraste.intervalo
+                        ? fila.contraste.intervalo.inferior +
+                          ' a ' +
+                          fila.contraste.intervalo.superior
+                        : '—'
+                    }}
+                  </td>
+                  <td class="num">{{ fila.contraste.nTareas }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      @if (r.validacion.rechazos.length || r.validacion.avisosResiduo.length) {
+        <article class="tarjeta tarjeta--ancha">
+          <h3>Validación de la carga</h3>
+          @if (r.validacion.rechazos.length) {
+            <p class="tarjeta__nota">
+              Intentos rechazados por la carga (no entran a ningún cálculo):
+            </p>
+            <ul class="resultados__lista">
+              @for (rz of r.validacion.rechazos; track rz.origen) {
+                <li>
+                  <code>{{ rz.ejecucion ?? rz.origen }}</code
+                  >: {{ rz.motivos.join(', ') }}
+                  <span class="tenue">{{ rz.detalle.join('; ') }}</span>
+                </li>
+              }
+            </ul>
+          }
+          @if (r.validacion.avisosResiduo.length) {
+            <p class="tarjeta__nota">
+              Ejecuciones válidas con residuo de orquestación por encima del
+              {{ r.validacion.umbralAvisoResiduo * 100 }} %:
+            </p>
+            <ul class="resultados__lista">
+              @for (av of r.validacion.avisosResiduo; track av.ejecucion) {
+                <li>
+                  <code>{{ av.ejecucion }}</code
+                  >: {{ av.proporcion }}
+                </li>
+              }
+            </ul>
+          }
+        </article>
+      }
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Las 43 métricas del registro</h3>
+        <p class="tarjeta__nota">
+          Toca una fila para ver sus valores y contrastes tal como los escribió el cuaderno.
+        </p>
+        <app-metrics-table [metricas]="metricas()" />
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Figuras y tablas publicadas por el cuaderno</h3>
+        <p class="tarjeta__nota">
+          Las mismas que van al manuscrito, con la huella del manifiesto. Las gráficas de arriba
+          también se descargan en SVG o PNG desde su propia barra.
+        </p>
+        @if (manifiesto(); as m) {
+          <app-figures-gallery [manifiesto]="m" [urlDe]="urlSalida" />
+        } @else {
+          <p class="tenue">
+            No hay <code>manifiesto.json</code> junto a los resultados: el cuaderno no publicó
+            figuras en esta ejecución.
+          </p>
+        }
+      </article>
+    </div>
+
+    <p class="tenue resultados__pie">
+      ¿Quieres ver la ejecución detrás de un número?
+      <a routerLink="../corridas" queryParamsHandling="preserve">Corridas</a> muestra cada traza y
+      su compuerta.
+    </p>
+  }
+</section>

@@ -31,6 +31,7 @@ ARCHIVO_PUNTUACIONES = 'puntuaciones.jsonl'
 ARCHIVO_HUELLAS = 'huellas-esperadas.json'
 ARCHIVO_MANIFIESTO = 'manifiesto.json'
 ARCHIVO_REEJECUCIONES = 'reejecuciones.md'
+ARCHIVO_INDICE = 'indice.json'
 DIRECTORIO_CUARENTENA = 'cuarentena'
 
 
@@ -218,6 +219,58 @@ class Corrida:
         return resultado
 
 
+def actualizar_indice(directorio_salida: Path) -> dict[str, Any]:
+    """Escribe `indice.json` con el manifiesto de cada corrida del directorio.
+
+    El panel web (HU-MET-09, HU-MET-14) lee archivos estaticos y no puede listar
+    un directorio, asi que el ejecutor deja el listado ya hecho. Es un catalogo,
+    no un calculo: copia los manifiestos y anota que archivos existen; nunca
+    agrega ni deriva una cifra (RM-02).
+
+    Orden: `generado_en` descendente y, a igual marca, nombre ascendente. El
+    desempate se declara para que el listado no dependa del orden del disco
+    (RM-10).
+    """
+    corridas: list[dict[str, Any]] = []
+    if directorio_salida.exists():
+        for carpeta in directorio_salida.iterdir():
+            if not carpeta.is_dir() or carpeta.name == DIRECTORIO_CUARENTENA:
+                continue
+            ruta_manifiesto = carpeta / ARCHIVO_MANIFIESTO
+            manifiesto = (
+                json.loads(ruta_manifiesto.read_text(encoding='utf-8'))
+                if ruta_manifiesto.exists()
+                else None
+            )
+            archivos = sorted(
+                ruta.relative_to(carpeta).as_posix()
+                for ruta in carpeta.rglob('*')
+                if ruta.is_file()
+            )
+            if not archivos:
+                continue
+            corridas.append({'nombre': carpeta.name, 'manifiesto': manifiesto, 'archivos': archivos})
+    corridas.sort(
+        key=lambda c: (-_orden_iso((c['manifiesto'] or {}).get('generado_en')), c['nombre'])
+    )
+    indice = {'generado_en': _ahora_iso(), 'corridas': corridas}
+    directorio_salida.mkdir(parents=True, exist_ok=True)
+    (directorio_salida / ARCHIVO_INDICE).write_text(
+        json.dumps(indice, ensure_ascii=False, indent=2) + chr(10), encoding='utf-8'
+    )
+    return indice
+
+
+def _orden_iso(marca: str | None) -> float:
+    """Marca ISO a segundos, para ordenar; una corrida sin manifiesto va al final."""
+    if not marca:
+        return float('-inf')
+    try:
+        return datetime.fromisoformat(marca.replace('Z', '+00:00')).timestamp()
+    except ValueError:
+        return float('-inf')
+
+
 class HuellaInesperadaError(RuntimeError):
     """El entorno no quedo como la tarea lo exige: la ejecucion no se corre (M7.2)."""
 
@@ -391,6 +444,7 @@ def correr(
             cliente.cerrar()
 
     corrida.escribir_manifiesto(seleccion)
+    actualizar_indice(configuracion.directorio_salida)
     return corrida
 
 

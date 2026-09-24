@@ -1,0 +1,31 @@
+.metricas__fila {
+  cursor: pointer;
+}
+
+.metricas__fila:hover td {
+  background: var(--fondo-hover);
+}
+
+.metricas__fila--abierta td {
+  border-bottom: 0;
+  background: var(--fondo-grupo);
+}
+
+.metricas__unidad {
+  font-size: 0.82rem;
+}
+
+.metricas__detalle > td {
+  padding: 0.6rem 0.9rem 1rem;
+  background: var(--fondo-grupo);
+}
+
+.metricas__detalle p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.metricas__sub {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}

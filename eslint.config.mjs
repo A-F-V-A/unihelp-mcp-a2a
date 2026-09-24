@@ -59,6 +59,12 @@ export default [
               onlyDependOnLibsWithTags: ['arq:compartido'],
               notDependOnLibsWithTags: ['alcance:backend'],
             },
+            // El arnes del experimento (visor, ejecutor) solo conoce los contratos
+            // compartidos: nunca la logica de una arquitectura.
+            {
+              sourceTag: 'tipo:experimento',
+              onlyDependOnLibsWithTags: ['arq:compartido'],
+            },
           ],
         },
       ],

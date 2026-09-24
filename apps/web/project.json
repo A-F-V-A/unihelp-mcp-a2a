@@ -5,6 +5,7 @@
   "prefix": "app",
   "sourceRoot": "apps/web/src",
   "tags": ["tipo:app", "arq:frontend"],
+  "// assets": "En produccion, `datos-experimento/*` se copia como assets estaticos (tareas, corrida.yaml, salidas y corridas). En desarrollo NO: el servidor de desarrollo recargaria la pagina cada vez que el ejecutor escribe una traza; en su lugar `proxy.conf.json` reenvia `/datos-experimento` a la consola del experimento, que sirve los mismos archivos de disco (decisiones 38 y 39).",
   "targets": {
     "build": {
       "executor": "@angular/build:application",
@@ -20,7 +21,10 @@
             "input": "apps/web/public"
           }
         ],
-        "styles": ["apps/web/src/styles.css"]
+        "styles": [
+          "apps/web/src/styles.css",
+          "apps/web/src/app/presentation/experimento/experimento.css"
+        ]
       },
       "configurations": {
         "production": {
@@ -36,7 +40,33 @@
               "maximumError": "10kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/web/public"
+            },
+            {
+              "glob": "T-*.yaml",
+              "input": "docs/tasks",
+              "output": "/datos-experimento/tareas"
+            },
+            {
+              "glob": "corrida.yaml",
+              "input": "experiment/ejecutor",
+              "output": "/datos-experimento/ejecutor"
+            },
+            {
+              "glob": "**/*.{json,svg,csv}",
+              "input": "experiment/salidas",
+              "output": "/datos-experimento/salidas"
+            },
+            {
+              "glob": "**/*.{json,jsonl,md}",
+              "input": "experiment/corridas",
+              "output": "/datos-experimento/corridas"
+            }
+          ]
         },
         "development": {
           "optimization": false,
@@ -61,7 +91,8 @@
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "allowedHosts": ["localhost.afva.com.co"]
+        "allowedHosts": ["localhost.afva.com.co"],
+        "proxyConfig": "apps/web/proxy.conf.json"
       },
       "configurations": {
         "production": {

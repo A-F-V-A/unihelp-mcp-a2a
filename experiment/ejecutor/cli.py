@@ -6,6 +6,9 @@
     correr      ejecuta la matriz y escribe trazas y puntuaciones
     puntuar     recalcula las puntuaciones de una corrida, sin volver a ejecutar
     verificar   revisa una corrida ya escrita (esquema, completitud, huellas)
+    puntuar-observacion   veredicto de UNA observacion del visor (JSON por stdin)
+    importar-visor        convierte un observaciones.jsonl del visor en una corrida
+    indice      reescribe corridas/indice.json, el catalogo que lee el panel web
 """
 
 from __future__ import annotations
@@ -25,8 +28,15 @@ from .configuracion import (
     ErrorConfiguracion,
     con_anulaciones,
     leer_configuracion,
+    version_codigo,
 )
-from .corrida import ARCHIVO_HUELLAS, ARCHIVO_TRAZAS, correr, repuntuar
+from .corrida import ARCHIVO_HUELLAS, ARCHIVO_TRAZAS, actualizar_indice, correr, repuntuar
+from .observaciones import (
+    ErrorObservacion,
+    importar,
+    puntuar_observacion,
+    validar_observacion,
+)
 from .tareas import cargar_tareas, huellas_esperadas, huellas_por_variante
 
 
@@ -159,6 +169,50 @@ def _comando_verificar(args: argparse.Namespace) -> int:
     return 0 if invalidas == 0 and huella_mala == 0 else 1
 
 
+def _comando_indice(args: argparse.Namespace) -> int:
+    """Cataloga las corridas para el panel web; util tras copiar o borrar una a mano."""
+    indice = actualizar_indice(_configuracion(args).directorio_salida)
+    print(f'{len(indice["corridas"])} corridas en el indice.')
+    return 0
+
+
+def _comando_puntuar_observacion(_: argparse.Namespace) -> int:
+    """Lee una observacion del visor por stdin y escribe su veredicto en JSON.
+
+    No escribe archivos: es lo que el visor muestra en el panel al terminar cada
+    tarea. Un problema de entrada sale como JSON con `error`, para que el visor
+    lo muestre en vez de quedarse sin veredicto.
+    """
+    try:
+        observacion = validar_observacion(json.loads(sys.stdin.read()))
+        configuracion = con_anulaciones(
+            leer_configuracion(), arquitecturas=(str(observacion['condicion']),)
+        )
+        veredicto = puntuar_observacion(
+            observacion,
+            configuracion,
+            {t.id: t for t in cargar_tareas()},
+            version_codigo(),
+        )
+    except (json.JSONDecodeError, ErrorObservacion, ErrorConfiguracion) as error:
+        print(json.dumps({'error': f'{type(error).__name__}: {error}'}, ensure_ascii=False))
+        return 1
+    print(json.dumps(veredicto, ensure_ascii=False))
+    return 0
+
+
+def _comando_importar_visor(args: argparse.Namespace) -> int:
+    corrida = importar(Path(args.observaciones), leer_configuracion(), nombre=args.nombre)
+    validas = sum(1 for r in corrida.resultados if r.valida)
+    aprobadas = sum(1 for r in corrida.resultados if r.aprobada_compuerta)
+    print(
+        f'{len(corrida.resultados)} observaciones; {validas} trazas validas; '
+        f'{aprobadas} superaron la compuerta automatica.'
+    )
+    print(f'Corrida en {corrida.directorio}')
+    return 0
+
+
 def _configuracion(args: argparse.Namespace):
     base = leer_configuracion()
     tareas = None
@@ -218,6 +272,21 @@ def _analizador() -> argparse.ArgumentParser:
     verificar = sub.add_parser('verificar', help='revisa una corrida ya escrita')
     verificar.add_argument('directorio')
     verificar.set_defaults(funcion=_comando_verificar)
+
+    puntuar_obs = sub.add_parser(
+        'puntuar-observacion', help='veredicto de una observacion del visor (JSON por stdin)'
+    )
+    puntuar_obs.set_defaults(funcion=_comando_puntuar_observacion)
+
+    importar_cmd = sub.add_parser(
+        'importar-visor', help='convierte un observaciones.jsonl del visor en una corrida'
+    )
+    importar_cmd.add_argument('observaciones', help='ruta a observaciones.jsonl')
+    importar_cmd.add_argument('--nombre', help='nombre del directorio de la corrida')
+    importar_cmd.set_defaults(funcion=_comando_importar_visor)
+
+    indice = sub.add_parser('indice', help='reescribe el catalogo de corridas que lee el panel')
+    indice.set_defaults(funcion=_comando_indice)
     return analizador
 
 

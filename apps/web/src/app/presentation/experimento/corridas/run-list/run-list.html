@@ -1,0 +1,95 @@
+<section class="panel">
+  <div class="panel__cabecera">
+    <div>
+      <p class="sobretitulo">Ejecutor · experiment/corridas</p>
+      <h2>Corridas</h2>
+      <p>
+        Cada corrida es un directorio con sus trazas y el veredicto de la compuerta automática por
+        ejecución. Los conteos son los que dejó escritos el ejecutor; las tasas con intervalo están
+        en Resultados.
+      </p>
+    </div>
+    <button type="button" class="boton-panel" (click)="recargar()" [disabled]="catalogo().cargando">
+      Volver a leer el catálogo
+    </button>
+  </div>
+
+  <app-estado-recurso
+    nombre="el catálogo de corridas"
+    [cargando]="catalogo().cargando"
+    [ausente]="catalogo().ausente"
+    [error]="catalogo().error"
+    comoGenerarlo="El ejecutor lo escribe al terminar cada corrida. Si ya hay corridas de antes, se regenera con:"
+    comando="cd experiment && uv run python -m ejecutor indice"
+    (reintentar)="recargar()"
+  />
+
+  @if (catalogo().valor; as cat) {
+    <p class="tenue corridas__conteo" role="status">
+      {{ cat.corridas.length }} corridas · catálogo escrito el
+      {{ formatearFechaHora(cat.generadoEn) }}
+    </p>
+    <ul class="lista-filas">
+      @for (corrida of cat.corridas; track corrida.nombre) {
+        <li>
+          <a
+            class="fila-enlace corridas__fila"
+            [routerLink]="[corrida.nombre]"
+            queryParamsHandling="preserve"
+          >
+            <span class="corridas__nombre">{{ corrida.nombre }}</span>
+            @if (corrida.manifiesto; as m) {
+              <span class="chips">
+                @for (arq of m.arquitecturas; track arq) {
+                  <span [class]="claseArquitectura(arq)">{{ arq }}</span>
+                }
+                <span class="chip">modo {{ m.modoLlm }}</span>
+                <span class="chip">{{ m.repeticiones }} rep.</span>
+                @if (!m.tarifaConfigurada) {
+                  <span
+                    class="chip chip--sin-datos"
+                    title="La tarifa del modelo está en cero: el costo estimado no es un costo medido (M4.7)."
+                    >tarifa sin fijar</span
+                  >
+                }
+                @if (m.enCuarentena) {
+                  <span class="chip chip--cuarentena">{{ m.enCuarentena }} en cuarentena</span>
+                }
+                @if (m.fallosDeInfraestructura.length) {
+                  <span class="chip chip--infraestructura"
+                    >{{ m.fallosDeInfraestructura.length }} de infraestructura</span
+                  >
+                }
+              </span>
+              <span class="corridas__datos">
+                <span
+                  ><strong>{{ m.ejecuciones }}</strong> ejecuciones</span
+                >
+                <span
+                  ><strong>{{ m.trazasValidas }}</strong> trazas válidas</span
+                >
+                <span
+                  ><strong>{{ m.compuertaSuperada }}</strong> superaron la compuerta</span
+                >
+                <span
+                  ><strong>{{ m.tareas }}</strong> tareas</span
+                >
+              </span>
+              <span class="corridas__meta tenue">
+                {{ formatearFechaHora(m.generadoEn) }} · código {{ m.versionCodigo }} · semilla
+                {{ m.semilla }}
+              </span>
+            } @else {
+              <span class="chips"
+                ><span class="chip chip--sin-datos">interrumpida antes del manifiesto</span></span
+              >
+              <span class="corridas__meta tenue">{{ corrida.archivos.join(' · ') }}</span>
+            }
+          </a>
+        </li>
+      } @empty {
+        <li class="aviso"><p>El catálogo está vacío: todavía no hay corridas.</p></li>
+      }
+    </ul>
+  }
+</section>

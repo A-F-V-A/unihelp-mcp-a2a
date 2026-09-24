@@ -8,11 +8,20 @@ import { InjectionToken } from '@angular/core';
 export interface ConfiguracionApp {
   /** Origen del backend activo, sin barra final. Ej.: `http://localhost:3000`. */
   readonly backendUrl: string;
+  /**
+   * Origen de la consola del experimento (`apps/consola-experimento`), sin
+   * barra final. Solo la usa el panel para lanzar corridas (decision 39); si no
+   * responde, el panel sigue en solo lectura.
+   */
+  readonly consolaUrl: string;
 }
 
 export const CONFIGURACION_APP = new InjectionToken<ConfiguracionApp>('CONFIGURACION_APP');
 
-const RESPALDO: ConfiguracionApp = { backendUrl: 'http://localhost:3000' };
+const RESPALDO: ConfiguracionApp = {
+  backendUrl: 'http://localhost:3000',
+  consolaUrl: 'http://localhost:3030',
+};
 
 const normalizar = (url: string): string => url.trim().replace(/\/+$/, '');
 
@@ -21,26 +30,36 @@ const normalizar = (url: string): string => url.trim().replace(/\/+$/, '');
  * arranque del contenedor a partir de la variable de entorno `BACKEND_URL`.
  *
  * Para desarrollo local se acepta ademas `?backend=http://localhost:3001`, que
- * permite apuntar el mismo frontend a otra arquitectura sin reconstruir nada.
+ * permite apuntar el mismo frontend a otra arquitectura sin reconstruir nada,
+ * y `?consola=http://localhost:3030` para la consola del experimento.
  */
 export async function cargarConfiguracion(): Promise<ConfiguracionApp> {
-  const sobrescritura = new URLSearchParams(window.location.search).get('backend');
-  if (sobrescritura) {
-    return { backendUrl: normalizar(sobrescritura) };
-  }
+  const parametros = new URLSearchParams(window.location.search);
+  const sobrescrituraBackend = parametros.get('backend');
+  const sobrescrituraConsola = parametros.get('consola');
 
+  let cargada: ConfiguracionApp = RESPALDO;
   try {
     const respuesta = await fetch('config.json', { cache: 'no-store' });
-    if (!respuesta.ok) {
-      return RESPALDO;
+    if (respuesta.ok) {
+      const crudo = (await respuesta.json()) as Partial<ConfiguracionApp>;
+      cargada = {
+        backendUrl:
+          typeof crudo.backendUrl === 'string' && crudo.backendUrl.length > 0
+            ? normalizar(crudo.backendUrl)
+            : RESPALDO.backendUrl,
+        consolaUrl:
+          typeof crudo.consolaUrl === 'string' && crudo.consolaUrl.length > 0
+            ? normalizar(crudo.consolaUrl)
+            : RESPALDO.consolaUrl,
+      };
     }
-
-    const crudo = (await respuesta.json()) as Partial<ConfiguracionApp>;
-    return typeof crudo.backendUrl === 'string' && crudo.backendUrl.length > 0
-      ? { backendUrl: normalizar(crudo.backendUrl) }
-      : RESPALDO;
   } catch {
     // Sin config.json disponible se cae al valor de desarrollo.
-    return RESPALDO;
   }
+
+  return {
+    backendUrl: sobrescrituraBackend ? normalizar(sobrescrituraBackend) : cargada.backendUrl,
+    consolaUrl: sobrescrituraConsola ? normalizar(sobrescrituraConsola) : cargada.consolaUrl,
+  };
 }

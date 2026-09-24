@@ -1,0 +1,89 @@
+.ejecucion__nav {
+  margin-bottom: 1rem;
+}
+
+.ejecucion__tarea {
+  color: inherit;
+  font-family: var(--fuente-mono);
+}
+
+.ejecucion__titulo {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.ejecucion__chips {
+  margin-top: 0.6rem;
+}
+
+.ejecucion__fichas {
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  max-width: 24rem;
+}
+
+.ejecucion__barra {
+  display: flex;
+  height: 0.9rem;
+  margin: 0.6rem 0 0.25rem;
+  border-radius: 0.3rem;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.ejecucion__barra span {
+  flex-basis: 0;
+  min-width: 0;
+}
+
+.ejecucion__consumo {
+  margin-top: 0.9rem;
+}
+
+.ejecucion__motivos {
+  margin: 0 0 0.75rem;
+  padding-left: 1.1rem;
+  line-height: 1.5;
+}
+
+.ejecucion__motivos code {
+  margin-left: 0.3rem;
+}
+
+.ejecucion__conversacion {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.ejecucion__errores {
+  margin-top: 0.75rem;
+}
+
+.ejecucion__args {
+  display: inline-block;
+  max-width: 24rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.ejecucion__resultado {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+}
+
+.ejecucion__resultado pre {
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.ejecucion__sub {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.9rem;
+}
+
+.json {
+  max-height: 24rem;
+  overflow: auto;
+}

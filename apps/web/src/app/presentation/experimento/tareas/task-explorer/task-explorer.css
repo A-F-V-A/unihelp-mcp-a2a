@@ -1,0 +1,76 @@
+.explorador__mas {
+  margin-bottom: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.explorador__grupo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.explorador__grupo > .tenue {
+  min-width: 4.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.explorador__conteo {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.explorador__fila {
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'id titulo'
+    'id chips'
+    'id texto';
+  align-items: start;
+}
+
+.explorador__id {
+  grid-area: id;
+  font-family: var(--fuente-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.explorador__titulo {
+  grid-area: titulo;
+  font-weight: 600;
+}
+
+.explorador__chips {
+  grid-area: chips;
+}
+
+.explorador__texto {
+  grid-area: texto;
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.9rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.chip--fuera {
+  background: var(--fondo-fuera-alcance);
+  color: var(--color-fuera-alcance);
+}
+
+@media (width <= 40rem) {
+  .explorador__fila {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'id'
+      'titulo'
+      'chips'
+      'texto';
+  }
+}

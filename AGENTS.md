@@ -115,6 +115,8 @@ apps/
   mcp-server/            NestJS  B1 y B3  tags: tipo:app, arq:compartido
   simulador-servicios/   NestJS  emula los 4 sistemas universitarios cuyo estado
                          consultan las tareas  tags: tipo:app, arq:compartido
+  consola-experimento/   NestJS  lanza el ejecutor y el cuaderno desde el panel web, uno a la
+                         vez, y transmite su progreso (decision 39)  tags: tipo:app, arq:compartido
   web/                   Angular, frontend UNICO  tags: tipo:app, arq:frontend
 libs/
   conocimiento/          @unihelp/conocimiento: grafo de politicas en PostgreSQL, busqueda
@@ -133,6 +135,7 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   analisis.ipynb         Cuaderno unico (papermill); escribe salidas/resultados.json
   fixtures/ pruebas/     Generador de corrida sintetica y pytest
   ejecutor/              Corre las 40 tareas contra una arquitectura: trazas y compuerta automatica
+  visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
   juez/                  Fuente del juez LLM (futuro)
   trazas/ resultados/ salidas/ corridas/ casetes/  Artefactos: NO se versionan
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
@@ -155,8 +158,8 @@ en [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md
 | ----------------- | --------------------------------------------------------------- |
 | `domain/`         | Modelos, reglas puras, errores y puertos (interfaces). TS puro. |
 | `application/`    | Tokens DI de los puertos, casos de uso y stores (signals).      |
-| `infrastructure/` | Repositorios `http/` y `browser/`, mappers, `provideDataLayer`. |
-| `presentation/`   | Componentes: `chat/`, `settings/`, `shell/`, `shared/`.         |
+| `infrastructure/` | Repositorios `http/`, `browser/` y `estaticos/` (panel), mappers, `provideDataLayer`. |
+| `presentation/`   | Componentes: `chat/`, `settings/`, `shell/`, `shared/` y `experimento/` (panel de solo lectura, ruta `/experimento`, decision 38). |
 | `nucleo/`         | Arranque: configuracion en runtime y servicio de salud.         |
 
 ---
@@ -315,6 +318,8 @@ Detalle y plantillas en [`documentar`](.claude/skills/documentar/SKILL.md).
 pnpm setup              # instala dependencias
 pnpm dev:web            # solo el frontend -> :4200 (necesita un backend arriba)
 pnpm dev:web:b0         # B0 + frontend contra el backend real
+pnpm dev:panel          # B0 + consola del experimento + frontend: correr desde el panel
+pnpm dev:consola        # solo la consola del experimento -> :3030
 pnpm dev:b0             # (b1/b2/b3) backend en desarrollo
 pnpm b0                 # (b1/b2/b3) arquitectura completa en Docker
 pnpm down               # detiene Docker
@@ -331,6 +336,7 @@ pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experime
 pnpm ejecutor:validar   # revisa las 40 tareas de docs/tasks sin ejecutar nada
 pnpm ejecutor:salud     # comprueba que el backend configurado responde
 pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experiment/ejecutor/corrida.yaml
+pnpm visor                # las tareas en vivo en el navegador (pnpm visor -- --grep T-COM-001; pnpm visor:ui)
 pnpm analisis:desde-cero  # uv sync + corrida sintetica + cuaderno de metricas completo
 pnpm analisis:test        # pytest del sistema de metricas (requiere uv)
 pnpm nx run trazas:generar  # tras cambiar experiment/schemas/traza.schema.json

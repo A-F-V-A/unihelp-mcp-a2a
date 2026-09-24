@@ -11,6 +11,10 @@ Detalle del diseno, puntos de rechazo y contrato de resultados:
 
 ## Correr las 40 tareas contra una arquitectura
 
+Tambien se puede correr desde el panel web (`http://localhost:4200/experimento`,
+pestaña *Correr una corrida*) con la consola levantada (`pnpm dev:consola`):
+lanza exactamente estos mismos comandos y muestra el progreso (decision 39).
+
 Requiere [uv](https://docs.astral.sh/uv/) y la arquitectura levantada con
 `UNIHELP_PERFIL=experimento` (sin ese perfil las rutas del ejecutor son 404,
 decision 32). Hoy **solo B0 esta implementada**.
@@ -25,6 +29,12 @@ pnpm ejecutor:salud                     # comprueba que el backend responde
 pnpm ejecutor:correr                    # corre la matriz de corrida.yaml
 ```
 
+Para **ver** las tareas correr en el navegador, con una persona simulada que teclea y
+un panel con tokens, latencia y herramientas: [`visor/`](visor/README.md)
+(`pnpm visor`, `pnpm visor:ui`). El visor no calcula metricas: le pide el veredicto
+de la compuerta a `python -m ejecutor puntuar-observacion` y sus observaciones se
+convierten en una corrida con `python -m ejecutor importar-visor`.
+
 Opciones de `correr` (tambien en `validar` y `salud`):
 
 ```bash
@@ -33,6 +43,7 @@ uv run python -m ejecutor correr --tareas T-COM-001,T-ADV-*   # subconjunto
 uv run python -m ejecutor correr --repeticiones 5 --modo-llm replay
 uv run python -m ejecutor verificar corridas/<nombre>          # revisa una corrida
 uv run python -m ejecutor huellas                              # regenera las huellas
+uv run python -m ejecutor indice                               # reescribe corridas/indice.json (lo lee el panel web)
 ```
 
 Cada corrida deja su propio directorio en `corridas/<nombre>/`:
@@ -45,6 +56,11 @@ Cada corrida deja su propio directorio en `corridas/<nombre>/`:
 | `manifiesto.json`         | Version del codigo, `config_hash`, conteos y si la tarifa esta fijada. |
 | `cuarentena/trazas.jsonl` | Las que no validaron, con sus errores. NO entran al conjunto.          |
 | `reejecuciones.md`        | Fallos de infraestructura a reejecutar (RM-15). Solo si los hubo.      |
+
+Ademas, `corridas/indice.json` cataloga todas las corridas (nombre, manifiesto y
+archivos) para el panel web de `apps/web` (`/experimento`), que lee archivos
+estaticos y no puede listar un directorio (decision 38). Se reescribe al terminar
+cada corrida y a mano con `ejecutor indice`.
 
 ## Ejecutar el analisis
 
@@ -66,30 +82,32 @@ uv run papermill analisis.ipynb salidas/analisis.ejecutado.ipynb --cwd . \
 
 ## Contenido
 
-| Ruta                                               | Contenido                                                                                           |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| [`metricas.yaml`](metricas.yaml)                   | Registro unico de las 43 metricas: ficha del plan, campo fuente, rol, umbral o resultado abierto.   |
-| [`schemas/`](schemas)                              | `traza`, `metricas`, `insumos` y `resultados` (JSON Schema 2020-12) y ejemplos compartidos con AJV. |
-| [`analisis/registro.py`](analisis/registro.py)     | Carga y valida el registro; unica fuente de nombres de campo.                                       |
-| [`analisis/carga.py`](analisis/carga.py)           | Lee trazas JSONL y cuarentena, valida, rechaza y consolida a Parquet.                               |
-| [`analisis/inferencia.py`](analisis/inferencia.py) | Bootstrap pareado por conglomerados: remuestrea tareas, nunca ejecuciones.                          |
-| [`analisis/familias/`](analisis/familias)          | `m1_efectividad.py`, `m4_eficiencia.py`, `m7_fiabilidad.py` y piezas comunes.                       |
-| [`analisis/salida.py`](analisis/salida.py)         | `resultados.json`, tablas y figuras etiquetadas, manifiesto.                                        |
-| [`analisis.ipynb`](analisis.ipynb)                 | El cuaderno unico: corre de principio a fin con papermill.                                          |
-| [`fixtures/generador.py`](fixtures/generador.py)   | Corrida sintetica con casos borde deliberados.                                                      |
-| [`ejecutor/corrida.yaml`](ejecutor/corrida.yaml)   | Configuracion de la corrida: semilla, repeticiones, backends, tarifa. Va a `config_hash`.           |
-| [`ejecutor/tareas.py`](ejecutor/tareas.py)         | Carga las 40 tareas y decide el corpus de cada una.                                                 |
-| [`ejecutor/cliente.py`](ejecutor/cliente.py)       | Cliente HTTP unico para las cuatro arquitecturas.                                                   |
-| [`ejecutor/corrida.py`](ejecutor/corrida.py)       | El ciclo de una ejecucion y la matriz aleatorizada con semilla.                                     |
-| [`ejecutor/traza.py`](ejecutor/traza.py)           | Arma la traza y la valida antes de persistirla (HU-38).                                             |
-| [`ejecutor/compuerta.py`](ejecutor/compuerta.py)   | Compuerta automatica de la rubrica: las ocho verificaciones de docs/04 (HU-40).                     |
-| [`ejecutor/cli.py`](ejecutor/cli.py)               | `validar`, `huellas`, `salud`, `correr`, `verificar`.                                               |
-| [`pruebas/`](pruebas)                              | pytest.                                                                                             |
-| `salidas/`                                         | Salidas del cuaderno. **No se versionan**.                                                          |
-| `corridas/`                                        | Artefactos de cada corrida del ejecutor. **No se versionan**.                                       |
-| `casetes/`                                         | Grabaciones del modelo en modo `record` (HU-39). **No se versionan**.                               |
-| `juez/`                                            | Reservada para el juez LLM (aun vacia): sin el, `veredicto_juez` es `null`.                         |
-| `trazas/`, `resultados/`                           | Artefactos de corridas. **No se versionan**.                                                        |
+| Ruta                                                     | Contenido                                                                                                 |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`metricas.yaml`](metricas.yaml)                         | Registro unico de las 43 metricas: ficha del plan, campo fuente, rol, umbral o resultado abierto.         |
+| [`schemas/`](schemas)                                    | `traza`, `metricas`, `insumos` y `resultados` (JSON Schema 2020-12) y ejemplos compartidos con AJV.       |
+| [`analisis/registro.py`](analisis/registro.py)           | Carga y valida el registro; unica fuente de nombres de campo.                                             |
+| [`analisis/carga.py`](analisis/carga.py)                 | Lee trazas JSONL y cuarentena, valida, rechaza y consolida a Parquet.                                     |
+| [`analisis/inferencia.py`](analisis/inferencia.py)       | Bootstrap pareado por conglomerados: remuestrea tareas, nunca ejecuciones.                                |
+| [`analisis/familias/`](analisis/familias)                | `m1_efectividad.py`, `m4_eficiencia.py`, `m7_fiabilidad.py` y piezas comunes.                             |
+| [`analisis/salida.py`](analisis/salida.py)               | `resultados.json`, tablas y figuras etiquetadas, manifiesto.                                              |
+| [`analisis.ipynb`](analisis.ipynb)                       | El cuaderno unico: corre de principio a fin con papermill.                                                |
+| [`fixtures/generador.py`](fixtures/generador.py)         | Corrida sintetica con casos borde deliberados.                                                            |
+| [`ejecutor/corrida.yaml`](ejecutor/corrida.yaml)         | Configuracion de la corrida: semilla, repeticiones, backends, tarifa. Va a `config_hash`.                 |
+| [`ejecutor/tareas.py`](ejecutor/tareas.py)               | Carga las 40 tareas y decide el corpus de cada una.                                                       |
+| [`ejecutor/cliente.py`](ejecutor/cliente.py)             | Cliente HTTP unico para las cuatro arquitecturas.                                                         |
+| [`ejecutor/corrida.py`](ejecutor/corrida.py)             | El ciclo de una ejecucion y la matriz aleatorizada con semilla.                                           |
+| [`ejecutor/traza.py`](ejecutor/traza.py)                 | Arma la traza y la valida antes de persistirla (HU-38).                                                   |
+| [`ejecutor/compuerta.py`](ejecutor/compuerta.py)         | Compuerta automatica de la rubrica: las ocho verificaciones de docs/04 (HU-40).                           |
+| [`ejecutor/observaciones.py`](ejecutor/observaciones.py) | Convierte lo que observo el visor en trazas y puntuaciones, con el mismo armado y compuerta.              |
+| [`ejecutor/cli.py`](ejecutor/cli.py)                     | `validar`, `huellas`, `salud`, `correr`, `puntuar`, `verificar`, `puntuar-observacion`, `importar-visor`. |
+| [`visor/`](visor/README.md)                              | Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia.                           |
+| [`pruebas/`](pruebas)                                    | pytest.                                                                                                   |
+| `salidas/`                                               | Salidas del cuaderno. **No se versionan**.                                                                |
+| `corridas/`                                              | Artefactos de cada corrida del ejecutor. **No se versionan**.                                             |
+| `casetes/`                                               | Grabaciones del modelo en modo `record` (HU-39). **No se versionan**.                                     |
+| `juez/`                                                  | Reservada para el juez LLM (aun vacia): sin el, `veredicto_juez` es `null`.                               |
+| `trazas/`, `resultados/`                                 | Artefactos de corridas. **No se versionan**.                                                              |
 
 **Lo que NO contiene:** logica de triaje ni codigo TypeScript. La validacion de trazas
 antes de persistir vive en [`libs/trazas`](../libs/trazas).

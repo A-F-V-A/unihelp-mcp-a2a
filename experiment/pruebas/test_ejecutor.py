@@ -297,3 +297,30 @@ def test_una_traza_invalida_va_a_cuarentena_y_conserva_su_estado(tmp_path) -> No
     assert manifiesto['fallos_de_infraestructura'] == ['T-INF-001|B0|r1|x']
     assert manifiesto['trazas_validas'] == 0
     assert (corrida.directorio / 'reejecuciones.md').exists()
+
+
+def test_el_indice_cataloga_las_corridas_sin_derivar_cifras(tmp_path) -> None:
+    from ejecutor.corrida import ARCHIVO_INDICE, actualizar_indice
+
+    reciente = tmp_path / 'reciente'
+    antigua = tmp_path / 'antigua'
+    abortada = tmp_path / 'abortada'
+    for carpeta, marca in ((reciente, '2026-09-23T03:53:43.845Z'), (antigua, '2026-09-22T01:00:00.000Z')):
+        carpeta.mkdir()
+        (carpeta / 'manifiesto.json').write_text(
+            json.dumps({'generado_en': marca, 'compuerta_superada': 3}), encoding='utf-8'
+        )
+        (carpeta / 'trazas.jsonl').write_text('{}\n', encoding='utf-8')
+    abortada.mkdir()
+    (abortada / 'trazas.jsonl').write_text('{}\n', encoding='utf-8')
+    (tmp_path / 'vacia').mkdir()
+
+    indice = actualizar_indice(tmp_path)
+
+    nombres = [c['nombre'] for c in indice['corridas']]
+    # Mas reciente primero; la corrida sin manifiesto va al final, no desaparece.
+    assert nombres == ['reciente', 'antigua', 'abortada']
+    assert indice['corridas'][0]['manifiesto']['compuerta_superada'] == 3
+    assert indice['corridas'][2]['manifiesto'] is None
+    assert indice['corridas'][0]['archivos'] == ['manifiesto.json', 'trazas.jsonl']
+    assert json.loads((tmp_path / ARCHIVO_INDICE).read_text(encoding='utf-8'))['corridas'] == indice['corridas']

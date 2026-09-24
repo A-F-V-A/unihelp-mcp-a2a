@@ -1,3 +1,4 @@
 {
-  "backendUrl": "http://localhost:3000"
+  "backendUrl": "http://localhost:3000",
+  "consolaUrl": "http://localhost:3030"
 }

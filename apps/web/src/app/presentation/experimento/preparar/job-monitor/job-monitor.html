@@ -1,0 +1,138 @@
+@if (trabajo(); as t) {
+  <section class="monitor" [class.monitor--activo]="enMarcha()" aria-live="polite">
+    <header class="monitor__cabecera">
+      <div>
+        <p class="sobretitulo">
+          {{ t.tipo === 'corrida' ? 'Corrida del ejecutor' : 'Cuaderno de análisis' }}
+        </p>
+        <h3 class="monitor__titulo">
+          {{ nombreCorrida() ?? t.id }}
+          <span [class]="'chip ' + claseEstado[t.estado]">{{ etiquetaEstado[t.estado] }}</span>
+        </h3>
+        <p class="tenue monitor__meta">
+          Inició {{ formatearFechaHora(t.iniciadoEn) }}
+          @if (t.terminadoEn) {
+            · terminó {{ formatearFechaHora(t.terminadoEn) }}
+          }
+          @if (t.codigoSalida !== null && t.estado !== 'en_marcha') {
+            · código de salida {{ t.codigoSalida }}
+          }
+        </p>
+      </div>
+      <div class="tarjeta__acciones">
+        @if (enMarcha()) {
+          <button type="button" class="boton-panel" (click)="cancelar()">Cancelar</button>
+        } @else {
+          <button type="button" class="boton-panel" (click)="descartar()">Cerrar</button>
+        }
+      </div>
+    </header>
+
+    <pre class="comando monitor__comando">{{ t.comando }}</pre>
+
+    @if (t.tipo === 'corrida') {
+      @if (porcentaje(); as pct) {
+        <div
+          class="monitor__barra"
+          role="progressbar"
+          [attr.aria-valuenow]="pct"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <span [style.width.%]="pct"></span>
+        </div>
+        <p class="tenue monitor__meta">
+          {{ progreso().ejecuciones.length }} de {{ progreso().total }} ejecuciones reportadas por
+          el ejecutor
+        </p>
+      } @else if (enMarcha()) {
+        <p class="tenue monitor__meta">Esperando la primera ejecución…</p>
+      }
+      @if (progreso().ejecuciones.length) {
+        <ol class="monitor__ejecuciones">
+          @for (e of progreso().ejecuciones; track e.indice) {
+            <li [class.monitor__ejecucion--reprobada]="!e.aprobada">
+              <span class="monitor__indice tenue">{{ e.indice }}</span>
+              <span [class]="'chip ' + (e.aprobada ? 'chip--aprobada' : 'chip--reprobada')">{{
+                e.aprobada ? 'Superó' : 'No superó'
+              }}</span>
+              <span class="monitor__tarea">
+                <strong>{{ e.tareaId }}</strong>
+                <span [class]="claseArquitectura(e.arquitectura)">{{ e.arquitectura }}</span>
+                <span class="tenue">r{{ e.repeticion }} · {{ e.detalle }}</span>
+                @if (tituloTarea(e.tareaId); as titulo) {
+                  <span class="monitor__titulo-tarea tenue">{{ titulo }}</span>
+                }
+              </span>
+              @if (e.motivos.length) {
+                <span class="monitor__motivos">
+                  @for (m of e.motivos; track m) {
+                    <span [title]="m"
+                      >{{ interpretarMotivo(m).etiqueta }}
+                      @if (interpretarMotivo(m).detalle; as d) {
+                        <code>{{ d }}</code>
+                      }
+                    </span>
+                  }
+                </span>
+              }
+            </li>
+          }
+        </ol>
+      }
+      @if (progreso().resumen; as resumen) {
+        <p class="monitor__resumen">{{ resumen }}</p>
+      }
+    }
+
+    <details
+      class="plegable monitor__registro"
+      [open]="t.tipo === 'analisis' || !progreso().ejecuciones.length"
+    >
+      <summary>Salida del proceso ({{ t.lineas.length }} líneas)</summary>
+      <pre
+        #registro
+        class="json monitor__lineas"
+      >@for (l of lineasVisibles(); track l.numero) {<span [class.monitor__stderr]="l.origen === 'stderr'">{{ l.texto }}</span>
+}</pre>
+    </details>
+
+    @if (error(); as e) {
+      <div class="aviso aviso--error" role="alert">
+        <p>{{ e }}</p>
+      </div>
+    }
+
+    @if (!enMarcha()) {
+      <div class="tarjeta__acciones">
+        @if (t.tipo === 'corrida' && nombreCorrida(); as corrida) {
+          <a
+            class="boton-panel"
+            [routerLink]="['/experimento/corridas', corrida]"
+            queryParamsHandling="preserve"
+            >Ver la corrida</a
+          >
+          @if (t.estado === 'terminado') {
+            <button
+              type="button"
+              class="boton-panel boton-panel--principal"
+              (click)="calcularResultados()"
+              [disabled]="lanzando()"
+            >
+              Calcular resultados con el cuaderno
+            </button>
+          }
+        }
+        @if (t.tipo === 'analisis' && t.estado === 'terminado') {
+          <a
+            class="boton-panel boton-panel--principal"
+            routerLink="/experimento/resultados"
+            queryParamsHandling="preserve"
+            (click)="recargarResultados()"
+            >Ver resultados</a
+          >
+        }
+      </div>
+    }
+  </section>
+}

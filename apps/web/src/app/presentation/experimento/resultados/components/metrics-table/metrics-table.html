@@ -1,0 +1,160 @@
+<div class="filtros">
+  <button
+    type="button"
+    class="conmutador"
+    [attr.aria-pressed]="familia() === null"
+    (click)="elegirFamilia(null)"
+  >
+    Todas
+  </button>
+  @for (f of familias; track f) {
+    <button
+      type="button"
+      class="conmutador"
+      [attr.aria-pressed]="familia() === f"
+      (click)="elegirFamilia(f)"
+    >
+      {{ f }} · {{ etiquetaFamilia[f] }}
+    </button>
+  }
+  <button
+    type="button"
+    class="conmutador"
+    [attr.aria-pressed]="soloCalculadas()"
+    (click)="alternarCalculadas()"
+  >
+    Solo calculadas
+  </button>
+</div>
+<div class="tabla-envoltorio">
+  <table class="tabla tabla--compacta metricas">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Métrica</th>
+        <th>Rol</th>
+        <th>Hipótesis</th>
+        <th>Tipo</th>
+        <th>Estado</th>
+        <th>Umbral</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (m of visibles(); track m.codigo) {
+        <tr
+          class="metricas__fila"
+          [class.metricas__fila--abierta]="abierta() === m.codigo"
+          (click)="alternar(m.codigo)"
+        >
+          <td>
+            <code>{{ m.codigo }}</code>
+          </td>
+          <td>
+            {{ m.nombre }}<span class="tenue metricas__unidad"> · {{ m.unidad }}</span>
+          </td>
+          <td>{{ etiquetaRol[m.rol] }}</td>
+          <td>{{ m.hipotesis.join(', ') }}</td>
+          <td>{{ m.tipoValorEsperado === 'umbral' ? 'umbral' : 'resultado abierto' }}</td>
+          <td>
+            <span [class]="'chip chip--' + (m.estado === 'calculada' ? 'alcanza' : 'sin-datos')">{{
+              etiquetaEstado[m.estado]
+            }}</span>
+          </td>
+          <td>
+            @if (m.tipoValorEsperado === 'umbral') {
+              @if (estadoSemaforo(m); as s) {
+                <span [class]="'chip chip--' + s.replace('_', '-')">{{ etiquetaSemaforo[s] }}</span>
+              }
+            } @else {
+              <span class="tenue">sin umbral: no se juzga</span>
+            }
+          </td>
+        </tr>
+        @if (abierta() === m.codigo) {
+          <tr class="metricas__detalle">
+            <td colspan="7">
+              @if (m.motivoEstado) {
+                <p class="tenue">{{ m.motivoEstado }}</p>
+              }
+              @if (m.umbral; as u) {
+                <p>
+                  <strong>Umbral:</strong> {{ u.descripcion }}
+                  @if (u.consecuencia) {
+                    · <strong>Consecuencia:</strong> {{ u.consecuencia }}
+                  }
+                </p>
+              }
+              @for (nota of m.notas; track nota) {
+                <p class="tenue">{{ nota }}</p>
+              }
+              @if (m.filas.length) {
+                <table class="tabla tabla--compacta">
+                  <thead>
+                    <tr>
+                      <th>Arquitectura</th>
+                      <th>Desglose</th>
+                      <th>Estadístico</th>
+                      <th class="num">Valor</th>
+                      <th>Intervalo</th>
+                      <th class="num">n tareas</th>
+                      <th class="num">n obs.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (f of m.filas; track $index) {
+                      <tr>
+                        <td>{{ f.arquitectura ?? 'global' }}</td>
+                        <td>{{ dimensiones(f.dimensiones) || '—' }}</td>
+                        <td>{{ f.estadistico }}</td>
+                        <td class="num">
+                          {{ f.valor === null ? 'sin datos' : formatearDecimal(f.valor) }}
+                        </td>
+                        <td>{{ f.intervalo ? formatearIntervalo(f.intervalo) : '—' }}</td>
+                        <td class="num">{{ f.nTareas ?? '—' }}</td>
+                        <td class="num">{{ f.nObservaciones ?? '—' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+              @if (m.contrastes.length) {
+                <p class="metricas__sub">
+                  Contrastes pareados por tarea (estimación con intervalo, sin decisión)
+                </p>
+                <table class="tabla tabla--compacta">
+                  <thead>
+                    <tr>
+                      <th>Contraste</th>
+                      <th>Desglose</th>
+                      <th class="num">Diferencia</th>
+                      <th>Intervalo</th>
+                      <th class="num">n tareas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (c of m.contrastes; track $index) {
+                      <tr>
+                        <td>{{ c.minuendo }} − {{ c.sustraendo }}</td>
+                        <td>{{ dimensiones(c.dimensiones) || '—' }}</td>
+                        <td class="num">
+                          {{ c.diferencia === null ? 'sin datos' : formatearDecimal(c.diferencia) }}
+                        </td>
+                        <td>{{ c.intervalo ? formatearIntervalo(c.intervalo) : '—' }}</td>
+                        <td class="num">{{ c.nTareas }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+              @if (!m.filas.length && !m.contrastes.length) {
+                <p class="tenue">
+                  Sin filas: la métrica está {{ etiquetaEstado[m.estado].toLowerCase() }}.
+                </p>
+              }
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>
