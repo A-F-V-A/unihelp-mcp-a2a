@@ -19,6 +19,7 @@ import {
   aHerramientaMcp,
   contextoDeLlamada,
   ServidorHerramientasMcp,
+  sinPrivilegio,
 } from './servidor-herramientas-mcp';
 
 /**
@@ -210,5 +211,69 @@ describe('contextoDeLlamada (HU-33)', () => {
       conversacionId: 'mcp-sesion-sesion-9',
       actor: 'cliente-mcp',
     });
+  });
+});
+
+/**
+ * Prueba de privilegios por agente B3 (HU-20, tarea 5.5 del plan de implementacion).
+ * Un agente solo puede invocar las herramientas de su rol; el rechazo es un
+ * resultado tipado (isError + SIN_AUTORIZACION), no un error del protocolo (RM-15).
+ */
+describe('filtro de privilegios por agente B3 (HU-20)', () => {
+  it('sin X-Agent-Id (B1, inspector MCP) no aplica restriccion', () => {
+    // Representa la llamada de B1 que no envia la cabecera
+    expect(sinPrivilegio(undefined, 'crear_ticket_simulado')).toBeNull();
+    expect(sinPrivilegio({}, 'crear_ticket_simulado')).toBeNull();
+  });
+
+  it('agente conocimiento puede invocar buscar_politica', () => {
+    expect(sinPrivilegio({ 'x-agent-id': 'conocimiento' }, 'buscar_politica')).toBeNull();
+  });
+
+  it('agente diagnostico puede invocar consultar_estado_servicio', () => {
+    expect(sinPrivilegio({ 'x-agent-id': 'diagnostico' }, 'consultar_estado_servicio')).toBeNull();
+  });
+
+  it('agente orquestador puede invocar proponer_ticket, confirmar_propuesta y crear_ticket_simulado', () => {
+    expect(sinPrivilegio({ 'x-agent-id': 'orquestador' }, 'proponer_ticket')).toBeNull();
+    expect(sinPrivilegio({ 'x-agent-id': 'orquestador' }, 'confirmar_propuesta')).toBeNull();
+    expect(sinPrivilegio({ 'x-agent-id': 'orquestador' }, 'crear_ticket_simulado')).toBeNull();
+  });
+
+  it('diputado confundido: agente conocimiento no puede crear_ticket_simulado (HU-20 CA)', () => {
+    const rechazo = sinPrivilegio({ 'x-agent-id': 'conocimiento' }, 'crear_ticket_simulado');
+    expect(rechazo).not.toBeNull();
+    expect(rechazo?.isError).toBe(true);
+    const meta = rechazo?._meta as Record<string, unknown>;
+    expect(meta['unihelp/error']).toMatchObject({ codigo: 'SIN_AUTORIZACION' });
+    const texto = (rechazo?.content as { text: string }[])[0]?.text ?? '';
+    expect(JSON.parse(texto)).toMatchObject({ error: { codigo: 'SIN_AUTORIZACION' } });
+  });
+
+  it('agente diagnostico no puede buscar_politica', () => {
+    const rechazo = sinPrivilegio({ 'x-agent-id': 'diagnostico' }, 'buscar_politica');
+    expect(rechazo?.isError).toBe(true);
+    expect(
+      (rechazo?._meta as Record<string, unknown>)['unihelp/error'],
+    ).toMatchObject({ codigo: 'SIN_AUTORIZACION' });
+  });
+
+  it('agente desconocido recibe SIN_AUTORIZACION en cualquier herramienta', () => {
+    const rechazo = sinPrivilegio({ 'x-agent-id': 'agente-extrano' }, 'buscar_politica');
+    expect(rechazo?.isError).toBe(true);
+    expect(
+      (rechazo?._meta as Record<string, unknown>)['unihelp/error'],
+    ).toMatchObject({ codigo: 'SIN_AUTORIZACION' });
+  });
+
+  it('el rechazo es isError, nunca lanza una excepcion del protocolo (RM-15)', () => {
+    // sinPrivilegio siempre retorna un resultado tipado, nunca lanza.
+    // Eso garantiza que el SDK no lo interpreta como error del protocolo y el
+    // modelo puede leer el rechazo y diagnosticar el problema (RM-15).
+    const rechazo = sinPrivilegio({ 'x-agent-id': 'conocimiento' }, 'crear_ticket_simulado');
+    expect(() => rechazo).not.toThrow();
+    expect(rechazo?.isError).toBe(true);
+    expect(rechazo?._meta).toBeDefined();
+    expect(rechazo?.content).toHaveLength(1);
   });
 });

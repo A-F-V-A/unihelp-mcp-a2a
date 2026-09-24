@@ -10,10 +10,12 @@ import {
 import { Inject, Injectable } from '@nestjs/common';
 import { comoTrasViajar, InvocadorCapacidades, RegistroCapacidades } from '@unihelp/capacidades';
 import {
+  CABECERA_AGENT_ID,
   CABECERA_TRACE_ID,
   type ContextoMcpDto,
   type ErrorHerramientaMcpDto,
   META_MCP,
+  PERMISOS_AGENTE,
   SERVIDOR_MCP,
 } from '@unihelp/contratos';
 import {
@@ -52,6 +54,47 @@ function cabecera(cabeceras: IsomorphicHeaders | undefined, nombre: string): str
   const limpio = texto?.trim();
   return limpio ? limpio : null;
 }
+
+/**
+ * Comprueba si el agente identificado por `X-Agent-Id` tiene permiso para
+ * invocar `nombreHerramienta` (HU-20, RNF-04). Si la cabecera esta ausente
+ * (B1, inspector MCP) se omite la comprobacion: el filtro solo aplica a B3.
+ * Retorna un `CallToolResult` de error si el privilegio falta, o `null` si OK.
+ */
+export function sinPrivilegio(
+  cabeceras: IsomorphicHeaders | undefined,
+  nombreHerramienta: string,
+): CallToolResult | null {
+  const agentId = cabecera(cabeceras, CABECERA_AGENT_ID);
+  if (!agentId) return null; // B1 o inspector: sin restriccion
+
+  const permitidas = PERMISOS_AGENTE[agentId];
+  if (!permitidas) {
+    // Agente desconocido: ninguna herramienta permitida
+    const error: ErrorHerramientaMcpDto = {
+      codigo: 'SIN_AUTORIZACION',
+      mensaje: `El agente «${agentId}» no tiene ningun privilegio registrado en este servidor.`,
+    };
+    return {
+      isError: true,
+      content: [{ type: 'text', text: JSON.stringify({ error }) }],
+      _meta: { [META_MCP.error]: error },
+    };
+  }
+  if (!permitidas.includes(nombreHerramienta)) {
+    const error: ErrorHerramientaMcpDto = {
+      codigo: 'SIN_AUTORIZACION',
+      mensaje: `El agente «${agentId}» no tiene permiso para invocar «${nombreHerramienta}». Herramientas permitidas: ${permitidas.join(', ')}.`,
+    };
+    return {
+      isError: true,
+      content: [{ type: 'text', text: JSON.stringify({ error }) }],
+      _meta: { [META_MCP.error]: error },
+    };
+  }
+  return null;
+}
+
 
 /**
  * Reconstruye en el receptor el contexto de la invocacion: la traza viaja en la
@@ -136,6 +179,11 @@ export class ServidorHerramientasMcp {
     }));
 
     servidor.setRequestHandler(CallToolRequestSchema, async (peticion, extra) => {
+      // Filtro de privilegios: cada agente B3 solo puede invocar sus herramientas (HU-20).
+      // Si el cliente no envia X-Agent-Id (B1, inspector), el filtro se omite.
+      const rechazo = sinPrivilegio(extra.requestInfo?.headers, peticion.params.name);
+      if (rechazo) return rechazo;
+
       // Desde la entrada al manejador hasta su salida, con reloj monotono (D5, D6).
       const inicio = ahoraMonotonoMs();
       const contexto = contextoDeLlamada(

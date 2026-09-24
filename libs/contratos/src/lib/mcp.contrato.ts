@@ -20,6 +20,32 @@ export const RUTA_MCP = '/mcp';
 export const CABECERA_TRACE_ID = 'x-trace-id';
 
 /**
+ * Cabecera HTTP con el identificador del agente que llama al servidor MCP. El
+ * servidor la usa para aplicar el filtro de privilegios por herramienta: cada
+ * agente B3 solo puede invocar las herramientas asignadas a su rol (HU-20). La
+ * restriccion esta en el servidor (no solo en el prompt) para que no dependa del
+ * comportamiento del modelo (RNF-04).
+ *
+ * Valores posibles: `'conocimiento'` | `'diagnostico'` | `'orquestador'`.
+ * Si el cliente no la envia (p. ej. el inspector MCP), el servidor la omite y
+ * aplica permisos abiertos, porque B1 no usa privilegios por agente.
+ */
+export const CABECERA_AGENT_ID = 'x-agent-id';
+
+/**
+ * Mapa de privilegios: que herramientas puede invocar cada agente B3 (HU-20,
+ * RNF-04). Solo lo lee el servidor; los clientes lo usan para auto-restringirse
+ * y para las pruebas adversariales (tarea 5.5 del plan de implementacion).
+ *
+ * `undefined` como clave significa "sin cabecera" (B1, inspector): sin restriccion.
+ */
+export const PERMISOS_AGENTE: Readonly<Record<string, readonly string[]>> = {
+  conocimiento:  ['buscar_politica'],
+  diagnostico:   ['consultar_estado_servicio'],
+  orquestador:   ['proponer_ticket', 'confirmar_propuesta', 'crear_ticket_simulado'],
+} as const;
+
+/**
  * Claves de `_meta` que UniHelp usa en MCP. El prefijo `unihelp/` evita chocar
  * con las claves reservadas del protocolo (`modelcontextprotocol.io/...`).
  */
