@@ -1,0 +1,132 @@
+<section class="panel">
+  <div class="panel__cabecera">
+    <div>
+      <p class="sobretitulo">Conjunto de evaluación · versión 1.0</p>
+      <h2>Tareas</h2>
+      <p>
+        Lo que se le pide al sistema en cada prueba, el estado en que arranca y la hoja de
+        respuestas con la que la compuerta automática decide. Se leen de
+        <code>docs/tasks</code>; aquí no se editan.
+      </p>
+    </div>
+    @if (tareas().valor) {
+      <button type="button" class="boton-panel boton-panel--principal" (click)="prepararCorrida()">
+        Preparar corrida con
+        {{ hayFiltro() ? 'estas ' + filtradas().length : 'las ' + total() }} tareas
+      </button>
+    }
+  </div>
+
+  <app-estado-recurso
+    nombre="el conjunto de tareas"
+    [cargando]="tareas().cargando"
+    [ausente]="tareas().ausente"
+    [error]="tareas().error"
+    comoGenerarlo="Los YAML viven en docs/tasks y el servidor los publica como archivos estáticos."
+    (reintentar)="recargar()"
+  />
+
+  @if (tareas().valor; as lista) {
+    <div class="filtros" role="search">
+      <input
+        class="filtros__busqueda"
+        type="search"
+        placeholder="Buscar por id, título, política o texto del usuario"
+        aria-label="Buscar tareas"
+        [value]="filtro().texto"
+        (input)="buscar($any($event.target).value)"
+      />
+      @for (categoria of categorias; track categoria) {
+        <button
+          type="button"
+          class="conmutador"
+          [attr.aria-pressed]="filtro().categorias.includes(categoria)"
+          (click)="alternarCategoria(categoria)"
+        >
+          {{ etiquetaCategoria[categoria] }}
+        </button>
+      }
+      @if (hayFiltro()) {
+        <button type="button" class="boton-panel" (click)="limpiar()">Limpiar filtros</button>
+      }
+    </div>
+
+    <details class="plegable explorador__mas">
+      <summary>Más filtros: vector adversarial, servicio y eje de dificultad</summary>
+      <div class="explorador__grupo">
+        <span class="tenue">Vector</span>
+        @for (vector of vectores; track vector) {
+          <button
+            type="button"
+            class="conmutador"
+            [attr.aria-pressed]="filtro().vectores.includes(vector)"
+            (click)="alternarVector(vector)"
+          >
+            {{ etiquetaVector[vector] }}
+          </button>
+        }
+      </div>
+      <div class="explorador__grupo">
+        <span class="tenue">Servicio</span>
+        @for (servicio of servicios; track servicio) {
+          <button
+            type="button"
+            class="conmutador"
+            [attr.aria-pressed]="filtro().servicios.includes(servicio)"
+            (click)="alternarServicio(servicio)"
+          >
+            {{ etiquetaServicio(servicio) }}
+          </button>
+        }
+      </div>
+      <div class="explorador__grupo">
+        <span class="tenue">Eje</span>
+        @for (eje of ejes(); track eje) {
+          <button
+            type="button"
+            class="conmutador"
+            [attr.aria-pressed]="filtro().ejes.includes(eje)"
+            (click)="alternarEje(eje)"
+          >
+            {{ etiquetaEje(eje) }}
+          </button>
+        }
+      </div>
+    </details>
+
+    <p class="tenue explorador__conteo" role="status">
+      {{ filtradas().length }} de {{ lista.length }} tareas
+    </p>
+
+    <ul class="lista-filas">
+      @for (tarea of filtradas(); track tarea.id) {
+        <li>
+          <a
+            class="fila-enlace explorador__fila"
+            [routerLink]="[tarea.id]"
+            queryParamsHandling="preserve"
+          >
+            <span class="explorador__id">{{ tarea.id }}</span>
+            <span class="explorador__titulo">{{ tarea.titulo }}</span>
+            <span class="chips explorador__chips">
+              <span class="chip" [class]="'chip chip--' + tarea.categoria">
+                {{ etiquetaCategoria[tarea.categoria] }}
+              </span>
+              @if (tarea.adversario) {
+                <span class="chip">{{ etiquetaVector[tarea.adversario.vector] }}</span>
+              }
+              @for (servicio of tarea.servicios; track servicio) {
+                <span class="chip">{{ etiquetaServicio(servicio) }}</span>
+              } @empty {
+                <span class="chip chip--fuera">Fuera de alcance</span>
+              }
+            </span>
+            <span class="explorador__texto tenue">“{{ tarea.conversacion[0].texto }}”</span>
+          </a>
+        </li>
+      } @empty {
+        <li class="aviso"><p>Ninguna tarea coincide con el filtro.</p></li>
+      }
+    </ul>
+  }
+</section>

@@ -9,6 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { ErrorVista } from '../../../application/state/conversacion.store';
 import type { ResumenConversacion } from '../../../domain/models/conversacion';
 import { agruparPorFecha, filtrarConversaciones } from '../../shared/agrupar-conversaciones';
@@ -20,10 +21,11 @@ const TOLERANCIA_MOVIMIENTO_PX = 10;
 
 /**
  * Menu lateral: historial de conversaciones agrupado por fecha, busqueda,
- * acceso a los tickets y a la configuracion.
+ * acceso a los tickets, al panel del experimento y a la configuracion.
  */
 @Component({
   selector: 'app-side-drawer',
+  imports: [RouterLink],
   templateUrl: './side-drawer.html',
   styleUrl: './side-drawer.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

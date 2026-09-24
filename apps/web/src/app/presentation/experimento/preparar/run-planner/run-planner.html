@@ -1,0 +1,259 @@
+<section class="panel">
+  <div class="panel__cabecera">
+    <div>
+      <p class="sobretitulo">Ejecutor · experiment/ejecutor</p>
+      <h2>Correr una corrida</h2>
+      <p>
+        Elige qué arquitectura y qué tareas quieres probar, comprueba que el backend responde y
+        corre. La consola del experimento lanza el mismo ejecutor que la terminal y muestra el
+        progreso aquí, ejecución por ejecución.
+      </p>
+    </div>
+    <div class="planeador__consola">
+      @switch (disponibilidad()) {
+        @case ('disponible') {
+          <span class="chip chip--alcanza" [title]="detalleConsola()?.directorioExperimento ?? ''"
+            >Consola lista</span
+          >
+        }
+        @case ('consultando') {
+          <span class="chip chip--sin-datos">Buscando la consola…</span>
+        }
+        @default {
+          <span class="chip chip--no-alcanza">Consola apagada</span>
+          <button type="button" class="boton-panel" (click)="comprobarConsola()">Reintentar</button>
+        }
+      }
+    </div>
+  </div>
+
+  <app-job-monitor />
+
+  <div class="panel__rejilla planeador">
+    <article class="tarjeta">
+      <h3>1 · Arquitectura</h3>
+      <p class="tarjeta__nota">
+        Hoy solo B0 está implementada; B1 a B3 responden únicamente <code>/health</code>.
+      </p>
+      <app-estado-recurso
+        nombre="corrida.yaml"
+        [cargando]="configuracion().cargando"
+        [ausente]="configuracion().ausente"
+        [error]="configuracion().error"
+        (reintentar)="recargarConfiguracion()"
+      />
+      @if (configuracion().valor; as config) {
+        <ul class="planeador__arqs">
+          @for (arq of arquitecturasDisponibles; track arq) {
+            <li>
+              <label class="planeador__arq">
+                <input
+                  type="checkbox"
+                  [checked]="arquitecturas().includes(arq)"
+                  (change)="alternarArquitectura(arq)"
+                />
+                <span [class]="claseArquitectura(arq)">{{ arq }}</span>
+                <code class="tenue">{{ config.backends[arq] ?? 'sin URL en corrida.yaml' }}</code>
+              </label>
+              @if (config.backends[arq]) {
+                <button
+                  type="button"
+                  class="boton-panel"
+                  (click)="comprobar(arq)"
+                  [disabled]="backends()[arq]?.comprobando"
+                >
+                  {{ backends()[arq]?.comprobando ? 'Consultando…' : 'Comprobar /health' }}
+                </button>
+              }
+              @if (backends()[arq]; as estado) {
+                @if (estado.salud; as s) {
+                  <span class="chip chip--alcanza"
+                    >responde {{ s.arquitectura }} · {{ s.servicio }} {{ s.version }}</span
+                  >
+                } @else if (estado.error) {
+                  <span class="chip chip--no-alcanza">{{ estado.error }}</span>
+                }
+              }
+            </li>
+          }
+        </ul>
+        <dl class="fichas planeador__config">
+          <div>
+            <dt>Semilla</dt>
+            <dd>{{ config.semilla }}</dd>
+          </div>
+          <div>
+            <dt>Repeticiones</dt>
+            <dd>{{ config.repeticiones }}</dd>
+          </div>
+          <div>
+            <dt>Modo del modelo</dt>
+            <dd>{{ config.modoLlm }}</dd>
+          </div>
+          <div>
+            <dt>Tarifa</dt>
+            <dd>
+              {{ config.tarifaUsdPorMillon.configurada ? 'fijada' : 'sin fijar (costo saldrá 0)' }}
+            </dd>
+          </div>
+          <div>
+            <dt>Fidelidad de citación</dt>
+            <dd>{{ config.verificarFidelidadCitacion ? 'se verifica' : 'desactivada' }}</dd>
+          </div>
+          <div>
+            <dt>Conjunto</dt>
+            <dd>versión {{ config.datasetVersion }}</dd>
+          </div>
+        </dl>
+      }
+    </article>
+
+    <article class="tarjeta">
+      <h3>2 · Tareas</h3>
+      <p class="tarjeta__nota">
+        {{ cuantasSeleccionadas() }} de {{ todas().length }} tareas. Una categoría completa se
+        abrevia como <code>T-COM-*</code>.
+      </p>
+      <div class="filtros">
+        <button
+          type="button"
+          class="conmutador"
+          [attr.aria-pressed]="seleccionadas() === null"
+          (click)="marcarTodas()"
+        >
+          Todas
+        </button>
+        @for (cat of categorias; track cat) {
+          <button type="button" class="conmutador" (click)="marcarCategoria(cat)">
+            {{ etiquetaCategoria[cat] }}
+          </button>
+        }
+      </div>
+      <app-estado-recurso
+        nombre="el conjunto de tareas"
+        [cargando]="catalogoTareas().cargando"
+        [ausente]="catalogoTareas().ausente"
+        [error]="catalogoTareas().error"
+      />
+      <ul class="planeador__tareas">
+        @for (t of todas(); track t.id) {
+          <li>
+            <label>
+              <input type="checkbox" [checked]="estaMarcada(t.id)" (change)="alternarTarea(t.id)" />
+              <span class="planeador__id">{{ t.id }}</span>
+              <span [class]="'chip chip--' + t.categoria">{{
+                etiquetaCategoria[t.categoria]
+              }}</span>
+              <span class="planeador__titulo">{{ t.titulo }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </article>
+
+    <article class="tarjeta">
+      <h3>3 · Anulaciones opcionales</h3>
+      <p class="tarjeta__nota">
+        Vacío = lo que dice <code>corrida.yaml</code>. Todo lo que cambies viaja al
+        <code>config_hash</code> de cada traza, así que dos corridas con opciones distintas nunca se
+        confunden.
+      </p>
+      <div class="planeador__campos">
+        <label>
+          <span>Repeticiones</span>
+          <input
+            type="number"
+            min="1"
+            step="1"
+            [value]="repeticiones() ?? ''"
+            (input)="cambiarRepeticiones($any($event.target).value)"
+          />
+        </label>
+        <label>
+          <span>Modo del modelo</span>
+          <select [value]="modoLlm() ?? ''" (change)="cambiarModo($any($event.target).value)">
+            <option value="">(el de corrida.yaml)</option>
+            @for (m of modos; track m) {
+              <option [value]="m">{{ m }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Nombre de la corrida</span>
+          <input
+            type="text"
+            placeholder="por ejemplo piloto-b0-3"
+            [value]="nombre()"
+            (input)="nombre.set($any($event.target).value)"
+          />
+        </label>
+      </div>
+      <p class="tarjeta__nota">
+        El modo debe coincidir con <code>UNIHELP_MODO_LLM</code> del backend: el ejecutor lo anota,
+        no lo impone. En <code>replay</code> se reutilizan los casetes grabados.
+      </p>
+    </article>
+
+    <article class="tarjeta tarjeta--ancha planeador__comando">
+      <h3>4 · Correr</h3>
+      @if (comando(); as cmd) {
+        @if (disponibilidad() === 'disponible') {
+          <p class="tarjeta__nota">
+            La consola lanzará en <code>experiment/</code>: <code>{{ cmd }}</code>
+          </p>
+          @if (backendsSinConfirmar().length) {
+            <p class="tarjeta__nota">
+              Aún no se comprobó que respondan: {{ backendsSinConfirmar().join(', ') }}. El ejecutor
+              se detiene si un backend no contesta.
+            </p>
+          }
+          <div class="tarjeta__acciones">
+            <button
+              type="button"
+              class="boton-panel boton-panel--principal"
+              (click)="correr()"
+              [disabled]="enMarcha() || lanzando()"
+            >
+              {{
+                enMarcha() ? 'Hay una corrida en marcha' : lanzando() ? 'Lanzando…' : 'Correr ahora'
+              }}
+            </button>
+            <button type="button" class="boton-panel" (click)="copiar()">
+              {{ copiado() ? 'Copiado' : 'Copiar comando para la terminal' }}
+            </button>
+          </div>
+          @if (errorConsola() && !trabajo()) {
+            <div class="aviso aviso--error" role="alert">
+              <p>{{ errorConsola() }}</p>
+            </div>
+          }
+        } @else {
+          <div class="aviso aviso--info">
+            <p>
+              <strong>La consola del experimento no responde.</strong> Levántala con
+              <code>pnpm dev:consola</code> para correr desde aquí, o copia el comando y córrelo en
+              una terminal desde la raíz del repositorio:
+            </p>
+            <pre class="comando planeador__linea">{{ cmd }}</pre>
+            <div class="tarjeta__acciones">
+              <button type="button" class="boton-panel boton-panel--principal" (click)="copiar()">
+                {{ copiado() ? 'Copiado' : 'Copiar comando' }}
+              </button>
+              <a class="boton-panel" routerLink="../corridas" queryParamsHandling="preserve"
+                >Ver corridas</a
+              >
+            </div>
+          </div>
+        }
+        <details class="plegable planeador__previos">
+          <summary>Qué debe estar levantado antes</summary>
+          <pre class="comando">{{ pasosPrevios.join('\n') }}</pre>
+        </details>
+      } @else if (!validacion().valida) {
+        <div class="aviso aviso--error" role="alert">
+          <p>{{ $any(validacion()).mensaje }}</p>
+        </div>
+      }
+    </article>
+  </div>
+</section>

@@ -211,7 +211,9 @@ insumos. Sus numeros son inventados para ejercitar el codigo. Casos borde:
 
 ## 9. Pendiente
 
-- Familias M2, M3, M5 y M6, juez automatico, calificacion humana y panel web.
+- Familias M2, M3, M5 y M6, juez automatico y calificacion humana. El panel web ya
+  existe en `apps/web` (`/experimento`, decision 38) y lee este contrato tal cual;
+  el tablero de seguridad (HU-MET-13) mostrara datos cuando M5 este implementada.
 - Productores reales de los insumos provisionales; al fijarlos, cambiar
   `insumos.schema.json` y quitar `provisional` del registro.
 - Tabla 3 (contrastes con decision por hipotesis), 5 y 6 del plan.

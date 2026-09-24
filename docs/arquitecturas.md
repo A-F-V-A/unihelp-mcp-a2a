@@ -78,6 +78,7 @@ una sola configuracion.
 | `b3-a2a-diagnostico`   | 3005                 | 3005 (solo inspeccion)        | 3005                 |
 | `mcp-server`           | 3010                 | 3010                          | 3010                 |
 | `simulador-servicios`  | 3020                 | 3020 (profile `simulacion`)   | 3020                 |
+| `consola-experimento`  | —                    | — (sin imagen; solo local)    | 3030                 |
 | `web`                  | 8080                 | 4200                          | 4200                 |
 | `postgres`             | 5432                 | 5432 (profile `conocimiento`) | —                    |
 

@@ -1,0 +1,15 @@
+.figura {
+  margin: 0;
+}
+
+.anillo {
+  fill: var(--color-superficie);
+}
+
+.leyenda__barra {
+  width: 0.2rem;
+  height: 0.9rem;
+  border: 0;
+  border-radius: 0.1rem;
+  background: var(--color-tenue);
+}

@@ -1,0 +1,30 @@
+.corridas__conteo {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.corridas__fila {
+  grid-template-columns: 1fr;
+}
+
+.corridas__nombre {
+  font-family: var(--fuente-mono);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.corridas__datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-size: 0.92rem;
+}
+
+.corridas__datos strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.corridas__meta {
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}

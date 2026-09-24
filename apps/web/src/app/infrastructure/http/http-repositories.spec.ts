@@ -45,7 +45,7 @@ describe('Repositorios HTTP: contrato con el backend', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND } },
+        { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND, consolaUrl: 'http://consola:3030' } },
         provideDataLayer(),
       ],
     });

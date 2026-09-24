@@ -1,0 +1,136 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* El body no se desplaza (es una app de chat); el panel si, dentro de su marco. */
+.marco {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+.marco__cabecera {
+  flex: none;
+  padding: calc(0.6rem + env(safe-area-inset-top)) 1rem 0;
+  border-bottom: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+}
+
+.marco__fila {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.marco__titulo {
+  flex: 1;
+  min-width: 0;
+}
+
+.marco__titulo h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.marco__volver,
+.marco__sello {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.4rem;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.marco__volver {
+  background: var(--fondo-grupo);
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.marco__volver:hover {
+  background: var(--fondo-hover);
+}
+
+.marco__sello {
+  background: var(--fondo-informativa);
+  color: var(--color-informativa);
+}
+
+.marco__volver svg,
+.marco__sello svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.marco__pestanas {
+  display: flex;
+  gap: 0.25rem;
+  max-width: 76rem;
+  margin: 0.6rem auto 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.marco__pestana {
+  flex: none;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 3px solid transparent;
+  color: var(--color-tenue);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.marco__pestana:hover {
+  color: var(--color-texto);
+}
+
+.marco__pestana--activa {
+  border-bottom-color: var(--color-acento);
+  color: var(--color-texto);
+}
+
+.marco__pestana:focus-visible,
+.marco__volver:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.marco__contenido {
+  flex: 1;
+  min-height: 0;
+  padding: 1.25rem 1rem calc(2rem + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (width <= 40rem) {
+  .marco__sello span,
+  .marco__volver span {
+    display: none;
+  }
+
+  .marco__sello,
+  .marco__volver {
+    padding: 0 0.6rem;
+  }
+
+  .marco__titulo h1 {
+    font-size: 1.1rem;
+  }
+}

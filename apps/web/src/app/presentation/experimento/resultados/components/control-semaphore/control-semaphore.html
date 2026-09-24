@@ -1,0 +1,32 @@
+<div class="semaforo">
+  <p class="semaforo__resumen" role="status">
+    <span class="chip chip--alcanza">{{ resumen().alcanzan }} alcanzan</span>
+    <span class="chip chip--no-alcanza">{{ resumen().noAlcanzan }} no alcanzan</span>
+    <span class="chip chip--sin-datos">{{ resumen().sinDatos }} sin evaluar</span>
+    <span class="tenue">de {{ resumen().total }} métricas de control</span>
+  </p>
+  <ul class="semaforo__luces">
+    @for (luz of luces(); track luz.metrica.codigo) {
+      <li class="semaforo__luz" [class]="'semaforo__luz semaforo__luz--' + luz.estado">
+        <span class="semaforo__punto" aria-hidden="true"></span>
+        <div class="semaforo__texto">
+          <p class="semaforo__nombre">
+            <code>{{ luz.metrica.codigo }}</code> {{ luz.metrica.nombre }}
+          </p>
+          <p class="semaforo__estado">{{ etiquetaSemaforo[luz.estado] }}</p>
+          @if (luz.metrica.umbral; as u) {
+            <p class="semaforo__detalle tenue">
+              Umbral: {{ u.descripcion }} · Observado: {{ luz.observado }}
+            </p>
+            @if (luz.estado === 'no_alcanza' && u.consecuencia) {
+              <p class="semaforo__consecuencia">Consecuencia: {{ u.consecuencia }}</p>
+            }
+          }
+          @if (luz.metrica.motivoEstado) {
+            <p class="semaforo__detalle tenue">{{ luz.metrica.motivoEstado }}</p>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+</div>

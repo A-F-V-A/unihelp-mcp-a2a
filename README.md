@@ -260,6 +260,28 @@ compuerta (calculado en Python). `pnpm visor -- --grep T-COM-001` corre una sola
 `pnpm visor:ui` abre el modo UI de Playwright. Detalle en
 [`experiment/visor/README.md`](experiment/visor/README.md).
 
+### Panel del experimento
+
+Con el frontend levantado, `http://localhost:4200/experimento` abre el panel del
+experimento (tambien desde el menu lateral del chat). Lo que muestra lo lee de
+archivos estaticos las 40 tareas de `docs/tasks`, las
+corridas de `experiment/corridas` (con su `indice.json`), `corrida.yaml` y las
+salidas del cuaderno (`resultados.json`, figuras y tablas), y no calcula ninguna
+metrica (decision 38). Cuatro pestañas:
+
+| Pestaña            | Que muestra                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Resultados         | Semaforo de control M7, efectividad con IC, latencia apilada, tokens, seguridad, las 43 metricas y las figuras   |
+| Corridas           | Cada corrida del ejecutor: matriz tarea x arquitectura con el veredicto de la compuerta y el detalle de cada traza |
+| Tareas             | Cada tarea: lo que recibe el sistema, el estado inicial y la hoja de respuestas                                    |
+| Correr una corrida | Elegir arquitectura y tareas, comprobar `/health`, correr desde el panel y seguir el progreso en vivo           |
+
+Para correr desde el panel hace falta la consola del experimento
+(`pnpm dev:consola`, puerto 3030, solo local), que lanza el mismo ejecutor y el
+mismo cuaderno que la terminal (decision 39). `pnpm dev:panel` levanta B0, la
+consola y el frontend de una vez. Sin la consola, el panel muestra el comando
+para copiarlo.
+
 ### Analisis de metricas
 
 Ninguna metrica se calcula en TypeScript: todas salen de un unico cuaderno en

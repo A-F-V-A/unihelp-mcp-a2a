@@ -1,0 +1,399 @@
+<section class="panel">
+  <nav class="ejecucion__nav">
+    <a class="boton-panel" routerLink="../.." queryParamsHandling="preserve">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+      Corrida {{ nombre() }}
+    </a>
+  </nav>
+
+  <app-estado-recurso
+    [nombre]="'la corrida ' + nombre()"
+    [cargando]="corrida().cargando"
+    [ausente]="corrida().ausente"
+    [error]="corrida().error"
+    (reintentar)="recargar()"
+  />
+
+  @if (corrida().valor && !ejecucion()) {
+    <div class="aviso aviso--error" role="alert">
+      <p>
+        La corrida no tiene la ejecución <code>{{ runId() }}</code
+        >.
+      </p>
+    </div>
+  }
+
+  @if (ejecucion(); as e) {
+    <header class="panel__cabecera">
+      <div>
+        <p class="sobretitulo">Ejecución · repetición {{ e.repeticion }}</p>
+        <h2>
+          <a
+            [routerLink]="['../../../../tareas', e.tareaId]"
+            queryParamsHandling="preserve"
+            class="ejecucion__tarea"
+            >{{ e.tareaId }}</a
+          >
+          @if (tarea(); as t) {
+            <span class="ejecucion__titulo">{{ t.titulo }}</span>
+          }
+        </h2>
+        <div class="chips ejecucion__chips">
+          <span [class]="claseArquitectura(e.arquitectura)">{{ e.arquitectura }}</span>
+          @if (tarea(); as t) {
+            <span [class]="'chip chip--' + t.categoria">{{ etiquetaCategoria[t.categoria] }}</span>
+          }
+          @if (veredicto(); as v) {
+            <span [class]="'chip chip--' + v">{{ etiquetaVeredicto[v] }}</span>
+          }
+          <span class="chip">{{ etiquetaEstado[e.estado] }}</span>
+          @if (e.enCuarentena) {
+            <span class="chip chip--cuarentena">no entra al conjunto</span>
+          }
+        </div>
+      </div>
+      <dl class="fichas ejecucion__fichas">
+        <div>
+          <dt>run_id</dt>
+          <dd>
+            <code>{{ e.runId }}</code>
+          </dd>
+        </div>
+        <div>
+          <dt>trace_id</dt>
+          <dd>
+            <code>{{ e.traceId }}</code>
+          </dd>
+        </div>
+        <div>
+          <dt>Inicio</dt>
+          <dd>{{ formatearFechaHora(e.iniciadaEn) }}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="panel__rejilla">
+      <article class="tarjeta">
+        <h3>Lo que midió el backend</h3>
+        <p class="cifra">{{ formatearMs(e.duracionMs) }}<small>de extremo a extremo</small></p>
+        <div
+          class="ejecucion__barra"
+          role="img"
+          [attr.aria-label]="
+            'Desglose: ' +
+            desglose()
+              .map((s) => s.etiqueta + ' ' + formatearMs(s.ms))
+              .join(', ')
+          "
+        >
+          @for (s of desglose(); track s.etiqueta) {
+            <span
+              [style.flex-grow]="s.proporcion"
+              [style.background]="s.color"
+              [title]="s.etiqueta + ': ' + formatearMs(s.ms)"
+            ></span>
+          }
+        </div>
+        <ul class="leyenda">
+          @for (s of desglose(); track s.etiqueta) {
+            <li>
+              <i [style.--serie]="s.color"></i>{{ s.etiqueta }}
+              <strong>{{ formatearMs(s.ms) }}</strong>
+            </li>
+          }
+        </ul>
+        <dl class="fichas ejecucion__consumo">
+          <div>
+            <dt>Tokens de entrada</dt>
+            <dd>{{ formatearEntero(e.consumo.tokensEntrada) }}</dd>
+          </div>
+          <div>
+            <dt>Tokens de salida</dt>
+            <dd>{{ formatearEntero(e.consumo.tokensSalida) }}</dd>
+          </div>
+          <div>
+            <dt>Entrada en caché</dt>
+            <dd>{{ formatearEntero(e.consumo.tokensEntradaCacheados) }}</dd>
+          </div>
+          <div>
+            <dt>Llamadas al modelo</dt>
+            <dd>{{ e.consumo.llamadasModelo }}</dd>
+          </div>
+          <div>
+            <dt>Costo estimado</dt>
+            <dd>
+              {{
+                e.consumo.costoUsdEstimado === 0
+                  ? 'sin tarifa fijada'
+                  : 'USD ' + formatearDecimal(e.consumo.costoUsdEstimado)
+              }}
+            </dd>
+          </div>
+          <div>
+            <dt>Modelo</dt>
+            <dd>{{ e.modeloId ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Mensajes entre agentes</dt>
+            <dd>{{ e.mensajesEntreAgentes }}</dd>
+          </div>
+          <div>
+            <dt>Modo del modelo</dt>
+            <dd>{{ e.procedencia.modoLlm ?? '—' }}</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="tarjeta">
+        <h3>Compuerta automática</h3>
+        @if (e.puntuacion; as p) {
+          <p class="tarjeta__nota">
+            {{
+              p.exito
+                ? 'Superó las ocho verificaciones.'
+                : 'No superó la compuerta por estos motivos:'
+            }}
+            Juez:
+            {{
+              p.veredictoJuez === null ? 'no ejecutado' : p.veredictoJuez ? 'aprueba' : 'reprueba'
+            }}.
+          </p>
+          @if (motivos().length) {
+            <ul class="ejecucion__motivos">
+              @for (m of motivos(); track m.crudo) {
+                <li>
+                  <strong>{{ m.etiqueta }}</strong>
+                  @if (m.detalle) {
+                    <code>{{ m.detalle }}</code>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        } @else {
+          <p class="tarjeta__nota">
+            Sin puntuación: la traza no validó contra el esquema y fue a cuarentena.
+          </p>
+          <ul class="ejecucion__motivos">
+            @for (err of e.erroresEsquema; track err) {
+              <li>{{ err }}</li>
+            }
+          </ul>
+        }
+        @if (tarea(); as t) {
+          <div class="tabla-envoltorio">
+            <table class="tabla tabla--compacta">
+              <thead>
+                <tr>
+                  <th>Verificación</th>
+                  <th>Esperado</th>
+                  <th>Observado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Herramientas</td>
+                  <td>
+                    @for (h of t.esperado.herramientasObligatorias; track h.nombre + $index) {
+                      <code>{{ h.nombre }}</code>
+                    }
+                    @if (t.esperado.herramientasProhibidas.length) {
+                      <span class="tenue"
+                        >· prohibidas: {{ t.esperado.herramientasProhibidas.join(', ') }}</span
+                      >
+                    }
+                  </td>
+                  <td>
+                    @for (h of herramientasInvocadas(); track h) {
+                      <code>{{ h }}</code>
+                    } @empty {
+                      <span class="tenue">ninguna</span>
+                    }
+                  </td>
+                </tr>
+                <tr>
+                  <td>Políticas</td>
+                  <td>
+                    {{ t.esperado.politicasRequeridas.join(', ') || 'ninguna' }}
+                    @if (t.esperado.politicasProhibidas.length) {
+                      <span class="tenue"
+                        >· prohibidas: {{ t.esperado.politicasProhibidas.join(', ') }}</span
+                      >
+                    }
+                  </td>
+                  <td><span class="tenue">ver objeto final</span></td>
+                </tr>
+                <tr>
+                  <td>Ticket</td>
+                  <td>
+                    {{
+                      t.esperado.ticket.debeCrearse
+                        ? 'debe crearse (' + t.esperado.ticket.prioridad + ')'
+                        : 'no debe crearse'
+                    }}
+                  </td>
+                  <td>{{ e.ticketsCreados.length }} creado(s) según la auditoría</td>
+                </tr>
+                <tr>
+                  <td>Confirmación</td>
+                  <td>{{ t.esperado.confirmacionRequerida ? 'requerida' : 'no requerida' }}</td>
+                  <td>
+                    {{ e.confirmacionSolicitada ? 'solicitada' : 'no solicitada'
+                    }}{{
+                      e.confirmacionOtorgada === null
+                        ? ''
+                        : e.confirmacionOtorgada
+                          ? ' · otorgada'
+                          : ' · negada'
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Huella del estado inicial</td>
+                  <td>
+                    <code [title]="huellaEsperada() ?? ''">{{
+                      huellaCorta(huellaEsperada())
+                    }}</code>
+                  </td>
+                  <td>
+                    <code [title]="e.procedencia.huellaEstadoInicial">{{
+                      huellaCorta(e.procedencia.huellaEstadoInicial)
+                    }}</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        }
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Conversación</h3>
+        <div class="ejecucion__conversacion">
+          @for (turno of e.conversacion; track turno.turno) {
+            <div
+              class="burbuja"
+              [class.burbuja--usuario]="turno.rol === 'usuario'"
+              [class.burbuja--agente]="turno.rol === 'agente'"
+            >
+              <p class="burbuja__rol">
+                Turno {{ turno.turno }} · {{ turno.rol === 'usuario' ? 'persona' : 'agente' }}
+              </p>
+              <p class="texto-ejecucion">{{ turno.texto }}</p>
+            </div>
+          } @empty {
+            <p class="tenue">La traza no trae la conversación.</p>
+          }
+        </div>
+        @if (e.errores.length) {
+          <div class="aviso aviso--error ejecucion__errores">
+            @for (err of e.errores; track $index) {
+              <p>
+                <strong>{{ err.tipo }}</strong
+                >: {{ err.mensaje }}
+              </p>
+            }
+          </div>
+        }
+      </article>
+
+      <article class="tarjeta tarjeta--ancha">
+        <h3>Llamadas a herramientas</h3>
+        <p class="tarjeta__nota">
+          En orden de emisión. La latencia es la que reportó el propio receptor (D5).
+        </p>
+        <div class="tabla-envoltorio">
+          <table class="tabla tabla--compacta">
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>Herramienta</th>
+                <th>Argumentos</th>
+                <th>Resultado</th>
+                <th class="num">Latencia</th>
+                <th>Vía</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of e.herramientas; track h.seq) {
+                <tr>
+                  <td class="num">{{ h.seq }}</td>
+                  <td>
+                    <code>{{ h.nombre }}</code>
+                  </td>
+                  <td>
+                    <code class="ejecucion__args">{{ jsonCorto(h.args) }}</code>
+                  </td>
+                  <td>
+                    <span class="chip" [class.chip--no-alcanza]="h.esError">{{
+                      h.estadoResultado
+                    }}</span>
+                    @if (h.resultado !== null) {
+                      <details class="plegable ejecucion__resultado">
+                        <summary>ver</summary>
+                        <pre class="json">{{ json(h.resultado) }}</pre>
+                      </details>
+                    }
+                  </td>
+                  <td class="num">{{ formatearMs(h.latenciaMs) }}</td>
+                  <td class="tenue">
+                    {{ h.agente ?? '' }} {{ h.transporte ? '· ' + h.transporte : '' }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="tenue">No invocó ninguna herramienta.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="tarjeta">
+        <h3>Auditoría del servidor</h3>
+        <div class="tabla-envoltorio">
+          <table class="tabla tabla--compacta">
+            <thead>
+              <tr>
+                <th>Acción</th>
+                <th>Resultado</th>
+                <th>Actor</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ev of e.auditoria; track $index) {
+                <tr>
+                  <td>
+                    <code>{{ ev.accion }}</code>
+                  </td>
+                  <td>{{ ev.resultado }}</td>
+                  <td>{{ ev.actor ?? '—' }}</td>
+                  <td>{{ ev.motivo ?? '—' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="tenue">Sin eventos para este trace_id.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="tarjeta">
+        <h3>Objeto final del agente</h3>
+        <p class="tarjeta__nota">
+          Clasificación, políticas citadas y demás campos estructurados con los que la compuerta
+          verifica las políticas.
+        </p>
+        <pre class="json">{{ json(e.objetoFinal) }}</pre>
+        @if (e.ticketsCreados.length) {
+          <h4 class="ejecucion__sub">Tickets creados</h4>
+          <pre class="json">{{ json(e.ticketsCreados) }}</pre>
+        }
+      </article>
+    </div>
+  }
+</section>

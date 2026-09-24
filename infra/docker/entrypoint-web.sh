@@ -6,12 +6,14 @@
 set -eu
 
 BACKEND_URL="${BACKEND_URL:-http://localhost:3000}"
+CONSOLA_URL="${CONSOLA_URL:-http://localhost:3030}"
 DESTINO="/usr/share/nginx/html/config.json"
 
 cat > "$DESTINO" <<JSON
 {
-  "backendUrl": "${BACKEND_URL}"
+  "backendUrl": "${BACKEND_URL}",
+  "consolaUrl": "${CONSOLA_URL}"
 }
 JSON
 
-echo "[unihelp-web] backendUrl=${BACKEND_URL}"
+echo "[unihelp-web] backendUrl=${BACKEND_URL} consolaUrl=${CONSOLA_URL}"

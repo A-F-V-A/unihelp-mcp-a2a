@@ -1,4 +1,5 @@
 export * from './lib/api.contrato';
+export * from './lib/consola-experimento.contrato';
 export * from './lib/conversacion.contrato';
 export * from './lib/experimento.contrato';
 export * from './lib/modelo-ia.contrato';

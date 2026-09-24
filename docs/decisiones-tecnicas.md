@@ -870,3 +870,93 @@ cifras no entran al analisis salvo que alguien las importe a proposito. La
 resta entre lecturas consecutivas de la traza parcial, para atribuir tokens a
 cada turno, es presentacion y no metrica. El panel depende del selector
 `.disposicion` del frontend solo para no tapar el chat.
+
+## 38. El panel del experimento vive en el frontend y lee archivos estaticos
+
+Contexto: las historias HU-MET-09 a HU-MET-14 piden un panel web que muestre
+`resultados.json` sin calcular nada (RM-02), que declare cuando el archivo no
+existe o su version no coincide, y que sea de **solo lectura, sobre archivos
+estaticos, sin backend propio** (HU-MET-14, obligatoria). El equipo ademas
+quiere ver, desde el mismo `localhost:4200`, que tareas se van a correr, que
+espera cada una, y como se comporto cada ejecucion de una corrida.
+
+Decision: el panel es una seccion del frontend unico (`apps/web`, ruta
+`/experimento`, carga perezosa) y no una app aparte. Los archivos que lee se
+publican como assets estaticos bajo `datos-experimento/` (`project.json`):
+`docs/tasks/T-*.yaml`, `experiment/ejecutor/corrida.yaml`,
+`experiment/salidas/*` y `experiment/corridas/*`. Como un servidor estatico no
+lista directorios, el ejecutor escribe `corridas/indice.json` al terminar cada
+corrida (`ejecutor indice` lo regenera). El puerto `ExperimentoRepository` no
+tiene ningun metodo de escritura; la unica peticion que sale del origen es
+`GET /health` a un backend, y la dispara la persona desde "Preparar corrida".
+Esa pantalla no lanza la corrida: arma la linea exacta de `pnpm ejecutor:correr`
+para copiarla, porque lanzarla desde el panel contradiria HU-MET-14 y la
+decision queda registrada como pendiente (RM-17). Los tipos de `resultados.json`
+y de la traza se declaran a mano en `infrastructure/estaticos/experimento.dto.ts`
+porque `libs/trazas` es `alcance:backend` y el frontend no puede importarla
+(decision 16); el mapper rechaza otra version del esquema.
+
+Por que: el mismo bundle sirve a las cuatro arquitecturas y ya lleva el tema, la
+tipografia y la paleta; una app nueva duplicaria todo eso para una pantalla de
+lectura. Servir archivos estaticos cumple HU-MET-14 al pie de la letra y en
+desarrollo muestra la corrida recien escrita sin ningun proceso adicional. El
+panel dibuja sus graficas en SVG propio (sin libreria) para que el chat no
+cargue una dependencia de graficas y para poder descargarlas en SVG o PNG con
+los colores del tema; las figuras del cuaderno se sirven ademas tal cual, con su
+SHA-256 del manifiesto.
+
+Consecuencias: el panel no muestra ninguna cifra que no venga escrita en un
+archivo: los conteos de una corrida son los del manifiesto del ejecutor y las
+tasas, medianas e intervalos son los de `resultados.json`. Una metrica de
+resultado abierto nunca lleva aprobado/reprobado (RM-14). En la imagen Docker
+los datos son la copia del momento de construir; el uso previsto es en
+desarrollo. Queda pendiente, y requiere decision del responsable, si se agrega
+un servicio local que lance el ejecutor desde el panel (afecta HU-MET-14).
+
+## 39. Una consola local lanza el ejecutor y el cuaderno desde el panel
+
+> Resuelve la decision pendiente de la 38. Tomada por el responsable del
+> proyecto el 23 de septiembre de 2026 (RM-17), con la condicion de que la
+> historia HU-MET-14 se redactara de nuevo para admitirla.
+
+Contexto: la decision 38 dejo el panel de solo lectura porque HU-MET-14 lo
+exigia, y dejo escrito que lanzar corridas desde el panel requeria decision. El
+responsable pidio poder elegir la arquitectura, correr y observar el resultado
+desde `localhost:4200`, sin abrir una terminal.
+
+Decision: se agrega `apps/consola-experimento` (NestJS, puerto 3030, solo
+`127.0.0.1`), que lanza **uno a la vez** (RM-04) los mismos comandos del README
+de `experiment/`: `uv run python -u -m ejecutor correr ...`, `uv run papermill
+...` sobre una corrida existente y `ejecutor indice` al terminar. Transmite la
+salida por SSE (`RUTAS_CONSOLA` en `libs/contratos`) y permite cancelar el arbol
+de procesos. El panel (pestaña "Correr una corrida") valida la seleccion con la
+misma regla que arma la linea para la terminal, la envia a la consola y sigue
+el progreso leyendo los renglones que ya escribe el ejecutor (`3/40 OK
+T-COM-001 B0 r1 ok`); al terminar ofrece calcular los resultados con el
+cuaderno y Resultados se vuelve a leer. La URL de la consola llega por
+`consolaUrl` en `config.json` o `?consola=`. HU-MET-14 se redacto de nuevo: el
+panel sigue sin poder modificar trazas, resultados ni configuracion; lo unico
+que puede hacer es arrancar, por la consola, lo mismo que haria una persona en
+la terminal.
+
+Por que: separar la consola del panel y del backend conserva las dos garantias
+que importan. Primera, una corrida lanzada desde el panel es identica a una
+lanzada a mano (misma `corrida.yaml`, mismo `config_hash`, mismos artefactos):
+la consola no tiene ninguna opcion que la terminal no tenga. Segunda, ninguna
+cifra se calcula fuera del cuaderno (RM-02): la consola solo reenvia lineas y
+el panel solo las lee. Escuchar en `127.0.0.1`, validar cada argumento contra
+una forma cerrada y lanzar sin interprete de comandos acota el riesgo de tener
+un servicio que arranca procesos.
+
+La consola tambien sirve, de solo lectura, los archivos de `datos-experimento/`
+(tareas, `corrida.yaml`, `salidas/`, `corridas/`) y en desarrollo el servidor
+de Angular se los reenvia (`apps/web/proxy.conf.json`): si esos directorios
+fueran assets del `serve`, el dev server recargaria la pagina con cada traza
+que escribe el ejecutor y cortaria el seguimiento en vivo. En produccion siguen
+siendo assets copiados al construir (decision 38).
+
+Consecuencias: la consola es una herramienta de desarrollo sin imagen Docker;
+si no responde, el panel muestra el comando para la terminal y, en desarrollo,
+no puede leer los archivos del experimento hasta que se levante. Correr desde el panel no exime de congelar la
+configuracion antes de la corrida oficial (RM-13). La redaccion original de
+HU-MET-14 queda anotada en la propia historia.

@@ -30,7 +30,7 @@ describe('BackendStatus', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND_URL } },
+        { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND_URL, consolaUrl: 'http://consola:3030' } },
       ],
     });
     http = TestBed.inject(HttpTestingController);

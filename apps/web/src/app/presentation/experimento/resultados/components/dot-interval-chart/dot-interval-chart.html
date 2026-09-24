@@ -1,0 +1,103 @@
+<figure class="figura">
+  <svg
+    #svg
+    class="grafica"
+    [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
+    role="img"
+    [attr.aria-label]="titulo()"
+  >
+    <title>{{ titulo() }}</title>
+    <g class="eje">
+      @for (marca of marcasY(); track marca.valor) {
+        <line
+          class="rejilla"
+          [attr.x1]="margen.izquierda"
+          [attr.x2]="ancho - margen.derecha"
+          [attr.y1]="marca.y"
+          [attr.y2]="marca.y"
+        />
+        <text [attr.x]="margen.izquierda - 8" [attr.y]="marca.y + 4" text-anchor="end">
+          {{ formatear(marca.valor) }}
+        </text>
+      }
+      @for (col of columnas(); track col.grupo) {
+        <text [attr.x]="col.centro" [attr.y]="alto - margen.abajo + 20" text-anchor="middle">
+          {{ col.etiqueta }}
+        </text>
+      }
+      @if (etiquetaEje()) {
+        <text class="tenue" [attr.x]="margen.izquierda" [attr.y]="12">{{ etiquetaEje() }}</text>
+      }
+    </g>
+    @for (d of dibujados(); track d.punto.arquitectura + d.punto.grupo) {
+      <g class="marca">
+        <title>{{ d.texto }}</title>
+        <line
+          [attr.x1]="d.x"
+          [attr.x2]="d.x"
+          [attr.y1]="d.ySuperior"
+          [attr.y2]="d.yInferior"
+          [style.stroke]="d.color"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <circle [attr.cx]="d.x" [attr.cy]="d.y" r="7" class="anillo" />
+        <circle [attr.cx]="d.x" [attr.cy]="d.y" r="5" [style.fill]="d.color" />
+      </g>
+    }
+  </svg>
+  <ul class="leyenda">
+    @for (arq of arquitecturas; track arq) {
+      <li [class.tenue]="!tieneDatos(arq)">
+        <i [style.--serie]="colores[arq]"></i>{{ arq }}{{ tieneDatos(arq) ? '' : ' (sin datos)' }}
+      </li>
+    }
+    <li><span class="patron leyenda__barra"></span>barra = intervalo de confianza</li>
+  </ul>
+  <app-chart-toolbar
+    [tablaVisible]="tablaVisible()"
+    (tabla)="alternarTabla()"
+    (descargarSvg)="exportarSvg()"
+    (descargarPng)="exportarPng()"
+    (descargarCsv)="exportarCsv()"
+  />
+  @if (tablaVisible()) {
+    <div class="tabla-envoltorio">
+      <table class="tabla tabla--compacta">
+        <thead>
+          <tr>
+            <th>Grupo</th>
+            <th>Arquitectura</th>
+            <th class="num">Valor</th>
+            <th>Intervalo</th>
+            <th class="num">n tareas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of filasTabla(); track f.grupo + f.arquitectura) {
+            <tr>
+              <td>{{ f.grupo }}</td>
+              <td>{{ f.arquitectura }}</td>
+              <td class="num">{{ f.valor === null ? 'sin datos' : formatear(f.valor) }}</td>
+              <td>
+                {{
+                  f.valor === null
+                    ? '—'
+                    : formatearIntervalo(
+                        f.intervalo,
+                        formato() === 'porcentaje'
+                          ? 'porcentaje'
+                          : formato() === 'ms'
+                            ? 'ms'
+                            : 'decimal'
+                      )
+                }}
+              </td>
+              <td class="num">{{ f.nTareas ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</figure>

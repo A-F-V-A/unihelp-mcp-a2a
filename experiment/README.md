@@ -11,6 +11,10 @@ Detalle del diseno, puntos de rechazo y contrato de resultados:
 
 ## Correr las 40 tareas contra una arquitectura
 
+Tambien se puede correr desde el panel web (`http://localhost:4200/experimento`,
+pestaña *Correr una corrida*) con la consola levantada (`pnpm dev:consola`):
+lanza exactamente estos mismos comandos y muestra el progreso (decision 39).
+
 Requiere [uv](https://docs.astral.sh/uv/) y la arquitectura levantada con
 `UNIHELP_PERFIL=experimento` (sin ese perfil las rutas del ejecutor son 404,
 decision 32). Hoy **solo B0 esta implementada**.
@@ -39,6 +43,7 @@ uv run python -m ejecutor correr --tareas T-COM-001,T-ADV-*   # subconjunto
 uv run python -m ejecutor correr --repeticiones 5 --modo-llm replay
 uv run python -m ejecutor verificar corridas/<nombre>          # revisa una corrida
 uv run python -m ejecutor huellas                              # regenera las huellas
+uv run python -m ejecutor indice                               # reescribe corridas/indice.json (lo lee el panel web)
 ```
 
 Cada corrida deja su propio directorio en `corridas/<nombre>/`:
@@ -51,6 +56,11 @@ Cada corrida deja su propio directorio en `corridas/<nombre>/`:
 | `manifiesto.json`         | Version del codigo, `config_hash`, conteos y si la tarifa esta fijada. |
 | `cuarentena/trazas.jsonl` | Las que no validaron, con sus errores. NO entran al conjunto.          |
 | `reejecuciones.md`        | Fallos de infraestructura a reejecutar (RM-15). Solo si los hubo.      |
+
+Ademas, `corridas/indice.json` cataloga todas las corridas (nombre, manifiesto y
+archivos) para el panel web de `apps/web` (`/experimento`), que lee archivos
+estaticos y no puede listar un directorio (decision 38). Se reescribe al terminar
+cada corrida y a mano con `ejecutor indice`.
 
 ## Ejecutar el analisis
 

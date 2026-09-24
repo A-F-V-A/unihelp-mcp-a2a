@@ -18,6 +18,7 @@ Contiene:
 | [`politica.contrato.ts`](src/lib/politica.contrato.ts)         | citas y politica completa                                                                                                                                           |
 | [`servicio.contrato.ts`](src/lib/servicio.contrato.ts)         | estado de servicio y ventana estimada                                                                                                                               |
 | [`simulacion.contrato.ts`](src/lib/simulacion.contrato.ts)     | `RUTAS_SIMULACION`: los sistemas universitarios emulados y su estado, con el vocabulario de `estado_inicial.servicios` de las tareas. Fuera de `/api` (decision 33) |
+| [`consola-experimento.contrato.ts`](src/lib/consola-experimento.contrato.ts) | `RUTAS_CONSOLA`: lanzar el ejecutor o el cuaderno desde el panel, seguir su salida por SSE y cancelar. Las atiende `apps/consola-experimento`, fuera de `/api` (decision 39) |
 | [`experimento.contrato.ts`](src/lib/experimento.contrato.ts)   | `RUTAS_EXPERIMENTO`: restablecer el entorno y entregar la traza de una ejecucion. Las consume el ejecutor, NO el frontend, y viven fuera de `/api` (decision 32)    |
 
 Los contratos de triaje se fijaron **antes** de existir el backend: el frontend

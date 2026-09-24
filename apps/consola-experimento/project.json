@@ -1,0 +1,27 @@
+{
+  "name": "consola-experimento",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/consola-experimento/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:compartido"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "consola-experimento:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "consola-experimento:build:development"
+        },
+        "production": {
+          "buildTarget": "consola-experimento:build:production"
+        }
+      }
+    }
+  }
+}

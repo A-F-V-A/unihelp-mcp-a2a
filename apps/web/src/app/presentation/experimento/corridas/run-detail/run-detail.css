@@ -1,0 +1,83 @@
+.corrida__nav {
+  margin-bottom: 1rem;
+}
+
+.corrida__nombre {
+  font-family: var(--fuente-mono);
+}
+
+.corrida__resumen {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) 3fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.corrida__reejecuciones {
+  margin-bottom: 1rem;
+}
+
+.corrida__conteo {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.corrida__matriz td {
+  vertical-align: top;
+}
+
+.corrida__tarea {
+  min-width: 14rem;
+}
+
+.corrida__id {
+  display: inline-block;
+  margin-right: 0.4rem;
+  color: inherit;
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+}
+
+.corrida__titulo {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.corrida__celda {
+  min-width: 8rem;
+}
+
+.corrida__celda .chip {
+  margin: 0 0.25rem 0.25rem 0;
+  text-decoration: none;
+}
+
+.corrida__celda .chip:hover {
+  filter: brightness(0.95);
+}
+
+.corrida__motivos {
+  min-width: 16rem;
+  font-size: 0.86rem;
+}
+
+.corrida__motivo {
+  display: block;
+  line-height: 1.5;
+}
+
+.corrida__motivo code {
+  margin-left: 0.25rem;
+}
+
+@media (width <= 48rem) {
+  .corrida__resumen {
+    grid-template-columns: 1fr;
+  }
+}
+
+app-job-monitor {
+  display: block;
+  margin-bottom: 1rem;
+}

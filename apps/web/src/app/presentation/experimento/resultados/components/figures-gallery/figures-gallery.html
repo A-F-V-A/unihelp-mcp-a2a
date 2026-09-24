@@ -1,0 +1,35 @@
+<div class="galeria">
+  @for (f of figuras(); track f.etiqueta) {
+    <figure class="galeria__figura">
+      <a [href]="urlDe()(f.archivo)" target="_blank" rel="noopener">
+        <img
+          [src]="urlDe()(f.archivo)"
+          [alt]="descripcionDe(f.etiqueta) || f.etiqueta"
+          loading="lazy"
+        />
+      </a>
+      <figcaption>
+        <strong>{{ f.etiqueta.replace('_', ' ') }}</strong>
+        <span>{{ descripcionDe(f.etiqueta) }}</span>
+        <span class="galeria__acciones">
+          <a class="boton-panel" [href]="urlDe()(f.archivo)" [download]="f.archivo"
+            >Descargar SVG</a
+          >
+          <code [title]="f.sha256">sha256 {{ huellaCorta(f.sha256) }}</code>
+        </span>
+      </figcaption>
+    </figure>
+  }
+</div>
+@if (tablas().length) {
+  <ul class="galeria__tablas">
+    @for (t of tablas(); track t.etiqueta) {
+      <li>
+        <a class="boton-panel" [href]="urlDe()(t.archivo)" [download]="t.archivo"
+          >{{ t.etiqueta.replace('_', ' ') }} (CSV)</a
+        >
+        <span class="tenue">{{ descripcionDe(t.etiqueta) }}</span>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,45 @@
+<div class="marco">
+  <header class="marco__cabecera">
+    <div class="marco__fila">
+      <a
+        class="marco__volver"
+        routerLink="/"
+        queryParamsHandling="preserve"
+        aria-label="Volver al chat"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        <span>Chat</span>
+      </a>
+      <div class="marco__titulo">
+        <p class="sobretitulo">UniHelp · banco de pruebas</p>
+        <h1>Panel del experimento</h1>
+      </div>
+      <span
+        class="marco__sello"
+        title="El panel no calcula ninguna métrica: muestra lo que escribieron el ejecutor y el cuaderno (RM-02). Correr pasa por la consola local, con el mismo ejecutor que la terminal (decisión 39)."
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </svg>
+        Sin cálculos propios
+      </span>
+    </div>
+    <nav class="marco__pestanas" aria-label="Secciones del panel">
+      @for (seccion of secciones; track seccion.ruta) {
+        <a
+          class="marco__pestana"
+          [routerLink]="seccion.ruta"
+          routerLinkActive="marco__pestana--activa"
+          queryParamsHandling="preserve"
+          ariaCurrentWhenActive="page"
+        >
+          {{ seccion.etiqueta }}
+        </a>
+      }
+    </nav>
+  </header>
+  <main class="marco__contenido">
+    <router-outlet />
+  </main>
+</div>

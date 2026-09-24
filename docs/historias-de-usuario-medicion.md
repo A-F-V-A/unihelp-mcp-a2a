@@ -190,12 +190,15 @@ Las reglas de implementación que derivan de estas historias están en
 
 ### HU-MET-14
 
-> Como **investigador**, quiero **que el panel sea de solo lectura y no tenga ninguna capacidad de modificar datos**, para que no pueda alterar el resultado del experimento.
+> Como **investigador**, quiero **que el panel de resultados sea de solo lectura y que la única forma de lanzar una corrida desde la web sea una consola local separada que ejecute el mismo ejecutor de la terminal**, para que nada pueda alterar un resultado ya escrito y una corrida lanzada desde el panel sea idéntica a una lanzada a mano.
 
 **Criterios de aceptación**
 
-- El panel no expone ningún endpoint de escritura ni ninguna acción que modifique trazas, resultados o configuración.
-- El panel funciona leyendo archivos estáticos, sin necesidad de un backend propio.
+- El panel no expone ningún endpoint que modifique trazas, resultados o configuración existentes; lo que muestra lo lee de archivos estáticos.
+- Lanzar una corrida o el cuaderno desde el panel pasa por un proceso local aparte (la consola del experimento), que solo escucha en la máquina local, valida cada opción contra una forma cerrada y arranca exactamente `ejecutor correr` y `papermill` sin intérprete de comandos, uno a la vez.
+- Una corrida lanzada desde el panel produce los mismos artefactos y el mismo `config_hash` que la misma línea de comandos en la terminal; la corrida oficial sigue exigiendo la congelación previa (RM-13).
+
+> Redacción original (hasta el 23 de septiembre de 2026): el panel «no expone ningún endpoint de escritura ni ninguna acción que modifique trazas, resultados o configuración» y «funciona leyendo archivos estáticos, sin necesidad de un backend propio». Se amplió por decisión del responsable para poder elegir la arquitectura, correr y ver el resultado desde el panel (decisión 39 de `docs/decisiones-tecnicas.md`).
 
 `Obligatoria` · Plataforma · Semana 7 · 2 pts
 
