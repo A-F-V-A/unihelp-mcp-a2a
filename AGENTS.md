@@ -166,13 +166,13 @@ instantanea `contrato/tools-list.instantanea.json`. Detalle en
 [`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md) y
 [`apps/b1-mcp-agente/docs/ARQUITECTURA.md`](apps/b1-mcp-agente/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
 
-| Carpeta           | Que contiene                                                    |
-| ----------------- | --------------------------------------------------------------- |
-| `domain/`         | Modelos, reglas puras, errores y puertos (interfaces). TS puro. |
-| `application/`    | Tokens DI de los puertos, casos de uso y stores (signals).      |
-| `infrastructure/` | Repositorios `http/`, `browser/` y `estaticos/` (panel), mappers, `provideDataLayer`. |
+| Carpeta           | Que contiene                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `domain/`         | Modelos, reglas puras, errores y puertos (interfaces). TS puro.                                                                    |
+| `application/`    | Tokens DI de los puertos, casos de uso y stores (signals).                                                                         |
+| `infrastructure/` | Repositorios `http/`, `browser/` y `estaticos/` (panel), mappers, `provideDataLayer`.                                              |
 | `presentation/`   | Componentes: `chat/`, `settings/`, `shell/`, `shared/` y `experimento/` (panel de solo lectura, ruta `/experimento`, decision 38). |
-| `nucleo/`         | Arranque: configuracion en runtime y servicio de salud.         |
+| `nucleo/`         | Arranque: configuracion en runtime y servicio de salud.                                                                            |
 
 ---
 
@@ -330,6 +330,8 @@ Detalle y plantillas en [`documentar`](.claude/skills/documentar/SKILL.md).
 pnpm setup              # instala dependencias
 pnpm dev:web            # solo el frontend -> :4200 (necesita un backend arriba)
 pnpm dev:web:b0         # B0 + frontend contra el backend real
+pnpm dev:web:b1         # mcp-server + B1 + frontend (abrir con ?backend=http://localhost:3001)
+pnpm dev:panel:h1       # B0 + mcp-server + B1 + consola + frontend: B0 y B1 en la misma corrida (H1)
 pnpm dev:panel          # B0 + consola del experimento + frontend: correr desde el panel
 pnpm dev:consola        # solo la consola del experimento -> :3030
 pnpm dev:b0             # (b1/b2/b3) backend en desarrollo; dev:b1 levanta mcp-server (:3010) + b1 (:3001)

@@ -23,6 +23,8 @@ restablecer el entorno y leer la traza), el frontend en marcha, Google Chrome y
 pnpm conocimiento:db && pnpm conocimiento:migrar && pnpm tickets:migrar
 pnpm exec nx build b0-directo && node dist/apps/b0-directo/main.js   # B0 en :3000
 pnpm dev:web                                                          # frontend en :4200
+# Para B1: pnpm dev:b1 (mcp-server :3010 + b1 :3001) y
+# VISOR_ARQUITECTURA=B1 VISOR_BACKEND=http://localhost:3001 pnpm visor
 
 pnpm visor                                  # las 40 tareas, con el navegador visible
 pnpm visor -- --grep T-COM-001              # una tarea

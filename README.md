@@ -164,6 +164,8 @@ Nx permite levantar y probar cada app de forma independiente:
 ```bash
 pnpm dev:b0     # nx serve b0-directo              -> :3000
 pnpm dev:b1     # mcp-server + b1-mcp-agente       -> :3010, :3001 (necesita apps/mcp-server/.env y apps/b1-mcp-agente/.env)
+pnpm dev:web:b1 # mcp-server + b1 + frontend; abrir http://localhost:4200/?backend=http://localhost:3001
+pnpm dev:panel:h1  # B0 + mcp-server + B1 + consola + frontend: correr B0 y B1 desde el panel para el contraste H1
 pnpm dev:b2     # nx serve b2-multiagente-local    -> :3002
 pnpm dev:b3     # mcp-server + los tres de B3      -> :3010, :3003, :3004, :3005
 pnpm dev:web    # nx serve web                     -> :4200
@@ -273,12 +275,12 @@ corridas de `experiment/corridas` (con su `indice.json`), `corrida.yaml` y las
 salidas del cuaderno (`resultados.json`, figuras y tablas), y no calcula ninguna
 metrica (decision 38). Cuatro pestañas:
 
-| Pestaña            | Que muestra                                                                                                       |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Resultados         | Semaforo de control M7, efectividad con IC, latencia apilada, tokens, seguridad, las 43 metricas y las figuras   |
+| Pestaña            | Que muestra                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Resultados         | Semaforo de control M7, efectividad con IC, latencia apilada, tokens, seguridad, las 43 metricas y las figuras     |
 | Corridas           | Cada corrida del ejecutor: matriz tarea x arquitectura con el veredicto de la compuerta y el detalle de cada traza |
 | Tareas             | Cada tarea: lo que recibe el sistema, el estado inicial y la hoja de respuestas                                    |
-| Correr una corrida | Elegir arquitectura y tareas, comprobar `/health`, correr desde el panel y seguir el progreso en vivo           |
+| Correr una corrida | Elegir arquitectura y tareas, comprobar `/health`, correr desde el panel y seguir el progreso en vivo              |
 
 Para correr desde el panel hace falta la consola del experimento
 (`pnpm dev:consola`, puerto 3030, solo local), que lanza el mismo ejecutor y el
