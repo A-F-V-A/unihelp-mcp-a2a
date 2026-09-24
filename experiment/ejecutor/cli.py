@@ -8,6 +8,7 @@
     verificar   revisa una corrida ya escrita (esquema, completitud, huellas)
     puntuar-observacion   veredicto de UNA observacion del visor (JSON por stdin)
     importar-visor        convierte un observaciones.jsonl del visor en una corrida
+    indice      reescribe corridas/indice.json, el catalogo que lee el panel web
 """
 
 from __future__ import annotations
@@ -29,7 +30,7 @@ from .configuracion import (
     leer_configuracion,
     version_codigo,
 )
-from .corrida import ARCHIVO_HUELLAS, ARCHIVO_TRAZAS, correr, repuntuar
+from .corrida import ARCHIVO_HUELLAS, ARCHIVO_TRAZAS, actualizar_indice, correr, repuntuar
 from .observaciones import (
     ErrorObservacion,
     importar,
@@ -168,6 +169,13 @@ def _comando_verificar(args: argparse.Namespace) -> int:
     return 0 if invalidas == 0 and huella_mala == 0 else 1
 
 
+def _comando_indice(args: argparse.Namespace) -> int:
+    """Cataloga las corridas para el panel web; util tras copiar o borrar una a mano."""
+    indice = actualizar_indice(_configuracion(args).directorio_salida)
+    print(f'{len(indice["corridas"])} corridas en el indice.')
+    return 0
+
+
 def _comando_puntuar_observacion(_: argparse.Namespace) -> int:
     """Lee una observacion del visor por stdin y escribe su veredicto en JSON.
 
@@ -276,6 +284,9 @@ def _analizador() -> argparse.ArgumentParser:
     importar_cmd.add_argument('observaciones', help='ruta a observaciones.jsonl')
     importar_cmd.add_argument('--nombre', help='nombre del directorio de la corrida')
     importar_cmd.set_defaults(funcion=_comando_importar_visor)
+
+    indice = sub.add_parser('indice', help='reescribe el catalogo de corridas que lee el panel')
+    indice.set_defaults(funcion=_comando_indice)
     return analizador
 
 
