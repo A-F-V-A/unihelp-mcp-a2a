@@ -836,3 +836,37 @@ Consecuencias: el prompt base crece (mas tokens de entrada en las cuatro
 arquitecturas por igual, RNF-01) y `prompt_hash` cambia. Si el corpus agrega
 politicas, esta lista se actualiza en el mismo cambio; si el equipo considera
 que el catalogo facilita demasiado M1.2, se retira y esta decision se reemplaza.
+
+## 37. El visor en vivo reproduce las tareas en el navegador y le pide el veredicto a Python
+
+Contexto: el equipo necesitaba ver como se comporta una arquitectura tarea por
+tarea (que teclea la persona, que responde el agente, cuanto consume) sin abrir
+trazas JSONL, y poder configurarlo: que tareas, a que ritmo, como se confirma.
+Playwright ya estaba en el repositorio como MCP para validar el frontend.
+
+Decision: `experiment/visor/` es un proyecto de Playwright (`@playwright/test`,
+Chrome del sistema) que genera una prueba por tarea de `docs/tasks`, teclea los
+turnos con una persona simulada de semilla fija y muestra en un panel inyectado en
+la pagina lo que el backend devuelve en `GET /experimento/trazas/:traceId`. Al
+terminar cada tarea escribe una observacion y llama a
+`python -m ejecutor puntuar-observacion`, que arma la traza con `armar_traza`,
+la valida y aplica `compuerta.evaluar`; `importar-visor` convierte un
+`observaciones.jsonl` en un directorio de corrida marcado `origen: visor`. La
+configuracion vive en `visor.config.yaml` con anulaciones `VISOR_*`. Un solo
+worker y sin reintentos. Los proyectos `tipo:experimento` pueden depender de
+`arq:compartido` (regla de limites en `eslint.config.mjs`).
+
+Por que: el visor podria haber calculado la compuerta en TypeScript, pero eso
+duplicaria la regla que decide el exito (RM-02, RM-16) y tarde o temprano
+divergiria del ejecutor. Delegar en Python cuesta un proceso por tarea y a
+cambio garantiza que "supera" significa lo mismo en el navegador y en la corrida
+oficial. Se reutiliza el frontend real, y no un cliente HTTP con pantalla, para
+que lo que se ve sea lo que una persona veria (HU-17 incluido: el boton de
+confirmar existe como opcion, aunque no sea comparable con el ejecutor).
+
+Consecuencias: una corrida del visor no es una corrida del ejecutor (orden
+manual, persona simulada, tiempos de lectura) y su manifiesto lo declara; sus
+cifras no entran al analisis salvo que alguien las importe a proposito. La
+resta entre lecturas consecutivas de la traza parcial, para atribuir tokens a
+cada turno, es presentacion y no metrica. El panel depende del selector
+`.disposicion` del frontend solo para no tapar el chat.

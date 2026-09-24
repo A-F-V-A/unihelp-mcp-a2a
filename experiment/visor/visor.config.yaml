@@ -1,0 +1,85 @@
+# Configuracion del visor en vivo (experiment/visor).
+#
+# El visor reproduce las tareas de docs/tasks en un navegador real, tecleando
+# como una persona, y muestra en un panel lo que el backend midio (tokens,
+# latencia, herramientas). NO calcula ninguna metrica: lo que muestra son
+# lecturas crudas de `GET /experimento/trazas/:traceId` (RM-02, decision 37).
+#
+# Los valores marcados con [VISOR_X] se pueden pisar con esa variable de
+# entorno, por ejemplo VISOR_CONFIRMACION=boton o VISOR_TAREAS=T-COM-001,T-ADV-*.
+# La lista completa esta en ANULACIONES_ENTORNO de src/configuracion.ts.
+
+# Arquitectura que se espera encontrar en /health. Si el backend informa otra,
+# el visor se detiene: nunca se corre B1 contra un proceso de B0 (decision 7).
+arquitectura: B0 # [VISOR_ARQUITECTURA]
+backend: http://localhost:3000 # [VISOR_BACKEND]
+frontend: http://localhost:4200 # [VISOR_FRONTEND]
+
+# `null` = las 40 tareas. Admite ids y comodines: [T-COM-001, T-ADV-*].
+tareas: null # [VISOR_TAREAS]
+repeticiones: 1 # [VISOR_REPETICIONES]
+
+# Como se comporta la persona simulada.
+persona:
+  # Milisegundos por caracter, [minimo, maximo]; se sortea uno por tecla.
+  tecleo_ms: [35, 110] # [VISOR_TECLEO_MS=35,110]
+  # Probabilidad (0 a 1) de teclear una letra equivocada y corregirla.
+  errores_de_tecleo: 0.02
+  # Antes de empezar a escribir cada turno.
+  pausa_antes_de_escribir_ms: 900
+  # "Lectura" de la respuesta: fija + proporcional a su longitud.
+  pausa_lectura_ms: 1500
+  pausa_lectura_por_caracter_ms: 8
+  pausa_lectura_maxima_ms: 9000
+  # Como responde al turno con condicion `agente_pidio_confirmacion`:
+  #   texto: escribe el turno del YAML (igual que el ejecutor; comparable).
+  #   boton: pulsa "Confirmar y crear ticket" en la tarjeta (camino del frontend;
+  #          el agente no invoca confirmar_propuesta y la compuerta lo notara).
+  confirmacion: texto # [VISOR_CONFIRMACION]
+  # Al terminar cada tarea, para poder mirar la pantalla.
+  pausa_final_ms: 4000
+  # Semilla del ritmo de tecleo y de los errores: la misma semilla teclea igual.
+  semilla: 20261014 # [VISOR_SEMILLA]
+
+# Entorno antes de cada tarea (requiere UNIHELP_PERFIL=experimento en el backend).
+entorno:
+  restablecer: true # [VISOR_RESTABLECER]
+  # Compara la huella devuelta con experiment/ejecutor/huellas-variantes.json.
+  verificar_huella: true
+  # Envia X-Trace-Id como el ejecutor. Con `false` el backend usa el modelo
+  # elegido en la pantalla de configuracion y el visor lee la traza por el id
+  # de la conversacion.
+  enviar_trace_id: true # [VISOR_ENVIAR_TRACE_ID]
+
+# Lo que solo el backend sabe (tokens, latencia, herramientas). Requiere el
+# mismo perfil; sin el, el panel muestra la conversacion pero no el consumo.
+medicion:
+  habilitada: true # [VISOR_MEDICION]
+  # Despues de cada tarea, la compuerta automatica de Python la puntua
+  # (`uv run python -m ejecutor puntuar-observacion`). El veredicto se muestra en
+  # el panel y en el reporte; NO hace fallar la prueba salvo que se pida.
+  compuerta: true # [VISOR_COMPUERTA]
+  fallar_si_reprueba_compuerta: false # [VISOR_FALLAR_SI_REPRUEBA]
+
+# Ventana del navegador y panel lateral.
+navegador:
+  ancho: 1480
+  alto: 900
+  # false = sin ventana (headless), por ejemplo en integracion continua.
+  visible: true # [VISOR_VISIBLE]
+  # Ralentiza cada accion de Playwright (ms). Util para mirar con calma.
+  camara_lenta_ms: 0 # [VISOR_CAMARA_LENTA_MS]
+panel:
+  visible: true # [VISOR_PANEL]
+  ancho: 420
+
+# Tiempo maximo de espera por la respuesta de un turno (RNF-04 son 120 s).
+tiempo_maximo_turno_s: 150
+
+salidas:
+  # Relativo a experiment/visor. No se versiona.
+  directorio: salidas
+  # Grabacion de video de cada tarea (webm) y traza de Playwright.
+  video: false # [VISOR_VIDEO]
+  # off | on | retain-on-failure | on-first-retry
+  traza_playwright: retain-on-failure

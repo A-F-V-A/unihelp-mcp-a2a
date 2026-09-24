@@ -133,6 +133,7 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   analisis.ipynb         Cuaderno unico (papermill); escribe salidas/resultados.json
   fixtures/ pruebas/     Generador de corrida sintetica y pytest
   ejecutor/              Corre las 40 tareas contra una arquitectura: trazas y compuerta automatica
+  visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
   juez/                  Fuente del juez LLM (futuro)
   trazas/ resultados/ salidas/ corridas/ casetes/  Artefactos: NO se versionan
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
@@ -331,6 +332,7 @@ pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experime
 pnpm ejecutor:validar   # revisa las 40 tareas de docs/tasks sin ejecutar nada
 pnpm ejecutor:salud     # comprueba que el backend configurado responde
 pnpm ejecutor:correr    # corre las 40 tareas contra la arquitectura de experiment/ejecutor/corrida.yaml
+pnpm visor                # las tareas en vivo en el navegador (pnpm visor -- --grep T-COM-001; pnpm visor:ui)
 pnpm analisis:desde-cero  # uv sync + corrida sintetica + cuaderno de metricas completo
 pnpm analisis:test        # pytest del sistema de metricas (requiere uv)
 pnpm nx run trazas:generar  # tras cambiar experiment/schemas/traza.schema.json

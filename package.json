@@ -44,6 +44,9 @@
     "analisis": "nx run analisis:ejecutar",
     "analisis:fixtures": "nx run analisis:fixtures",
     "analisis:test": "nx run analisis:test",
+    "visor": "nx run visor:correr",
+    "visor:ui": "nx run visor:ui",
+    "visor:reporte": "nx run visor:reporte",
     "build": "nx run-many -t build --all",
     "test": "nx run-many -t test --all",
     "lint": "nx run-many -t lint --all",
@@ -73,6 +76,7 @@
     "@nx/webpack": "23.2.1",
     "@nx/workspace": "23.2.1",
     "@playwright/mcp": "0.0.80",
+    "@playwright/test": "1.63.0",
     "@schematics/angular": "~22.1.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",
@@ -101,7 +105,8 @@
     "typescript-eslint": "^8.58.0",
     "webpack": "^5.101.3",
     "webpack-cli": "^7.0.0",
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^5.2.1",
+    "yaml": "2.9.0"
   },
   "dependencies": {
     "@angular/common": "~22.1.0",

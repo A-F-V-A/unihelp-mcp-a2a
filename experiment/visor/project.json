@@ -1,0 +1,33 @@
+{
+  "name": "visor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "experiment/visor/src",
+  "tags": ["tipo:experimento"],
+  "// targets": "Visor en vivo de las tareas de docs/tasks sobre el frontend real (decision 37). No calcula metricas: muestra lo que el backend midio y le pide el veredicto a Python.",
+  "targets": {
+    "correr": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "playwright test --config experiment/visor/playwright.config.ts",
+        "forwardAllArgs": true
+      }
+    },
+    "ui": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "playwright test --config experiment/visor/playwright.config.ts --ui",
+        "forwardAllArgs": true
+      }
+    },
+    "reporte": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node experiment/visor/src/abrir-reporte.cjs"
+      }
+    }
+  }
+}

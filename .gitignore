@@ -71,6 +71,8 @@ experiment/fixtures/sinteticas/
 # fuente y pueden traer texto de las conversaciones (regla 9 de AGENTS.md).
 experiment/corridas/
 experiment/casetes/
+# Corridas del visor en vivo: observaciones, reporte HTML, videos y trazas de Playwright.
+experiment/visor/salidas/
 
 # ---------------------------------------------------------------------------
 # Python (entorno uv del analisis)

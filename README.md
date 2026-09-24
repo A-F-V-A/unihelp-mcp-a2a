@@ -251,6 +251,15 @@ pnpm conocimiento:test-integracion  # pruebas contra PostgreSQL real
 Detalle, variables de entorno y restablecimiento en
 [`libs/conocimiento/README.md`](libs/conocimiento/README.md).
 
+### Ver las tareas en vivo
+
+Con B0 y el frontend levantados, `pnpm visor` recorre las tareas de `docs/tasks` en un
+Chrome visible: una persona simulada teclea cada turno y un panel lateral muestra los
+tokens, la latencia y las herramientas que el backend midio, mas el veredicto de la
+compuerta (calculado en Python). `pnpm visor -- --grep T-COM-001` corre una sola;
+`pnpm visor:ui` abre el modo UI de Playwright. Detalle en
+[`experiment/visor/README.md`](experiment/visor/README.md).
+
 ### Analisis de metricas
 
 Ninguna metrica se calcula en TypeScript: todas salen de un unico cuaderno en
@@ -296,7 +305,8 @@ unihelp/
 │   ├── analisis/                Carga, inferencia y calculo por familia
 │   ├── analisis.ipynb           Cuaderno unico: genera salidas/resultados.json
 │   ├── fixtures/                Generador de corrida sintetica
-│   ├── ejecutor/                Corredor de casos (futuro)
+│   ├── ejecutor/                Corre las 40 tareas contra una arquitectura
+│   ├── visor/                   Playwright: las tareas en vivo, con panel de consumo
 │   └── juez/                    Evaluacion automatica (futuro)
 ├── infra/
 │   └── docker/                  Un Dockerfile por app + compose con profiles

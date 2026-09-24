@@ -13,5 +13,6 @@ libs/trazas/src/lib/*.generado.ts
 # Salidas del analisis y datos sinteticos generados
 experiment/salidas
 experiment/fixtures/sinteticas
+experiment/visor/salidas
 
 .angular
