@@ -10,23 +10,28 @@ descripcion y esquemas de cada herramienta se escriben una sola vez aqui: B0 los
 envia al modelo y `mcp-server` los publicara en `tools/list`. Lo mismo con el
 saneamiento y la validacion, que ocurren del lado del receptor en ambas.
 
-> Estado: la usa B0. `mcp-server` todavia no la consume.
+> Estado: la usan B0, `mcp-server` (publica el contrato en `tools/list`) y B1
+> (cliente MCP que cumple `PuertoCapacidades`).
 
-| Archivo                                                                | Contenido                                                                               |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [`definiciones-herramientas.ts`](src/lib/definiciones-herramientas.ts) | Las cinco herramientas de docs/02 con sus esquemas y anotaciones; diferencias anotadas. |
-| [`prompt-base.ts`](src/lib/prompt-base.ts)                             | Prompt base compartido, versionado (`VERSION_PROMPT_BASE`).                             |
-| [`objeto-final.ts`](src/lib/objeto-final.ts)                           | Esquema del objeto final del agente unico (docs/03, 4.3; HU-30).                        |
-| [`validador-argumentos.ts`](src/lib/validador-argumentos.ts)           | AJV contra el esquema de entrada; mensajes en español (HU-22, M2.3).                    |
-| [`saneador-contenido.ts`](src/lib/saneador-contenido.ts)               | Bloque delimitado con marcador por ejecucion (HU-18; DP-04).                            |
-| [`detector-instrucciones.ts`](src/lib/detector-instrucciones.ts)       | Heuristica determinista de instrucciones incrustadas (HU-18, criterio 2).               |
-| [`ejecutor-capacidad.ts`](src/lib/ejecutor-capacidad.ts)               | Puerta del receptor: limite de 20 llamadas, validacion, `dur` y auditoria.              |
-| [`errores-herramienta.ts`](src/lib/errores-herramienta.ts)             | `ErrorHerramienta` y los codigos de docs/02, seccion 5.                                 |
-| [`reloj-monotono.ts`](src/lib/reloj-monotono.ts)                       | `ahoraMonotonoMs()`: toda duracion se mide con reloj monotono (D6).                     |
+| Archivo                                                                | Contenido                                                                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [`definiciones-herramientas.ts`](src/lib/definiciones-herramientas.ts) | Las cinco herramientas de docs/02 con sus esquemas y anotaciones; diferencias anotadas.     |
+| [`prompt-base.ts`](src/lib/prompt-base.ts)                             | Prompt base compartido, versionado (`VERSION_PROMPT_BASE`).                                 |
+| [`objeto-final.ts`](src/lib/objeto-final.ts)                           | Esquema del objeto final del agente unico (docs/03, 4.3; HU-30).                            |
+| [`validador-argumentos.ts`](src/lib/validador-argumentos.ts)           | AJV contra el esquema de entrada; mensajes en español (HU-22, M2.3).                        |
+| [`saneador-contenido.ts`](src/lib/saneador-contenido.ts)               | Bloque delimitado con marcador por ejecucion (HU-18; DP-04).                                |
+| [`detector-instrucciones.ts`](src/lib/detector-instrucciones.ts)       | Heuristica determinista de instrucciones incrustadas (HU-18, criterio 2).                   |
+| [`ejecutor-capacidad.ts`](src/lib/ejecutor-capacidad.ts)               | Puerta del receptor: limite de 20 llamadas, validacion, `dur` y auditoria.                  |
+| [`puerto-capacidades.ts`](src/lib/puerto-capacidades.ts)               | `PuertoCapacidades`: listar e invocar; la unica frontera entre el nucleo y el transporte.   |
+| [`errores-herramienta.ts`](src/lib/errores-herramienta.ts)             | `ErrorHerramienta` (codigos de docs/02, 5) y `ErrorInfraestructura` (RM-15).                |
+| [`reloj-monotono.ts`](src/lib/reloj-monotono.ts)                       | `ahoraMonotonoMs()`: toda duracion se mide con reloj monotono (D6).                         |
+| [`entorno-local.ts`](src/lib/entorno-local.ts)                         | `cargarEntornoLocal(ruta)`: carga el `.env` de una app en desarrollo, sin pisar el entorno. |
 
-**Lo que NO contiene**: los casos de uso de cada herramienta (viven en
-`@unihelp/conocimiento` y `@unihelp/tickets`), el bucle del agente ni el cliente
-del modelo, que son de cada arquitectura.
+**Lo que NO contiene**: la implementacion de cada herramienta
+(`@unihelp/capacidades`, sobre `@unihelp/conocimiento` y `@unihelp/tickets`) ni el
+bucle del agente y el cliente del modelo (`@unihelp/agente-nucleo`). El validador
+admite herramientas registradas despues de arrancar (`registrar`), para que el
+registro de `@unihelp/capacidades` pueda crecer sin recompilar (HU-27).
 
 Cambiar una definicion o el prompt base cambia lo que ve el modelo en todas las
 arquitecturas: se hace a proposito, con la version subida, y antes de congelar

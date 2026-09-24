@@ -12,22 +12,37 @@ Detalle del diseno, puntos de rechazo y contrato de resultados:
 ## Correr las 40 tareas contra una arquitectura
 
 Tambien se puede correr desde el panel web (`http://localhost:4200/experimento`,
-pestaña *Correr una corrida*) con la consola levantada (`pnpm dev:consola`):
+pestaña _Correr una corrida_) con la consola levantada (`pnpm dev:consola`):
 lanza exactamente estos mismos comandos y muestra el progreso (decision 39).
 
 Requiere [uv](https://docs.astral.sh/uv/) y la arquitectura levantada con
 `UNIHELP_PERFIL=experimento` (sin ese perfil las rutas del ejecutor son 404,
-decision 32). Hoy **solo B0 esta implementada**.
+decision 32). Hoy estan implementadas **B0 y B1**; B2 y B3 solo responden
+`/health`.
 
 ```bash
 pnpm conocimiento:db                    # PostgreSQL
 pnpm conocimiento:migrar && pnpm tickets:migrar
 pnpm dev:b0                             # B0 en :3000, con .env de experimento
+pnpm dev:b1                             # mcp-server en :3010 + B1 en :3001 (ambos con su .env; B1 con UNIHELP_PERFIL=experimento)
 
 pnpm ejecutor:validar                   # revisa las 40 tareas sin ejecutar
 pnpm ejecutor:salud                     # comprueba que el backend responde
-pnpm ejecutor:correr                    # corre la matriz de corrida.yaml
+pnpm ejecutor:correr                    # corre la matriz de corrida.yaml (arquitecturas: [B0])
+pnpm ejecutor:correr -- --arquitecturas B1        # solo B1
+pnpm ejecutor:correr -- --arquitecturas B0,B1     # B0 y B1 en la MISMA corrida: es lo que H1 necesita
 ```
+
+**Para comparar B0 con B1** (contraste `B1-B0` de `metricas.yaml`, H1) las dos
+arquitecturas deben ir en la misma corrida: el cuaderno remuestrea tareas
+completas y calcula la diferencia dentro de cada tarea, asi que necesita ambas
+columnas en el mismo `trazas.jsonl`, con el mismo `config_hash`. Dos corridas
+separadas (una de B0 y otra de B1) no se combinan; hacerlo seria una decision
+de medicion pendiente (RM-17). Los dos backends deben usar el mismo modelo, el
+mismo modo de casetes y el mismo limite de llamadas (RNF-01): en B1 el limite
+lo aplica `mcp-server` (`apps/mcp-server/.env`). Con una sola arquitectura en
+la corrida, los contrastes salen `sin_datos` y las metricas por arquitectura se
+calculan igual.
 
 Para **ver** las tareas correr en el navegador, con una persona simulada que teclea y
 un panel con tokens, latencia y herramientas: [`visor/`](visor/README.md)

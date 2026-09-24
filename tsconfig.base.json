@@ -20,6 +20,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "paths": {
+      "@unihelp/agente-nucleo": ["./libs/agente-nucleo/src/index.ts"],
+      "@unihelp/capacidades": ["./libs/capacidades/src/index.ts"],
       "@unihelp/conocimiento": ["./libs/conocimiento/src/index.ts"],
       "@unihelp/contratos": ["./libs/contratos/src/index.ts"],
       "@unihelp/dominio": ["./libs/dominio/src/index.ts"],

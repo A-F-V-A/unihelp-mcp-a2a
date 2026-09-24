@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import type { ErrorObject, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
-import { DEFINICIONES_HERRAMIENTAS } from './definiciones-herramientas';
+import { DEFINICIONES_HERRAMIENTAS, type DefinicionHerramienta } from './definiciones-herramientas';
 
 /** Resultado de validar los argumentos de una llamada. */
 export type ResultadoValidacionArgumentos =
@@ -39,14 +39,25 @@ function describir(error: ErrorObject): string {
  * produce `VALIDACION_ENTRADA` y nunca toca los datos (HU-22, M2.3).
  */
 export class ValidadorArgumentos {
+  private readonly ajv: Ajv;
   private readonly validadores = new Map<string, ValidateFunction>();
 
-  constructor() {
-    const ajv = new Ajv({ allErrors: true, strict: false });
-    addFormats(ajv);
-    for (const definicion of DEFINICIONES_HERRAMIENTAS) {
-      this.validadores.set(definicion.nombre, ajv.compile(definicion.esquemaEntrada));
+  /** Por defecto conoce las cinco herramientas del contrato. */
+  constructor(definiciones: readonly DefinicionHerramienta[] = DEFINICIONES_HERRAMIENTAS) {
+    this.ajv = new Ajv({ allErrors: true, strict: false });
+    addFormats(this.ajv);
+    for (const definicion of definiciones) {
+      this.registrar(definicion);
     }
+  }
+
+  /**
+   * Compila el esquema de una herramienta agregada despues de arrancar. Es lo
+   * que permite que el registro de herramientas crezca de forma aditiva sin
+   * recompilar (HU-27): la herramienta nueva se valida igual que las cinco.
+   */
+  registrar(definicion: DefinicionHerramienta): void {
+    this.validadores.set(definicion.nombre, this.ajv.compile(definicion.esquemaEntrada));
   }
 
   validar(nombre: string, argumentos: unknown): ResultadoValidacionArgumentos {

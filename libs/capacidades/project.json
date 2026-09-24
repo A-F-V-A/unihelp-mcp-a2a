@@ -1,0 +1,8 @@
+{
+  "name": "capacidades",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/capacidades/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {}
+}

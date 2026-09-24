@@ -27,6 +27,13 @@
       "options": {
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm exec jest --config apps/b1-mcp-agente/jest.e2e.config.cts --runInBand"
+      }
     }
   }
 }

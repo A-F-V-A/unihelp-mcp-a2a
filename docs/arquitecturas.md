@@ -38,7 +38,14 @@ navegador -> web -> b1-mcp-agente --MCP--> mcp-server -> (API del dominio)
 ```
 
 Mismo agente y mismas capacidades que B0, pero alcanzadas como herramientas
-expuestas por un servidor MCP independiente.
+expuestas por un servidor MCP independiente. El agente es el mismo codigo que
+B0 (`libs/agente-nucleo`); lo unico propio de B1 es `CapacidadesMcp`, un
+cliente MCP (`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25,
+Streamable HTTP con sesion en `http://localhost:3010/mcp`) que descubre las
+herramientas con `tools/list` y las invoca con `tools/call`, propagando
+`X-Trace-Id` en la cabecera. `mcp-server` publica las capacidades de
+`libs/capacidades`, las mismas que B0 ejecuta en proceso (decisiones 41 y 42;
+detalle en `apps/b1-mcp-agente/docs/ARQUITECTURA.md`).
 
 ### B2 — multiagente en el mismo proceso
 
@@ -125,8 +132,11 @@ El campo `arquitectura` toma los valores `B0`, `B1`, `B2`, `B3` o `COMPARTIDO`
 
 ## Servicio MCP y su alcance
 
-`mcp-server` participa en los profiles `b1` y `b3`, que son los que lo
-consumen. **B2 no lo levanta**, porque sus agentes se coordinan en memoria y
+`mcp-server` expone `/health` y el transporte MCP en `/mcp` (fuera de `/api`).
+Publica las cinco herramientas con esquema de entrada y salida y anotaciones;
+la respuesta de `tools/list` esta versionada en
+`apps/mcp-server/contrato/tools-list.instantanea.json`. Participa en los
+profiles `b1` y `b3`, que son los que lo consumen. **B2 no lo levanta**, porque sus agentes se coordinan en memoria y
 alcanzan el dominio en proceso: introducir un salto MCP en B2 la convertiria en
 otra arquitectura y confundiria la variable que el experimento aisla.
 
