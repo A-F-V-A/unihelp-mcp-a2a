@@ -960,3 +960,133 @@ si no responde, el panel muestra el comando para la terminal y, en desarrollo,
 no puede leer los archivos del experimento hasta que se levante. Correr desde el panel no exime de congelar la
 configuracion antes de la corrida oficial (RM-13). La redaccion original de
 HU-MET-14 queda anotada en la propia historia.
+
+## 40. B0 pasa a gpt-5.5-2026-04-23 con esfuerzo de razonamiento `none`
+
+> Reemplaza la eleccion de modelo de la decision 23 (los demas parametros de
+> esa decision siguen vigentes). Tomada por el responsable del proyecto el 23 de
+> septiembre de 2026 (RM-17): "modifica el modelo por uno mucho mas superior".
+
+Contexto: con `gpt-5.4-mini-2026-03-17` y el prompt base 1.3.0, B0 se estanco en
+33 de 40 tareas en cinco corridas (±3 de ruido), con cuatro fallos estables que
+no se resolvian con mas texto en el prompt
+(`apps/b0-directo/docs/LINEA-BASE-B0-2026-09-23-gpt-5.4-mini.md`). El modelo es una
+variable controlada del experimento (RNF-01, RNF-08): cambiarlo es una decision
+registrada, no un ajuste.
+
+Decision: `UNIHELP_MODELO_ID=gpt-5.5-2026-04-23`, el modelo general mas capaz con
+fecha de snapshot disponible en la cuenta del proyecto (los `gpt-5.6-*` no tienen
+snapshot y `gpt-5.5-pro` no es comparable en costo ni latencia). Se conserva
+`temperature 0.2`, `top_p 1`, `max_completion_tokens 2048` y
+`parallel_tool_calls: false` (decision 23, docs/07). Para que el proveedor acepte
+esa temperatura y las herramientas en Chat Completions, B0 envia ahora
+`reasoning_effort` de forma explicita, configurable con
+`UNIHELP_MODELO_ESFUERZO` (por defecto `none`); con `none` el modelo no gasta
+tokens de razonamiento y la peticion es la misma que recibia el modelo anterior.
+Un valor distinto de `none` entra en la clave del casete, asi que las grabaciones
+existentes siguen valiendo. La linea base con el modelo anterior queda congelada
+en el documento citado y en `experiment/resultados/2026-09-23-b0-gpt-5.4-mini/`.
+
+Por que: la unica variable que cambia entre la linea base y las corridas nuevas
+es el modelo. Mantener temperatura, herramientas y prompt permite atribuir la
+diferencia al modelo y no a la configuracion. `reasoning_effort: none` es ademas
+la unica combinacion que el proveedor admite con funciones en esta API; usar
+razonamiento exigiria migrar a la API de respuestas y rompe la comparacion.
+
+Consecuencias: el prompt base sigue en 1.3.0 hasta que una corrida con el modelo
+nuevo justifique tocarlo; cualquier cambio posterior sube su version. El costo
+por ejecucion sube (tarifa aun sin fijar, M4.7). La cache automatica del
+proveedor sigue activa (D2 pendiente, decision 23). El manifiesto y cada traza
+registran el modelo exacto, asi que las corridas de ambos modelos no se
+confunden; el cuaderno se corre por separado sobre cada una.
+
+## 41. El nucleo del agente unico y sus capacidades son librerias compartidas; cada arquitectura aporta solo el puerto
+
+> Resuelve DP-07 y DP-16 de `apps/b0-directo/docs/ARQUITECTURA.md` para B0 y B1.
+> Tomada al construir B1 (23 de septiembre de 2026) bajo el principio del encargo:
+> B1 y B0 identicos en todo salvo el transporte de las capacidades.
+
+Contexto: todo el agente (bucle, cliente del modelo, casetes, presupuesto,
+instrumentacion, extractor, capa de conversacion y controladores) vivia dentro
+de `apps/b0-directo`. Construir B1 exigia copiarlo, y H1 mide `P(B1) - P(B0)`:
+cualquier diferencia entre dos copias entraria en ese numero sin poder
+separarse despues (RNF-01).
+
+Decision:
+
+- `libs/agente-nucleo` (`@unihelp/agente-nucleo`, `arq:compartido`) contiene el
+  nucleo completo del agente unico y `AgenteNucleoModule.forRoot({ identidad,
+  imports, puertoCapacidades })`. El bucle depende de la interfaz
+  `PuertoCapacidades` (`listar()` e `invocar()`, declarada en
+  `libs/herramientas`) y pide las capacidades al puerto ANTES de cada llamada
+  al modelo. La traduccion al formato de function calling ocurre en un unico
+  lugar (`aFunctionCalling`). La identidad del agente (servicio, protocolo,
+  actor de auditoria) se deriva de la identidad de salud de cada app.
+- `libs/capacidades` (`@unihelp/capacidades`) contiene la logica de las cinco
+  capacidades (antes adaptadores de B0), un registro aditivo con notificacion
+  de cambio, el invocador del receptor sobre `EjecutorCapacidad` y
+  `CapacidadesLocales`, el puerto en proceso. Los esquemas siguen en
+  `libs/herramientas`, fuente unica; la libreria no sabe nada de MCP ni de
+  function calling.
+- B0 enlaza `PUERTO_CAPACIDADES` con `CapacidadesLocales`; B1 con
+  `CapacidadesMcp` (cliente MCP en `apps/b1-mcp-agente`). Ninguna otra pieza es
+  propia de la arquitectura.
+- El resultado de una capacidad se normaliza "como si hubiera viajado" (JSON:
+  fechas ISO, sin `undefined`) tambien en B0, para que la traza y el ensamblado
+  de la respuesta vean la misma forma en ambas.
+
+Por que: es la unica forma de que la resta mida el transporte. Ademas B2 podra
+reutilizar `CapacidadesLocales` y B3 el cliente MCP sin volver a escribirlos.
+
+Consecuencias: `apps/b0-directo` queda con `main`, `entorno`, `salud` y el
+cableado; sus pruebas se movieron con el codigo (cambiaron imports y la
+construccion del bucle, que ahora recibe el puerto). El proceso de cada agente
+sigue accediendo a PostgreSQL para lo que no son capacidades (turno literal,
+botones, lecturas, rutas del ejecutor): DP-B1-01 de
+`apps/b1-mcp-agente/docs/ARQUITECTURA.md`. `docs/arquitecturas.md` y los README
+de las librerias describen el reparto.
+
+## 42. El servidor MCP publica los JSON Schema del contrato tal cual y lleva la trazabilidad en cabecera y `_meta`
+
+> Tomada al construir B1 (23 de septiembre de 2026). Registra la version del SDK
+> y de la especificacion, como pide el encargo.
+
+Contexto: docs/02 fija la especificacion MCP `2025-11-25`, transporte Streamable
+HTTP, esquemas de entrada y salida, anotaciones, errores tipados y
+`tools.listChanged: true`. Habia que decidir con que se construye y como viajan
+la traza (HU-33) y la duracion del receptor (D5) que el protocolo no contempla.
+
+Decision:
+
+- `@modelcontextprotocol/sdk` **1.30.1**, que implementa `2025-11-25`
+  (`LATEST_PROTOCOL_VERSION`). Se usa el `Server` de bajo nivel y no
+  `McpServer`, porque este solo acepta esquemas Zod y aqui los JSON Schema de
+  `DEFINICIONES_HERRAMIENTAS` se publican sin transformar: es lo que hace que
+  `tools/list` y lo que B0 envia al modelo sean identicos (prueba de
+  equivalencia en `apps/mcp-server/src/app/mcp/contrato.spec.ts`).
+- Transporte Streamable HTTP **con estado** (una sesion por cliente) en `/mcp`,
+  fuera de `/api`; sin autenticacion en el entorno experimental. Solo asi
+  existe el flujo SSE por el que se emite `notifications/tools/list_changed`
+  cuando `RegistroCapacidades` crece (HU-27).
+- Lo que UniHelp agrega encima del protocolo vive en
+  `libs/contratos/src/lib/mcp.contrato.ts`: la traza en la cabecera
+  `x-trace-id` de cada peticion; `conversacionId` y `actor` en
+  `_meta['unihelp/contexto']` de `tools/call`; en el resultado,
+  `_meta['unihelp/duracion_ms']` (entrada -> salida del manejador, reloj
+  monotono), `_meta['unihelp/estructurado']` (dato sin sanear para M3.1) y
+  `_meta['unihelp/error']` (`{ codigo, mensaje }` con `isError: true`). El texto
+  que ve el modelo es el mismo JSON que B0 pone en el rol de herramienta.
+- `tools/list` se compara con la instantanea versionada
+  `apps/mcp-server/contrato/tools-list.instantanea.json`; cambiar una
+  herramienta exige regenerarla en el mismo commit (RM-12).
+- No se exponen recursos ni plantillas de prompt (HU-28 fuera de la corrida).
+
+Por que: publicar los esquemas sin reescribirlos y medir la duracion en el
+receptor son las dos condiciones para que `B1 - B0` sea el costo del transporte
+(RNF-01, D5, RM-05). `_meta` es el unico lugar del protocolo para datos que no
+son para el modelo.
+
+Consecuencias: una actualizacion del SDK que cambie `LATEST_PROTOCOL_VERSION` se
+ve en el arranque y debe registrarse aqui. El limite de llamadas se aplica en
+`mcp-server` (DP-B1-03). La duracion reportada incluye la construccion del
+`CallToolResult`, fracciones de milisegundo que B0 no tiene (DP-B1-02).

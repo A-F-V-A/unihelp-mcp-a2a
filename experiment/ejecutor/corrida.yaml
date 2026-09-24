@@ -11,6 +11,8 @@ corrida:
   # Semilla del orden aleatorizado de la matriz (docs/05, seccion 2).
   semilla: 20260922
   repeticiones: 1
+  # [B0, B1] corre ambas en la misma matriz, que es lo que exige el contraste
+  # B1-B0 (H1): dos corridas separadas no se combinan. B2 y B3 aun no existen.
   arquitecturas: [B0]
   # `null` = las 40 tareas de docs/tasks.
   tareas: null

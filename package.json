@@ -37,7 +37,9 @@
     "dev:consola": "nx serve consola-experimento",
     "dev:web": "nx serve web",
     "dev:web:b0": "nx run-many -t serve --projects=b0-directo,web -c backend-real",
+    "dev:web:b1": "nx run-many -t serve --projects=mcp-server,b1-mcp-agente,web -c backend-real",
     "dev:panel": "nx run-many -t serve --projects=b0-directo,consola-experimento,web -c backend-real",
+    "dev:panel:h1": "nx run-many -t serve --projects=b0-directo,mcp-server,b1-mcp-agente,consola-experimento,web -c backend-real",
     "ejecutor:validar": "nx run analisis:ejecutor-validar",
     "ejecutor:salud": "nx run analisis:ejecutor-salud",
     "ejecutor:correr": "nx run analisis:ejecutor-correr",
@@ -118,6 +120,7 @@
     "@angular/platform-browser": "~22.1.0",
     "@angular/platform-browser-dynamic": "~22.1.0",
     "@angular/router": "~22.1.0",
+    "@modelcontextprotocol/sdk": "1.30.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
@@ -127,6 +130,7 @@
     "pg": "^8.23.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",
-    "typeorm": "^0.3.31"
+    "typeorm": "^0.3.31",
+    "zod": "^4.6.2"
   }
 }

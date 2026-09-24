@@ -68,8 +68,12 @@ services:
     container_name: unihelp-b1-mcp-agente
     environment:
       <<: *entorno-comun
-      # Reservado para cuando se implemente el cliente MCP real.
+      # URL base del servidor MCP; el agente descubre las herramientas en /mcp.
       MCP_SERVER_URL: http://mcp-server:3010
+      # PENDIENTE, igual que B0: el profile todavia no levanta PostgreSQL ni
+      # recibe las variables del modelo (OPENAI_API_KEY, UNIHELP_MODELO_*).
+      CONOCIMIENTO_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+      TICKETS_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
     depends_on:
       mcp-server:
         condition: service_healthy
@@ -163,6 +167,12 @@ services:
       dockerfile: infra/docker/Dockerfile.mcp-server
     image: unihelp/mcp-server:${UNIHELP_VERSION:-0.1.0}
     container_name: unihelp-mcp-server
+    environment:
+      <<: *entorno-comun
+      # Las capacidades leen la misma base que B0 (PENDIENTE: el profile no
+      # levanta postgres todavia; ver B0).
+      CONOCIMIENTO_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+      TICKETS_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
     ports:
       - '${PUERTO_MCP:-3010}:3010'
 

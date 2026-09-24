@@ -1,3 +1,4 @@
+import './entorno';
 import { Logger, RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
@@ -6,10 +7,16 @@ import { IDENTIDAD, PUERTO_POR_DEFECTO } from './app/salud/identidad';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  // `/health` queda fuera del prefijo para cumplir el contrato de verificacion;
-  // el resto de la API vivira bajo `/api`.
+  // Identico a B0: `/health` fuera del prefijo por el contrato de verificacion
+  // (decision 6) y `/experimento/*` tambien, porque `/api` es exactamente lo que
+  // declara `libs/contratos` para el frontend y el ejecutor no es el frontend
+  // (decision 32). El frontend y el ejecutor cambian de arquitectura cambiando
+  // solo la URL del backend.
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'health', method: RequestMethod.GET }],
+    exclude: [
+      { path: 'health', method: RequestMethod.GET },
+      { path: 'experimento/*ruta', method: RequestMethod.ALL },
+    ],
   });
 
   // El frontend Angular corre en otro origen (4200 en dev, 8080 en Docker).
@@ -19,7 +26,8 @@ async function bootstrap(): Promise<void> {
   await app.listen(puerto, '0.0.0.0');
 
   Logger.log(
-    `[${IDENTIDAD.arquitectura}] ${IDENTIDAD.servicio} escuchando en http://localhost:${puerto} (salud: /health)`,
+    `[${IDENTIDAD.arquitectura}] ${IDENTIDAD.servicio} escuchando en http://localhost:${puerto} ` +
+      `(salud: /health, servidor MCP: ${process.env.MCP_SERVER_URL ?? 'sin configurar'})`,
     'Bootstrap',
   );
 }
