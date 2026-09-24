@@ -61,6 +61,7 @@ export class BucleAgente {
     historial: readonly ChatCompletionMessageParam[],
     contexto: ContextoInvocacion,
     inicioTurno: number,
+    modeloId: string,
   ): Promise<ResultadoBucle> {
     const nuevos: ChatCompletionMessageParam[] = [];
     const llamadas: LlamadaDelTurno[] = [];
@@ -82,6 +83,7 @@ export class BucleAgente {
           [...historial, ...nuevos],
           this.registro.definiciones,
           restante,
+          modeloId,
         );
       } catch (fallo) {
         if (fallo instanceof ErrorTiempoAgotado) {

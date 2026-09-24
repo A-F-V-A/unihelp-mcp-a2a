@@ -105,6 +105,9 @@
           </svg>
         </button>
       </div>
+      @if (errorModelo(); as error) {
+        <p class="campo__error" role="alert" data-error-modelo>{{ error }}</p>
+      }
 
       <h3 class="ajustes__seccion">Datos</h3>
       <div class="ajustes__grupo">
@@ -228,26 +231,42 @@
       </button>
       <h2 class="ajustes__titulo">Modelo de IA</h2>
       <p class="ajustes__ayuda">
-        Elige qué proveedor debe responder tus solicitudes. Por ahora esta elección solo queda
-        guardada: las respuestas de esta demo siguen siendo simuladas.
+        Elige qué proveedor y qué modelo responden tus solicitudes. La clave del proveedor vive en
+        el servidor: no se pide ni se guarda en este navegador.
       </p>
 
+      @if (errorModelo(); as error) {
+        <p class="campo__error" role="alert" data-error-modelo>{{ error }}</p>
+      }
+
+      @if (!editable()) {
+        <p class="campo__ayuda-discreta" data-modelo-bloqueado>
+          El servidor no permite cambiar el modelo en este momento.
+        </p>
+      }
+
       <ul class="proveedores" role="radiogroup" aria-label="Proveedor de IA">
-        @for (descriptor of proveedores; track descriptor.id) {
+        @for (descriptor of proveedores(); track descriptor.id) {
           <li>
             <button
               type="button"
               role="radio"
               class="proveedores__opcion"
               [class.proveedores__opcion--activa]="proveedor() === descriptor.id"
+              [class.proveedores__opcion--inactiva]="!descriptor.disponible"
               [attr.aria-checked]="proveedor() === descriptor.id"
               [attr.data-proveedor]="descriptor.id"
+              [disabled]="!descriptor.disponible || !editable()"
               (click)="elegirProveedor(descriptor.id)"
             >
               <span class="proveedores__radio" aria-hidden="true"></span>
               <span class="proveedores__texto">
                 <span class="proveedores__nombre">{{ descriptor.nombre }}</span>
-                <span class="proveedores__descripcion">{{ descriptor.descripcion }}</span>
+                <span class="proveedores__descripcion">
+                  {{
+                    descriptor.disponible ? descriptor.descripcion : descriptor.motivoNoDisponible
+                  }}
+                </span>
               </span>
             </button>
           </li>
@@ -259,92 +278,30 @@
         novalidate
         (submit)="$event.preventDefault(); enviarModelo()"
       >
-        @if (descriptorSeleccionado().requiereUrl) {
-          <label class="campo">
-            <span class="campo__rotulo">URL del agente</span>
-            <input
-              #campoUrl
-              class="campo__entrada"
-              type="url"
-              inputmode="url"
-              placeholder="http://localhost:9000"
-              [attr.aria-invalid]="erroresModelo().urlAgenteLocal ? 'true' : null"
-              [value]="urlAgenteLocal()"
-              (input)="urlAgenteLocal.set(campoUrl.value)"
-            />
-          </label>
-          @if (erroresModelo().urlAgenteLocal; as error) {
-            <p class="campo__error" role="alert">{{ error }}</p>
-          }
-        }
-
-        <label class="campo">
-          <span class="campo__rotulo">
-            {{ descriptorSeleccionado().requiereUrl ? 'Token de acceso' : 'Clave de API' }}
-          </span>
-          <span class="campo__con-boton">
-            <input
-              #campoToken
-              class="campo__entrada"
-              [type]="mostrarToken() ? 'text' : 'password'"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="••••••••••••"
-              [attr.aria-invalid]="erroresModelo().token ? 'true' : null"
-              [value]="token()"
-              (input)="token.set(campoToken.value)"
-            />
-            <button
-              type="button"
-              class="campo__boton-ojo"
-              [attr.aria-label]="mostrarToken() ? 'Ocultar token' : 'Mostrar token'"
-              (click)="mostrarToken.set(!mostrarToken())"
-            >
-              @if (mostrarToken()) {
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z" />
-                  <circle cx="12" cy="12" r="2.5" />
-                </svg>
-              } @else {
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 3l18 18M10.6 10.6a2.5 2.5 0 0 0 3.5 3.5" />
-                  <path
-                    d="M6.6 6.7C4.3 8.2 3 12 3 12s3.5 6 9 6c1.6 0 3-.5 4.2-1.2M9.9 5.2A9 9 0 0 1 12 5c5.5 0 9 6 9 6a13 13 0 0 1-2.1 2.7"
-                  />
-                </svg>
-              }
-            </button>
-          </span>
-        </label>
-        @if (erroresModelo().token; as error) {
-          <p class="campo__error" role="alert">{{ error }}</p>
-        }
-        @if (token() && !erroresModelo().token) {
-          <p class="campo__ayuda-discreta">Guardado como {{ tokenEnmascarado() }}</p>
-        }
-
-        @if (descriptorSeleccionado().modelosSugeridos.length) {
-          <label class="campo">
-            <span class="campo__rotulo">Modelo (opcional)</span>
-            <input
-              #campoModelo
-              class="campo__entrada"
-              type="text"
-              [placeholder]="'Por defecto: ' + descriptorSeleccionado().modelosSugeridos[0]"
-              [value]="modelo()"
-              (input)="modelo.set(campoModelo.value)"
-            />
-          </label>
+        @if (modelosDisponibles().length) {
+          <span class="campo__rotulo">Modelo</span>
           <div class="chips">
-            @for (sugerido of descriptorSeleccionado().modelosSugeridos; track sugerido) {
-              <button type="button" class="chips__opcion" (click)="usarModeloSugerido(sugerido)">
-                {{ sugerido }}
+            @for (disponible of modelosDisponibles(); track disponible) {
+              <button
+                type="button"
+                class="chips__opcion"
+                [class.chips__opcion--activa]="modelo() === disponible"
+                [attr.aria-pressed]="modelo() === disponible"
+                [attr.data-modelo]="disponible"
+                [disabled]="!editable()"
+                (click)="elegirModelo(disponible)"
+              >
+                {{ disponible }}
               </button>
             }
           </div>
+          <p class="campo__ayuda-discreta">
+            Las corridas del experimento usan siempre el modelo configurado en el servidor, sin
+            importar lo que se elija aquí.
+          </p>
         }
 
-        <button type="submit" class="boton-principal">Guardar</button>
+        <button type="submit" class="boton-principal" [disabled]="!editable()">Guardar</button>
       </form>
     }
 

@@ -20,15 +20,13 @@ import {
   validarPerfil,
 } from '../../../domain/models/preferencias';
 import {
-  type CampoModeloIA,
-  CATALOGO_PROVEEDORES_IA,
-  type ConfiguracionModeloIA,
-  PROVEEDORES_IA,
-  type ProveedorIA,
-  enmascararToken,
-  modeloIAConfigurado,
-  validarConfiguracionModeloIA,
-} from '../../../domain/models/proveedor-ia';
+  type CatalogoModeloIa,
+  type ProveedorModelo,
+  type SeleccionModeloIa,
+  modeloIaListo,
+  proveedorDe,
+  resumenModeloIa,
+} from '../../../domain/models/modelo-ia';
 import { VERSION_APP } from '../../shared/version';
 import { BackendStatus } from '../../shell/backend-status/backend-status';
 
@@ -59,6 +57,9 @@ const RETRASO_REINICIO_MS = 450;
  * Contenido de Configuracion: perfil del solicitante, apariencia, modelo de
  * IA, datos y "acerca de". Solo emite intenciones; guardar es cosa de quien
  * lo usa.
+ *
+ * La pantalla de modelo NO pide la clave del proveedor: vive en el servidor y
+ * la interfaz solo elige entre lo que el backend declara disponible (decision 27).
  */
 @Component({
   selector: 'app-settings-panel',
@@ -70,13 +71,14 @@ const RETRASO_REINICIO_MS = 450;
 export class SettingsPanel {
   readonly abierto = input(false);
   readonly preferencias = input.required<Preferencias>();
-  readonly configuracionModelo = input.required<ConfiguracionModeloIA>();
+  readonly catalogoModelo = input.required<CatalogoModeloIa>();
+  readonly errorModelo = input<string | null>(null);
   readonly cantidadConversaciones = input(0);
 
   readonly cambiarTema = output<Tema>();
   readonly cambiarTamanoTexto = output<TamanoTexto>();
   readonly guardarPerfil = output<PerfilSolicitante>();
-  readonly guardarModeloIA = output<ConfiguracionModeloIA>();
+  readonly guardarModeloIA = output<SeleccionModeloIa>();
   readonly borrarConversaciones = output<void>();
 
   protected readonly pantalla = signal<Pantalla>('principal');
@@ -85,12 +87,8 @@ export class SettingsPanel {
   protected readonly rol = signal<RolSolicitante>('estudiante');
   protected readonly errores = signal<Readonly<Partial<Record<CampoPerfil, string>>>>({});
 
-  protected readonly proveedor = signal<ProveedorIA>('chatgpt');
+  protected readonly proveedor = signal<ProveedorModelo>('chatgpt');
   protected readonly modelo = signal('');
-  protected readonly token = signal('');
-  protected readonly urlAgenteLocal = signal('');
-  protected readonly mostrarToken = signal(false);
-  protected readonly erroresModelo = signal<Readonly<Partial<Record<CampoModeloIA, string>>>>({});
 
   protected readonly iniciales = computed(() => inicialesDe(this.preferencias().perfil.nombre));
   protected readonly nombreVisible = computed(
@@ -106,20 +104,16 @@ export class SettingsPanel {
   protected readonly maximoNombre = LONGITUD_MAXIMA_NOMBRE;
   protected readonly version = VERSION_APP;
 
-  protected readonly proveedores = PROVEEDORES_IA.map((id) => CATALOGO_PROVEEDORES_IA[id]);
-  protected readonly proveedorActivo = computed(
-    () => CATALOGO_PROVEEDORES_IA[this.configuracionModelo().proveedor],
+  protected readonly proveedores = computed(() => this.catalogoModelo().proveedores);
+  protected readonly modeloConfigurado = computed(() => modeloIaListo(this.catalogoModelo()));
+  protected readonly resumenModelo = computed(() => resumenModeloIa(this.catalogoModelo()));
+  protected readonly editable = computed(() => this.catalogoModelo().editable);
+  protected readonly descriptorSeleccionado = computed(() =>
+    proveedorDe(this.catalogoModelo(), this.proveedor()),
   );
-  protected readonly modeloConfigurado = computed(() =>
-    modeloIAConfigurado(this.configuracionModelo()),
+  protected readonly modelosDisponibles = computed(
+    () => this.descriptorSeleccionado()?.modelos ?? [],
   );
-  protected readonly resumenModelo = computed(() =>
-    this.modeloConfigurado() ? this.proveedorActivo().nombre : 'Sin configurar',
-  );
-  protected readonly descriptorSeleccionado = computed(
-    () => CATALOGO_PROVEEDORES_IA[this.proveedor()],
-  );
-  protected readonly tokenEnmascarado = computed(() => enmascararToken(this.token()));
 
   constructor() {
     effect((alLimpiar) => {
@@ -155,37 +149,29 @@ export class SettingsPanel {
   }
 
   protected editarModelo(): void {
-    const configuracion = this.configuracionModelo();
-    this.proveedor.set(configuracion.proveedor);
-    this.modelo.set(configuracion.modelo);
-    this.token.set(configuracion.token);
-    this.urlAgenteLocal.set(configuracion.urlAgenteLocal);
-    this.mostrarToken.set(false);
-    this.erroresModelo.set({});
+    const { seleccion } = this.catalogoModelo();
+    this.proveedor.set(seleccion.proveedor);
+    this.modelo.set(seleccion.modelo);
     this.pantalla.set('modelo');
   }
 
-  protected elegirProveedor(proveedor: ProveedorIA): void {
+  /** Un proveedor no disponible no se puede elegir: el backend lo rechazaria igual. */
+  protected elegirProveedor(proveedor: ProveedorModelo): void {
+    const descriptor = proveedorDe(this.catalogoModelo(), proveedor);
+    if (descriptor === null || !descriptor.disponible) {
+      return;
+    }
     this.proveedor.set(proveedor);
-    this.erroresModelo.set({});
+    this.modelo.set(descriptor.modeloPorDefecto ?? '');
   }
 
-  protected usarModeloSugerido(modelo: string): void {
+  protected elegirModelo(modelo: string): void {
     this.modelo.set(modelo);
   }
 
   protected enviarModelo(): void {
-    const validacion = validarConfiguracionModeloIA({
-      proveedor: this.proveedor(),
-      modelo: this.modelo(),
-      token: this.token(),
-      urlAgenteLocal: this.urlAgenteLocal(),
-    });
-    if (!validacion.valido) {
-      this.erroresModelo.set(validacion.errores);
-      return;
-    }
-    this.guardarModeloIA.emit(validacion.configuracion);
+    this.guardarModeloIA.emit({ proveedor: this.proveedor(), modelo: this.modelo() });
+    // Vuelve a la pantalla principal, donde se ve el resumen y, si lo hubo, el error.
     this.pantalla.set('principal');
   }
 

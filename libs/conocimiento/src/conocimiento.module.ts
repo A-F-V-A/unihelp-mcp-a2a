@@ -5,7 +5,9 @@ import { BuscarPoliticaUseCase } from './aplicacion/buscar-politica.use-case';
 import { resolverConfiguracionConocimiento } from './aplicacion/configuracion';
 import type { OpcionesConocimiento, VariablesEntorno } from './aplicacion/configuracion';
 import { ConsultarComponentesDeServicioUseCase } from './aplicacion/consultar-componentes-de-servicio.use-case';
+import { ConsultarEntornoUseCase } from './aplicacion/consultar-entorno.use-case';
 import { ConsultarPoliticasDeCategoriaUseCase } from './aplicacion/consultar-politicas-de-categoria.use-case';
+import { ListarEstadosInicialesUseCase } from './aplicacion/listar-estados-iniciales.use-case';
 import { ListarServiciosUseCase } from './aplicacion/listar-servicios.use-case';
 import { ObtenerPoliticaUseCase } from './aplicacion/obtener-politica.use-case';
 import { RestablecerConocimientoUseCase } from './aplicacion/restablecer-conocimiento.use-case';
@@ -42,8 +44,10 @@ export class ConocimientoModule {
     const casosDeUso: Type<unknown>[] = [
       BuscarPoliticaUseCase,
       ConsultarComponentesDeServicioUseCase,
+      ConsultarEntornoUseCase,
       ConsultarPoliticasDeCategoriaUseCase,
       ObtenerPoliticaUseCase,
+      ListarEstadosInicialesUseCase,
       ListarServiciosUseCase,
       SembrarConocimientoUseCase,
       ...(configuracion.restablecimientoPermitido ? [RestablecerConocimientoUseCase] : []),

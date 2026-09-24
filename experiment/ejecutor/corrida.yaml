@@ -1,0 +1,48 @@
+# Configuracion de una corrida del ejecutor.
+#
+# Todo lo que puede mover una cifra vive aqui y viaja a `provenance.config_hash`
+# de cada traza. Un cambio en este archivo produce otra huella: dos corridas con
+# configuraciones distintas nunca se confunden.
+#
+# ESTA NO ES LA CORRIDA OFICIAL. Para la oficial hay que fijar antes la tarifa,
+# las repeticiones y la semilla, y registrar la congelacion (RM-13).
+
+corrida:
+  # Semilla del orden aleatorizado de la matriz (docs/05, seccion 2).
+  semilla: 20260922
+  repeticiones: 1
+  arquitecturas: [B0]
+  # `null` = las 40 tareas de docs/tasks.
+  tareas: null
+  # live | record | replay. Debe coincidir con UNIHELP_MODO_LLM del backend:
+  # el ejecutor lo anota en la traza, no lo impone (HU-39).
+  modo_llm: record
+
+backends:
+  B0: http://localhost:3000
+  B1: http://localhost:3001
+  B2: http://localhost:3002
+  B3: http://localhost:3003
+
+# PENDIENTE (RM-17): tarifa congelada del modelo para M4.7. Mientras siga en
+# cero, `cost_usd_est` vale 0,0 y el manifiesto lo declara con
+# `tarifa_configurada: false`, para que un costo cero no se lea como medido.
+tarifa_usd_por_millon:
+  entrada: 0.0
+  salida: 0.0
+
+limites:
+  # Margen sobre los 120 s de RNF-04: el turno puede tardar mas que el
+  # presupuesto del agente si el proveedor va lento.
+  timeout_http_s: 300
+
+compuerta:
+  # Verificacion 7 de docs/04: toda cifra citada debe aparecer en un extracto
+  # recuperado en la ejecucion (HU-06, M3.1).
+  verificar_fidelidad_citacion: true
+
+dataset_version: '1.0'
+
+salidas:
+  # Relativo a `experiment/`. No se versiona (regla 9 de AGENTS.md).
+  directorio: corridas

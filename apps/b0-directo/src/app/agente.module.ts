@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import type { DynamicModule } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { ConocimientoModule } from '@unihelp/conocimiento';
+import { ConocimientoModule, perfilPermiteRestablecer } from '@unihelp/conocimiento';
 import { EjecutorCapacidad, ValidadorArgumentos } from '@unihelp/herramientas';
-import { RegistroAuditoria, TicketsModule } from '@unihelp/tickets';
+import { perfilPermiteVaciarTickets, RegistroAuditoria, TicketsModule } from '@unihelp/tickets';
 import { BucleAgente } from './agente/bucle-agente';
 import { ExtractorObjetoFinal } from './agente/extractor-objeto-final';
 import { InstrumentadorTrazas } from './agente/instrumentador-trazas';
@@ -18,6 +18,7 @@ import { AtenderTurnoUseCase } from './conversacion/atender-turno.use-case';
 import { ConversacionController } from './conversacion/conversacion.controller';
 import { EnsambladorRespuesta } from './conversacion/ensamblador-respuesta';
 import { RepositorioConversaciones } from './conversacion/repositorio-conversaciones';
+import { ExperimentoController } from './experimento/experimento.controller';
 import { AdaptadorBuscarPolitica } from './herramientas/adaptadores/buscar-politica.adaptador';
 import { AdaptadorConfirmarPropuesta } from './herramientas/adaptadores/confirmar-propuesta.adaptador';
 import { AdaptadorConsultarEstadoServicio } from './herramientas/adaptadores/consultar-estado-servicio.adaptador';
@@ -29,6 +30,8 @@ import { RegistroCapacidades } from './herramientas/registro-capacidades';
 import { TransporteHerramientasLocal } from './herramientas/transporte-herramientas-local';
 import { FiltroErrores } from './http/filtro-errores';
 import { CaseteModelo } from './modelo/casete-modelo';
+import { ConfiguracionModeloRuntime } from './modelo/configuracion-modelo-runtime';
+import { ModeloIaController } from './modelo/modelo-ia.controller';
 import { ClienteModelo } from './modelo/cliente-modelo';
 import { TicketsController } from './tickets/tickets.controller';
 
@@ -40,11 +43,26 @@ import { TicketsController } from './tickets/tickets.controller';
  */
 @Module({})
 export class AgenteModule {
-  static forRoot(configuracion: ConfiguracionB0 = leerConfiguracionB0()): DynamicModule {
+  static forRoot(
+    configuracion: ConfiguracionB0 = leerConfiguracionB0(),
+    entorno: Readonly<Record<string, string | undefined>> = process.env,
+  ): DynamicModule {
+    // Las rutas del ejecutor solo existen en el perfil de experimento: fuera de
+    // el, restablecer borraria una base real y el controlador ni se registra
+    // (decision 32). Se exigen los dos restablecimientos porque una ejecucion
+    // con el conocimiento restablecido y los tickets de la anterior no sirve.
+    const perfilDeExperimento =
+      perfilPermiteRestablecer(entorno) && perfilPermiteVaciarTickets(entorno);
     return {
       module: AgenteModule,
       imports: [ConocimientoModule.forRoot(), TicketsModule.forRoot()],
-      controllers: [ConversacionController, TicketsController, ConsultasController],
+      controllers: [
+        ConversacionController,
+        TicketsController,
+        ConsultasController,
+        ModeloIaController,
+        ...(perfilDeExperimento ? [ExperimentoController] : []),
+      ],
       providers: [
         { provide: CONFIGURACION_B0, useValue: configuracion },
         { provide: APP_FILTER, useClass: FiltroErrores },
@@ -61,6 +79,7 @@ export class AgenteModule {
         },
         CaseteModelo,
         ClienteModelo,
+        ConfiguracionModeloRuntime,
         CatalogoServicios,
         AdaptadorBuscarPolitica,
         AdaptadorConsultarEstadoServicio,

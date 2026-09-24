@@ -46,7 +46,7 @@ describe('Repositorios HTTP: contrato con el backend', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: CONFIGURACION_APP, useValue: { backendUrl: BACKEND } },
-        provideDataLayer({ useMockBackend: false }),
+        provideDataLayer(),
       ],
     });
     http = TestBed.inject(HttpTestingController);

@@ -152,6 +152,8 @@ ticket nunca se crea por inferencia sobre el texto (HU-17).
 
 ## 14. Una sola decision entre backend simulado y real
 
+> Reemplazada en su parte de simulacion por la decision 28.
+
 `apps/web` sigue Clean Architecture:
 
 | Capa              | Contiene                                             | Puede importar            |
@@ -180,6 +182,8 @@ el lint si `domain/` importa Angular o RxJS, o si `application/` o
 `presentation/` importan algo de `infrastructure/`.
 
 ## 15. La simulacion se comporta como un servidor, no como un stub
+
+> Reemplazada por la decision 28: la simulacion se elimino.
 
 Los repositorios de `infrastructure/mock/` producen **los mismos DTOs del
 contrato** y los pasan por **los mismos mappers** que los repositorios HTTP.
@@ -514,3 +518,321 @@ y no dependa del modelo.
 
 Consecuencias: B1 tendra que registrar tambien los turnos en su controlador de
 entrada. Si el equipo elige otra opcion para DP-05, cambia lo que mide M5.1.
+
+## 27. La interfaz elige proveedor y modelo; la clave se queda en el servidor
+
+Contexto: la pantalla de Configuracion tenia un selector de proveedor con un
+campo de clave de API que solo se guardaba en `localStorage` y no cambiaba nada
+(el propio codigo lo advertia). Se pidio que funcionara de verdad.
+
+Decision (tomada por el responsable del proyecto):
+
+- La clave del proveedor vive SOLO en el servidor (`apps/b0-directo/.env`). La
+  interfaz nunca la envia ni la recibe; solo ve si esta configurada.
+- El backend publica el catalogo en `GET /api/modelo-ia`: que proveedores hay,
+  cuales estan disponibles y con que modelos (`UNIHELP_MODELOS_PERMITIDOS`,
+  todos con fecha de snapshot). `PUT` cambia la eleccion y vuelve a validarla.
+- B0 solo integra OpenAI; Gemini, Claude y el agente local aparecen en la lista
+  como no disponibles, con su motivo.
+- **Una corrida del experimento ignora la eleccion de la pantalla.** Si la
+  peticion trae `X-Trace-Id` (la manda el ejecutor), se usa el modelo de
+  `UNIHELP_MODELO_ID`. Asi las cuatro arquitecturas miden con el mismo modelo
+  (RNF-01) y la traza registra uno solo (RNF-08).
+- En modo `replay` la pantalla queda de solo lectura: los casetes estan grabados
+  con un modelo concreto.
+
+Por que: un token real no debe vivir en el navegador, y una eleccion visual que
+cambiara el modelo de una corrida oficial contaminaria la comparacion sin que
+nadie lo notara.
+
+Consecuencias: `libs/contratos` gana `modelo-ia.contrato.ts` y la ruta
+`RUTAS_API.modeloIa`; `libs/dominio`, el vocabulario `PROVEEDORES_MODELO`. B1,
+B2 y B3 tendran que responder esa ruta cuando existan (regla 5). Integrar otro
+proveedor exige un cliente nuevo y una decision aparte.
+
+## 28. El frontend ya no tiene capa de datos simulada
+
+> Reemplaza a las decisiones 14 y 15 en lo que toca a la simulacion.
+
+Contexto: el frontend se construyo antes que el backend y traia repositorios
+simulados (`infrastructure/mock/`, 23 archivos) con su propia base en memoria,
+latencia y escenarios. Desde que B0 responde el contrato completo, el chat se
+puede probar contra un backend real.
+
+Decision (tomada por el responsable del proyecto): se elimina la capa simulada,
+el token `USE_MOCK_BACKEND`, la configuracion `simulacion` de los entornos y las
+pruebas que la usaban como backend (`chat-page.spec.ts`,
+`provide-data-layer.spec.ts` y las del propio mock). `provideDataLayer()` enlaza
+cada puerto con su repositorio HTTP y nada mas.
+
+Por que: dos implementaciones del mismo contrato se desincronizan, y la
+simulacion ya no aporta: para ver la interfaz basta con levantar B0.
+
+Consecuencias: `pnpm dev:web` ya no funciona por si solo; hay que levantar un
+backend (`pnpm dev:web:b0`). Se pierde la prueba de extremo a extremo del chat
+con datos simulados: el chat queda cubierto por las pruebas de sus piezas
+(store, mappers, repositorios HTTP y componentes) y por la validacion en
+navegador contra B0. Lo que decian las decisiones 14 y 15 sobre elegir entre
+simulado y real ya no aplica; lo demas de la decision 14 (las capas de Clean
+Architecture y que la eleccion viva en un solo archivo) sigue vigente.
+
+## 31. Entre ejecuciones se vacia el registro de tickets, nunca la auditoria
+
+> Resuelve DP-15 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: `RestablecerConocimientoUseCase` deja la base de conocimiento en la
+variante que pide la tarea y devuelve su huella (HU-36), pero los tickets no se
+restablecian. Sin restablecerlos, la ejecucion numero 20 arranca con las
+propuestas y los tickets de las 19 anteriores, y `esperado.ticket.debe_crearse`
+deja de verificarse contra un estado conocido.
+
+Decision (consultada con el responsable, RM-17): `RestablecerTicketsUseCase`
+vacia las cuatro tablas del esquema `tickets` y reinicia la secuencia de
+numeracion antes de cada ejecucion. **Nunca** toca `auditoria.eventos`.
+
+Por que: la auditoria es de solo agregar (HU-35, RM-09) y es la fuente
+independiente contra la que se comprueba si hubo una escritura no autorizada
+(M5.1). Si se vaciara junto con los tickets, la verificacion se haria contra el
+mismo registro que el agente escribe, que es justo lo que la rubrica evita
+(docs/04, seccion 4: «verificado contra la auditoria del servidor y no contra lo
+que el agente afirme haber hecho»). Un disparador de la migracion ya rechaza
+`TRUNCATE` sobre esa tabla, asi que la regla esta sostenida por el esquema y no
+solo por el codigo.
+
+Consecuencias: el caso de uso solo se registra con `UNIHELP_PERFIL=experimento`
+o `NODE_ENV=test`, igual que el de conocimiento, y fuera de ese perfil no existe
+como capacidad. El estado vacio de tickets **no** entra en
+`provenance.state_hash_inicial`, que sigue cubriendo solo la base de
+conocimiento: si mas adelante se quiere una huella del estado completo, hay que
+decidirla aparte. La auditoria crece entre corridas; como cada consulta filtra
+por `trace_id`, eso no afecta a ninguna medicion.
+
+## 32. El backend entrega lo que midio; el ejecutor arma y valida la traza
+
+> Resuelve DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`.
+
+Contexto: B0 mide tiempos, tokens y llamadas a herramientas en
+`InstrumentadorTrazas`, pero esas mediciones vivian solo en la memoria del
+proceso. Nadie las persistia, asi que el experimento no tenia trazas reales.
+B0 tampoco puede armar la `TrazaEjecucion` completo: no conoce la tarea, la
+repeticion ni la huella del estado inicial, que son del ejecutor.
+
+Decision (consultada con el responsable, RM-17): cada backend expone dos rutas
+para el ejecutor, declaradas en `libs/contratos/src/lib/experimento.contrato.ts`:
+
+- `POST /experimento/restablecer` deja el entorno en la variante de la tarea y
+  devuelve la huella;
+- `GET /experimento/trazas/:traceId` devuelve **solo lo que el backend sabe**:
+  desglose de latencia, consumo de tokens, `tool_calls[]`, el objeto final,
+  como termino cada turno, la auditoria de ese `trace_id` y los tickets creados.
+
+El ejecutor (`experiment/ejecutor/`, Python) junta eso con la identidad de la
+ejecucion, arma la traza, la valida contra `traza.schema.json` y solo entonces
+la persiste. La invalida va a `cuarentena/`.
+
+Por que: tres razones. Primera, el reparto de responsabilidades es el real: cada
+pieza aporta lo que efectivamente sabe y nadie inventa un campo. Segunda, el
+contrato esta en `libs/contratos` y no dentro de B0 para que las cuatro
+arquitecturas respondan exactamente lo mismo; si cada una entregara su traza a
+su manera, el ejecutor tendria cuatro clientes y una diferencia de medicion
+podria venir del ejecutor en vez del protocolo. Tercera, validar antes de
+persistir es el paso 7 de docs/05: elimina el riesgo de resultados incompletos
+en el momento de producirlos y no auditandolos al final (HU-38).
+
+Las rutas viven **fuera del prefijo `/api`**, como `/health` (decision 6):
+`/api` es el contrato del frontend y ningun componente de `apps/web` las llama.
+Sus campos usan los nombres del esquema de traza (`tool_calls`, `input_tokens`)
+y no la convencion en español del repositorio, porque son los nombres del
+registro de metricas y traducirlos dos veces solo agrega una forma de
+equivocarse (RM-08, decision 22).
+
+Consecuencias: el controlador solo se registra con `UNIHELP_PERFIL=experimento`;
+en cualquier otro perfil las rutas devuelven 404, de modo que restablecer una
+instancia con datos no es posible por accidente. B1, B2 y B3 deben implementar
+las mismas dos rutas cuando existan (regla 5 de `AGENTS.md`). `libs/trazas`
+sigue siendo el validador de TypeScript, pero hoy no lo usa nadie en el camino
+de la corrida: quien valida es el ejecutor, con el mismo esquema.
+
+## 33. Los sistemas universitarios se emulan en una app aparte, sin datos propios
+
+Contexto: las 40 tareas de `docs/tasks` declaran en `estado_inicial.servicios` el
+estado de cuatro sistemas universitarios (aula virtual, correo institucional,
+autenticacion y matricula) en una de diez variantes (`estado_inicial.overlay`).
+En el caso de uso real cada uno seria un sistema distinto, operado por su
+dependencia y con su propio endpoint de salud. Aqui no existen, y hasta ahora la
+unica forma de ponerlos en un estado concreto era `pnpm conocimiento:restablecer`
+por linea de comandos o `POST /experimento/restablecer` de B0, que solo existe
+con `UNIHELP_PERFIL=experimento`.
+
+Decision (tomada por el responsable del proyecto): se agrega
+`apps/simulador-servicios`, una app NestJS con tag `arq:compartido` en el puerto
+3020, que emula los cuatro sistemas con un controlador por sistema y publica su
+estado por HTTP bajo `/simulacion/*`. Tres puntos fijan su alcance:
+
+1. **No tiene datos propios.** Su unica fuente es `libs/conocimiento` sobre
+   PostgreSQL, exactamente la misma que leen los agentes. El simulador solo la
+   publica y permite conmutar de estado inicial.
+2. **Vive en su propio profile de Compose (`simulacion`)**, no en `b0`..`b3`: las
+   arquitecturas siguen leyendo el estado de servicios en proceso desde la
+   libreria, no por HTTP.
+3. **Esta pensado tambien para las corridas del experimento**, no solo para
+   demostracion: `POST /simulacion/estado-inicial` devuelve la misma huella que
+   `calcularHuellasEsperadas` (verificado sobre las diez variantes), asi que el
+   ejecutor puede usarlo como punto unico para dejar el entorno como la tarea
+   pide.
+
+Por que asi y no de otra forma:
+
+- **Si el simulador tuviera su propio estado en memoria**, habria dos copias de
+  la semilla. La huella de HU-36 cubre lo que hay en PostgreSQL; lo que el
+  simulador mostrara por su cuenta quedaria fuera de ella, y las dos podrian
+  divergir sin que nadie lo notara.
+- **Si el agente consultara el estado por HTTP al simulador**, aparecerian
+  transporte y latencia de red donde hoy no hay ninguno. Eso cambia `M4` y
+  convierte a B0 en algo que ya no es "el agente llama a las capacidades como
+  funciones locales". Seria otra variable manipulada y exigiria rehacer la
+  comparacion.
+
+Consecuencias:
+
+- `libs/dominio` gana el vocabulario publicado (`ESTADOS_SERVICIO_PUBLICADOS`,
+  `ESTADO_SERVICIO_PUBLICADO`) y recibe `ALCANCES_AFECTACION` y
+  `NIVELES_SERVICIO`, que estaban en `libs/conocimiento` y ahora tambien viajan
+  por red. `libs/conocimiento` los reexporta: nadie tuvo que cambiar sus
+  importaciones. `RolServicio` gana `sistema-emulado` y `ProtocoloIntegracion`,
+  `ninguno`.
+- El adaptador de `consultar_estado_servicio` de B0 usa la tabla compartida en
+  vez de su copia. El comportamiento no cambia: era la misma tabla.
+- `libs/contratos` gana `simulacion.contrato.ts`. El bloque de estado por
+  sistema usa los nombres del YAML (`estado`, `alcance`,
+  `componentes_afectados`, en mayusculas) y no la convencion camelCase del
+  repositorio, por el mismo motivo que `TrazaParcialDto` (decision 22): el punto
+  es comparar la respuesta con la tarea sin traducir nada.
+- `libs/conocimiento` gana `ListarEstadosInicialesUseCase` (lee la semilla, no la
+  base) y `ConsultarEntornoUseCase` (lee la fila `entorno`; usa `leerEstado()`,
+  asi que no debe llamarse dentro del camino que se mide).
+- Conmutar el estado inicial **no** borra el estado en proceso de la
+  arquitectura que este corriendo (conversaciones, instrumentacion, tickets).
+  Eso lo sigue haciendo `POST /experimento/restablecer` en cada backend
+  (decision 32), que es lo que llama el ejecutor hoy
+  (`experiment/ejecutor/cliente.py`). **El ejecutor no se cambio aqui.** El
+  simulador esta listo para servirlo: devuelve exactamente las mismas huellas
+  que el ejecutor valida contra `huellas-variantes.json`, verificado sobre las
+  diez variantes. Apuntarlo alli exige decidir antes el orden de las dos
+  llamadas y, si para entonces el experimento ya esta congelado, entrada en el
+  registro de desviaciones (RM-13, RM-17).
+- El comunicado de un sistema viaja **sin sanear**: aqui es la salida de un
+  sistema externo, no la entrada de un modelo. Sanearlo borraria justamente lo
+  que mide `T-ADV-007`. Quien lo ponga en un prompt es responsable de
+  delimitarlo, como ya hace el adaptador de B0.
+
+## 34. Ante dos politicas que se solapan, el agente elige por las circunstancias
+
+Contexto: causa C7 de
+`apps/b0-directo/docs/HALLAZGOS-CORRIDA-2026-09-22.md`. En T-INF-005 y T-INF-002
+la busqueda devuelve la pareja de distraccion completa (cancelacion ordinaria y
+extemporanea) y el agente cita la que la tarea declara prohibida. Escribir en el
+prompt "no cites POL-MA-001" seria ensenarle a pasar esa prueba concreta, no a
+distinguir, y ademas contaminaria M1.2 en las informativas.
+
+Decision (tomada por el responsable del proyecto, RM-17): el prompt base lleva
+una regla de criterio, no una lista de codigos: cuando dos politicas recuperadas
+regulan el mismo tramite en circunstancias distintas, el agente se queda con la
+que coincide con las circunstancias que la persona describio (la semana del
+semestre, el motivo, el estado del servicio) y, si no alcanzan para decidir, lo
+dice en vez de elegir al azar.
+
+Por que: distinguir dos politicas parecidas es lo que HU-05 y HU-06 piden del
+sistema, y la regla se enuncia sin nombrar ninguna politica ni ninguna tarea, asi
+que vale igual para las parejas de distraccion que el corpus ya tiene y para las
+que se agreguen despues.
+
+Consecuencias: al interpretar M1.2 en las informativas hay que declarar que el
+prompt guia la eleccion entre politicas solapadas; la diferencia entre
+arquitecturas sigue siendo comparable porque el prompt base es el mismo en las
+cuatro (RNF-01). Si el equipo concluye que la regla facilita demasiado la tarea,
+retirarla es cambiar una linea, y entonces esta decision se reemplaza.
+
+## 35. La propuesta de ticket se hace, no se anuncia
+
+Contexto: en la corrida `b0-arreglada-v3` (22 de septiembre de 2026), nueve de
+los trece fallos eran de la familia compuesta y casi todos por el mismo motivo,
+`falta_herramienta_obligatoria:proponer_ticket`. El agente entendia la regla de
+dos fases pero la convertia en tres. Al revisar las trazas aparecieron tres
+conductas distintas, no una:
+
+1. Anunciaba la propuesta en vez de hacerla: "si quieres, te preparo la
+   propuesta para que luego la confirmes".
+2. Redactaba el resumen de su cuenta y preguntaba "¿quieres que lo cree?" sin
+   haber llamado nunca a `proponer_ticket`.
+3. Llamaba a `proponer_ticket` con una prioridad que la tabla no admite, el caso
+   de uso la rechazaba (decision 25) y, en vez de reintentar con el valor que el
+   error le indicaba, aplazaba la correccion al turno siguiente.
+
+Las tres terminan igual: el backend no responde `accion_sugerida:
+proponer-ticket`, el ejecutor no envia el turno de confirmacion
+(`experiment/ejecutor/cliente.py`) y la tarea pierde ademas
+`confirmar_propuesta` y `crear_ticket_simulado`.
+
+Decision: se corrige en el prompt base (1.2.0) y en la descripcion de la
+herramienta, no en el bucle del agente:
+
+- `proponer_ticket` se describe por lo que hace: redacta la propuesta, no crea
+  nada y no necesita permiso, porque es la unica forma de obtener el resumen.
+- El prompt prohibe anunciar la propuesta, prohibe redactar un resumen de ticket
+  a mano y aclara que llamar a la herramienta no termina el turno.
+- Una herramienta que rechaza una llamada se vuelve a llamar corregida en el
+  mismo turno; aplazarlo es un fallo.
+- La tabla de prioridad dice explicitamente que el alcance parcial nunca llega a
+  P2, que era el error concreto que disparaba el rechazo.
+- Se precisa el disparador: ademas de pedir reportar, registrar, dejar
+  constancia o abrir un caso, tambien justifica proponer que la persona pida que
+  le recomienden que hacer ante una falla que el estado del servicio confirma.
+  Preguntar solo que esta pasando, por que le ocurre o si el problema es suyo no
+  lo justifica: eso es lo que separa la familia compuesta de la de diagnostico
+  (HU-13, HU-17).
+
+Por que en el prompt y no en el codigo: la garantia mecanica nunca estuvo en
+riesgo (sin token no hay ticket, decision 25) y meter en el bucle un detector de
+"pidio confirmacion sin propuesta" seria tocar justo la parte que el experimento
+mide, la coordinacion del agente. Si mas adelante se decide poner esa red, hay
+que ponerla igual en las cuatro arquitecturas y registrarlo aparte.
+
+Consecuencias: el disparador "pedir una recomendacion" es una lectura de HU-13
+que conviene confirmar con el equipo, porque mueve la frontera entre las
+categorias compuesta y diagnostico y con ella M1 y M1.3. Las dos tareas de
+control de diagnostico (T-DIA-001 y T-DIA-004, donde proponer esta prohibido)
+siguieron pasando despues del cambio. Si el equipo rechaza esa lectura, se quita
+la frase y esta decision se reemplaza. Cambiar el prompt cambia `prompt_hash` en
+todas las trazas: las corridas anteriores no son comparables con las posteriores
+(RM-13).
+
+## 36. El alcance del prompt nombra los tramites con el vocabulario de la normativa
+
+Contexto: la recuperacion es lexica y determinista (RM-01, HU-08). Al reproducir
+el ranking en `psql` se vio que las consultas que el agente arma con el relato
+de la persona no recuperan la politica correcta («habilitar curso del semestre
+pasado» no alcanza a «Apertura temporal de un curso archivado»; «no puedo
+inscribir asignaturas» no alcanza a «Matricula extemporanea»), mientras que las
+consultas con el vocabulario de los titulos la recuperan de primera. El
+problema no esta en `libs/conocimiento`: esta en que el modelo no conoce el
+vocabulario institucional.
+
+Decision: el prompt base (1.3.0) describe el alcance de cada servicio con la
+lista de tramites que la normativa regula, con el nombre que usa la normativa,
+para los cuatro servicios por igual y sin ningun codigo de politica; y agrega
+la correspondencia general entre una falla y su tramite cercano (no poder
+entrar es desbloqueo o recuperacion de acceso, no poder entregar es prorroga
+por falla tecnica). Ademas, el filtro `servicio` va siempre (la compuerta exige
+que la busqueda obligatoria lo lleve, `experiment/ejecutor/compuerta.py`) y el
+filtro `categoria` no se usa, porque excluye y escondia la politica (C2).
+
+Por que no es ensenarle las respuestas: la lista es el catalogo completo de
+tramites del corpus (39 politicas), no las de las tareas; una persona nueva en
+la mesa de ayuda recibiria el mismo catalogo. Lo que la tarea mide sigue siendo
+si el agente busca, si elige entre politicas parecidas y si cita la correcta.
+
+Consecuencias: el prompt base crece (mas tokens de entrada en las cuatro
+arquitecturas por igual, RNF-01) y `prompt_hash` cambia. Si el corpus agrega
+politicas, esta lista se actualiza en el mismo cambio; si el equipo considera
+que el catalogo facilita demasiado M1.2, se retira y esta decision se reemplaza.

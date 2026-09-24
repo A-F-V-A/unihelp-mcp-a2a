@@ -315,7 +315,8 @@
   <app-settings-panel
     [abierto]="hoja() === 'ajustes'"
     [preferencias]="preferencias()"
-    [configuracionModelo]="configuracionModelo()"
+    [catalogoModelo]="catalogoModelo()"
+    [errorModelo]="errorModelo()"
     [cantidadConversaciones]="conversaciones().length"
     (cambiarTema)="cambiarTema($event)"
     (cambiarTamanoTexto)="cambiarTamanoTexto($event)"

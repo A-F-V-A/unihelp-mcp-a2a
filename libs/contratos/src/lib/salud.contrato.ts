@@ -6,7 +6,7 @@ import type {
 } from '@unihelp/dominio';
 
 /**
- * Contrato del endpoint `GET /api/health`, identico en las siete apps de
+ * Contrato del endpoint `GET /api/health`, identico en las ocho apps de
  * backend. Permite verificar en cualquier momento QUE arquitectura esta
  * corriendo, sin inspeccionar contenedores ni logs.
  */

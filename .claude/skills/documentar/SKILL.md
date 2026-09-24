@@ -160,4 +160,3 @@ Consecuencias: que implica, que queda pendiente, cuando se podria revertir.
 | Puertos, servicios o profiles Docker  | `docs/arquitecturas.md` + `README.md` raiz                                   |
 | Una forma de trabajar o una regla     | `AGENTS.md` (y la skill correspondiente)                                     |
 | Algo que parecia raro y es deliberado | Nueva decision en `docs/decisiones-tecnicas.md`                              |
-| Un escenario simulado nuevo           | Tabla "Frases que activan..." del `README.md` raiz                           |

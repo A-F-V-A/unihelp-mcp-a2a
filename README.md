@@ -10,7 +10,7 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 
 > **Estado actual: B0 funcional, B1-B3 en esqueleto.** B0 ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md))
 > es un agente unico con function calling sobre OpenAI y cinco herramientas en
-> proceso, conectado al frontend: consulta la base de conocimiento
+> proceso, y es el unico backend que responde el contrato que consume el frontend: consulta la base de conocimiento
 > ([`libs/conocimiento`](libs/conocimiento/README.md)), propone y crea tickets solo
 > con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y deja
 > auditoria de solo agregar. B1, B2 y B3 solo responden su endpoint de salud; no
@@ -109,6 +109,7 @@ docker compose -f infra/docker/docker-compose.yml up --build
 | `b2`           | `b2-multiagente-local` + `web`                                                             |
 | `b3`           | `mcp-server` + `b3-a2a-orquestador` + `b3-a2a-conocimiento` + `b3-a2a-diagnostico` + `web` |
 | `conocimiento` | `postgres` (base de conocimiento; aun no participa en `b0`..`b3`)                          |
+| `simulacion`   | `postgres` + `simulador-servicios` (los cuatro sistemas emulados, en :3020)                |
 
 ---
 
@@ -162,6 +163,8 @@ pnpm dev:b1     # mcp-server + b1-mcp-agente       -> :3010, :3001
 pnpm dev:b2     # nx serve b2-multiagente-local    -> :3002
 pnpm dev:b3     # mcp-server + los tres de B3      -> :3010, :3003, :3004, :3005
 pnpm dev:web    # nx serve web                     -> :4200
+
+pnpm dev:simulador  # simulador de los sistemas universitarios -> :3020
 ```
 
 En modo desarrollo cada app usa su propio puerto. Para apuntar el frontend a
@@ -185,54 +188,56 @@ cp apps/b0-directo/.env.example apps/b0-directo/.env   # y completar OPENAI_API_
 pnpm dev:web:b0               # B0 en :3000 + frontend contra el backend real en :4200
 ```
 
-Para reproducir el estado de una tarea (docs/10, seccion 4) antes de probar:
-`UNIHELP_PERFIL=experimento pnpm conocimiento:restablecer ma_fuera_parcial estandar`.
+Desde **Configuración → Modelo de IA** se elige el proveedor y el modelo entre
+los que habilita el servidor (`UNIHELP_MODELOS_PERMITIDOS`). La clave nunca sale
+del servidor, y una corrida del experimento ignora esa eleccion (decision 27).
+
+Para reproducir el estado de una tarea (docs/10, seccion 4) antes de probar hay
+dos caminos: por linea de comandos,
+`UNIHELP_PERFIL=experimento pnpm conocimiento:restablecer ma_fuera_parcial estandar`,
+o por HTTP con el simulador de sistemas (ver mas abajo).
 
 `pnpm b0` (Docker) todavia no sirve para B0: el contenedor no tiene la base
 migrada ni las variables del modelo.
 
-### Frontend sin backend (datos simulados)
+### El frontend siempre habla con un backend real
 
-`pnpm dev:web` arranca la interfaz de chat con **repositorios simulados**: no
-necesita ninguna arquitectura levantada. La simulacion responde con latencia
-real (300-1500 ms) y datos variados para ver todos los estados de la UI.
+`pnpm dev:web` levanta solo la interfaz: necesita una arquitectura respondiendo
+en `backendUrl` (hoy, B0). La capa de datos simulada se retiro cuando B0 empezo
+a responder el contrato completo (decision 28); antes servia para construir el
+frontend sin backend.
 
-| Para                                     | Haz                                                                                 |
-| ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| Usar el backend real en desarrollo       | `nx serve web -c backend-real`                                                      |
-| Pasar a backend real de forma permanente | `USE_MOCK_BACKEND: false` en `apps/web/src/environments/environment.development.ts` |
-| Forzar un error en todas las operaciones | `?simular-error=timeout` (`validacion`, `servicio-no-disponible`, `interno`)        |
-| Forzar un error solo en una operacion    | `?simular-error=interno&simular-error-en=confirmarTicket`                           |
-| Errores aleatorios                       | `?tasa-error=0.3`                                                                   |
-| Ver el aviso de limite de turnos rapido  | `?turnos-maximos=2`                                                                 |
-| Fallar un mensaje concreto               | escribir `#timeout`, `#validacion`, `#no-disponible` o `#interno` en el chat        |
-
-Frases que activan cada tipo de respuesta simulada:
-
-| Escribe algo como                               | Veras                                       |
-| ----------------------------------------------- | ------------------------------------------- |
-| "¿Hasta cuándo puedo cancelar una asignatura?"  | informativa con politicas citadas           |
-| "No puedo entregar la tarea en el aula virtual" | diagnostico, estado con ventana, propuesta  |
-| "Los correos institucionales no salen"          | diagnostico sin ventana estimada, propuesta |
-| "¿Puedo renovar libros de la biblioteca?"       | mantenimiento programado, sin ticket        |
-| "No puedo pagar la matrícula por PSE"           | compuesta: estado + politicas + propuesta   |
-| "¿Dónde parqueo la moto?"                       | fuera de alcance con el canal correcto      |
-| "Sí, crea el ticket"                            | recordatorio: solo el boton crea tickets    |
-
-Los casos viven en `apps/web/src/app/infrastructure/mock/fixtures/`. La
-simulacion **nunca** llega a la imagen Docker: el build de produccion usa
-siempre el backend real (ver `docs/decisiones-tecnicas.md`, decisiones 13 a 15).
+Para apuntar el frontend a otra arquitectura sin reconstruirlo:
+`http://localhost:4200/?backend=http://localhost:3002`.
 
 ### Comandos de calidad
 
 ```bash
-pnpm lint            # ESLint en los 11 proyectos
+pnpm lint            # ESLint en los 12 proyectos
 pnpm test            # pruebas unitarias (Jest)
-pnpm build           # compila los 8 artefactos
+pnpm build           # compila los 9 artefactos
 pnpm verify          # lint + test + build de todo el workspace
 pnpm format          # Prettier sobre los archivos afectados
 pnpm graph           # grafo de dependencias del monorepo
 ```
+
+### Simulador de los sistemas universitarios
+
+Emula el aula virtual, el correo institucional, la autenticacion y la matricula:
+los cuatro sistemas cuyo estado consultan las tareas de `docs/tasks`. No tiene
+datos propios, publica los de `libs/conocimiento` (decision 33).
+
+```bash
+pnpm conocimiento:db && pnpm conocimiento:preparar
+cp apps/simulador-servicios/.env.example apps/simulador-servicios/.env
+pnpm dev:simulador                  # -> :3020   (o `pnpm simulador` en Docker)
+
+curl http://localhost:3020/simulacion/salud              # los cuatro sistemas
+curl -X POST http://localhost:3020/simulacion/estado-inicial   -H 'Content-Type: application/json'   -d '{"estadoInicial":"av_degradado_carga"}'            # conmuta de variante
+```
+
+Rutas, estados iniciales y limites en
+[`apps/simulador-servicios/README.md`](apps/simulador-servicios/README.md).
 
 ### Base de conocimiento
 
@@ -273,6 +278,7 @@ unihelp/
 │   ├── b3-a2a-conocimiento/     NestJS - B3: especialista A2A de conocimiento
 │   ├── b3-a2a-diagnostico/      NestJS - B3: especialista A2A de diagnostico
 │   ├── mcp-server/              NestJS - servidor de herramientas MCP (B1 y B3)
+│   ├── simulador-servicios/     NestJS - emula los cuatro sistemas universitarios
 │   └── web/                     Angular - frontend unico para las cuatro
 ├── libs/
 │   ├── conocimiento/            Base de conocimiento (NestJS + TypeORM + PostgreSQL)
@@ -307,6 +313,10 @@ unihelp/
   compila, se prueba y se despliega sin las otras tres.
 - **`apps/mcp-server`** — servidor de herramientas MCP. Es transversal: lo
   consumen las arquitecturas que hablan MCP, no pertenece a ninguna.
+- **`apps/simulador-servicios`** — emula los sistemas universitarios cuyo estado
+  consulta UniHelp, uno por controlador, y conmuta entre los diez estados
+  iniciales de las tareas. No tiene datos propios: publica los de
+  `libs/conocimiento`, la misma fuente que leen los agentes.
 - **`apps/web`** — **un solo** frontend Angular. Descubre la arquitectura activa
   consultando `/health`; la URL del backend llega por variable de entorno.
 - **`libs/conocimiento`** — politicas versionadas, servicios y componentes como

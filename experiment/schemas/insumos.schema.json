@@ -19,7 +19,12 @@
           "type": "boolean"
         },
         "compuerta_automatica": { "type": "boolean" },
-        "veredicto_juez": { "enum": ["aprobado", "reprobado", null] }
+        "veredicto_juez": { "enum": ["aprobado", "reprobado", null] },
+        "motivos": {
+          "description": "Verificaciones de la compuerta automatica que fallaron (por ejemplo `herramienta_prohibida:crear_ticket_simulado`). Vacio si la compuerta se supero. Sin esto una corrida dice cuantas ejecuciones fallaron, pero no por que.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
       }
     },
     "huellasEsperadas": {

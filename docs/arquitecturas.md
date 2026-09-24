@@ -77,18 +77,39 @@ una sola configuracion.
 | `b3-a2a-conocimiento`  | 3004                 | 3004 (solo inspeccion)        | 3004                 |
 | `b3-a2a-diagnostico`   | 3005                 | 3005 (solo inspeccion)        | 3005                 |
 | `mcp-server`           | 3010                 | 3010                          | 3010                 |
+| `simulador-servicios`  | 3020                 | 3020 (profile `simulacion`)   | 3020                 |
 | `web`                  | 8080                 | 4200                          | 4200                 |
 | `postgres`             | 5432                 | 5432 (profile `conocimiento`) | —                    |
 
 Todos los puertos del host se pueden cambiar desde `infra/docker/.env`.
 
 `postgres` aloja la base de conocimiento de
-[`libs/conocimiento`](../libs/conocimiento/README.md). Por ahora vive en su
-propio profile: ninguna arquitectura la consume todavia (decision 16).
+[`libs/conocimiento`](../libs/conocimiento/README.md). Vive en los profiles
+`conocimiento` y `simulacion`.
+
+## Simulador de los sistemas universitarios
+
+`simulador-servicios` emula los cuatro sistemas cuyo estado consultan las tareas
+(aula virtual, correo institucional, autenticacion y matricula), con un
+controlador por sistema, y permite conmutar entre los diez estados iniciales de
+`docs/10` (decision 33). Detalle en
+[`apps/simulador-servicios/README.md`](../apps/simulador-servicios/README.md).
+
+```text
+ejecutor / curl -> simulador-servicios -> libs/conocimiento -> postgres
+                                               ^
+                        b0-directo ------------+  (en proceso, NO por HTTP)
+```
+
+**No esta en los profiles `b0`..`b3`, sino en el suyo (`simulacion`).** Las
+arquitecturas alcanzan el estado de servicios en proceso desde la libreria; si
+lo consultaran por HTTP al simulador apareceria transporte donde hoy no hay
+ninguno y `M4` mediria otra cosa. El simulador no aporta ningun salto a la
+medicion: por eso su `protocolo` es `ninguno` y su `rol`, `sistema-emulado`.
 
 ## Contrato de salud
 
-Las siete apps de backend implementan el mismo endpoint, definido en
+Las ocho apps de backend implementan el mismo endpoint, definido en
 [`libs/contratos`](../libs/contratos/src/lib/salud.contrato.ts):
 
 ```http

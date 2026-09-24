@@ -4,17 +4,23 @@
   "projectType": "application",
   "sourceRoot": "experiment/analisis",
   "tags": ["tipo:experimento"],
-  "// targets": "Python gestionado con uv (decision 20). Ninguna metrica se calcula fuera de aqui (decision 19).",
+  "// targets": "Python gestionado con uv (decision 20). Ninguna metrica se calcula fuera de aqui (decision 19). Los objetivos `ejecutor-*` corren el conjunto de tareas contra una arquitectura levantada con UNIHELP_PERFIL=experimento (decision 32).",
   "targets": {
     "instalar": {
       "executor": "nx:run-commands",
       "cache": false,
-      "options": { "command": "uv sync", "cwd": "experiment" }
+      "options": {
+        "command": "uv sync",
+        "cwd": "experiment"
+      }
     },
     "fixtures": {
       "executor": "nx:run-commands",
       "cache": false,
-      "options": { "command": "uv run python fixtures/generador.py", "cwd": "experiment" }
+      "options": {
+        "command": "uv run python fixtures/generador.py",
+        "cwd": "experiment"
+      }
     },
     "ejecutar": {
       "executor": "nx:run-commands",
@@ -27,7 +33,43 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": false,
-      "options": { "command": "uv run pytest", "cwd": "experiment" }
+      "options": {
+        "command": "uv run pytest",
+        "cwd": "experiment"
+      }
+    },
+    "ejecutor-validar": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "uv run python -u -m ejecutor validar",
+        "cwd": "experiment"
+      }
+    },
+    "ejecutor-salud": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "uv run python -u -m ejecutor salud",
+        "cwd": "experiment"
+      }
+    },
+    "ejecutor-correr": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "uv run python -u -m ejecutor correr",
+        "cwd": "experiment",
+        "forwardAllArgs": true
+      }
+    },
+    "ejecutor-huellas": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "uv run python -u -m ejecutor huellas",
+        "cwd": "experiment"
+      }
     }
   }
 }

@@ -1,15 +1,21 @@
 import { Inject, Injectable, Module } from '@nestjs/common';
 import type { DynamicModule, OnModuleDestroy, Provider } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
-import { resolverUrlTickets } from './aplicacion/configuracion';
+import { perfilPermiteVaciarTickets, resolverUrlTickets } from './aplicacion/configuracion';
 import type { OpcionesTickets } from './aplicacion/configuracion';
 import { ConfirmarPropuestaUseCase } from './aplicacion/confirmar-propuesta.use-case';
+import { ConsultarAuditoriaUseCase } from './aplicacion/consultar-auditoria.use-case';
 import { ConsultarPropuestasUseCase } from './aplicacion/consultar-propuestas.use-case';
+import { RestablecerTicketsUseCase } from './aplicacion/restablecer-tickets.use-case';
 import { CrearTicketUseCase } from './aplicacion/crear-ticket.use-case';
 import { ProponerTicketUseCase } from './aplicacion/proponer-ticket.use-case';
 import { RegistrarTurnoUseCase } from './aplicacion/registrar-turno.use-case';
 import { RegistroAuditoria } from './aplicacion/registro-auditoria';
-import { RELOJ_TICKETS, TICKETS_REPOSITORY } from './aplicacion/tokens';
+import {
+  RELOJ_TICKETS,
+  RESTABLECIMIENTO_TICKETS_PERMITIDO,
+  TICKETS_REPOSITORY,
+} from './aplicacion/tokens';
 import { abrirDataSourceTickets, DATA_SOURCE_TICKETS } from './infraestructura/data-source';
 import { TypeOrmTicketsRepository } from './infraestructura/typeorm-tickets.repository';
 
@@ -32,6 +38,7 @@ const CASOS_DE_USO = [
   ConfirmarPropuestaUseCase,
   CrearTicketUseCase,
   ConsultarPropuestasUseCase,
+  ConsultarAuditoriaUseCase,
 ];
 
 /**
@@ -46,6 +53,12 @@ export class TicketsModule {
     entorno: Readonly<Record<string, string | undefined>> = process.env,
   ): DynamicModule {
     const url = resolverUrlTickets(opciones, entorno);
+    // Fuera del perfil de experimento el caso de uso ni siquiera se registra:
+    // vaciar tickets no debe existir como capacidad en una app normal (decision 31).
+    const vaciarPermitido = perfilPermiteVaciarTickets(entorno);
+    const casosDeUso = vaciarPermitido
+      ? [...CASOS_DE_USO, RestablecerTicketsUseCase]
+      : CASOS_DE_USO;
     const providers: Provider[] = [
       { provide: DATA_SOURCE_TICKETS, useFactory: () => abrirDataSourceTickets(url) },
       {
@@ -54,9 +67,10 @@ export class TicketsModule {
         inject: [DATA_SOURCE_TICKETS],
       },
       { provide: RELOJ_TICKETS, useValue: { ahora: () => new Date() } },
+      { provide: RESTABLECIMIENTO_TICKETS_PERMITIDO, useValue: vaciarPermitido },
       CierreConexionTickets,
-      ...CASOS_DE_USO,
+      ...casosDeUso,
     ];
-    return { module: TicketsModule, providers, exports: CASOS_DE_USO };
+    return { module: TicketsModule, providers, exports: casosDeUso };
   }
 }

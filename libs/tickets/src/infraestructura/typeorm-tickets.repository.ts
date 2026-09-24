@@ -205,6 +205,58 @@ export class TypeOrmTicketsRepository implements TicketsRepository {
     );
   }
 
+  async listarEventos(traceId: string): Promise<readonly EventoAuditoria[]> {
+    const filas = await this.query(
+      `SELECT trace_id, actor, accion, recurso, resultado, motivo, token_valido, payload_hash
+         FROM auditoria.eventos WHERE trace_id = $1 ORDER BY id ASC`,
+      [traceId],
+    );
+    return filas.map((f) => ({
+      traceId: String(f['trace_id']),
+      actor: String(f['actor']),
+      accion: String(f['accion']),
+      recurso: String(f['recurso']),
+      resultado: f['resultado'] as EventoAuditoria['resultado'],
+      motivo: f['motivo'] === null ? null : String(f['motivo']),
+      tokenValido: f['token_valido'] === null ? null : Boolean(f['token_valido']),
+      payloadHash: String(f['payload_hash']),
+    }));
+  }
+
+  async listarTicketsDeTrace(traceId: string): Promise<readonly Ticket[]> {
+    const filas = await this.query(
+      `SELECT numero, propuesta_id, conversacion_id, trace_id, servicio, categoria, prioridad,
+              estado, creado_en
+         FROM tickets.tickets WHERE trace_id = $1 ORDER BY numero COLLATE "C" ASC`,
+      [traceId],
+    );
+    return filas.map((f) => ({
+      numero: String(f['numero']),
+      propuestaId: String(f['propuesta_id']),
+      conversacionId: String(f['conversacion_id']),
+      traceId: String(f['trace_id']),
+      servicio: String(f['servicio']),
+      categoria: f['categoria'] as CategoriaTicket,
+      prioridad: f['prioridad'] as CodigoPrioridad,
+      estado: f['estado'] as Ticket['estado'],
+      creadoEn: fecha(f['creado_en']),
+    }));
+  }
+
+  /**
+   * Un solo TRUNCATE de las cuatro tablas de `tickets`, sin nombrar
+   * `auditoria.eventos`: su disparador aborta cualquier TRUNCATE y con el se
+   * perderia la fuente independiente de M5.1 (HU-35, decision 31).
+   */
+  async vaciarRegistro(): Promise<void> {
+    await this.query(
+      `TRUNCATE tickets.tickets, tickets.confirmaciones, tickets.propuestas,
+                tickets.turnos_usuario RESTART IDENTITY`,
+      [],
+    );
+    await this.query(`ALTER SEQUENCE tickets.secuencia_ticket RESTART WITH 1`, []);
+  }
+
   private async unaPropuesta(sql: string, parametros: unknown[]): Promise<Propuesta | null> {
     const [f] = await this.query(sql, parametros);
     return f === undefined ? null : aPropuesta(f);

@@ -1,14 +1,10 @@
-import type { ConfiguracionSimulacion } from '../app/infrastructure/mock/configuracion-simulacion';
-
 /**
  * Entorno de PRODUCCION (imagen Docker que se evalua en el experimento).
  *
- * Usa siempre el backend real: una imagen que respondiera con datos simulados
- * contaminaria las mediciones sin que nadie lo notara. Para desarrollo local
- * se reemplaza por `environment.development.ts` (ver `project.json`).
+ * La URL del backend NO vive aqui: se resuelve en ejecucion desde `config.json`
+ * (decision 5). Desde que se retiro la capa de datos simulada, el frontend
+ * siempre habla con un backend real (decision 29).
  */
 export const environment = {
   production: true,
-  USE_MOCK_BACKEND: false,
-  simulacion: {} as Partial<ConfiguracionSimulacion>,
 };

@@ -45,14 +45,16 @@ export class ClienteModelo {
         : new OpenAI({ apiKey: configuracion.claveApi, maxRetries: 0 });
   }
 
+  /** `modeloId` lo decide `ConfiguracionModeloRuntime`: la interfaz en desarrollo, la configuracion en una corrida. */
   async completar(
     mensajes: readonly ChatCompletionMessageParam[],
     herramientas: readonly ChatCompletionFunctionTool[],
     tiempoRestanteMs: number,
+    modeloId: string,
   ): Promise<RespuestaModelo> {
     const { modelo } = this.configuracion;
     const clave = claveCasete({
-      model: modelo.id,
+      model: modeloId,
       messages: mensajes,
       tools: herramientas.map((h) => h.function.name),
       temperature: modelo.temperatura,
@@ -62,7 +64,7 @@ export class ClienteModelo {
     const respuesta =
       this.casete.modo === 'replay'
         ? this.casete.leer(clave)
-        : await this.pedir(mensajes, herramientas, tiempoRestanteMs);
+        : await this.pedir(mensajes, herramientas, tiempoRestanteMs, modeloId);
     const rttMs = ahoraMonotonoMs() - inicio;
 
     if (this.casete.modo === 'record') {
@@ -87,6 +89,7 @@ export class ClienteModelo {
     mensajes: readonly ChatCompletionMessageParam[],
     herramientas: readonly ChatCompletionFunctionTool[],
     tiempoRestanteMs: number,
+    modeloId: string,
   ): Promise<ChatCompletion> {
     if (this.cliente === null) {
       throw new ErrorInfraestructuraModelo('No hay clave del proveedor configurada.');
@@ -96,7 +99,7 @@ export class ClienteModelo {
     try {
       return await this.cliente.chat.completions.create(
         {
-          model: modelo.id,
+          model: modeloId,
           messages: [...mensajes],
           tools: [...herramientas],
           tool_choice: 'auto',

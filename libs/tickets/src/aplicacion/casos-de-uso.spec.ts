@@ -74,6 +74,21 @@ class RepositorioMemoria implements TicketsRepository {
   async registrarEvento(e: EventoAuditoria): Promise<void> {
     this.eventos.push(e);
   }
+  async listarEventos(traceId: string): Promise<readonly EventoAuditoria[]> {
+    return this.eventos.filter((e) => e.traceId === traceId);
+  }
+  async listarTicketsDeTrace(traceId: string): Promise<readonly Ticket[]> {
+    return this.tickets
+      .filter((t) => t.traceId === traceId)
+      .sort((a, b) => (a.numero < b.numero ? -1 : 1));
+  }
+  async vaciarRegistro(): Promise<void> {
+    this.turnos = [];
+    this.propuestas.clear();
+    this.confirmaciones.clear();
+    this.tickets = [];
+    this.secuencia = 0;
+  }
 }
 
 class RelojFalso {

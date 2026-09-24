@@ -1,12 +1,8 @@
-import type { AreaServicio } from '@unihelp/dominio';
+import type { AreaServicio, NivelServicio } from '@unihelp/dominio';
 
-/**
- * Nivel de servicio comprometido. Lo usa la tabla institucional de prioridad
- * (docs/10, seccion 5): la misma afectacion pesa distinto en un servicio critico.
- */
-export const NIVELES_SERVICIO = ['critico', 'alto', 'medio'] as const;
-
-export type NivelServicio = (typeof NIVELES_SERVICIO)[number];
+/** Ver nota de `estado-servicio.ts`: el vocabulario vive en `@unihelp/dominio` (decision 33). */
+export { NIVELES_SERVICIO } from '@unihelp/dominio';
+export type { NivelServicio } from '@unihelp/dominio';
 
 /**
  * Servicio digital concreto: nodo raiz del grafo de conocimiento (HU-09, HU-10).

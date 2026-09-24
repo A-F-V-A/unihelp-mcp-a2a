@@ -8,14 +8,17 @@ experimento vienen de la arquitectura y no de haber reimplementado el problema.
 
 Contiene:
 
-| Archivo                                                        | Contrato                                              |
-| -------------------------------------------------------------- | ----------------------------------------------------- |
-| [`salud.contrato.ts`](src/lib/salud.contrato.ts)               | `GET /health`                                         |
-| [`api.contrato.ts`](src/lib/api.contrato.ts)                   | `RUTAS_API` y el cuerpo de error `ErrorApiDto`        |
-| [`conversacion.contrato.ts`](src/lib/conversacion.contrato.ts) | envio de mensajes, historial, clasificacion y bloques |
-| [`ticket.contrato.ts`](src/lib/ticket.contrato.ts)             | propuesta, confirmacion explicita, rechazo y ticket   |
-| [`politica.contrato.ts`](src/lib/politica.contrato.ts)         | citas y politica completa                             |
-| [`servicio.contrato.ts`](src/lib/servicio.contrato.ts)         | estado de servicio y ventana estimada                 |
+| Archivo                                                        | Contrato                                                                                                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`salud.contrato.ts`](src/lib/salud.contrato.ts)               | `GET /health`                                                                                                                                                       |
+| [`api.contrato.ts`](src/lib/api.contrato.ts)                   | `RUTAS_API` y el cuerpo de error `ErrorApiDto`                                                                                                                      |
+| [`conversacion.contrato.ts`](src/lib/conversacion.contrato.ts) | envio de mensajes, historial, clasificacion y bloques                                                                                                               |
+| [`ticket.contrato.ts`](src/lib/ticket.contrato.ts)             | propuesta, confirmacion explicita, rechazo y ticket                                                                                                                 |
+| [`modelo-ia.contrato.ts`](src/lib/modelo-ia.contrato.ts)       | catalogo de proveedores y modelo elegido (decision 27)                                                                                                              |
+| [`politica.contrato.ts`](src/lib/politica.contrato.ts)         | citas y politica completa                                                                                                                                           |
+| [`servicio.contrato.ts`](src/lib/servicio.contrato.ts)         | estado de servicio y ventana estimada                                                                                                                               |
+| [`simulacion.contrato.ts`](src/lib/simulacion.contrato.ts)     | `RUTAS_SIMULACION`: los sistemas universitarios emulados y su estado, con el vocabulario de `estado_inicial.servicios` de las tareas. Fuera de `/api` (decision 33) |
+| [`experimento.contrato.ts`](src/lib/experimento.contrato.ts)   | `RUTAS_EXPERIMENTO`: restablecer el entorno y entregar la traza de una ejecucion. Las consume el ejecutor, NO el frontend, y viven fuera de `/api` (decision 32)    |
 
 Los contratos de triaje se fijaron **antes** de existir el backend: el frontend
 ya funciona contra ellos con datos simulados, y cada arquitectura debe

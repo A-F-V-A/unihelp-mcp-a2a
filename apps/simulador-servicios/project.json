@@ -1,0 +1,27 @@
+{
+  "name": "simulador-servicios",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/simulador-servicios/src",
+  "projectType": "application",
+  "tags": ["tipo:app", "arq:compartido"],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "simulador-servicios:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "simulador-servicios:build:development"
+        },
+        "production": {
+          "buildTarget": "simulador-servicios:build:production"
+        }
+      }
+    }
+  }
+}

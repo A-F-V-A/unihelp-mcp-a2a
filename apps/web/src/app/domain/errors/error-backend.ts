@@ -14,9 +14,9 @@ const REINTENTABLES: ReadonlySet<CodigoErrorBackend> = new Set<CodigoErrorBacken
 ]);
 
 /**
- * Unico tipo de error que cruza la frontera de los repositorios. Tanto la
- * implementacion HTTP como la simulada traducen sus fallos a este tipo, de modo
- * que casos de uso, store y componentes no distinguen de donde vino.
+ * Unico tipo de error que cruza la frontera de los repositorios: cada
+ * implementacion traduce sus fallos a este tipo, de modo que casos de uso,
+ * store y componentes no distinguen de donde vino.
  */
 export class ErrorBackend extends Error {
   override readonly name = 'ErrorBackend';

@@ -167,6 +167,40 @@ services:
       - '${PUERTO_MCP:-3010}:3010'
 
   # =========================================================================
+  # Simulador de los sistemas universitarios (apps/simulador-servicios)
+  # =========================================================================
+  # Emula el aula virtual, el correo institucional, la autenticacion y la
+  # matricula: los cuatro sistemas cuyo estado consultan las tareas de
+  # `docs/tasks` (decision 33). No tiene datos propios; publica los de
+  # `libs/conocimiento`, por eso depende de `postgres`.
+  #
+  # Vive en su propio profile y NO en b0..b3: hoy las arquitecturas leen el
+  # estado de servicios en proceso desde la libreria, no por HTTP, y meterlo en
+  # sus profiles daria a entender que forma parte de la topologia que se mide.
+  # Se levanta junto con `conocimiento`:
+  #
+  #   docker compose --profile conocimiento --profile simulacion up --build
+  simulador-servicios:
+    <<: *backend-comun
+    profiles: ['simulacion']
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.simulador-servicios
+    image: unihelp/simulador-servicios:${UNIHELP_VERSION:-0.1.0}
+    container_name: unihelp-simulador-servicios
+    environment:
+      <<: *entorno-comun
+      CONOCIMIENTO_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+      # Sin este perfil el simulador queda de solo lectura y no puede conmutar
+      # el estado inicial (HU-36).
+      UNIHELP_PERFIL: ${UNIHELP_PERFIL:-experimento}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '${PUERTO_SIMULADOR:-3020}:3020'
+
+  # =========================================================================
   # PostgreSQL de la base de conocimiento (libs/conocimiento)
   # =========================================================================
   # Por ahora vive en su propio profile: ninguna arquitectura lo consume aun.
@@ -175,7 +209,7 @@ services:
   # cambiar de version podria cambiar el ranking. Los datos viven en tmpfs, asi
   # que cada `up` parte de una base vacia.
   postgres:
-    profiles: ['conocimiento']
+    profiles: ['conocimiento', 'simulacion']
     image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
     container_name: unihelp-postgres
     restart: unless-stopped

@@ -1,3 +1,4 @@
+import './entorno';
 import { Logger, RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
@@ -6,10 +7,15 @@ import { IDENTIDAD, PUERTO_POR_DEFECTO } from './app/salud/identidad';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  // `/health` queda fuera del prefijo para cumplir el contrato de verificacion;
-  // el resto de la API vivira bajo `/api`.
+  // `/health` queda fuera del prefijo para cumplir el contrato de verificacion
+  // (decision 6) y `/experimento/*` tambien, porque `/api` es exactamente lo que
+  // declara `libs/contratos` para el frontend y el ejecutor no es el frontend
+  // (decision 32). El resto de la API vive bajo `/api`.
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'health', method: RequestMethod.GET }],
+    exclude: [
+      { path: 'health', method: RequestMethod.GET },
+      { path: 'experimento/*ruta', method: RequestMethod.ALL },
+    ],
   });
 
   // El frontend Angular corre en otro origen (4200 en dev, 8080 en Docker).

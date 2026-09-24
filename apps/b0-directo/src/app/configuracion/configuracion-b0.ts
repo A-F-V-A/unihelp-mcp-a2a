@@ -20,6 +20,12 @@ export interface ConfiguracionModelo {
 
 export interface ConfiguracionB0 {
   readonly modelo: ConfiguracionModelo;
+  /**
+   * Modelos entre los que la pantalla de configuracion puede elegir, todos con
+   * su fecha de snapshot (RNF-08). Siempre incluye el de `UNIHELP_MODELO_ID`,
+   * que es el unico que usan las corridas del experimento (decision 27).
+   */
+  readonly modelosPermitidos: readonly string[];
   /** `null` en `replay`: la reproduccion no requiere credenciales (HU-44). */
   readonly claveApi: string | null;
   readonly modoLlm: ModoLlm;
@@ -81,10 +87,17 @@ export function leerConfiguracionB0(entorno: Entorno = process.env): Configuraci
   const claveApi = modo === 'replay' ? null : obligatoria(entorno, 'OPENAI_API_KEY');
   const positivo = (n: number) => n > 0;
 
+  const modeloId = obligatoria(entorno, 'UNIHELP_MODELO_ID');
+  const permitidos = (entorno['UNIHELP_MODELOS_PERMITIDOS'] ?? '')
+    .split(',')
+    .map((m) => m.trim())
+    .filter((m) => m !== '');
+
   return {
+    modelosPermitidos: [...new Set([modeloId, ...permitidos])],
     modelo: {
       proveedor,
-      id: obligatoria(entorno, 'UNIHELP_MODELO_ID'),
+      id: modeloId,
       // Valores por defecto de docs/07, seccion 2.
       temperatura: numero(entorno, 'UNIHELP_MODELO_TEMPERATURA', 0.2, (n) => n >= 0 && n <= 2),
       topP: numero(entorno, 'UNIHELP_MODELO_TOP_P', 1, (n) => n > 0 && n <= 1),

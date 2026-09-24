@@ -27,6 +27,18 @@ export interface MedicionesEjecucion {
   cachedInputTokens: number;
   llmCalls: number;
   toolCalls: LlamadaInstrumentada[];
+  /**
+   * Como termino cada turno, en orden. El ejecutor lo traduce a `outcome.status`:
+   * sin esto tendria que adivinarlo del texto del aviso de corte, que es
+   * lenguaje natural y puede cambiar (HU-04).
+   */
+  motivos: string[];
+  /**
+   * Objeto final del ultimo turno que lo emitio (HU-30). Es el artefacto contra
+   * el que la compuerta automatica verifica politicas citadas y clasificacion
+   * (docs/04, seccion 4); `null` si el modelo nunca lo emitio o no valido.
+   */
+  objetoFinal: Record<string, unknown> | null;
 }
 
 /**
@@ -35,8 +47,10 @@ export interface MedicionesEjecucion {
  * corregir: un residuo negativo es un defecto de instrumentacion que debe verse
  * (M4.2, HU-MET-07). No calcula metricas (RM-02).
  *
- * Pendiente DP-09: armar y persistir la `TrazaEjecucion` con `PersistidorTrazas`
- * requiere la identidad de la tarea y la huella del estado, que da el ejecutor.
+ * DP-09 se resolvio asi: B0 NO arma ni persiste la `TrazaEjecucion`, porque la
+ * identidad de la tarea, la repeticion y la huella del estado son del ejecutor.
+ * B0 expone lo acumulado en `GET /experimento/trazas/:traceId` y el ejecutor
+ * arma la traza completa y la valida antes de persistirla (decision 32).
  */
 @Injectable()
 export class InstrumentadorTrazas {
@@ -56,6 +70,8 @@ export class InstrumentadorTrazas {
         cachedInputTokens: 0,
         llmCalls: 0,
         toolCalls: [],
+        motivos: [],
+        objetoFinal: null,
       };
       this.mediciones.set(traceId, medicion);
     }
@@ -75,6 +91,17 @@ export class InstrumentadorTrazas {
     m.llmCalls += 1;
   }
 
+  /** Lo acumulado de una ejecucion, o `undefined` si B0 nunca la vio (HU-34, DP-09). */
+  consultar(traceId: string): MedicionesEjecucion | undefined {
+    return this.mediciones.get(traceId);
+  }
+
+  registrarObjetoFinal(traceId: string, objeto: Record<string, unknown> | null): void {
+    if (objeto !== null) {
+      this.de(traceId).objetoFinal = objeto;
+    }
+  }
+
   siguienteSeq(traceId: string): number {
     return this.de(traceId).toolCalls.length + 1;
   }
@@ -90,12 +117,13 @@ export class InstrumentadorTrazas {
     m.toolCalls.push({ ...llamada, agente: 'b0-directo', transporte: 'directo' });
   }
 
-  cerrarTurno(traceId: string, duracionMs: number): void {
+  cerrarTurno(traceId: string, duracionMs: number, motivo: string): void {
     const m = this.de(traceId);
     m.totalMs += duracionMs;
+    m.motivos.push(motivo);
     const residuo = m.totalMs - m.llmMs - m.toolExecMs - m.transportMs;
     this.logger.log(
-      `[${traceId}] total=${m.totalMs.toFixed(1)}ms llm=${m.llmMs.toFixed(1)} tool=${m.toolExecMs.toFixed(1)} ` +
+      `[${traceId}] fin=${motivo} total=${m.totalMs.toFixed(1)}ms llm=${m.llmMs.toFixed(1)} tool=${m.toolExecMs.toFixed(1)} ` +
         `transporte=${m.transportMs.toFixed(2)} orquestacion=${residuo.toFixed(1)} ` +
         `tokens=${m.inputTokens}/${m.outputTokens} (cacheados ${m.cachedInputTokens}) ` +
         `llamadasModelo=${m.llmCalls} herramientas=${m.toolCalls.length}`,
@@ -109,5 +137,10 @@ export class InstrumentadorTrazas {
 
   olvidar(traceId: string): void {
     this.mediciones.delete(traceId);
+  }
+
+  /** Olvida todas las ejecuciones. Solo lo usa el restablecimiento del experimento. */
+  olvidarTodo(): void {
+    this.mediciones.clear();
   }
 }

@@ -36,6 +36,11 @@ export class RepositorioConversaciones {
     return this.conversaciones.delete(id);
   }
 
+  /** Borra TODAS las conversaciones. Solo lo usa el restablecimiento del experimento (RNF-03). */
+  vaciar(): void {
+    this.conversaciones.clear();
+  }
+
   /** De la mas reciente a la mas antigua; desempate por id en orden binario (RM-10). */
   listar(): readonly Conversacion[] {
     return [...this.conversaciones.values()].sort(
