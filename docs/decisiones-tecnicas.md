@@ -960,3 +960,42 @@ si no responde, el panel muestra el comando para la terminal y, en desarrollo,
 no puede leer los archivos del experimento hasta que se levante. Correr desde el panel no exime de congelar la
 configuracion antes de la corrida oficial (RM-13). La redaccion original de
 HU-MET-14 queda anotada en la propia historia.
+
+## 40. B0 pasa a gpt-5.5-2026-04-23 con esfuerzo de razonamiento `none`
+
+> Reemplaza la eleccion de modelo de la decision 23 (los demas parametros de
+> esa decision siguen vigentes). Tomada por el responsable del proyecto el 23 de
+> septiembre de 2026 (RM-17): "modifica el modelo por uno mucho mas superior".
+
+Contexto: con `gpt-5.4-mini-2026-03-17` y el prompt base 1.3.0, B0 se estanco en
+33 de 40 tareas en cinco corridas (±3 de ruido), con cuatro fallos estables que
+no se resolvian con mas texto en el prompt
+(`apps/b0-directo/docs/LINEA-BASE-B0-2026-09-23-gpt-5.4-mini.md`). El modelo es una
+variable controlada del experimento (RNF-01, RNF-08): cambiarlo es una decision
+registrada, no un ajuste.
+
+Decision: `UNIHELP_MODELO_ID=gpt-5.5-2026-04-23`, el modelo general mas capaz con
+fecha de snapshot disponible en la cuenta del proyecto (los `gpt-5.6-*` no tienen
+snapshot y `gpt-5.5-pro` no es comparable en costo ni latencia). Se conserva
+`temperature 0.2`, `top_p 1`, `max_completion_tokens 2048` y
+`parallel_tool_calls: false` (decision 23, docs/07). Para que el proveedor acepte
+esa temperatura y las herramientas en Chat Completions, B0 envia ahora
+`reasoning_effort` de forma explicita, configurable con
+`UNIHELP_MODELO_ESFUERZO` (por defecto `none`); con `none` el modelo no gasta
+tokens de razonamiento y la peticion es la misma que recibia el modelo anterior.
+Un valor distinto de `none` entra en la clave del casete, asi que las grabaciones
+existentes siguen valiendo. La linea base con el modelo anterior queda congelada
+en el documento citado y en `experiment/resultados/2026-09-23-b0-gpt-5.4-mini/`.
+
+Por que: la unica variable que cambia entre la linea base y las corridas nuevas
+es el modelo. Mantener temperatura, herramientas y prompt permite atribuir la
+diferencia al modelo y no a la configuracion. `reasoning_effort: none` es ademas
+la unica combinacion que el proveedor admite con funciones en esta API; usar
+razonamiento exigiria migrar a la API de respuestas y rompe la comparacion.
+
+Consecuencias: el prompt base sigue en 1.3.0 hasta que una corrida con el modelo
+nuevo justifique tocarlo; cualquier cambio posterior sube su version. El costo
+por ejecucion sube (tarifa aun sin fijar, M4.7). La cache automatica del
+proveedor sigue activa (D2 pendiente, decision 23). El manifiesto y cada traza
+registran el modelo exacto, asi que las corridas de ambos modelos no se
+confunden; el cuaderno se corre por separado sobre cada una.

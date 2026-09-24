@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ahoraMonotonoMs } from '@unihelp/herramientas';
 import OpenAI from 'openai';
 import type {
+  ChatCompletionCreateParams,
   ChatCompletion,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
@@ -58,6 +59,7 @@ export class ClienteModelo {
       messages: mensajes,
       tools: herramientas.map((h) => h.function.name),
       temperature: modelo.temperatura,
+      reasoning_effort: modelo.esfuerzoRazonamiento,
     });
 
     const inicio = ahoraMonotonoMs();
@@ -104,6 +106,11 @@ export class ClienteModelo {
           tools: [...herramientas],
           tool_choice: 'auto',
           parallel_tool_calls: false,
+          // Explicito: en GPT-5.x el valor por defecto no es `none` y con otro
+          // valor el proveedor rechaza `temperature` y las herramientas (decision 40).
+          // El tipo del SDK 5.23 aun no lista `none`, que la API si acepta.
+          reasoning_effort:
+            modelo.esfuerzoRazonamiento as ChatCompletionCreateParams['reasoning_effort'],
           temperature: modelo.temperatura,
           top_p: modelo.topP,
           max_completion_tokens: modelo.maxTokens,

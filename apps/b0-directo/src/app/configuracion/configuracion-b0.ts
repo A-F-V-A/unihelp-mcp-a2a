@@ -9,6 +9,16 @@ export const MODOS_LLM = ['live', 'record', 'replay'] as const;
 
 export type ModoLlm = (typeof MODOS_LLM)[number];
 
+/**
+ * Esfuerzo de razonamiento que se pide al proveedor. `none` es el unico con el
+ * que los modelos GPT-5.x aceptan `temperature` y herramientas en Chat
+ * Completions (decisiones 23 y 40); con otro valor la temperatura de docs/07
+ * deja de aplicar y el proveedor exige la API de respuestas.
+ */
+export const ESFUERZOS_RAZONAMIENTO = ['none', 'low', 'medium', 'high'] as const;
+
+export type EsfuerzoRazonamiento = (typeof ESFUERZOS_RAZONAMIENTO)[number];
+
 export interface ConfiguracionModelo {
   readonly proveedor: 'openai';
   /** Identificador exacto con fecha de snapshot. Va a cada traza (RNF-08). */
@@ -16,6 +26,7 @@ export interface ConfiguracionModelo {
   readonly temperatura: number;
   readonly topP: number;
   readonly maxTokens: number;
+  readonly esfuerzoRazonamiento: EsfuerzoRazonamiento;
 }
 
 export interface ConfiguracionB0 {
@@ -45,6 +56,16 @@ export const CONFIGURACION_B0 = Symbol('CONFIGURACION_B0');
 type Entorno = Readonly<Record<string, string | undefined>>;
 
 export class ConfiguracionB0InvalidaError extends Error {}
+
+function esfuerzo(entorno: Entorno): EsfuerzoRazonamiento {
+  const valor = entorno['UNIHELP_MODELO_ESFUERZO']?.trim() || 'none';
+  if (!(ESFUERZOS_RAZONAMIENTO as readonly string[]).includes(valor)) {
+    throw new ConfiguracionB0InvalidaError(
+      `UNIHELP_MODELO_ESFUERZO=«${valor}» no es válido; use none, low, medium o high.`,
+    );
+  }
+  return valor as EsfuerzoRazonamiento;
+}
 
 function obligatoria(entorno: Entorno, nombre: string): string {
   const valor = entorno[nombre]?.trim();
@@ -102,6 +123,7 @@ export function leerConfiguracionB0(entorno: Entorno = process.env): Configuraci
       temperatura: numero(entorno, 'UNIHELP_MODELO_TEMPERATURA', 0.2, (n) => n >= 0 && n <= 2),
       topP: numero(entorno, 'UNIHELP_MODELO_TOP_P', 1, (n) => n > 0 && n <= 1),
       maxTokens: numero(entorno, 'UNIHELP_MODELO_MAX_TOKENS', 2048, positivo),
+      esfuerzoRazonamiento: esfuerzo(entorno),
     },
     claveApi,
     modoLlm: modo,

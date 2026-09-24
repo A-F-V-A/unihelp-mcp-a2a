@@ -10,7 +10,12 @@ const base = {
 describe('leerConfiguracionB0', () => {
   it('aplica los valores por defecto de docs/07 y RNF-04', () => {
     const c = leerConfiguracionB0(base);
-    expect(c.modelo).toMatchObject({ temperatura: 0.2, topP: 1, maxTokens: 2048 });
+    expect(c.modelo).toMatchObject({
+      temperatura: 0.2,
+      topP: 1,
+      maxTokens: 2048,
+      esfuerzoRazonamiento: 'none',
+    });
     expect(c.limites).toEqual({ tiempoMs: 120_000, turnos: 8, llamadasHerramienta: 20 });
   });
 

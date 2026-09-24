@@ -10,6 +10,7 @@ function configuracion(parcial: Partial<ConfiguracionB0> = {}): ConfiguracionB0 
       temperatura: 0.2,
       topP: 1,
       maxTokens: 2048,
+      esfuerzoRazonamiento: 'none',
     },
     modelosPermitidos: ['modelo-oficial', 'modelo-alterno'],
     claveApi: 'clave',

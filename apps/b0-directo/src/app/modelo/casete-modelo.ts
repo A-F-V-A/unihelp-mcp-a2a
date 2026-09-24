@@ -12,6 +12,8 @@ export interface PeticionCanonica {
   readonly messages: unknown;
   readonly tools: readonly string[];
   readonly temperature: number;
+  /** Solo entra en la clave si no es `none`, para que los casetes ya grabados sigan valiendo. */
+  readonly reasoning_effort?: string;
 }
 
 /** Clave de docs/05, seccion 4: modelo, mensajes, nombres de herramientas ordenados y temperatura. */
@@ -21,6 +23,9 @@ export function claveCasete(peticion: PeticionCanonica): string {
     messages: peticion.messages,
     tools: [...peticion.tools].sort(),
     temperature: peticion.temperature,
+    ...(peticion.reasoning_effort && peticion.reasoning_effort !== 'none'
+      ? { reasoning_effort: peticion.reasoning_effort }
+      : {}),
   });
   return createHash('sha256').update(canon, 'utf8').digest('hex');
 }
