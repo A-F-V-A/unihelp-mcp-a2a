@@ -49,3 +49,26 @@ export interface PuertoCapacidades {
 
 /** Token de inyeccion del puerto. Cada arquitectura enlaza su implementacion. */
 export const PUERTO_CAPACIDADES = Symbol('PUERTO_CAPACIDADES');
+
+/** Lo minimo de una herramienta publicada por `tools/list` de MCP que el puerto necesita. */
+export interface HerramientaPublicada {
+  readonly name: string;
+  readonly description?: string;
+  readonly inputSchema: object;
+}
+
+/**
+ * Traduce una herramienta descubierta por MCP a la descripcion neutral del
+ * puerto. La usa el cliente MCP de B1 y la prueba de equivalencia de contrato
+ * de `mcp-server`: si B0 (desde las definiciones) y B1 (desde `tools/list`)
+ * entregan al modelo algo distinto, la comparacion B0-B1 queda invalida.
+ */
+export function descripcionDesdeHerramientaPublicada(
+  herramienta: HerramientaPublicada,
+): DescripcionCapacidad {
+  return {
+    nombre: herramienta.name,
+    descripcion: herramienta.description ?? '',
+    esquemaEntrada: herramienta.inputSchema as EsquemaJson,
+  };
+}
