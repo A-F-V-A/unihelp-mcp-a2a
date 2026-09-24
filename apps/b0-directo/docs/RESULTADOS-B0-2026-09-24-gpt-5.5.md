@@ -77,41 +77,6 @@ primera vez) y las cuatro en riesgo (T-COM-001, T-COM-003, T-COM-004, T-COM-005)
 Fallan T-COM-009 y T-INF-010. Una repetición: confirma que las reglas actúan, no
 cuánto mejora la tasa.
 
-### Corrida completa con el prompt 1.4.0: `b0-gpt55-p140-r1`
-
-**36 de 40** (40 trazas válidas, 0 en cuarentena). Es la primera vez que B0 sale del
-techo de 33, pero la diferencia (+3) está justo en el borde del ruido entre corridas
-idénticas: hacen falta repeticiones para afirmar cuánto mejora. Cifras del cuaderno
-(`experiment/resultados/2026-09-24-b0-gpt-5.5-prompt-1.4.0/`):
-
-| Métrica                         | 1.3.0 (r1)          | 1.4.0 (p140-r1)     |
-| ------------------------------- | ------------------- | ------------------- |
-| M1.1 Tasa de éxito              | 0,825 [0,70; 0,925] | 0,90 [0,80; 0,975]  |
-| M1.2 · informativa              | 0,80                | 0,70                |
-| M1.2 · diagnóstico              | 0,80                | 1,00                |
-| M1.2 · compuesta                | 0,70                | 0,90                |
-| M1.2 · adversarial              | 1,00                | 1,00                |
-| M4.1 Latencia mediana           | 6 648 ms            | 5 746 ms            |
-| M4.6 Tokens por tarea (mediana) | 15 457              | 16 345              |
-
-Las cinco tareas atacadas pasaron (T-COM-002, T-DIA-002, T-DIA-009, T-INF-002,
-T-COM-010). Siguen fallando T-COM-009 y T-INF-010 (decisiones P1 y P2) y aparecen
-dos fallos nuevos, ambos con la misma forma:
-
-| Tarea     | Motivo                                              | Qué pasó                                                                                                                                                                   |
-| --------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| T-INF-007 | `politica_prohibida:POL-AU-003`                     | Eligió bien POL-AU-002 y, al buscar si el desbloqueo es presencial, encontró POL-AU-003; en la respuesta dijo que «no es lo que describes» pero la listó en `politicas_citadas` |
-| T-INF-005 | `politica_prohibida:POL-MA-001; cifra_no_recuperada:11` | Eligió bien POL-MA-002 (semana 11 es extemporánea) pero listó también la ordinaria «para contrastar». La cifra 11 la dijo la persona («vamos en la semana 11»): la compuerta solo admite cifras que vengan de una herramienta, no del mensaje del usuario |
-
-Causa común: el prompt define `politicas_citadas` como «las políticas en las que te
-apoyes», y el modelo incluye también la que menciona para descartarla. Una regla de
-una línea («una política que nombras solo para explicar que no aplica no va en
-`politicas_citadas`») lo cubriría; queda propuesta para una versión 1.4.1, no
-aplicada, para no encadenar otra iteración sin repeticiones. El motivo
-`cifra_no_recuperada:11` es un falso positivo de la compuerta (las cifras del propio
-mensaje de la persona no cuentan como recuperadas) y entra en la lista de decisiones
-como P4.
-
 ## 4. Decisiones pendientes (RM-17)
 
 No se toman aquí. Cada una cambia lo que mide M1 en las cuatro arquitecturas y debe
@@ -122,7 +87,6 @@ quedar registrada en `docs/decisiones-tecnicas.md` con razón y consecuencia.
 | P1  | ¿La compuerta acumula `politicas_citadas` de todos los turnos del agente, o el objeto del último turno debe resumir la conversación (convención que 1.4.0 ya sigue)?  | T-COM-010, T-COM-009, HU-06 |
 | P2  | T-INF-010: ¿se corrige la tarea en `tareas_data.py` para que espere solo lo que el corpus contiene, se cambia `buscar_politica` para devolver todos los extractos, o se documenta como tarea que ninguna arquitectura pasa? | T-INF-010, HU-05, HU-KB-04 |
 | P3  | ¿Se mantiene `reasoning_effort: none` con temperatura 0,2 (diseño congelado) o se permite `low` sin temperatura, registrado como desviación (RM-13)?               | Toda la corrida, D2, decisión 40 |
-| P4  | ¿Las cifras que aparecen en el mensaje de la persona (la semana, el número de intentos) cuentan como recuperadas para la verificación de fidelidad de citación, o solo las que devuelve una herramienta? | T-INF-005 y cualquier tarea donde la persona dé un número; HU-06 |
 
 ## 5. Por qué 33 de 40 no invalida el experimento
 
