@@ -11,9 +11,9 @@ export const IDENTIDAD: IdentidadServicio = {
   rol: 'orquestador',
   protocolo: 'en-proceso',
   descripcion:
-    'Varios agentes especializados coordinados en memoria dentro del mismo proceso, sin protocolo de red entre ellos.',
+    'Orquestador y dos agentes especializados coordinados en memoria dentro del mismo proceso, sin protocolo de red entre ellos; las herramientas se alcanzan por MCP.',
   consumidoPor: ['B2'],
-  dependencias: [],
+  dependencias: ['mcp-server'],
 };
 
 /** Puerto por defecto en ejecucion local (`nx serve b2-multiagente-local`). */
