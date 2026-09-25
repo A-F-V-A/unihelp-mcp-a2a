@@ -104,27 +104,51 @@ export class CapacidadesMcpConocimiento implements OnModuleDestroy {
       throw new ErrorHerramienta(codigo, error?.mensaje ?? textoDe(resultado));
     }
 
-    interface SalidaModelo {
-      readonly resultados?: readonly {
-        readonly codigo: string;
-        readonly titulo: string;
-        readonly version: string;
-        readonly extracto: string;
-        readonly relevancia: number;
+    const metaEstructurado = metaResultado[META_MCP.estructurado] as
+      | {
+          politicas?: readonly {
+            codigo: string;
+            titulo: string;
+            version: string;
+            extracto: { texto?: string } | string;
+            relevancia: number;
+          }[];
+        }
+      | undefined;
+
+    let desdeTexto: {
+      resultados?: readonly {
+        codigo: string;
+        titulo: string;
+        version: string;
+        extracto: string;
+        relevancia: number;
       }[];
+    } = {};
+    try {
+      desdeTexto = JSON.parse(textoDe(resultado) || '{}');
+    } catch {
+      // Ignorar si el texto no es JSON
     }
 
-    const estructurado =
-      (metaResultado[META_MCP.estructurado] as SalidaModelo | undefined) ??
-      (JSON.parse(textoDe(resultado) || '{}') as SalidaModelo);
-
-    const politicas: PoliticaCitadaDto[] = (estructurado.resultados ?? []).map((r) => ({
-      codigo: r.codigo,
-      titulo: r.titulo,
-      version: r.version,
-      extracto: r.extracto,
-      relevancia: r.relevancia,
-    }));
+    let politicas: PoliticaCitadaDto[] = [];
+    if (Array.isArray(metaEstructurado?.politicas) && metaEstructurado.politicas.length > 0) {
+      politicas = metaEstructurado.politicas.map((p) => ({
+        codigo: p.codigo,
+        titulo: p.titulo,
+        version: p.version,
+        extracto: typeof p.extracto === 'string' ? p.extracto : (p.extracto?.texto ?? ''),
+        relevancia: p.relevancia,
+      }));
+    } else if (Array.isArray(desdeTexto?.resultados)) {
+      politicas = desdeTexto.resultados.map((r) => ({
+        codigo: r.codigo,
+        titulo: r.titulo,
+        version: r.version,
+        extracto: r.extracto,
+        relevancia: r.relevancia,
+      }));
+    }
 
     const sinResultados = politicas.length === 0;
     const confianza: 'alta' | 'media' | 'baja' = sinResultados
@@ -133,9 +157,10 @@ export class CapacidadesMcpConocimiento implements OnModuleDestroy {
         ? 'alta'
         : 'media';
 
+    const extractoTexto = politicas[0]?.extracto ? ` ${politicas[0].extracto}` : '';
     const resumen = sinResultados
       ? 'No se encontraron políticas institucionales directamente aplicables a la consulta.'
-      : `Se identificaron ${politicas.length} política(s) aplicables, principalmente ${politicas[0].codigo} (${politicas[0].titulo}).`;
+      : `Según la política institucional ${politicas[0].codigo} (${politicas[0].titulo}):${extractoTexto}`;
 
     return {
       artefacto: {
