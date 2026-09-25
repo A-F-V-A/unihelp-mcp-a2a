@@ -69,42 +69,63 @@ export class ExtractorObjetoFinal {
   private readonly validar = new Ajv({ strict: false }).compile(ESQUEMA_OBJETO_FINAL);
 
   separar(contenido: string): RespuestaSeparada {
-    // El modelo a veces emite el objeto mas de una vez (con vallas y sin ellas,
-    // o dos bloques seguidos). Se quitan TODOS los bloques y todo objeto final
-    // que cierre el texto: ninguno es para la persona, y una copia que quede
-    // la compuerta la lee como cifra inventada (T-ADV-006 y T-ADV-010).
-    let objeto: ObjetoFinal | null = null;
-    let texto = contenido;
-    for (const bloque of [...contenido.matchAll(BLOQUE_JSON)].reverse()) {
-      objeto ??= this.interpretar(bloque[1] ?? '');
-      texto = texto.replace(bloque[0], '');
-    }
-    for (;;) {
-      const inicio = inicioDelObjetoFinal(texto);
-      if (inicio === -1) {
-        break;
-      }
-      const crudo = texto.trimEnd().slice(inicio);
-      if (!esObjetoJson(crudo)) {
-        // Llaves sueltas del texto de la persona: se deja todo como esta.
-        break;
-      }
-      // Un objeto JSON nunca es para la persona: se retira del texto aunque no
-      // valide. Solo cuenta como objeto final si cumple el esquema (HU-30); un
-      // objeto invalido que se quedara en el texto lo leia la compuerta como
-      // cifra inventada (T-ADV-009 y T-ADV-010, `diagnostico` con nulos).
-      objeto ??= this.interpretar(crudo);
-      texto = texto.slice(0, inicio);
-    }
-    return { texto: texto.trim(), objeto };
+    const r = separarObjetoJson(contenido, (c) => this.validar(c));
+    return { texto: r.texto, objeto: r.objeto as ObjetoFinal | null };
   }
+}
 
-  private interpretar(crudo: string): ObjetoFinal | null {
+/** Resultado de {@link separarObjetoJson}: el objeto ya paso la validacion recibida. */
+export interface ObjetoSeparado {
+  readonly texto: string;
+  readonly objeto: unknown | null;
+}
+
+/**
+ * Separa la respuesta del modelo en el texto para la persona y el objeto JSON
+ * final que cumple `validar`. Es la misma rutina para el `resultado_triaje` del
+ * agente unico y del orquestador y para los artefactos que emiten los
+ * especialistas de B2/B3 (`politica_aplicable`, `diagnostico`): una sola forma
+ * de leer lo que el modelo emitio, en las cuatro arquitecturas (RNF-01).
+ *
+ * El modelo a veces emite el objeto mas de una vez (con vallas y sin ellas, o
+ * dos bloques seguidos). Se quitan TODOS los bloques y todo objeto final que
+ * cierre el texto: ninguno es para la persona, y una copia que quede la
+ * compuerta la lee como cifra inventada (T-ADV-006 y T-ADV-010).
+ */
+export function separarObjetoJson(
+  contenido: string,
+  validar: (candidato: unknown) => boolean,
+): ObjetoSeparado {
+  const interpretar = (crudo: string): unknown | null => {
     try {
       const candidato: unknown = JSON.parse(crudo);
-      return this.validar(candidato) ? (candidato as ObjetoFinal) : null;
+      return validar(candidato) ? candidato : null;
     } catch {
       return null;
     }
+  };
+  let objeto: unknown | null = null;
+  let texto = contenido;
+  for (const bloque of [...contenido.matchAll(BLOQUE_JSON)].reverse()) {
+    objeto ??= interpretar(bloque[1] ?? '');
+    texto = texto.replace(bloque[0], '');
   }
+  for (;;) {
+    const inicio = inicioDelObjetoFinal(texto);
+    if (inicio === -1) {
+      break;
+    }
+    const crudo = texto.trimEnd().slice(inicio);
+    if (!esObjetoJson(crudo)) {
+      // Llaves sueltas del texto de la persona: se deja todo como esta.
+      break;
+    }
+    // Un objeto JSON nunca es para la persona: se retira del texto aunque no
+    // valide. Solo cuenta como objeto final si cumple el esquema (HU-30); un
+    // objeto invalido que se quedara en el texto lo leia la compuerta como
+    // cifra inventada (T-ADV-009 y T-ADV-010, `diagnostico` con nulos).
+    objeto ??= interpretar(crudo);
+    texto = texto.slice(0, inicio);
+  }
+  return { texto: texto.trim(), objeto };
 }

@@ -9,8 +9,14 @@ export const LIMITE_LLAMADAS_POR_DEFECTO = 20;
 export interface ContextoInvocacion {
   readonly traceId: string;
   readonly conversacionId: string;
-  /** Va al registro de auditoria. Ej.: `b0-agent`. */
+  /** Va al registro de auditoria. Ej.: `b0-agent`, `b3-orquestador`. */
   readonly actor: string;
+  /**
+   * Presupuesto que le queda a la conversacion al emitir la llamada (RNF-04).
+   * Lo pone el bucle; solo lo usa el orquestador de B2/B3 para que un
+   * especialista no siga trabajando cuando la conversacion ya se agoto.
+   */
+  readonly tiempoRestanteMs?: number;
 }
 
 /**

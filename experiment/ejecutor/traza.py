@@ -152,8 +152,11 @@ def armar_traza(
         },
         'conversation': conversacion.turnos,
         'tool_calls': llamadas,
-        # B0 y B1 tienen un solo agente: el esquema fija el conteo en cero (M4.5).
-        'a2a': {'mensajes_totales': 0},
+        # Lo entrega el backend: en B0 y B1 es `{mensajes_totales: 0}` (un solo
+        # agente); el orquestador de B2 y B3 agrega tarea, estados, saltos y
+        # artefactos (M4.5, decision 44). Un backend anterior que no lo envie
+        # se lee como agente unico.
+        'a2a': dict(parcial.get('a2a') or {'mensajes_totales': 0}),
         'server_audit': list(parcial.get('server_audit') or []),
         'outcome': {
             'status': estado or estado_final(list(parcial.get('terminaciones') or [])),

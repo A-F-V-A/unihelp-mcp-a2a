@@ -1,3 +1,5 @@
+import type { MedicionReceptorDto, SaltoA2aDto } from '@unihelp/contratos';
+import type { ProtocoloIntegracion } from '@unihelp/dominio';
 import type { EsquemaJson } from './definiciones-herramientas';
 import type { ContextoInvocacion, ResultadoCapacidad } from './ejecutor-capacidad';
 
@@ -14,12 +16,38 @@ export interface DescripcionCapacidad {
 }
 
 /**
+ * Lo que una invocacion que fue una DELEGACION a otro agente trae ademas del
+ * resultado (B2 y B3; decision 44). El nucleo la registra como salto de `a2a`
+ * y fusiona la medicion del receptor con la propia: su consumo, sus tiempos y
+ * sus llamadas a herramientas, con el `agente` que las hizo (HU-34, M4.5).
+ */
+export interface DelegacionRegistrada {
+  /** El salto sin `n` ni `transport_ms`: los pone el instrumentador al fusionar. */
+  readonly salto: Omit<SaltoA2aDto, 'n' | 'transport_ms'>;
+  readonly medicion: MedicionReceptorDto;
+  /** Identificadores de los artefactos que devolvio el receptor. */
+  readonly artefactos: readonly string[];
+  /** `a2a` por red (B3) o `en-proceso` (B2): va a `tool_calls[].transporte`. */
+  readonly transporte: ProtocoloIntegracion;
+}
+
+/**
  * Resultado de una invocacion visto desde el EMISOR: lo que devolvio el receptor
  * mas la ida y vuelta medida por quien invoco. `transport_ms = rttMs - durMs`
  * (D5): el receptor reporta su propia duracion y el emisor nunca resta marcas de
- * tiempo de otro proceso (RM-05).
+ * tiempo de otro proceso (RM-05). Si la invocacion fue una delegacion a otro
+ * agente, `delegacion` trae lo que ese agente midio de si mismo.
  */
-export type ResultadoInvocacion = ResultadoCapacidad & { readonly rttMs: number };
+export type ResultadoInvocacion = ResultadoCapacidad & {
+  readonly rttMs: number;
+  readonly delegacion?: DelegacionRegistrada;
+  /**
+   * Protocolo por el que viajo ESTA invocacion cuando difiere del protocolo del
+   * agente: el orquestador de B2/B3 delega por `en-proceso` o `a2a`, pero sus
+   * herramientas de tickets viajan por `mcp` (va a `tool_calls[].transporte`).
+   */
+  readonly transporte?: ProtocoloIntegracion;
+};
 
 /**
  * Puerto de capacidades del agente unico (HU-25). Es la UNICA frontera entre el

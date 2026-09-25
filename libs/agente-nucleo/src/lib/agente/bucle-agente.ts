@@ -41,11 +41,14 @@ function parsearArgumentos(crudo: string): Record<string, unknown> | string {
 }
 
 /**
- * Bucle de function calling del agente unico, compartido por B0 y B1. El MODELO
- * decide que herramienta invocar, en que orden y con que argumentos (HU-02;
- * seccion 8 de la arquitectura de B0). El bucle no clasifica, no valida
- * argumentos, no sanea y no decide prioridades: todo eso ocurre del lado del
- * receptor, detras del puerto de capacidades.
+ * Bucle de function calling del agente, compartido por las cuatro arquitecturas:
+ * el agente unico de B0 y B1 y cada agente (orquestador y especialistas) de B2
+ * y B3 (decision 44). El MODELO decide que herramienta invocar, en que orden y
+ * con que argumentos (HU-02; seccion 8 de la arquitectura de B0). El bucle no
+ * clasifica, no valida argumentos, no sanea y no decide prioridades: todo eso
+ * ocurre del lado del receptor, detras del puerto de capacidades. Tampoco sabe
+ * si una herramienta es una capacidad o una delegacion a otro agente: eso lo
+ * decide el puerto y solo cambia como se instrumenta.
  *
  * Las herramientas disponibles se piden al puerto ANTES de cada llamada al
  * modelo: en B1 una herramienta agregada en el servidor aparece en la siguiente
@@ -130,20 +133,32 @@ export class BucleAgente {
         }
         const seq = this.instrumentador.siguienteSeq(contexto.traceId);
         const args = parsearArgumentos(pedida.function.arguments);
-        const resultado = await this.capacidades.invocar(pedida.function.name, args, contexto);
-        this.instrumentador.registrarHerramienta(
-          contexto.traceId,
-          {
-            seq,
-            nombre: pedida.function.name,
-            args: typeof args === 'string' ? { _crudo: args } : args,
-            isError: !resultado.ok,
-            resultado_status: resultado.ok ? 'ok' : resultado.error.codigo,
-            resultado: resultado.ok ? resultado.salida.estructurado : null,
-            latency_ms: resultado.rttMs,
-          },
-          resultado.durMs,
-        );
+        // El presupuesto restante viaja con la llamada: un especialista de
+        // B2/B3 no debe seguir trabajando cuando la conversacion ya se agoto.
+        const resultado = await this.capacidades.invocar(pedida.function.name, args, {
+          ...contexto,
+          tiempoRestanteMs: this.presupuesto.restanteMs(contexto.traceId, inicioTurno),
+        });
+        const llamada = {
+          seq,
+          nombre: pedida.function.name,
+          args: typeof args === 'string' ? { _crudo: args } : args,
+          isError: !resultado.ok,
+          resultado_status: resultado.ok ? 'ok' : resultado.error.codigo,
+          resultado: resultado.ok ? resultado.salida.estructurado : null,
+          latency_ms: resultado.rttMs,
+        };
+        if (resultado.delegacion !== undefined) {
+          // Delegacion a otro agente: se fusiona lo que el receptor midio (decision 44).
+          this.instrumentador.registrarDelegacion(contexto.traceId, llamada, resultado.delegacion);
+        } else {
+          this.instrumentador.registrarHerramienta(
+            contexto.traceId,
+            llamada,
+            resultado.durMs,
+            resultado.transporte,
+          );
+        }
         llamadas.push({
           nombre: pedida.function.name,
           ok: resultado.ok,

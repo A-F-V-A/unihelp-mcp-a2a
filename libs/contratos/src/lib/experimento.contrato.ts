@@ -15,6 +15,8 @@
  * ni siquiera registra el controlador y las rutas devuelven 404.
  */
 
+import type { EstadoTareaA2a, HabilidadA2a } from './a2a.contrato';
+
 export const RUTAS_EXPERIMENTO = {
   /** `POST` {@link RestablecerEntornoDto} -> {@link EntornoRestablecidoDto}. Borra y repuebla. */
   restablecer: '/experimento/restablecer',
@@ -61,6 +63,50 @@ export interface LlamadaHerramientaDto {
   readonly latency_ms: number;
   readonly agente: string;
   readonly transporte: string;
+}
+
+/** Una transicion del ciclo de vida de la tarea del orquestador (docs/03, 3); `t` solo ordena (D6). */
+export interface EstadoTareaA2aDto {
+  readonly estado: EstadoTareaA2a;
+  readonly t: string;
+}
+
+/**
+ * Un salto entre agentes, con los nombres de `a2a.hops[]` de `docs/05`. El
+ * `transport_ms` es `rtt_ms - procesamiento_receptor_ms`: el receptor reporta su
+ * duracion y el emisor mide la ida y vuelta, nunca se restan marcas de tiempo
+ * de procesos distintos (D5, RM-05). En B2 el salto ocurre en proceso y el
+ * transporte es casi cero, pero se mide igual (M4.2).
+ */
+export interface SaltoA2aDto {
+  /** Posicion del salto en la ejecucion, desde 1. */
+  readonly n: number;
+  readonly de: string;
+  readonly a: string;
+  readonly habilidad: HabilidadA2a;
+  /** Identificador de la tarea que abrio el receptor. */
+  readonly task_id: string;
+  readonly estado: EstadoTareaA2a;
+  readonly t_emision: string;
+  readonly t_recepcion: string;
+  readonly rtt_ms: number;
+  readonly procesamiento_receptor_ms: number;
+  readonly transport_ms: number;
+}
+
+/**
+ * `a2a` de la traza (`$defs/mensajeriaAgentes`). En B0 y B1 es
+ * `{ mensajes_totales: 0 }`: un solo agente, sin mensajes entre agentes por
+ * definicion (M4.5). En B2 y B3 cada delegacion cuenta dos mensajes (la
+ * solicitud y la respuesta), en proceso o por red, para que M4.5 compare lo
+ * mismo en ambas (decision 44).
+ */
+export interface MensajeriaAgentesDto {
+  readonly mensajes_totales: number;
+  readonly task_id?: string;
+  readonly estados?: readonly EstadoTareaA2aDto[];
+  readonly hops?: readonly SaltoA2aDto[];
+  readonly artefactos?: readonly string[];
 }
 
 /** Evento de auditoria del servidor, tal como lo pide `server_audit[]` de la traza. */
@@ -120,7 +166,10 @@ export interface TrazaParcialDto {
    * las politicas citadas y la clasificacion (docs/04, seccion 4).
    */
   readonly final_json: Readonly<Record<string, unknown>> | null;
+  /** Las de TODOS los agentes de la ejecucion, en orden de emision; `agente` dice quien la hizo. */
   readonly tool_calls: readonly LlamadaHerramientaDto[];
+  /** Mensajeria entre agentes; el ejecutor la copia tal cual a `a2a` de la traza. */
+  readonly a2a: MensajeriaAgentesDto;
   readonly server_audit: readonly EventoAuditoriaDto[];
   /** Numeros de ticket creados en esta ejecucion, segun el registro (no segun el agente). */
   readonly tickets_creados: readonly string[];

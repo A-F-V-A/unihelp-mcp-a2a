@@ -2,13 +2,14 @@ import { Body, Controller, Get, HttpCode, Inject, Param, Post } from '@nestjs/co
 import type {
   EntornoRestablecidoDto,
   EventoAuditoriaDto,
+  MensajeriaAgentesDto,
   RestablecerEntornoDto,
   TrazaParcialDto,
 } from '@unihelp/contratos';
 import { CORPUS_CONOCIMIENTO } from '@unihelp/contratos';
 import { RestablecerConocimientoUseCase } from '@unihelp/conocimiento';
 import { ConsultarAuditoriaUseCase, RestablecerTicketsUseCase } from '@unihelp/tickets';
-import { InstrumentadorTrazas } from '../agente/instrumentador-trazas';
+import { InstrumentadorTrazas, type MensajeriaAcumulada } from '../agente/instrumentador-trazas';
 import {
   CONFIGURACION_AGENTE,
   type ConfiguracionAgente,
@@ -127,10 +128,29 @@ export class ExperimentoController {
       terminaciones: [...medicion.motivos],
       final_json: medicion.objetoFinal,
       tool_calls: medicion.toolCalls.map((llamada) => ({ ...llamada })),
+      a2a: aMensajeriaDto(medicion.a2a),
       server_audit: eventos.map(aEventoDto),
       tickets_creados: tickets.map((ticket) => ticket.numero),
     };
   }
+}
+
+/**
+ * `a2a` de la traza. Un agente unico no tuvo tarea ni saltos y entrega solo el
+ * conteo en cero, que es lo que el esquema exige para B0 y B1 (M4.5); el
+ * orquestador entrega la tarea, sus estados, los saltos y los artefactos.
+ */
+function aMensajeriaDto(a2a: MensajeriaAcumulada): MensajeriaAgentesDto {
+  if (a2a.taskId === null && a2a.hops.length === 0 && a2a.estados.length === 0) {
+    return { mensajes_totales: a2a.mensajesTotales };
+  }
+  return {
+    mensajes_totales: a2a.mensajesTotales,
+    ...(a2a.taskId === null ? {} : { task_id: a2a.taskId }),
+    estados: a2a.estados.map((e) => ({ ...e })),
+    hops: a2a.hops.map((h) => ({ ...h })),
+    artefactos: [...a2a.artefactos],
+  };
 }
 
 function aEventoDto(evento: {

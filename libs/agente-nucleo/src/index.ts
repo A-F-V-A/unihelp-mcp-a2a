@@ -17,3 +17,4 @@ export * from './lib/modelo/casete-modelo';
 export * from './lib/modelo/cliente-modelo';
 export * from './lib/modelo/configuracion-modelo-runtime';
 export * from './lib/modelo/errores-modelo';
+export * from './lib/prompt-sistema';

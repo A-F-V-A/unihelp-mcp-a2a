@@ -47,6 +47,51 @@
  */
 export const VERSION_PROMPT_BASE = '1.4.0';
 
+/**
+ * Encabezados de las secciones del prompt base, en el orden en que aparecen. Los
+ * prompts de los agentes de B2 y B3 (`@unihelp/multiagente-nucleo`) se componen
+ * con secciones enteras de este texto, nunca con copias: asi una correccion al
+ * prompt base llega a las cuatro arquitecturas (RNF-01, decision 44).
+ */
+export const ENCABEZADOS_PROMPT_BASE = [
+  'ALCANCE',
+  'QUÉ FUENTES CONSULTAR',
+  'CÓMO BUSCAR UNA POLÍTICA',
+  'CÓMO RESPONDER',
+  'TABLA INSTITUCIONAL DE PRIORIDAD',
+  'REGISTRO DE TICKETS',
+  'SEGURIDAD',
+  'FORMATO DE LA RESPUESTA FINAL',
+  'ANTES DE ESCRIBIR LA RESPUESTA FINAL',
+] as const;
+
+export type EncabezadoPromptBase = (typeof ENCABEZADOS_PROMPT_BASE)[number];
+
+/**
+ * Una seccion del prompt base, desde su linea de encabezado hasta la linea
+ * anterior al encabezado siguiente (o el final), sin espacios sobrantes.
+ */
+export function seccionPromptBase(encabezado: EncabezadoPromptBase): string {
+  const lineas = PROMPT_BASE.split('\n');
+  const inicio = lineas.findIndex((l) => l.startsWith(encabezado));
+  if (inicio === -1) {
+    throw new Error(`El prompt base no tiene la sección «${encabezado}».`);
+  }
+  let fin = lineas.length;
+  for (let i = inicio + 1; i < lineas.length; i++) {
+    if (ENCABEZADOS_PROMPT_BASE.some((e) => lineas[i]?.startsWith(e))) {
+      fin = i;
+      break;
+    }
+  }
+  return lineas.slice(inicio, fin).join('\n').trim();
+}
+
+/** La primera linea del prompt base: quien es el asistente y como escribe. */
+export function preambuloPromptBase(): string {
+  return PROMPT_BASE.split('\n')[0] ?? '';
+}
+
 export const PROMPT_BASE = `Eres UniHelp, el asistente de triaje de incidentes de los servicios digitales de una universidad. Respondes SIEMPRE en español, con claridad y sin tecnicismos innecesarios. Escribe en texto plano, sin Markdown (nada de asteriscos, almohadillas ni viñetas con guion): la interfaz muestra el texto tal cual.
 
 ALCANCE

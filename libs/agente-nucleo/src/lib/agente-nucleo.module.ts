@@ -3,6 +3,8 @@ import type { DynamicModule, Provider, Type } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import type { IdentidadServicio } from '@unihelp/contratos';
 import { perfilPermiteRestablecer } from '@unihelp/conocimiento';
+import type { ProtocoloIntegracion } from '@unihelp/dominio';
+import { PROMPT_BASE } from '@unihelp/herramientas';
 import { perfilPermiteVaciarTickets } from '@unihelp/tickets';
 import { BucleAgente } from './agente/bucle-agente';
 import { ExtractorObjetoFinal } from './agente/extractor-objeto-final';
@@ -26,6 +28,7 @@ import { CaseteModelo } from './modelo/casete-modelo';
 import { ClienteModelo } from './modelo/cliente-modelo';
 import { ConfiguracionModeloRuntime } from './modelo/configuracion-modelo-runtime';
 import { ModeloIaController } from './modelo/modelo-ia.controller';
+import { PROMPT_SISTEMA } from './prompt-sistema';
 import { TicketsController } from './tickets/tickets.controller';
 
 export interface OpcionesAgenteNucleo {
@@ -42,16 +45,29 @@ export interface OpcionesAgenteNucleo {
   readonly puertoCapacidades: Provider;
   readonly configuracion?: ConfiguracionAgente;
   readonly entorno?: Readonly<Record<string, string | undefined>>;
+  /**
+   * Prompt de sistema. Por defecto `PROMPT_BASE`; el orquestador de B2 y B3
+   * aporta el suyo, derivado del base con un delta publicado (decision 44).
+   */
+  readonly prompt?: string;
+  /**
+   * Nombre y protocolo del agente en la traza cuando la app no es un agente
+   * unico (`tool_calls[].agente`, `transporte`). Por defecto se derivan del rol
+   * de la identidad de salud.
+   */
+  readonly agente?: { readonly nombre: string; readonly protocolo?: ProtocoloIntegracion };
 }
 
 /**
- * Nucleo del agente unico: bucle, cliente del modelo con casetes, presupuesto,
+ * Nucleo del agente: bucle, cliente del modelo con casetes, presupuesto,
  * instrumentacion, extraccion del objeto final, capa de conversacion y las
  * rutas del contrato (`RUTAS_API`) y del ejecutor (`RUTAS_EXPERIMENTO`). Es el
  * MISMO codigo en B0 y B1: la unica pieza que cada arquitectura aporta es la
  * implementacion de `PuertoCapacidades` (en proceso o cliente MCP). Si el
  * nucleo se copiara por arquitectura, `B1 - B0` mediria tambien las copias y no
- * el transporte (H1, RNF-01).
+ * el transporte (H1, RNF-01). El orquestador de B2 y B3 tambien es este nucleo,
+ * con un puerto cuyas herramientas son delegaciones a los especialistas y las
+ * de tickets por MCP, y con su prompt (decision 44).
  *
  * La configuracion se lee al arrancar y un valor faltante detiene el arranque.
  * Arquitectura completa en `apps/b0-directo/docs/ARQUITECTURA.md`; lo que B1
@@ -80,7 +96,11 @@ export class AgenteNucleoModule {
       ],
       providers: [
         { provide: CONFIGURACION_AGENTE, useValue: configuracion },
-        { provide: IDENTIDAD_AGENTE, useValue: identidadAgenteDe(opciones.identidad) },
+        {
+          provide: IDENTIDAD_AGENTE,
+          useValue: identidadAgenteDe(opciones.identidad, opciones.agente),
+        },
+        { provide: PROMPT_SISTEMA, useValue: opciones.prompt ?? PROMPT_BASE },
         { provide: APP_FILTER, useClass: FiltroErrores },
         opciones.puertoCapacidades,
         CaseteModelo,
@@ -95,6 +115,9 @@ export class AgenteNucleoModule {
         RepositorioConversaciones,
         AtenderTurnoUseCase,
       ],
+      // Lo que un adaptador de otro transporte (el endpoint A2A del orquestador
+      // de B3) necesita para atender la MISMA conversacion que las rutas REST.
+      exports: [AtenderTurnoUseCase, InstrumentadorTrazas, RepositorioConversaciones],
     };
   }
 }

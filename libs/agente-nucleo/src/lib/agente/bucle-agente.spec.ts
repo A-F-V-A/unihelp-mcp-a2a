@@ -14,6 +14,8 @@ const consumo = { entrada: 10, salida: 5, cacheados: 0 };
 const identidad = {
   arquitectura: 'B0' as const,
   servicio: 'b0-directo',
+  rol: 'agente-unico' as const,
+  agente: 'b0-directo',
   protocolo: 'directo' as const,
   actor: 'b0-agent',
 };
@@ -84,7 +86,7 @@ describe('BucleAgente', () => {
     expect(m.puerto.invocar).toHaveBeenCalledWith(
       'buscar_politica',
       { consulta: 'prórroga' },
-      contexto,
+      { ...contexto, tiempoRestanteMs: 60_000 },
     );
     const herramienta = r.mensajesNuevos.find((mm) => mm.role === 'tool');
     expect(herramienta).toMatchObject({ role: 'tool', tool_call_id: 'call-1' });
