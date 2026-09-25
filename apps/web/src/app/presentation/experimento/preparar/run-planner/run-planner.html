@@ -33,8 +33,9 @@
     <article class="tarjeta">
       <h3>1 · Arquitectura</h3>
       <p class="tarjeta__nota">
-        B0 y B1 están implementadas; B2 y B3 responden únicamente <code>/health</code>. Para el
-        contraste B1−B0 (H1) marca las dos: la misma corrida las mide con la misma configuración.
+        Las cuatro arquitecturas están implementadas. Un contraste (B1−B0 para H1, B3−B2 para H3)
+        exige marcar las dos en la misma corrida: se miden con la misma configuración. B2 y B3
+        necesitan <code>mcp-server</code> levantado; B3, además, sus dos especialistas.
       </p>
       <app-estado-recurso
         nombre="corrida.yaml"
