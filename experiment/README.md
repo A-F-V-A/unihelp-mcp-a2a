@@ -17,8 +17,8 @@ lanza exactamente estos mismos comandos y muestra el progreso (decision 39).
 
 Requiere [uv](https://docs.astral.sh/uv/) y la arquitectura levantada con
 `UNIHELP_PERFIL=experimento` (sin ese perfil las rutas del ejecutor son 404,
-decision 32). Hoy estan implementadas **B0 y B1**; B2 y B3 solo responden
-`/health`.
+decision 32). Las cuatro arquitecturas estan implementadas; B2 y B3 necesitan
+`mcp-server` levantado y B3 sus dos especialistas.
 
 ```bash
 pnpm conocimiento:db                    # PostgreSQL
@@ -31,6 +31,10 @@ pnpm ejecutor:salud                     # comprueba que el backend responde
 pnpm ejecutor:correr                    # corre la matriz de corrida.yaml (arquitecturas: [B0])
 pnpm ejecutor:correr -- --arquitecturas B1        # solo B1
 pnpm ejecutor:correr -- --arquitecturas B0,B1     # B0 y B1 en la MISMA corrida: es lo que H1 necesita
+pnpm dev:b2                             # mcp-server en :3010 + B2 en :3002 (B2 con UNIHELP_PERFIL=experimento)
+pnpm dev:b3                             # mcp-server + especialistas (:3004, :3005) + orquestador en :3003
+pnpm ejecutor:correr -- --arquitecturas B2,B3     # B2 y B3 en la MISMA corrida: contraste B3-B2 (H3)
+pnpm ejecutor:correr -- --arquitecturas B0,B1,B2,B3   # las cuatro (pnpm dev:panel:todas las levanta)
 ```
 
 **Para comparar B0 con B1** (contraste `B1-B0` de `metricas.yaml`, H1) las dos

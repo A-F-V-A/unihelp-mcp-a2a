@@ -7,7 +7,7 @@
 #
 #   docker compose --profile b0 up --build   -> b0-directo + web
 #   docker compose --profile b1 up --build   -> mcp-server + b1-mcp-agente + web
-#   docker compose --profile b2 up --build   -> b2-multiagente-local + web
+#   docker compose --profile b2 up --build   -> mcp-server + b2-multiagente-local + web
 #   docker compose --profile b3 up --build   -> mcp-server + los tres servicios B3 + web
 #
 # Tambien se puede fijar la arquitectura con UNA variable, sin pasar --profile:
@@ -91,6 +91,17 @@ services:
       dockerfile: infra/docker/Dockerfile.b2-multiagente-local
     image: unihelp/b2-multiagente-local:${UNIHELP_VERSION:-0.1.0}
     container_name: unihelp-b2-multiagente-local
+    environment:
+      <<: *entorno-comun
+      # Los tres agentes de B2 alcanzan las herramientas por MCP (decision 45).
+      MCP_SERVER_URL: http://mcp-server:3010
+      # PENDIENTE, igual que B0: el profile todavia no levanta PostgreSQL ni
+      # recibe las variables del modelo (OPENAI_API_KEY, UNIHELP_MODELO_*).
+      CONOCIMIENTO_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+      TICKETS_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+    depends_on:
+      mcp-server:
+        condition: service_healthy
     ports:
       - '${PUERTO_BACKEND:-3000}:3002'
 
@@ -107,10 +118,15 @@ services:
     container_name: unihelp-b3-a2a-orquestador
     environment:
       <<: *entorno-comun
-      # Reservado para cuando se implemente el transporte A2A real.
+      # Registro de descubrimiento (HU-29): donde estan las Agent Cards.
       A2A_CONOCIMIENTO_URL: http://b3-a2a-conocimiento:3004
       A2A_DIAGNOSTICO_URL: http://b3-a2a-diagnostico:3005
+      A2A_SELF_URL: http://b3-a2a-orquestador:3003
       MCP_SERVER_URL: http://mcp-server:3010
+      # PENDIENTE, igual que B0: el profile todavia no levanta PostgreSQL ni
+      # recibe las variables del modelo (OPENAI_API_KEY, UNIHELP_MODELO_*).
+      CONOCIMIENTO_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
+      TICKETS_DATABASE_URL: postgresql://${POSTGRES_USER:-unihelp}:${POSTGRES_PASSWORD:-unihelp}@postgres:5432/${POSTGRES_DB:-unihelp}
     depends_on:
       b3-a2a-conocimiento:
         condition: service_healthy
@@ -132,6 +148,8 @@ services:
     environment:
       <<: *entorno-comun
       MCP_SERVER_URL: http://mcp-server:3010
+      # URL con la que el orquestador lo alcanza: va en su Agent Card (HU-29).
+      A2A_SELF_URL: http://b3-a2a-conocimiento:3004
     depends_on:
       mcp-server:
         condition: service_healthy
@@ -150,6 +168,7 @@ services:
     environment:
       <<: *entorno-comun
       MCP_SERVER_URL: http://mcp-server:3010
+      A2A_SELF_URL: http://b3-a2a-diagnostico:3005
     depends_on:
       mcp-server:
         condition: service_healthy
@@ -157,11 +176,11 @@ services:
       - '${PUERTO_B3_DIAGNOSTICO:-3005}:3005'
 
   # =========================================================================
-  # Servidor MCP compartido: participa en los profiles que lo consumen (b1, b3)
+  # Servidor MCP compartido: participa en los profiles que lo consumen (b1, b2, b3)
   # =========================================================================
   mcp-server:
     <<: *backend-comun
-    profiles: ['b1', 'b3']
+    profiles: ['b1', 'b2', 'b3']
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.mcp-server

@@ -12,7 +12,8 @@ corrida:
   semilla: 20260922
   repeticiones: 1
   # [B0, B1] corre ambas en la misma matriz, que es lo que exige el contraste
-  # B1-B0 (H1): dos corridas separadas no se combinan. B2 y B3 aun no existen.
+  # B1-B0 (H1); [B2, B3] hace lo mismo para B3-B2 (H3). Dos corridas separadas
+  # no se combinan. B2 y B3 exigen mcp-server levantado (decision 45).
   arquitecturas: [B0]
   # `null` = las 40 tareas de docs/tasks.
   tareas: null

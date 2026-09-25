@@ -1093,6 +1093,11 @@ ve en el arranque y debe registrarse aqui. El limite de llamadas se aplica en
 
 ## 43. El orquestador B3 implementa coordinacion A2A explicita sin bucle de AgenteNucleoModule
 
+> **Sustituida por la decision 44** (25 de septiembre de 2026): el orquestador de
+> B3 SI es el nucleo del agente, con modelo, y comparte con B2 el nucleo
+> multiagente. Se conserva como registro de por que existio la version
+> determinista de B3.
+>
 > Tomada al construir B3 (24 de septiembre de 2026). Registra la independencia de
 > coordinacion de agentes distribuida segun la regla de oro del experimento y RM-17.
 
@@ -1122,3 +1127,122 @@ protocolo A2A v1.0.
 Consecuencias: la simetria de contratos externos con el frontend se mantiene intacta
 a traves de `@unihelp/contratos`, pero la logica de orquestacion interna es propia de B3,
 respetando estrictamente la comparabilidad cientifica (H3, RNF-01).
+
+## 44. B2 y B3 son agentes con modelo sobre el mismo nucleo; el orquestador y los especialistas comparten `libs/multiagente-nucleo` y cada arquitectura aporta solo el puerto de especialistas
+
+> Tomada al construir B2 y completar B3 (25 de septiembre de 2026). Sustituye a la
+> decision 43. Registra tres decisiones de medicion que tomo el equipo (RM-17):
+> (a) el orquestador y los dos especialistas usan el modelo, con el mismo prompt
+> base y el mismo cliente que B0 y B1; (b) en la traza, cada delegacion cuenta dos
+> mensajes y el `agente` de cada llamada es el rol; (c) la duracion del receptor
+> no se suma a `tool_exec_ms`, sino que se reparte en sus propios componentes.
+
+Contexto: la primera version de B3 (decision 43) clasificaba con palabras clave
+y componia la respuesta con plantillas: ningun agente usaba el modelo. `docs/01`
+exige que las cuatro arquitecturas compartan "el mismo prompt base, el mismo
+modelo" y `docs/03` describe a los especialistas como agentes. Comparar un
+agente con modelo (B0, B1) contra un sistema de reglas (B3) habria mezclado la
+variable medida (como se integran los agentes) con otra (si usan modelo). B2 no
+existia. Ademas B3 no publicaba las rutas del ejecutor ni la de confirmacion por
+boton, y no media tiempos, saltos ni tokens.
+
+Decision:
+
+- **Los tres agentes de B2 y B3 usan el modelo** (opcion elegida por el equipo
+  entre "orquestador y especialistas con modelo" y "solo el orquestador"). Cada
+  uno es el MISMO bucle de function calling de B0/B1 (`BucleAgente`), con el
+  mismo cliente del modelo, los mismos casetes, el mismo presupuesto y el mismo
+  instrumentador. El orquestador ES `AgenteNucleoModule` con tres diferencias
+  declaradas: su prompt, su puerto de capacidades y su identidad en la traza.
+- `libs/multiagente-nucleo` (`@unihelp/multiagente-nucleo`, `arq:compartido`)
+  contiene todo lo que B2 y B3 comparten: el prompt del orquestador, los
+  prompts de los especialistas, las dos habilidades de delegacion
+  (`knowledge_lookup`, `incident_diagnosis`) tal como las ve el modelo, los
+  esquemas de los artefactos (`politica_aplicable`, `diagnostico`), el agente
+  especialista, su fabrica, el endpoint A2A del especialista, las Agent Cards,
+  el puerto compuesto del orquestador (`CapacidadesOrquestador`: delegaciones
+  mas herramientas de tickets por MCP con `X-Agent-Id: orquestador`) y
+  `OrquestadorMultiagenteModule.forRoot`. Es el equivalente de
+  `libs/agente-nucleo` para la pareja B2/B3 (decision 41).
+- **La unica pieza por arquitectura es `PuertoEspecialistas`**: en B2,
+  `EspecialistasEnProceso` invoca a los dos especialistas dentro del proceso
+  (la tarea pasa por JSON, "como si hubiera viajado"); en B3, `EspecialistasA2a`
+  los resuelve por `skills[].id` en el registro de descubrimiento y les envia
+  `message/send` (JSON-RPC 2.0 sobre HTTP). La equivalencia B3/B2 de `docs/03`,
+  seccion 7, se cumple por construccion.
+- **El prompt del orquestador es un delta mecanico sobre `PROMPT_BASE`**
+  (`componerPromptOrquestador`): una seccion nueva que explica que las dos
+  herramientas de lectura son delegaciones, la sustitucion de sus nombres y del
+  campo `motivo_sin_resultados`, y la supresion de la frase sobre el filtro
+  `categoria`. Los prompts de los especialistas se componen con secciones
+  enteras del base (`seccionPromptBase`). El delta esta publicado en
+  `docs/prompt-diffs.md` y una prueba falla si el base pierde un fragmento del
+  delta (docs/06, actividad 4.7).
+- **El cliente MCP de B1 se movio a `libs/capacidades-mcp`** y gano el rol
+  (`X-Agent-Id`) con filtro de `tools/list` por `PERMISOS_AGENTE` (docs/03, 5).
+  B1 lo usa sin rol, sin cambio de comportamiento; los tres agentes de B2 y B3,
+  con el suyo. Una sola implementacion evita que `B2 - B1` incluya una
+  diferencia en el acceso a las herramientas.
+- **Traza de una ejecucion multiagente.** El especialista devuelve en
+  `metadata['unihelp/medicion']` de su tarea lo que midio de si mismo
+  (`duracion_ms`, `llm_ms`, `tool_exec_ms`, `transport_ms`, `usage`,
+  `tool_calls`). El instrumentador del orquestador FUSIONA: suma consumo y
+  tiempos, renumera las llamadas del especialista a continuacion de las suyas
+  (con `agente` = rol: `orquestador`, `conocimiento`, `diagnostico`, el mismo
+  en B2 y B3), registra el salto en `a2a.hops[]` con
+  `transport_ms = rtt - duracion_ms` (D5, RM-05) y cuenta **dos mensajes por
+  delegacion** (solicitud y respuesta) en `a2a.mensajes_totales`, en proceso o
+  por red (M4.5). La duracion del receptor NO entra en `tool_exec_ms`: ya esta
+  repartida en su `llm_ms`, `tool_exec_ms`, `transport_ms` y residuo; sumarla
+  otra vez haria negativa la resta de orquestacion (HU-MET-07). Los estados de
+  la tarea (`submitted`, `working`, `input-required`, `completed`, `failed`,
+  `rejected`) van a `a2a.estados[]`; `input-required` es el turno en que el
+  orquestador propuso un ticket y espera (HU-31). `TrazaParcialDto` gana el
+  campo `a2a` y el ejecutor lo copia tal cual; B0 y B1 entregan
+  `{ mensajes_totales: 0 }`.
+- Un especialista que no responde, o cuyo modelo o servidor MCP fallan, es
+  `ErrorInfraestructura` en el orquestador: la ejecucion termina como
+  `error_infraestructura`, se reejecuta y se excluye, nunca con un diagnostico
+  inventado (RM-15; docs/03, 7, degradacion). Un especialista que no puede
+  completar por otra causa (tiempo, limite, artefacto invalido) devuelve una
+  tarea `failed` con motivo, que el modelo del orquestador recibe como error de
+  herramienta y explica a la persona.
+
+Por que: es la unica forma de que `B2 - B1` mida la coordinacion multiagente y
+`B3 - B2` el transporte A2A (H3), con el mismo modelo, el mismo prompt base y la
+misma medicion en las cuatro arquitecturas (RNF-01). Reutilizar el bucle no
+contamina la variable: el bucle es infraestructura, como el cliente de OpenAI;
+lo que cambia entre arquitecturas es que herramientas ve cada modelo y por
+donde viajan.
+
+Consecuencias: la decision 43 queda sustituida (el clasificador determinista y
+`TriajeService` se retiraron). `AgenteNucleoModule.forRoot` admite `prompt` y
+`agente`, y exporta `AtenderTurnoUseCase`, `InstrumentadorTrazas` y
+`RepositorioConversaciones` para el endpoint A2A del orquestador. El orquestador
+hereda del nucleo las rutas del ejecutor, los botones de tickets y las lecturas,
+y B3 pasa a leer PostgreSQL para lo que no son capacidades, como B1
+(DP-B1-01). Cada delegacion no cuenta contra el limite de 20 llamadas de
+`mcp-server`, que si aplica a las llamadas de los tres agentes bajo la misma
+traza. `libs/trazas` no cambia: `a2a.hops[]` y `a2a.estados[]` ya eran
+objetos libres en el esquema.
+
+## 45. B2 alcanza las herramientas por MCP, igual que B3
+
+> Tomada al construir B2 (25 de septiembre de 2026). Resuelve la discrepancia
+> "B2 y MCP" de la tabla de AGENTS.md a favor del anexo (`docs/01`). Decision
+> de medicion del equipo (RM-17), entre "B2 usa MCP, igual que B3" y "B2 usa las
+> herramientas en proceso, como B0".
+
+Contexto: `docs/01` dice que B2 accede a las capacidades por el servidor MCP; el
+profile `b2` de Compose no lo levantaba porque B2 era solo `/health`. Con B2 en
+proceso (`CapacidadesLocales`) y B3 por MCP, `B3 - B2` habria sumado el costo
+de MCP al de A2A y dejado de ser una ablacion limpia del transporte entre agentes.
+
+Decision: los tres agentes de B2 usan `CapacidadesMcp` con su rol, exactamente
+como los de B3. `dev:b2` y el profile `b2` levantan `mcp-server`. Los contrastes
+quedan asi: `B1 - B0` = MCP; `B2 - B1` = coordinacion multiagente en proceso;
+`B3 - B2` = transporte A2A (H3).
+
+Consecuencias: B2 depende de `mcp-server` (su identidad de salud lo declara).
+La fila "B2 y MCP" sale de la tabla de discrepancias y `docs/arquitecturas.md`
+muestra el salto MCP en B2.

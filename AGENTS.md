@@ -32,16 +32,21 @@ logica de triaje y la coordinacion de agentes) se implementa por separado en
 cada arquitectura. Cualquier cambio que rompa esa simetria contamina las
 mediciones. Ante la duda, pregunta antes de compartir o duplicar codigo.
 
-Estado actual: B0 y B1 son el MISMO agente unico real (OpenAI, function
-calling), cuyo nucleo vive en `libs/agente-nucleo` y cuyas cinco capacidades en
-`libs/capacidades`; B0 las invoca en proceso y B1 por MCP contra `mcp-server`
+Estado actual: las cuatro arquitecturas estan implementadas con el mismo
+modelo (OpenAI, function calling) y el mismo prompt base. B0 y B1 son el MISMO
+agente unico, cuyo nucleo vive en `libs/agente-nucleo` y cuyas cinco capacidades
+en `libs/capacidades`; B0 las invoca en proceso y B1 por MCP contra `mcp-server`
 (`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25), la unica
-diferencia entre ambos (decisiones 41 y 42). Ambos consumen `libs/conocimiento` y
-`libs/tickets` sobre PostgreSQL y responden el mismo contrato al frontend y al
-ejecutor. B2 y B3 solo tienen `/health`; aun no hay A2A real. El sistema de metricas
-(`experiment/`, Python) calcula M1, M4 y M7 de extremo a extremo sobre una
-corrida **sintetica**; B0 mide tiempos y tokens pero todavia no persiste trazas
-(DP-09 de `apps/b0-directo/docs/ARQUITECTURA.md`).
+diferencia entre ambos (decisiones 41 y 42). B2 y B3 son el MISMO sistema
+multiagente (orquestador con modelo que delega en dos especialistas con modelo,
+`libs/multiagente-nucleo`, todos con sus herramientas por MCP y su rol en
+`X-Agent-Id`); B2 invoca a los especialistas en proceso y B3 por A2A (JSON-RPC
+2.0 sobre HTTP, Agent Cards, `input-required`), la unica diferencia entre ambos
+(decisiones 44 y 45). Todas consumen `libs/conocimiento` y `libs/tickets` sobre
+PostgreSQL y responden el mismo contrato al frontend y al ejecutor, incluidas las
+rutas de restablecimiento y traza. El sistema de metricas (`experiment/`,
+Python) calcula M1, M4 y M7 de extremo a extremo; B0 y B1 tienen corridas
+completas de las 40 tareas (36/40 cada una); B2 y B3 aun no tienen corrida.
 
 El diseño completo del experimento esta especificado en `docs/00` a `docs/10`
 (anexo tecnico del seminario): historias de usuario, contrato MCP, agentes A2A,
@@ -75,18 +80,18 @@ funcionalidades F-1 a F-7 y requisitos RNF-01 a RNF-08 se definen ahi.
 
 Segun la tarea, lee ademas:
 
-| Si vas a...                                                                          | Lee                                                                                                                                         |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tocar `apps/web` o crear una capacidad nueva                                         | [`.claude/skills/arquitectura-limpia/SKILL.md`](.claude/skills/arquitectura-limpia/SKILL.md)                                                |
-| Cambiar un DTO, una ruta, un tipo o un catalogo                                      | [`.claude/skills/contratos-y-dominio/SKILL.md`](.claude/skills/contratos-y-dominio/SKILL.md) y `docs/01` (modelo de dominio, contrato REST) |
-| Escribir comentarios, un README o algo en `docs/`                                    | [`.claude/skills/documentar/SKILL.md`](.claude/skills/documentar/SKILL.md)                                                                  |
-| Implementar `mcp-server` o un agente B1                                              | `docs/02-servidor-mcp.md`, `apps/b1-mcp-agente/docs/ARQUITECTURA.md` y los README de `libs/agente-nucleo` y `libs/capacidades`              |
-| Implementar B2 o B3 (orquestador, especialistas)                                     | `docs/03-agentes-a2a.md` y `docs/01` (B2 y B3 deben ser identicos salvo transporte)                                                         |
-| Trabajar en `experiment/` (runner, trazas, juez)                                     | `docs/04`, `docs/05`, `docs/09`, `docs/10`, `docs/tasks/_ESTRUCTURA.md` y las reglas RM-01 a RM-17                                          |
-| Metricas, cuaderno de analisis o panel de resultados                                 | `docs/historias-de-usuario-medicion.md` (HU-MET-01 a HU-MET-14), `docs/09` y las reglas RM-01 a RM-17                                       |
-| Base de conocimiento (esquema, semillas, busqueda de politicas, estado de servicios) | `docs/historias-de-usuario-conocimiento.md` (HU-KB-01 a HU-KB-10), skill `contratos-y-dominio` y reglas RM-01, RM-10, RM-17                 |
-| Planear que construir y cuando                                                       | `docs/06-plan-10-semanas-detallado.md` y seccion 19 de `docs/08`                                                                            |
-| Tocar Docker o puertos                                                               | `infra/docker/docker-compose.yml` y `docs/arquitecturas.md`                                                                                 |
+| Si vas a...                                                                          | Lee                                                                                                                                                 |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tocar `apps/web` o crear una capacidad nueva                                         | [`.claude/skills/arquitectura-limpia/SKILL.md`](.claude/skills/arquitectura-limpia/SKILL.md)                                                        |
+| Cambiar un DTO, una ruta, un tipo o un catalogo                                      | [`.claude/skills/contratos-y-dominio/SKILL.md`](.claude/skills/contratos-y-dominio/SKILL.md) y `docs/01` (modelo de dominio, contrato REST)         |
+| Escribir comentarios, un README o algo en `docs/`                                    | [`.claude/skills/documentar/SKILL.md`](.claude/skills/documentar/SKILL.md)                                                                          |
+| Implementar `mcp-server` o un agente B1                                              | `docs/02-servidor-mcp.md`, `apps/b1-mcp-agente/docs/ARQUITECTURA.md` y los README de `libs/agente-nucleo` y `libs/capacidades`                      |
+| Implementar B2 o B3 (orquestador, especialistas)                                     | `docs/03-agentes-a2a.md`, `docs/01` (B2 y B3 deben ser identicos salvo transporte), `docs/prompt-diffs.md` y el README de `libs/multiagente-nucleo` |
+| Trabajar en `experiment/` (runner, trazas, juez)                                     | `docs/04`, `docs/05`, `docs/09`, `docs/10`, `docs/tasks/_ESTRUCTURA.md` y las reglas RM-01 a RM-17                                                  |
+| Metricas, cuaderno de analisis o panel de resultados                                 | `docs/historias-de-usuario-medicion.md` (HU-MET-01 a HU-MET-14), `docs/09` y las reglas RM-01 a RM-17                                               |
+| Base de conocimiento (esquema, semillas, busqueda de politicas, estado de servicios) | `docs/historias-de-usuario-conocimiento.md` (HU-KB-01 a HU-KB-10), skill `contratos-y-dominio` y reglas RM-01, RM-10, RM-17                         |
+| Planear que construir y cuando                                                       | `docs/06-plan-10-semanas-detallado.md` y seccion 19 de `docs/08`                                                                                    |
+| Tocar Docker o puertos                                                               | `infra/docker/docker-compose.yml` y `docs/arquitecturas.md`                                                                                         |
 
 ### Que documento manda
 
@@ -122,11 +127,16 @@ apps/
                          vez, y transmite su progreso (decision 39)  tags: tipo:app, arq:compartido
   web/                   Angular, frontend UNICO  tags: tipo:app, arq:frontend
 libs/
-  agente-nucleo/         @unihelp/agente-nucleo: nucleo del agente unico (bucle, modelo, casetes,
-                         instrumentacion, rutas del contrato y del ejecutor), compartido por B0 y B1;
-                         depende del puerto PuertoCapacidades (solo backends)
+  agente-nucleo/         @unihelp/agente-nucleo: nucleo del agente (bucle, modelo, casetes,
+                         instrumentacion, rutas del contrato y del ejecutor), compartido por B0 y B1
+                         y por el orquestador de B2 y B3; depende del puerto PuertoCapacidades (solo backends)
   capacidades/           @unihelp/capacidades: logica de las 5 capacidades, registro aditivo,
                          invocador del receptor y puerto en proceso (B0, mcp-server) (solo backends)
+  capacidades-mcp/       @unihelp/capacidades-mcp: cliente MCP que cumple PuertoCapacidades, con rol
+                         opcional en X-Agent-Id (B1 sin rol; los agentes de B2 y B3 con el suyo) (solo backends)
+  multiagente-nucleo/    @unihelp/multiagente-nucleo: orquestador y especialistas con modelo compartidos
+                         por B2 y B3 (prompts derivados del base, habilidades de delegacion, artefactos,
+                         puerto compuesto); depende del puerto PuertoEspecialistas (solo backends)
   conocimiento/          @unihelp/conocimiento: grafo de politicas en PostgreSQL, busqueda
                          lexica determinista, restablecimiento con huella (solo backends)
   contratos/             @unihelp/contratos: DTOs y rutas de red (solo tipos)
@@ -160,11 +170,18 @@ tools/git-hooks/         Hook commit-msg (valida HU y prohibe firma de IA), plan
 Todas las apps NestJS tienen `src/app/salud/` (identico en las ocho; lo unico
 que cambia es `identidad.ts`). B0 y B1 no tienen mas codigo propio que el
 cableado de `AgenteNucleoModule` con su puerto: B0 con `CapacidadesLocales`
-(`libs/capacidades`) y B1 con `CapacidadesMcp` (`src/app/capacidades-mcp/`).
-`mcp-server` agrega `src/app/mcp/` (sesiones, `tools/list`, `tools/call`) y la
-instantanea `contrato/tools-list.instantanea.json`. Detalle en
-[`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md) y
-[`apps/b1-mcp-agente/docs/ARQUITECTURA.md`](apps/b1-mcp-agente/docs/ARQUITECTURA.md). Dentro de `apps/web/src/app/`:
+(`libs/capacidades`) y B1 con `CapacidadesMcp` (`libs/capacidades-mcp`). B2 y el
+orquestador de B3 no tienen mas codigo propio que el cableado de
+`OrquestadorMultiagenteModule` con su puerto de especialistas: B2 con
+`EspecialistasEnProceso` (`src/app/especialistas-en-proceso/`) y B3 con
+`EspecialistasA2a` (`src/app/especialistas-a2a/`) mas el registro de
+descubrimiento y las Agent Cards; los dos especialistas de B3 solo cablean
+`EspecialistaModule` con su rol. `mcp-server` agrega `src/app/mcp/` (sesiones,
+`tools/list`, `tools/call`, filtro `X-Agent-Id`) y la instantanea
+`contrato/tools-list.instantanea.json`. Detalle en
+[`apps/b0-directo/docs/ARQUITECTURA.md`](apps/b0-directo/docs/ARQUITECTURA.md),
+[`apps/b1-mcp-agente/docs/ARQUITECTURA.md`](apps/b1-mcp-agente/docs/ARQUITECTURA.md)
+y [`docs/arquitecturas.md`](docs/arquitecturas.md). Dentro de `apps/web/src/app/`:
 
 | Carpeta           | Que contiene                                                                                                                       |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -334,7 +351,8 @@ pnpm dev:web:b1         # mcp-server + B1 + frontend (abrir con ?backend=http://
 pnpm dev:panel:h1       # B0 + mcp-server + B1 + consola + frontend: B0 y B1 en la misma corrida (H1)
 pnpm dev:panel          # B0 + consola del experimento + frontend: correr desde el panel
 pnpm dev:consola        # solo la consola del experimento -> :3030
-pnpm dev:b0             # (b1/b2/b3) backend en desarrollo; dev:b1 levanta mcp-server (:3010) + b1 (:3001)
+pnpm dev:b0             # (b1/b2/b3) backend en desarrollo; dev:b1 y dev:b2 levantan mcp-server (:3010); dev:b3, mcp-server y los tres de B3
+pnpm dev:panel:todas    # B0, B1, B2, B3, mcp-server, consola y frontend: las cuatro en la misma corrida (H1, H3)
 pnpm nx e2e b1-mcp-agente  # T-COM-001 de punta a punta por MCP (exige dev:b1 con UNIHELP_PERFIL=experimento)
 UNIHELP_ACTUALIZAR_INSTANTANEA=1 pnpm nx test mcp-server  # regenera la instantanea de tools/list (RM-12)
 pnpm b0                 # (b1/b2/b3) arquitectura completa en Docker
@@ -446,7 +464,6 @@ hasta que se registre una decision, no las "arregles" por tu cuenta.
 | Stack                  | API Java 21 / Spring Boot + PostgreSQL; agentes, MCP y runner en Python (`docs/01`, `docs/07`) | Todo TypeScript: NestJS + Angular en Nx                                                                                  |
 | Nombres de apps        | `baseline-direct`, `agent-mcp`, `multiagent-local`, `multiagent-a2a`, `unihelp-api`            | `b0-directo`, `b1-mcp-agente`, `b2-multiagente-local`, `b3-a2a-*`; no existe `unihelp-api`                               |
 | Puertos                | 8080-8084                                                                                      | 3000-3010 y 4200 (`docs/arquitecturas.md`)                                                                               |
-| B2 y MCP               | B2 accede a capacidades por el servidor MCP (`docs/01`)                                        | El profile `b2` no levanta `mcp-server` (`docs/arquitecturas.md`)                                                        |
 | Profiles de Compose    | `base`, `b1`, `b2` (= B3), `full`                                                              | `b0`, `b1`, `b2`, `b3`                                                                                                   |
 | Interfaz grafica       | **Fuera de alcance** (`docs/08`, seccion 20)                                                   | Frontend Angular completo en `apps/web`                                                                                  |
 | Arnes experimental     | `evaluation/` (runner, judge, tasks, schemas)                                                  | `experiment/` (ejecutor, juez, trazas, resultados); tareas en `docs/tasks/`                                              |

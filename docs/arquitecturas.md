@@ -39,8 +39,8 @@ navegador -> web -> b1-mcp-agente --MCP--> mcp-server -> (API del dominio)
 
 Mismo agente y mismas capacidades que B0, pero alcanzadas como herramientas
 expuestas por un servidor MCP independiente. El agente es el mismo codigo que
-B0 (`libs/agente-nucleo`); lo unico propio de B1 es `CapacidadesMcp`, un
-cliente MCP (`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25,
+B0 (`libs/agente-nucleo`); lo unico propio de B1 es `CapacidadesMcp`
+(`libs/capacidades-mcp`, sin rol), un cliente MCP (`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25,
 Streamable HTTP con sesion en `http://localhost:3010/mcp`) que descubre las
 herramientas con `tools/list` y las invoca con `tools/call`, propagando
 `X-Trace-Id` en la cabecera. `mcp-server` publica las capacidades de
@@ -50,24 +50,37 @@ detalle en `apps/b1-mcp-agente/docs/ARQUITECTURA.md`).
 ### B2 — multiagente en el mismo proceso
 
 ```text
-navegador -> web -> b2-multiagente-local
-                      ├── agente de conocimiento  (en memoria)
-                      └── agente de diagnostico   (en memoria)
+navegador -> web -> b2-multiagente-local ──MCP──> mcp-server -> (API del dominio)
+                      │ orquestador (modelo)   ─ proponer/confirmar/crear ticket ─┘
+                      ├── especialista de conocimiento (modelo, en memoria) ─ buscar_politica ─┘
+                      └── especialista de diagnostico  (modelo, en memoria) ─ consultar_estado_servicio ─┘
 ```
 
-Varios agentes especializados coordinados dentro de un solo proceso NestJS. No
-hay serializacion ni salto de red entre ellos.
+Un orquestador con modelo delega en dos agentes especializados con modelo,
+coordinados dentro de un solo proceso NestJS: no hay serializacion ni salto de
+red entre ellos (la tarea del especialista pasa por JSON para que el
+orquestador vea la misma forma que en B3). Los tres alcanzan sus herramientas
+por MCP con su rol en `X-Agent-Id` (decision 45). El orquestador, los
+especialistas, sus prompts y el puerto compuesto son `libs/multiagente-nucleo`;
+lo unico propio de B2 es `EspecialistasEnProceso`, el puerto de especialistas en
+memoria (decision 44).
 
 ### B3 — multiagente distribuido sobre A2A
 
 ```text
-navegador -> web -> b3-a2a-orquestador
+navegador -> web -> b3-a2a-orquestador ──MCP──> mcp-server -> (API del dominio)
                       ├──A2A──> b3-a2a-conocimiento ──MCP──> mcp-server
                       └──A2A──> b3-a2a-diagnostico  ──MCP──> mcp-server
 ```
 
-Los mismos especialistas de B2, pero cada uno como servicio independiente que se
-coordina por protocolo Agent2Agent.
+Los mismos tres agentes de B2, pero cada especialista como servicio
+independiente que se descubre por su Agent Card (`/.well-known/agent-card.json`)
+y se coordina con `message/send` (JSON-RPC 2.0 sobre HTTP, A2A v1.0). Lo unico
+propio de B3 es `EspecialistasA2a` (cliente A2A) y el registro de
+descubrimiento; el orquestador ademas publica su tarjeta y atiende `/a2a`. La
+confirmacion de un ticket es la transicion `working -> input-required ->
+working` de la tarea (docs/03, 3; HU-31). Cada salto queda en la traza con
+`transport_ms = rtt - duracion` reportada por el especialista (D5).
 
 ## Mapa de puertos
 

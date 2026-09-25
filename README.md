@@ -8,17 +8,24 @@ El objetivo del repositorio no es un producto, es un **banco de pruebas**: la
 misma funcionalidad se construye cuatro veces, cambiando unicamente como se
 integran los agentes, para medir el efecto de esa decision arquitectonica.
 
-> **Estado actual: B0 y B1 funcionales, B2-B3 en esqueleto.** B0
-> ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md)) y B1
+> **Estado actual: las cuatro arquitecturas implementadas con el mismo modelo.**
+> B0 ([`apps/b0-directo`](apps/b0-directo/docs/ARQUITECTURA.md)) y B1
 > ([`apps/b1-mcp-agente`](apps/b1-mcp-agente/docs/ARQUITECTURA.md)) son el mismo
 > agente unico con function calling sobre OpenAI ([`libs/agente-nucleo`](libs/agente-nucleo/README.md))
 > y las mismas cinco capacidades ([`libs/capacidades`](libs/capacidades/README.md)):
 > B0 las invoca en proceso y B1 las descubre e invoca por MCP contra
-> [`apps/mcp-server`](apps/mcp-server/README.md). Ambos consultan la base de conocimiento
-> ([`libs/conocimiento`](libs/conocimiento/README.md)), proponen y crean tickets solo
-> con confirmacion explicita ([`libs/tickets`](libs/tickets/README.md)) y dejan
-> auditoria de solo agregar. B2 y B3 solo responden su endpoint de salud; no hay
-> A2A real. Ninguna arquitectura corre todavia en Docker con el agente real (ver
+> [`apps/mcp-server`](apps/mcp-server/README.md). B2
+> ([`apps/b2-multiagente-local`](apps/b2-multiagente-local/README.md)) y B3
+> ([`apps/b3-a2a-orquestador`](apps/b3-a2a-orquestador/README.md) con sus dos
+> especialistas) son el mismo sistema multiagente con modelo
+> ([`libs/multiagente-nucleo`](libs/multiagente-nucleo/README.md)): un orquestador
+> que delega en un especialista de conocimiento y otro de diagnostico, todos con
+> sus herramientas por MCP; B2 los invoca en proceso y B3 por A2A. Todas consultan
+> la base de conocimiento ([`libs/conocimiento`](libs/conocimiento/README.md)),
+> proponen y crean tickets solo con confirmacion explicita
+> ([`libs/tickets`](libs/tickets/README.md)) y dejan auditoria de solo agregar.
+> B0 y B1 tienen corridas completas de las 40 tareas; B2 y B3 aun no. Ninguna
+> arquitectura corre todavia en Docker con el agente real (ver
 > [B0 con el agente real](#b0-con-el-agente-real)).
 > El sistema de metricas ([`experiment/`](experiment/README.md)) calcula las
 > familias M1, M4 y M7 de extremo a extremo sobre una corrida **sintetica**.
@@ -110,7 +117,7 @@ docker compose -f infra/docker/docker-compose.yml up --build
 | -------------- | ------------------------------------------------------------------------------------------ |
 | `b0`           | `b0-directo` + `web`                                                                       |
 | `b1`           | `mcp-server` + `b1-mcp-agente` + `web`                                                     |
-| `b2`           | `b2-multiagente-local` + `web`                                                             |
+| `b2`           | `mcp-server` + `b2-multiagente-local` + `web`                                              |
 | `b3`           | `mcp-server` + `b3-a2a-orquestador` + `b3-a2a-conocimiento` + `b3-a2a-diagnostico` + `web` |
 | `conocimiento` | `postgres` (base de conocimiento; aun no participa en `b0`..`b3`)                          |
 | `simulacion`   | `postgres` + `simulador-servicios` (los cuatro sistemas emulados, en :3020)                |
@@ -166,8 +173,11 @@ pnpm dev:b0     # nx serve b0-directo              -> :3000
 pnpm dev:b1     # mcp-server + b1-mcp-agente       -> :3010, :3001 (necesita apps/mcp-server/.env y apps/b1-mcp-agente/.env)
 pnpm dev:web:b1 # mcp-server + b1 + frontend; abrir http://localhost:4200/?backend=http://localhost:3001
 pnpm dev:panel:h1  # B0 + mcp-server + B1 + consola + frontend: correr B0 y B1 desde el panel para el contraste H1
-pnpm dev:b2     # nx serve b2-multiagente-local    -> :3002
-pnpm dev:b3     # mcp-server + los tres de B3      -> :3010, :3003, :3004, :3005
+pnpm dev:b2     # mcp-server + b2-multiagente-local -> :3010, :3002 (necesita apps/b2-multiagente-local/.env)
+pnpm dev:b3     # mcp-server + los tres de B3      -> :3010, :3003, :3004, :3005 (cada app con su .env)
+pnpm dev:web:b2 # mcp-server + b2 + frontend; abrir http://localhost:4200/?backend=http://localhost:3002
+pnpm dev:web:b3 # mcp-server + los tres de B3 + frontend; abrir http://localhost:4200/?backend=http://localhost:3003
+pnpm dev:panel:todas  # las cuatro arquitecturas + mcp-server + consola + frontend: correrlas en la misma corrida (H1, H3)
 pnpm dev:web    # nx serve web                     -> :4200
 
 pnpm dev:simulador  # simulador de los sistemas universitarios -> :3020
