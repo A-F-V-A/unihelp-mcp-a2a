@@ -1,5 +1,6 @@
 import { Logger, RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { RUTA_A2A, RUTA_AGENT_CARD } from '@unihelp/contratos';
 import { AppModule } from './app/app.module';
 import { IDENTIDAD, PUERTO_POR_DEFECTO } from './app/salud/identidad';
 
@@ -7,9 +8,13 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   // `/health` queda fuera del prefijo para cumplir el contrato de verificacion;
-  // el resto de la API vivira bajo `/api`.
+  // `/.well-known/agent-card.json` y `/a2a` son rutas del protocolo A2A v1.0 (HU-29).
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'health', method: RequestMethod.GET }],
+    exclude: [
+      { path: 'health', method: RequestMethod.GET },
+      { path: RUTA_AGENT_CARD.slice(1), method: RequestMethod.GET },
+      { path: RUTA_A2A.slice(1), method: RequestMethod.ALL },
+    ],
   });
 
   // El frontend Angular corre en otro origen (4200 en dev, 8080 en Docker).

@@ -1016,7 +1016,7 @@ Decision:
 
 - `libs/agente-nucleo` (`@unihelp/agente-nucleo`, `arq:compartido`) contiene el
   nucleo completo del agente unico y `AgenteNucleoModule.forRoot({ identidad,
-  imports, puertoCapacidades })`. El bucle depende de la interfaz
+imports, puertoCapacidades })`. El bucle depende de la interfaz
   `PuertoCapacidades` (`listar()` e `invocar()`, declarada en
   `libs/herramientas`) y pide las capacidades al puerto ANTES de cada llamada
   al modelo. La traduccion al formato de function calling ocurre en un unico
@@ -1090,3 +1090,35 @@ Consecuencias: una actualizacion del SDK que cambie `LATEST_PROTOCOL_VERSION` se
 ve en el arranque y debe registrarse aqui. El limite de llamadas se aplica en
 `mcp-server` (DP-B1-03). La duracion reportada incluye la construccion del
 `CallToolResult`, fracciones de milisegundo que B0 no tiene (DP-B1-02).
+
+## 43. El orquestador B3 implementa coordinacion A2A explicita sin bucle de AgenteNucleoModule
+
+> Tomada al construir B3 (24 de septiembre de 2026). Registra la independencia de
+> coordinacion de agentes distribuida segun la regla de oro del experimento y RM-17.
+
+Contexto: B0 y B1 son un agente unico con bucle de function calling implementado
+en `libs/agente-nucleo`. En B3 (A2A distribuido), el orquestador tiene un rol
+esencialmente diferente: recibe la solicitud, clasifica el tipo de triaje (HU-02),
+descubre a los especialistas dinamicamente por sus Agent Cards (`/.well-known/agent-card.json`, HU-29)
+sin quemar URLs en el prompt (D-41), delega secuencialmente a traves del protocolo
+Agent2Agent v1.0 sobre JSON-RPC 2.0 (`message/send`, HU-30, RM-04), gestiona la espera
+de confirmacion de tickets como el estado nativo del protocolo `input-required` (HU-31),
+y utiliza las herramientas de tickets en `mcp-server` con la cabecera `X-Agent-Id: orquestador` (HU-20).
+
+Decision:
+
+- `b3-a2a-orquestador` no importa ni instancia el bucle iterativo de `AgenteNucleoModule`.
+  En su lugar, implementa un servicio dedicado `TriajeService` con maquina de estados A2A
+  y ruteo tipado. El orquestador expone las mismas rutas REST de triaje (`/api/conversaciones`)
+  con los mismos contratos compartidos (`@unihelp/contratos`), permitiendo que el frontend
+  interactue de manera indistinguible.
+
+Por que: el nucleo de B0/B1 asume un unico agente que consulta herramientas locales o MCP.
+Obligar a B3 a forzar la coordinacion A2A dentro de ese mismo bucle contaminaria la variable
+medida (la arquitectura de integracion distribuida) y enmascararia las transiciones de estado
+formales (`submitted -> working -> input-required -> completed/failed`) exigidas por el
+protocolo A2A v1.0.
+
+Consecuencias: la simetria de contratos externos con el frontend se mantiene intacta
+a traves de `@unihelp/contratos`, pero la logica de orquestacion interna es propia de B3,
+respetando estrictamente la comparabilidad cientifica (H3, RNF-01).
