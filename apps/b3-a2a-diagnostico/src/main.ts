@@ -1,3 +1,4 @@
+import './entorno';
 import { Logger, RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { RUTA_A2A, RUTA_AGENT_CARD } from '@unihelp/contratos';

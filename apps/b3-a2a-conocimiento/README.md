@@ -1,22 +1,31 @@
 # b3-a2a-conocimiento
 
-Agente especialista en consulta y recuperacion de politicas institucionales (puerto 3004).
-Forma parte de la condicion experimental **B3** (A2A distribuido, HU-29, HU-30).
+Agente especialista de **conocimiento** de la condicion experimental **B3**, expuesto
+como servicio A2A independiente (puerto 3004). Es el MISMO agente que B2
+invoca en proceso: viene entero de
+[`libs/multiagente-nucleo`](../../libs/multiagente-nucleo/README.md)
+(`EspecialistaModule.forRoot({ rol: 'conocimiento' })`, decision 44); la app solo
+aporta su identidad de salud y su Agent Card.
 
-- Protocolo: **Agent2Agent (A2A v1.0)** sobre JSON-RPC 2.0 y HTTP.
-- Agent Card: Expuesta en `GET /.well-known/agent-card.json` (HU-29), declara la habilidad `knowledge_lookup`.
-- Transporte de herramientas: Consulta politicas institucionales invocando `buscar_politica` en `mcp-server` (:3010) via MCP con cabecera `X-Agent-Id: conocimiento` (HU-20).
-- Salida estructurada: Emite el artefacto A2A `politica_aplicable` con politicas citadas y resumen (HU-30, doc 03 §4.1).
+- Habilidad `knowledge_lookup` (HU-29): recibe del orquestador una solicitud como
+  `DataPart`, corre el bucle del agente con su prompt de rol y su unica
+  herramienta, `buscar_politica`, por MCP con `X-Agent-Id: conocimiento` (HU-20), y
+  devuelve el artefacto `politica_aplicable` validado (docs/03, 4) con su medicion
+  (`metadata['unihelp/medicion']`: duracion, tiempos, consumo, llamadas) para
+  que el orquestador reste el transporte (D5, RM-05).
+- `POST /a2a`: `message/send` (JSON-RPC 2.0). Un fallo de su infraestructura
+  (modelo, servidor MCP) vuelve como error `-32000` que el orquestador traduce a
+  `error_infraestructura` (RM-15).
+- `GET /.well-known/agent-card.json`: la tarjeta con `A2A_SELF_URL`.
 
-| Archivo                                                                                                                            | Contenido                                                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts)                                       | Publica la Agent Card A2A en `/.well-known/agent-card.json` (HU-29).                |
-| [`src/app/agent-card/agent-card.module.ts`](src/app/agent-card/agent-card.module.ts)                                               | Modulo NestJS que empaqueta el controlador de la Agent Card.                        |
-| [`src/app/capacidades-mcp/capacidades-mcp-conocimiento.ts`](src/app/capacidades-mcp/capacidades-mcp-conocimiento.ts)               | Cliente MCP con cabecera `X-Agent-Id: conocimiento` para `buscar_politica` (HU-20). |
-| [`src/app/capacidades-mcp/capacidades-mcp-conocimiento.module.ts`](src/app/capacidades-mcp/capacidades-mcp-conocimiento.module.ts) | Modulo NestJS del cliente MCP.                                                      |
-| [`src/app/capacidades-mcp/configuracion-conocimiento.ts`](src/app/capacidades-mcp/configuracion-conocimiento.ts)                   | Lectura de `MCP_SERVER_URL` desde el entorno.                                       |
-| [`src/app/a2a/knowledge-lookup.service.ts`](src/app/a2a/knowledge-lookup.service.ts)                                               | Ejecuta el lookup y estructura el artefacto `politica_aplicable` (HU-05, HU-30).    |
-| [`src/app/a2a/knowledge-lookup.service.spec.ts`](src/app/a2a/knowledge-lookup.service.spec.ts)                                         | Pruebas unitarias de lookup directo y rescate con terminos clave (HU-05, HU-30).    |
-| [`src/app/a2a/a2a.controller.ts`](src/app/a2a/a2a.controller.ts)                                                                   | Endpoint `POST /a2a` JSON-RPC 2.0 (`message/send`).                                 |
-| [`src/app/a2a/a2a.module.ts`](src/app/a2a/a2a.module.ts)                                                                           | Modulo NestJS de comunicacion A2A del especialista.                                 |
-| [`src/app/salud/salud.controller.ts`](src/app/salud/salud.controller.ts)                                                           | Endpoint `GET /health` con identidad del especialista de conocimiento.              |
+| Archivo                                                                                      | Contenido                                                                            |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [`src/app/app.module.ts`](src/app/app.module.ts)                                             | Salud + Agent Card + `EspecialistaModule.forRoot({ rol: 'conocimiento' })`.          |
+| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts) | Publica la tarjeta (`tarjetaAgente('conocimiento', A2A_SELF_URL)`).                  |
+| [`src/app/salud/`](src/app/salud/)                                                           | `GET /health` con la identidad del especialista (`rol: especialista`).               |
+| [`src/entorno.ts`](src/entorno.ts)                                                           | Carga `apps/b3-a2a-conocimiento/.env` en desarrollo.                                 |
+| [`.env.example`](.env.example)                                                               | `PORT`, `MCP_SERVER_URL`, `A2A_SELF_URL`, modelo y casetes (iguales al orquestador). |
+
+Se levanta con `pnpm dev:b3` junto con `mcp-server`, el otro especialista y el
+orquestador. Modelo, muestreo, modo de casetes y limites llevan los mismos
+valores que el orquestador y que B0 (RNF-01).

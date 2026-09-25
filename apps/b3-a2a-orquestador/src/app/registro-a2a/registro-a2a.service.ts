@@ -28,13 +28,20 @@ export function expandirVariablesEntorno(cadena: string): string {
  *
  * Lee la configuracion de agentes especialistas en `config/a2a-registry.yaml`,
  * consulta su tarjeta Agent Card en `/.well-known/agent-card.json` y construye
- * una tabla de ruteo dinamica indexada por `skills[].id` (HU-29, D-41).
+ * una tabla de ruteo dinamica indexada por `skills[].id` (HU-29, docs/03, 2).
+ * El orquestador nunca lleva la URL de un especialista en el prompt ni en el
+ * codigo: agregar un especialista es un cambio de configuracion.
+ *
+ * El descubrimiento se intenta al arrancar y, si una habilidad falta, se
+ * reintenta al pedirla (`resolver`): con `nx run-many` los especialistas pueden
+ * arrancar despues que el orquestador y no por eso quedan fuera para siempre.
  */
 @Injectable()
 export class RegistroA2aService implements OnModuleInit {
   private readonly logger = new Logger(RegistroA2aService.name);
   private readonly habilidades = new Map<string, AgentCardDto>();
   private readonly agentesRegistrados = new Map<string, AgentCardDto>();
+  private recargaEnCurso: Promise<void> | null = null;
 
   async onModuleInit(): Promise<void> {
     await this.cargarRegistro();
@@ -44,6 +51,19 @@ export class RegistroA2aService implements OnModuleInit {
    * Resuelve el agente especialista capaz de atender una habilidad especifica (HU-29).
    */
   resolverAgentePorHabilidad(skillId: string): AgentCardDto | undefined {
+    return this.habilidades.get(skillId);
+  }
+
+  /** Como `resolverAgentePorHabilidad`, pero vuelve a descubrir una vez si la habilidad falta. */
+  async resolver(skillId: string): Promise<AgentCardDto | undefined> {
+    const conocido = this.habilidades.get(skillId);
+    if (conocido !== undefined) {
+      return conocido;
+    }
+    this.recargaEnCurso ??= this.cargarRegistro().finally(() => {
+      this.recargaEnCurso = null;
+    });
+    await this.recargaEnCurso;
     return this.habilidades.get(skillId);
   }
 

@@ -1,21 +1,31 @@
 # b3-a2a-diagnostico
 
-Agente especialista en diagnostico de incidentes y estado de servicios universitarios (puerto 3005).
-Forma parte de la condicion experimental **B3** (A2A distribuido, HU-29, HU-30).
+Agente especialista de **diagnostico** de la condicion experimental **B3**, expuesto
+como servicio A2A independiente (puerto 3005). Es el MISMO agente que B2
+invoca en proceso: viene entero de
+[`libs/multiagente-nucleo`](../../libs/multiagente-nucleo/README.md)
+(`EspecialistaModule.forRoot({ rol: 'diagnostico' })`, decision 44); la app solo
+aporta su identidad de salud y su Agent Card.
 
-- Protocolo: **Agent2Agent (A2A v1.0)** sobre JSON-RPC 2.0 y HTTP.
-- Agent Card: Expuesta en `GET /.well-known/agent-card.json` (HU-29), declara la habilidad `incident_diagnosis`.
-- Transporte de herramientas: Consulta estado de sistemas universitarios invocando `consultar_estado_servicio` en `mcp-server` (:3010) via MCP con cabecera `X-Agent-Id: diagnostico` (HU-20).
-- Salida estructurada: Emite el artefacto A2A `diagnostico` con severidad, alcance y prioridad calculada (HU-30, doc 03 §4.2).
+- Habilidad `incident_diagnosis` (HU-29): recibe del orquestador una solicitud como
+  `DataPart`, corre el bucle del agente con su prompt de rol y su unica
+  herramienta, `consultar_estado_servicio`, por MCP con `X-Agent-Id: diagnostico` (HU-20), y
+  devuelve el artefacto `diagnostico` validado (docs/03, 4) con su medicion
+  (`metadata['unihelp/medicion']`: duracion, tiempos, consumo, llamadas) para
+  que el orquestador reste el transporte (D5, RM-05).
+- `POST /a2a`: `message/send` (JSON-RPC 2.0). Un fallo de su infraestructura
+  (modelo, servidor MCP) vuelve como error `-32000` que el orquestador traduce a
+  `error_infraestructura` (RM-15).
+- `GET /.well-known/agent-card.json`: la tarjeta con `A2A_SELF_URL`.
 
-| Archivo                                                                                                                          | Contenido                                                                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts)                                     | Publica la Agent Card A2A en `/.well-known/agent-card.json` (HU-29).                                                   |
-| [`src/app/agent-card/agent-card.module.ts`](src/app/agent-card/agent-card.module.ts)                                             | Modulo NestJS que empaqueta el controlador de la Agent Card.                                                           |
-| [`src/app/capacidades-mcp/capacidades-mcp-diagnostico.ts`](src/app/capacidades-mcp/capacidades-mcp-diagnostico.ts)               | Cliente MCP con cabecera `X-Agent-Id: diagnostico` para `consultar_estado_servicio` (HU-20).                           |
-| [`src/app/capacidades-mcp/capacidades-mcp-diagnostico.module.ts`](src/app/capacidades-mcp/capacidades-mcp-diagnostico.module.ts) | Modulo NestJS del cliente MCP de diagnostico.                                                                          |
-| [`src/app/capacidades-mcp/configuracion-diagnostico.ts`](src/app/capacidades-mcp/configuracion-diagnostico.ts)                   | Lectura de `MCP_SERVER_URL` desde el entorno.                                                                          |
-| [`src/app/a2a/incident-diagnosis.service.ts`](src/app/a2a/incident-diagnosis.service.ts)                                         | Ejecuta el diagnostico, evalua prioridad institucional y estructura el artefacto `diagnostico` (HU-09 a HU-12, HU-30). |
-| [`src/app/a2a/a2a.controller.ts`](src/app/a2a/a2a.controller.ts)                                                                 | Endpoint `POST /a2a` JSON-RPC 2.0 (`message/send`).                                                                    |
-| [`src/app/a2a/a2a.module.ts`](src/app/a2a/a2a.module.ts)                                                                         | Modulo NestJS de comunicacion A2A del especialista.                                                                    |
-| [`src/app/salud/salud.controller.ts`](src/app/salud/salud.controller.ts)                                                         | Endpoint `GET /health` con identidad del especialista de diagnostico.                                                  |
+| Archivo                                                                                      | Contenido                                                                            |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [`src/app/app.module.ts`](src/app/app.module.ts)                                             | Salud + Agent Card + `EspecialistaModule.forRoot({ rol: 'diagnostico' })`.           |
+| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts) | Publica la tarjeta (`tarjetaAgente('diagnostico', A2A_SELF_URL)`).                   |
+| [`src/app/salud/`](src/app/salud/)                                                           | `GET /health` con la identidad del especialista (`rol: especialista`).               |
+| [`src/entorno.ts`](src/entorno.ts)                                                           | Carga `apps/b3-a2a-diagnostico/.env` en desarrollo.                                  |
+| [`.env.example`](.env.example)                                                               | `PORT`, `MCP_SERVER_URL`, `A2A_SELF_URL`, modelo y casetes (iguales al orquestador). |
+
+Se levanta con `pnpm dev:b3` junto con `mcp-server`, el otro especialista y el
+orquestador. Modelo, muestreo, modo de casetes y limites llevan los mismos
+valores que el orquestador y que B0 (RNF-01).
