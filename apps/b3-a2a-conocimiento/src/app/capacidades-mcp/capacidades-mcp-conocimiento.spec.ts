@@ -1,7 +1,7 @@
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { CABECERA_AGENT_ID } from '@unihelp/contratos';
+import { CABECERA_AGENT_ID, META_MCP } from '@unihelp/contratos';
 import { CapacidadesMcpConocimiento } from './capacidades-mcp-conocimiento';
 
 describe('CapacidadesMcpConocimiento (HU-20, HU-25, HU-33)', () => {
@@ -91,5 +91,37 @@ describe('CapacidadesMcpConocimiento (HU-20, HU-25, HU-33)', () => {
 
     expect(llamadasHeaders.length).toBeGreaterThan(0);
     expect(llamadasHeaders[0][CABECERA_AGENT_ID]).toBe('conocimiento');
+  });
+
+  it('debe mapear politicas cuando el servidor MCP las entrega en _meta.estructurado', async () => {
+    servidor.setRequestHandler(CallToolRequestSchema, async () => ({
+      content: [{ type: 'text', text: '{}' }],
+      _meta: {
+        [META_MCP.estructurado]: {
+          tipo: 'encontradas',
+          politicas: [
+            {
+              codigo: 'POL-CI-003',
+              version: '1.1',
+              titulo: 'Reactivación por inactividad',
+              extracto: { texto: 'La reactivación tarda 5 días hábiles.' },
+              relevancia: 0.85,
+            },
+          ],
+        },
+      },
+    }));
+
+    const clienteMcp = new CapacidadesMcpConocimiento(
+      { urlServidorMcp: 'http://localhost:3010' },
+      () => transportes[1],
+    );
+
+    const res = await clienteMcp.buscarPolitica('reactivar correo', 'trace-test-estructurado');
+    expect(res.artefacto.politicas).toHaveLength(1);
+    expect(res.artefacto.politicas[0].codigo).toBe('POL-CI-003');
+    expect(res.artefacto.politicas[0].extracto).toBe('La reactivación tarda 5 días hábiles.');
+    expect(res.artefacto.confianza).toBe('alta');
+    expect(res.artefacto.sin_resultados).toBe(false);
   });
 });

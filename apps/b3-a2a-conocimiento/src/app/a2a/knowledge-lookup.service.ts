@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { A2aArtifactDto, ArtefactoPoliticaAplicableDataDto } from '@unihelp/contratos';
 import { CapacidadesMcpConocimiento } from '../capacidades-mcp/capacidades-mcp-conocimiento';
 
@@ -76,7 +76,10 @@ function extraerTerminosClave(texto: string): string {
 export class KnowledgeLookupService {
   private readonly logger = new Logger(KnowledgeLookupService.name);
 
-  constructor(private readonly capacidadesMcp: CapacidadesMcpConocimiento) {}
+  constructor(
+    @Inject(CapacidadesMcpConocimiento)
+    private readonly capacidadesMcp: CapacidadesMcpConocimiento,
+  ) {}
 
   /**
    * Ejecuta la busqueda de politica institucional para la consulta dada.
