@@ -1,0 +1,8 @@
+{
+  "name": "multiagente-nucleo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/multiagente-nucleo/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {}
+}
