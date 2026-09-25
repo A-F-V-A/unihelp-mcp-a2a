@@ -75,7 +75,7 @@ Las de B0 (sección 2 del documento de B0) más las propias del protocolo:
 | HU-25 | Las cinco herramientas con esquema de entrada y salida por `tools/list`; instantánea versionada; equivalencia con B0           | `mcp-server/src/app/mcp/servidor-herramientas-mcp.ts`, `contrato.spec.ts`, `contrato/tools-list.instantanea.json` |
 | HU-26 | Anotaciones: consultas de solo lectura e idempotentes; creación destructiva                                                    | `DEFINICIONES_HERRAMIENTAS.anotaciones`, publicadas tal cual                                                      |
 | HU-27 | Registro aditivo, `notifications/tools/list_changed`, el agente incorpora la herramienta sin reiniciar. La sexta sigue sellada | `RegistroCapacidades.agregar`, `SesionesMcp`, `CapacidadesMcp`                                                    |
-| HU-33 | `X-Trace-Id` viaja del ejecutor al agente y del agente al servidor MCP, y llega a la auditoría                                 | `CapacidadesMcp.fetchConTraza`, `contextoDeLlamada`                                                               |
+| HU-33 | `X-Trace-Id` viaja del ejecutor al agente y del agente al servidor MCP, y llega a la auditoría                                 | `CapacidadesMcp.fetchConCabeceras`, `contextoDeLlamada`                                                               |
 | HU-34 | El servidor reporta su duración; el agente calcula el transporte por resta                                                     | `aResultadoMcp` (`_meta`), `CapacidadesMcp.invocar`                                                               |
 | HU-16 | La garantía del token vive en `CrearTicketUseCase`, detrás del servidor; un intento sin token vuelve `CONFIRMACION_REQUERIDA`  | `@unihelp/tickets`, sin código nuevo                                                                              |
 
@@ -143,9 +143,9 @@ Solo las clases que no existen en B0. Rutas relativas a `apps/`.
 
 | Campo           | Contenido                                                                                                                                                                                                 |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Archivo         | `b1-mcp-agente/src/app/capacidades-mcp/capacidades-mcp.ts`                                                                                                                                                |
+| Archivo         | `libs/capacidades-mcp/src/lib/capacidades-mcp.ts` (`@unihelp/capacidades-mcp`; vivió en `b1-mcp-agente/src/app/capacidades-mcp/` hasta la decisión 44, que lo compartió con B2 y B3 sin cambiar su comportamiento) |
 | Responsabilidad | Cumplir `PuertoCapacidades` con un cliente MCP: descubrir con `tools/list`, invocar con `tools/call`, propagar la traza, medir `rtt`, tomar `dur` del servidor y traducir `isError` a `ErrorHerramienta`. |
-| Recibe          | `ConfiguracionB1` (`MCP_SERVER_URL`) y, opcionalmente, una fábrica de transporte (las pruebas usan `InMemoryTransport`).                                                                                  |
+| Recibe          | `ConfiguracionClienteMcp` (`MCP_SERVER_URL`, rol `agente: null` en B1, nombre del cliente) y, opcionalmente, una fábrica de transporte (las pruebas usan `InMemoryTransport`).                            |
 | Devuelve        | `DescripcionCapacidad[]` y `ResultadoInvocacion` (`ok`, `salida` o `error`, `durMs`, `rttMs`).                                                                                                            |
 | Depende de      | `@modelcontextprotocol/sdk` (`Client`, `StreamableHTTPClientTransport`), `@unihelp/contratos` (`mcp.contrato.ts`), `@unihelp/herramientas`.                                                               |
 | Sostiene        | HU-25, HU-27, HU-33, HU-34, D5, RM-05, RM-15 (`ErrorInfraestructuraMcp`).                                                                                                                                 |
@@ -356,7 +356,7 @@ Todo lo de la sección 12 de B0, más:
 | Nucleo compartido             | `libs/agente-nucleo` (decisión 41); B0 y B1 lo importan sin ramas por arquitectura.                                                  |
 | Capacidades compartidas       | `libs/capacidades` (decisión 41); B0 las invoca en proceso y `mcp-server` las publica.                                               |
 | Servidor MCP                  | `apps/mcp-server`: `/mcp`, sesiones, `tools/list` con instantánea, `tools/call` con `_meta`, `list_changed` (decisión 42).           |
-| Cliente MCP                   | `CapacidadesMcp` en `apps/b1-mcp-agente`.                                                                                            |
+| Cliente MCP                   | `CapacidadesMcp` en `libs/capacidades-mcp`, con `agente: null` (sin `X-Agent-Id`).                                                   |
 | Pruebas de contrato           | Instantánea y equivalencia B0-B1 en `mcp-server/src/app/mcp/contrato.spec.ts`; salidas contra `esquemaSalida` en `libs/capacidades`. |
 | Punta a punta                 | `nx e2e b1-mcp-agente`: T-COM-001 real, traza válida con AJV, creación sin token rechazada y auditada.                               |
 | Sustitución B0/B1 en `replay` | **Pendiente.** Escrita y desactivada (`UNIHELP_E2E_SUSTITUCION=1`): exige casetes grabados con la misma traza para ambas (DP-04).    |

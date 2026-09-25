@@ -10,10 +10,12 @@ import {
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import type { OnModuleDestroy } from '@nestjs/common';
 import {
+  CABECERA_AGENT_ID,
   CABECERA_TRACE_ID,
   type ContextoMcpDto,
   type ErrorHerramientaMcpDto,
   META_MCP,
+  PERMISOS_AGENTE,
   RUTA_MCP,
 } from '@unihelp/contratos';
 import {
@@ -27,16 +29,19 @@ import {
   descripcionDesdeHerramientaPublicada,
   esCodigoErrorHerramienta,
 } from '@unihelp/herramientas';
-import { CONFIGURACION_B1, type ConfiguracionB1 } from './configuracion-b1';
+import {
+  CONFIGURACION_CLIENTE_MCP,
+  type ConfiguracionClienteMcp,
+} from './configuracion-cliente-mcp';
 
-/** Como se presenta B1 en `initialize`. */
-const CLIENTE_MCP = { name: 'b1-mcp-agente', version: '0.1.0' } as const;
+/** Version con la que el cliente se presenta en `initialize`. */
+const VERSION_CLIENTE = '0.1.0';
 
 /**
  * Construye el transporte del cliente. Se inyecta para que las pruebas usen un
  * transporte en memoria; en produccion es Streamable HTTP contra `mcp-server`.
  */
-export type FabricaTransporteMcp = (fetchConTraza: FetchLike) => Transport;
+export type FabricaTransporteMcp = (fetchConCabeceras: FetchLike) => Transport;
 
 export const FABRICA_TRANSPORTE_MCP = Symbol('FABRICA_TRANSPORTE_MCP');
 
@@ -49,24 +54,30 @@ function textoDe(resultado: CallToolResult): string {
 }
 
 /**
- * Implementacion MCP del puerto de capacidades: la UNICA pieza de B1 que no es
- * el nucleo compartido, y la unica diferencia con B0 (H1, RNF-01).
+ * Implementacion MCP del puerto de capacidades. En B1 es la UNICA pieza que no
+ * es el nucleo compartido, y la unica diferencia con B0 (H1, RNF-01); en B2 y
+ * B3 la usa cada agente (orquestador y especialistas) con su rol (decision 44),
+ * asi que B3 - B2 no incluye ninguna diferencia en el acceso a las herramientas.
  *
  * - Descubre las herramientas con `tools/list` la primera vez que el nucleo las
  *   pide y las traduce a la descripcion neutral del puerto; el nucleo las lleva
  *   al formato de function calling en el mismo lugar que en B0.
+ * - Con un rol (`agente`), filtra la lista con `PERMISOS_AGENTE`: el modelo de
+ *   cada especialista solo ve sus herramientas, y el servidor rechaza igual una
+ *   llamada fuera del mapa (docs/03, seccion 5; HU-20).
  * - Ante `notifications/tools/list_changed` olvida la lista: la siguiente
  *   llamada al modelo ya ve las herramientas nuevas, sin reiniciar (HU-27).
- * - Cada `tools/call` viaja con `X-Trace-Id` en la cabecera HTTP (HU-33) y con
- *   `conversacionId` y `actor` en `_meta`; mide la ida y vuelta con reloj
- *   monotono y toma la duracion que el servidor reporta en `_meta`, de modo que
- *   `transport_ms = rtt - dur` sin restar marcas de otro proceso (D5, RM-05).
+ * - Cada `tools/call` viaja con `X-Trace-Id` (HU-33) y, si hay rol, con
+ *   `X-Agent-Id` en la cabecera HTTP, y con `conversacionId` y `actor` en
+ *   `_meta`; mide la ida y vuelta con reloj monotono y toma la duracion que el
+ *   servidor reporta en `_meta`, de modo que `transport_ms = rtt - dur` sin
+ *   restar marcas de otro proceso (D5, RM-05).
  * - Si el servidor no responde, lanza `ErrorInfraestructura`: la ejecucion
  *   termina como `error_infraestructura` (RM-15).
  */
 @Injectable()
 export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
-  private readonly logger = new Logger('CapacidadesMcp');
+  private readonly logger: Logger;
   /** Traza de la invocacion en curso; la lee el `fetch` para poner la cabecera. */
   private readonly trazaEnCurso = new AsyncLocalStorage<string>();
   private readonly fabrica: FabricaTransporteMcp;
@@ -74,15 +85,23 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
   private herramientas: readonly DescripcionCapacidad[] | null = null;
 
   constructor(
-    @Inject(CONFIGURACION_B1) private readonly configuracion: ConfiguracionB1,
+    @Inject(CONFIGURACION_CLIENTE_MCP) private readonly configuracion: ConfiguracionClienteMcp,
     @Optional() @Inject(FABRICA_TRANSPORTE_MCP) fabrica: FabricaTransporteMcp | null,
   ) {
+    this.logger = new Logger(
+      configuracion.agente === null ? 'CapacidadesMcp' : `CapacidadesMcp:${configuracion.agente}`,
+    );
     this.fabrica =
       fabrica ??
-      ((fetchConTraza) =>
+      ((fetchConCabeceras) =>
         new StreamableHTTPClientTransport(new URL(RUTA_MCP, `${configuracion.urlServidorMcp}/`), {
-          fetch: fetchConTraza,
+          fetch: fetchConCabeceras,
         }));
+  }
+
+  /** Rol con el que se presenta ante el servidor, o `null` (B1). */
+  get agente(): ConfiguracionClienteMcp['agente'] {
+    return this.configuracion.agente;
   }
 
   async listar(): Promise<readonly DescripcionCapacidad[]> {
@@ -90,9 +109,13 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
     if (this.herramientas === null) {
       try {
         const { tools } = await cliente.listTools();
-        this.herramientas = tools.map(descripcionDesdeHerramientaPublicada);
+        const permitidas = this.configuracion.agente === null ? null : this.permitidas();
+        this.herramientas = tools
+          .filter((t) => permitidas === null || permitidas.includes(t.name))
+          .map(descripcionDesdeHerramientaPublicada);
         this.logger.log(
-          `Herramientas descubiertas por tools/list: ${this.herramientas.map((h) => h.nombre).join(', ')}`,
+          `Herramientas descubiertas por tools/list: ${this.herramientas.map((h) => h.nombre).join(', ')}` +
+            (permitidas === null ? '' : ` (de ${tools.length} publicadas; filtro por rol)`),
         );
       } catch (fallo) {
         throw this.comoInfraestructura('descubrir las herramientas (tools/list)', fallo);
@@ -175,6 +198,12 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
     }
   }
 
+  private permitidas(): readonly string[] {
+    return this.configuracion.agente === null
+      ? []
+      : (PERMISOS_AGENTE[this.configuracion.agente] ?? []);
+  }
+
   /** Conecta una vez y reutiliza la sesion; tras un cierre, la siguiente llamada reconecta. */
   private conectar(): Promise<Client> {
     this.conexion ??= this.abrir().catch((fallo: unknown) => {
@@ -185,7 +214,10 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
   }
 
   private async abrir(): Promise<Client> {
-    const cliente = new Client(CLIENTE_MCP);
+    const cliente = new Client({
+      name: this.configuracion.nombreCliente,
+      version: VERSION_CLIENTE,
+    });
     cliente.setNotificationHandler(ToolListChangedNotificationSchema, async () => {
       // Se olvida la lista, no se vuelve a pedir aqui: el nucleo la pide antes
       // de la siguiente llamada al modelo y la usa desde ahi (HU-27).
@@ -197,7 +229,7 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
       this.herramientas = null;
     };
     try {
-      await cliente.connect(this.fabrica(this.fetchConTraza));
+      await cliente.connect(this.fabrica(this.fetchConCabeceras));
     } catch (fallo) {
       throw this.comoInfraestructura(
         `conectar con el servidor MCP en ${this.configuracion.urlServidorMcp}`,
@@ -207,12 +239,15 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
     return cliente;
   }
 
-  /** `fetch` que agrega la cabecera de traza de la invocacion en curso (HU-33). */
-  private readonly fetchConTraza: FetchLike = (url, init) => {
+  /** `fetch` que agrega la traza de la invocacion en curso (HU-33) y el rol del agente (HU-20). */
+  private readonly fetchConCabeceras: FetchLike = (url, init) => {
     const cabeceras = normalizeHeaders(init?.headers);
     const traza = this.trazaEnCurso.getStore();
     if (traza !== undefined) {
       cabeceras[CABECERA_TRACE_ID] = traza;
+    }
+    if (this.configuracion.agente !== null) {
+      cabeceras[CABECERA_AGENT_ID] = this.configuracion.agente;
     }
     return fetch(url, { ...init, headers: cabeceras });
   };

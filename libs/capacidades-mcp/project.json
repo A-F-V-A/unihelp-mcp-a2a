@@ -1,0 +1,8 @@
+{
+  "name": "capacidades-mcp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/capacidades-mcp/src",
+  "projectType": "library",
+  "tags": ["tipo:lib", "arq:compartido", "alcance:backend"],
+  "targets": {}
+}

@@ -6,6 +6,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {
   CallToolRequestSchema,
+  type CallToolResult,
   ListToolsRequestSchema,
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
@@ -17,6 +18,13 @@ import {
   ErrorInfraestructura,
 } from '@unihelp/herramientas';
 import { CapacidadesMcp } from './capacidades-mcp';
+import type { ConfiguracionClienteMcp } from './configuracion-cliente-mcp';
+
+const CONFIG_B1: ConfiguracionClienteMcp = {
+  urlServidorMcp: 'http://en-memoria',
+  agente: null,
+  nombreCliente: 'b1-mcp-agente',
+};
 
 const contexto: ContextoInvocacion = {
   traceId: 'traza-b1',
@@ -41,12 +49,10 @@ function servidorFalso() {
     outputSchema: d.esquemaSalida as Tool['outputSchema'],
     annotations: { title: d.titulo, ...d.anotaciones },
   }));
-  const servidor = new Server(
-    { name: 'falso', version: '0' },
-    { capabilities: { tools: { listChanged: true } } },
-  );
-  servidor.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: herramientas }));
-  servidor.setRequestHandler(CallToolRequestSchema, async (peticion, extra) => {
+  const atender = async (
+    peticion: { params: { name: string; _meta?: unknown } },
+    extra: { requestInfo?: { headers: Record<string, string | string[] | undefined> } },
+  ): Promise<CallToolResult> => {
     recibidas.push({
       nombre: peticion.params.name,
       meta: peticion.params._meta,
@@ -71,9 +77,17 @@ function servidorFalso() {
       structuredContent: salida,
       _meta: { [META_MCP.duracionMs]: 7, [META_MCP.estructurado]: { tipo: 'sin-resultados' } },
     };
-  });
+  };
+  const servidor = new Server(
+    { name: 'falso', version: '0' },
+    { capabilities: { tools: { listChanged: true } } },
+  );
+  servidor.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: herramientas }));
+  servidor.setRequestHandler(CallToolRequestSchema, atender);
   return {
     servidor,
+    herramientas,
+    atender,
     recibidas,
     agregarHerramienta(): void {
       herramientas.push({
@@ -85,9 +99,9 @@ function servidorFalso() {
   };
 }
 
-function enMemoria() {
+function enMemoria(configuracion: ConfiguracionClienteMcp = CONFIG_B1) {
   const falso = servidorFalso();
-  const puerto = new CapacidadesMcp({ urlServidorMcp: 'http://en-memoria' }, (fetchConTraza) => {
+  const puerto = new CapacidadesMcp(configuracion, (fetchConTraza) => {
     void fetchConTraza;
     const [paraCliente, paraServidor] = InMemoryTransport.createLinkedPair();
     void falso.servidor.connect(paraServidor);
@@ -164,54 +178,112 @@ describe('CapacidadesMcp (puerto de capacidades por MCP)', () => {
     expect(lista.map((h) => h.nombre)).toContain('herramienta_de_prueba');
     await puerto.onModuleDestroy();
   });
+
+  it('con un rol, tools/list se filtra con PERMISOS_AGENTE: el modelo solo ve sus herramientas (HU-20)', async () => {
+    const conocimiento = enMemoria({ ...CONFIG_B1, agente: 'conocimiento' });
+    expect((await conocimiento.puerto.listar()).map((h) => h.nombre)).toEqual(['buscar_politica']);
+    await conocimiento.puerto.onModuleDestroy();
+
+    const orquestador = enMemoria({ ...CONFIG_B1, agente: 'orquestador' });
+    expect((await orquestador.puerto.listar()).map((h) => h.nombre)).toEqual([
+      'proponer_ticket',
+      'confirmar_propuesta',
+      'crear_ticket_simulado',
+    ]);
+    await orquestador.puerto.onModuleDestroy();
+  });
 });
 
+/**
+ * Servidor HTTP con el contrato falso detras de Streamable HTTP. Una sesion MCP
+ * por cliente, como `mcp-server`: cada `initialize` abre su propio transporte.
+ */
+async function levantarHttp(falso: ReturnType<typeof servidorFalso>) {
+  const transportes = new Map<string, StreamableHTTPServerTransport>();
+  const http: ServidorHttp = createServer((peticion: IncomingMessage, respuesta) => {
+    let cuerpo = '';
+    peticion.on('data', (trozo: Buffer) => (cuerpo += trozo.toString('utf8')));
+    peticion.on('end', () => {
+      void (async () => {
+        const json: unknown = cuerpo ? JSON.parse(cuerpo) : undefined;
+        const sesion = peticion.headers['mcp-session-id'];
+        let transporte = typeof sesion === 'string' ? transportes.get(sesion) : undefined;
+        if (transporte === undefined) {
+          const nuevo: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: () => randomUUID(),
+            onsessioninitialized: (id: string): void => {
+              transportes.set(id, nuevo);
+            },
+          });
+          // Un `Server` del SDK atiende un transporte; se crea uno por sesion
+          // sobre los mismos manejadores del contrato falso.
+          const servidor = new Server(
+            { name: 'falso', version: '0' },
+            { capabilities: { tools: { listChanged: true } } },
+          );
+          servidor.setRequestHandler(ListToolsRequestSchema, async () => ({
+            tools: falso.herramientas,
+          }));
+          servidor.setRequestHandler(CallToolRequestSchema, falso.atender);
+          await servidor.connect(nuevo);
+          transporte = nuevo;
+        }
+        await (transporte as StreamableHTTPServerTransport).handleRequest(
+          peticion,
+          respuesta,
+          json,
+        );
+      })();
+    });
+  });
+  await new Promise<void>((r) => http.listen(0, '127.0.0.1', () => r()));
+  return {
+    url: `http://127.0.0.1:${(http.address() as AddressInfo).port}`,
+    async cerrar(): Promise<void> {
+      await Promise.all([...transportes.values()].map((t) => t.close()));
+      http.closeAllConnections();
+      await new Promise<void>((r) => http.close(() => r()));
+    },
+  };
+}
+
 describe('CapacidadesMcp por Streamable HTTP', () => {
-  let http: ServidorHttp;
-  let url: string;
   let falso: ReturnType<typeof servidorFalso>;
-  let transporte: StreamableHTTPServerTransport | null = null;
+  let servidor: Awaited<ReturnType<typeof levantarHttp>>;
 
   beforeAll(async () => {
     falso = servidorFalso();
-    http = createServer((peticion: IncomingMessage, respuesta) => {
-      let cuerpo = '';
-      peticion.on('data', (trozo: Buffer) => (cuerpo += trozo.toString('utf8')));
-      peticion.on('end', () => {
-        void (async () => {
-          const json: unknown = cuerpo ? JSON.parse(cuerpo) : undefined;
-          if (transporte === null) {
-            transporte = new StreamableHTTPServerTransport({
-              sessionIdGenerator: () => randomUUID(),
-            });
-            await falso.servidor.connect(transporte);
-          }
-          await transporte.handleRequest(peticion, respuesta, json);
-        })();
-      });
-    });
-    await new Promise<void>((r) => http.listen(0, '127.0.0.1', () => r()));
-    url = `http://127.0.0.1:${(http.address() as AddressInfo).port}`;
+    servidor = await levantarHttp(falso);
   });
 
   afterAll(async () => {
-    await transporte?.close();
-    http.closeAllConnections();
-    await new Promise<void>((r) => http.close(() => r()));
+    await servidor.cerrar();
   });
 
-  it('propaga X-Trace-Id en la cabecera de cada tools/call (HU-33)', async () => {
-    const puerto = new CapacidadesMcp({ urlServidorMcp: url }, null);
+  it('propaga X-Trace-Id en la cabecera de cada tools/call y sin rol no envia X-Agent-Id (HU-33)', async () => {
+    const puerto = new CapacidadesMcp({ ...CONFIG_B1, urlServidorMcp: servidor.url }, null);
     const r = await puerto.invocar('buscar_politica', { consulta: 'prórroga' }, contexto);
     expect(r.ok).toBe(true);
     // La duracion es la que REPORTA el servidor (aqui fija), no una resta local (D5).
     expect(r.durMs).toBe(7);
     expect(falso.recibidas.at(-1)?.cabeceras?.['x-trace-id']).toBe('traza-b1');
+    expect(falso.recibidas.at(-1)?.cabeceras?.['x-agent-id']).toBeUndefined();
     await puerto.onModuleDestroy();
   });
 
+  it('con un rol, cada tools/call lleva X-Agent-Id ademas de la traza (HU-20)', async () => {
+    const diagnostico = new CapacidadesMcp(
+      { urlServidorMcp: servidor.url, agente: 'diagnostico', nombreCliente: 'prueba' },
+      null,
+    );
+    await diagnostico.invocar('consultar_estado_servicio', { servicio: 'aula_virtual' }, contexto);
+    expect(falso.recibidas.at(-1)?.cabeceras?.['x-agent-id']).toBe('diagnostico');
+    expect(falso.recibidas.at(-1)?.cabeceras?.['x-trace-id']).toBe('traza-b1');
+    await diagnostico.onModuleDestroy();
+  });
+
   it('si el servidor MCP no responde, la invocacion termina en ErrorInfraestructura (RM-15)', async () => {
-    const puerto = new CapacidadesMcp({ urlServidorMcp: 'http://127.0.0.1:9' }, null);
+    const puerto = new CapacidadesMcp({ ...CONFIG_B1, urlServidorMcp: 'http://127.0.0.1:9' }, null);
     await expect(puerto.listar()).rejects.toBeInstanceOf(ErrorInfraestructura);
     await expect(puerto.invocar('buscar_politica', { consulta: 'x' }, contexto)).rejects.toThrow(
       /servidor MCP/,

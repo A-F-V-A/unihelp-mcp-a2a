@@ -33,9 +33,25 @@ export const CABECERA_TRACE_ID = 'x-trace-id';
 export const CABECERA_AGENT_ID = 'x-agent-id';
 
 /**
- * Mapa de privilegios: que herramientas puede invocar cada agente B3 (HU-20,
- * RNF-04). Solo lo lee el servidor; los clientes lo usan para auto-restringirse
- * y para las pruebas adversariales (tarea 5.5 del plan de implementacion).
+ * Agentes con privilegios propios ante el servidor MCP: los tres roles del
+ * sistema multiagente (B2 y B3, decision 44). Son los valores validos de
+ * `X-Agent-Id`; el agente unico de B0 y B1 no envia la cabecera.
+ */
+export const AGENTES_MCP = ['conocimiento', 'diagnostico', 'orquestador'] as const;
+
+export type AgenteMcp = (typeof AGENTES_MCP)[number];
+
+export function esAgenteMcp(valor: unknown): valor is AgenteMcp {
+  return typeof valor === 'string' && (AGENTES_MCP as readonly string[]).includes(valor);
+}
+
+/**
+ * Mapa de privilegios: que herramientas puede invocar cada agente de B2 y B3
+ * (HU-20, RNF-04; docs/03, seccion 5). Se aplica en DOS lugares: el cliente
+ * (`@unihelp/capacidades-mcp`) filtra `tools/list` para que el modelo de cada
+ * rol solo vea sus herramientas, y el servidor rechaza con `SIN_AUTORIZACION`
+ * cualquier `tools/call` fuera del mapa, para que la restriccion no dependa del
+ * comportamiento del modelo.
  *
  * `undefined` como clave significa "sin cabecera" (B1, inspector): sin restriccion.
  */

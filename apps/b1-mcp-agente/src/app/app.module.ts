@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AgenteNucleoModule, leerConfiguracionAgente } from '@unihelp/agente-nucleo';
+import {
+  CapacidadesMcp,
+  CapacidadesMcpModule,
+  leerConfiguracionClienteMcp,
+} from '@unihelp/capacidades-mcp';
 import { ConocimientoModule } from '@unihelp/conocimiento';
 import { PUERTO_CAPACIDADES } from '@unihelp/herramientas';
 import { TicketsModule } from '@unihelp/tickets';
-import { CapacidadesMcp } from './capacidades-mcp/capacidades-mcp';
-import { CapacidadesMcpModule } from './capacidades-mcp/capacidades-mcp.module';
-import { leerConfiguracionB1 } from './capacidades-mcp/configuracion-b1';
 import { IDENTIDAD } from './salud/identidad';
 import { SaludModule } from './salud/salud.module';
 
@@ -14,8 +16,10 @@ const configuracion = leerConfiguracionAgente();
 /**
  * B1: el MISMO nucleo compartido que B0 con una sola diferencia: las cinco
  * capacidades se alcanzan por MCP. `PUERTO_CAPACIDADES` se enlaza con
- * `CapacidadesMcp`, un cliente que descubre las herramientas con `tools/list` y
- * las invoca con `tools/call` contra `mcp-server`. Nada mas cambia (RNF-01, H1).
+ * `CapacidadesMcp` (`@unihelp/capacidades-mcp`), un cliente que descubre las
+ * herramientas con `tools/list` y las invoca con `tools/call` contra
+ * `mcp-server`. Sin rol (`agente: null`): el agente unico no tiene privilegios
+ * por rol y el servidor no restringe. Nada mas cambia (RNF-01, H1).
  *
  * `ConocimientoModule` y `TicketsModule` se importan por las rutas que NO son
  * capacidades del agente y que B0 tambien atiende en proceso: registro del
@@ -33,7 +37,7 @@ const configuracion = leerConfiguracionAgente();
       imports: [
         ConocimientoModule.forRoot(),
         TicketsModule.forRoot(),
-        CapacidadesMcpModule.forRoot(leerConfiguracionB1()),
+        CapacidadesMcpModule.forRoot(leerConfiguracionClienteMcp(IDENTIDAD.servicio)),
       ],
       puertoCapacidades: { provide: PUERTO_CAPACIDADES, useExisting: CapacidadesMcp },
     }),
