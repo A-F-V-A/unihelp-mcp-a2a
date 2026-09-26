@@ -30,6 +30,11 @@ export interface RespuestaModelo {
   readonly rttMs: number;
 }
 
+/** Modelos que aceptan `reasoning_effort`: la familia GPT-5 y la serie o (`o3`, `o4-mini`). */
+export function admiteRazonamiento(modeloId: string): boolean {
+  return /^(gpt-5|o\d)/.test(modeloId);
+}
+
 /**
  * Hace UNA peticion al modelo. Sin reintentos automaticos: un reintento
  * escondido mezclaria dos peticiones en un solo `rtt` (M4.2). Nunca pide
@@ -111,9 +116,14 @@ export class ClienteModelo {
           parallel_tool_calls: false,
           // Explicito: en GPT-5.x el valor por defecto no es `none` y con otro
           // valor el proveedor rechaza `temperature` y las herramientas (decision 40).
-          // El tipo del SDK 5.23 aun no lista `none`, que la API si acepta.
-          reasoning_effort:
-            modelo.esfuerzoRazonamiento as ChatCompletionCreateParams['reasoning_effort'],
+          // El tipo del SDK 5.23 aun no lista `none`, que la API si acepta. Un
+          // modelo sin razonamiento (gpt-4.1) rechaza el parametro: no se envia.
+          ...(admiteRazonamiento(modeloId)
+            ? {
+                reasoning_effort:
+                  modelo.esfuerzoRazonamiento as ChatCompletionCreateParams['reasoning_effort'],
+              }
+            : {}),
           temperature: modelo.temperatura,
           top_p: modelo.topP,
           max_completion_tokens: modelo.maxTokens,
