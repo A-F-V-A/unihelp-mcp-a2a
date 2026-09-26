@@ -33,7 +33,8 @@ cada arquitectura. Cualquier cambio que rompa esa simetria contamina las
 mediciones. Ante la duda, pregunta antes de compartir o duplicar codigo.
 
 Estado actual: las cuatro arquitecturas estan implementadas con el mismo
-modelo (OpenAI, function calling) y el mismo prompt base. B0 y B1 son el MISMO
+modelo (OpenAI, function calling; o un modelo local por Ollama con la misma
+API, decision 46) y el mismo prompt base. B0 y B1 son el MISMO
 agente unico, cuyo nucleo vive en `libs/agente-nucleo` y cuyas cinco capacidades
 en `libs/capacidades`; B0 las invoca en proceso y B1 por MCP contra `mcp-server`
 (`@modelcontextprotocol/sdk` 1.30.1, especificacion 2025-11-25), la unica
@@ -157,6 +158,7 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   juez/                  Fuente del juez LLM (futuro)
   trazas/ resultados/ salidas/ corridas/ casetes/  Artefactos: NO se versionan
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
+infra/ollama/            Modelfile del modelo local (proveedor `ollama`, decision 46)
 docs/                    Documentacion (indice en docs/README.md)
   00-...10-*.md          Anexo tecnico: especificacion del experimento (08-10 generados)
   tasks/                 40 YAML del conjunto de evaluacion (generados, no editar a mano)
@@ -362,6 +364,7 @@ pnpm nx test <proyecto> # tests de un proyecto
 pnpm verify             # lint + test + build de todo (obligatorio antes de cerrar)
 pnpm graph              # grafo de dependencias
 pnpm conocimiento:db    # PostgreSQL de la base de conocimiento (Docker)
+pnpm ollama:crear       # construye el modelo local de infra/ollama (exige Ollama instalado)
 pnpm conocimiento:migrar && pnpm conocimiento:sembrar
 pnpm conocimiento:test-integracion  # pruebas de libs/conocimiento contra PostgreSQL
 pnpm ejecutor:validar   # revisa las 40 tareas de docs/tasks sin ejecutar nada

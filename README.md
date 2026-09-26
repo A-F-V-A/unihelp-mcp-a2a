@@ -204,6 +204,13 @@ cp apps/b0-directo/.env.example apps/b0-directo/.env   # y completar OPENAI_API_
 pnpm dev:web:b0               # B0 en :3000 + frontend contra el backend real en :4200
 ```
 
+Para correr sin clave y sin costo de API hay un proveedor local por Ollama
+(decision 46): `winget install Ollama.Ollama`, `pnpm ollama:crear` y, en el `.env`,
+`UNIHELP_MODELO_PROVEEDOR=ollama` con
+`UNIHELP_MODELO_ID=unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k`. Detalle en
+[`infra/ollama/README.md`](infra/ollama/README.md). Las cifras de un modelo local
+se reportan como campaña aparte y no se mezclan con las de OpenAI.
+
 Desde **Configuración → Modelo de IA** se elige el proveedor y el modelo entre
 los que habilita el servidor (`UNIHELP_MODELOS_PERMITIDOS`). La clave nunca sale
 del servidor, y una corrida del experimento ignora esa eleccion (decision 27).

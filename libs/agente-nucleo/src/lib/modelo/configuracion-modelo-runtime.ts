@@ -8,21 +8,32 @@ import { PROVEEDORES_MODELO, type ProveedorModelo, esProveedorModelo } from '@un
 import {
   CONFIGURACION_AGENTE,
   type ConfiguracionAgente,
+  type ProveedorModeloBackend,
 } from '../configuracion/configuracion-agente';
 import { ErrorApi } from '../http/error-api';
 
-/** Fichas de los proveedores que la interfaz muestra. B0 solo implementa OpenAI (decision 27). */
+/**
+ * Fichas de los proveedores que la interfaz muestra. El backend integra uno a
+ * la vez, el de `UNIHELP_MODELO_PROVEEDOR`: OpenAI se muestra como `chatgpt`
+ * y Ollama como `local` (decisiones 27 y 46).
+ */
 const FICHAS: Readonly<Record<ProveedorModelo, { nombre: string; descripcion: string }>> = {
   chatgpt: { nombre: 'ChatGPT', descripcion: 'Modelos GPT de OpenAI.' },
   gemini: { nombre: 'Gemini', descripcion: 'Modelos Gemini de Google.' },
   claude: { nombre: 'Claude', descripcion: 'Modelos Claude de Anthropic.' },
   local: {
     nombre: 'Agente local',
-    descripcion: 'Un agente propio, alcanzable por una URL y autenticado con un token.',
+    descripcion: 'Un modelo servido en esta máquina con Ollama, por la misma API que OpenAI.',
   },
 };
 
-const NO_IMPLEMENTADO = 'B0 todavía no integra este proveedor; por ahora solo responde OpenAI.';
+const FICHA_DEL_PROVEEDOR: Readonly<Record<ProveedorModeloBackend, ProveedorModelo>> = {
+  openai: 'chatgpt',
+  ollama: 'local',
+};
+
+const NO_IMPLEMENTADO =
+  'El servidor no integra este proveedor; solo responde el configurado en UNIHELP_MODELO_PROVEEDOR.';
 const SIN_CLAVE = 'Falta la clave del proveedor en el servidor (OPENAI_API_KEY).';
 const EN_REPRODUCCION =
   'En modo de reproducción el modelo no se puede cambiar: los casetes están grabados con uno concreto.';
@@ -43,7 +54,7 @@ export class ConfiguracionModeloRuntime {
   private seleccion: SeleccionModeloIaDto;
 
   constructor(@Inject(CONFIGURACION_AGENTE) private readonly configuracion: ConfiguracionAgente) {
-    this.seleccion = { proveedor: 'chatgpt', modelo: configuracion.modelo.id };
+    this.seleccion = { proveedor: this.integrado(), modelo: configuracion.modelo.id };
   }
 
   /** Modelo que debe usar este turno. El ejecutor del experimento manda sobre la interfaz. */
@@ -93,9 +104,14 @@ export class ConfiguracionModeloRuntime {
     return this.estado();
   }
 
+  /** Ficha de la interfaz que corresponde al proveedor que este proceso invoca. */
+  private integrado(): ProveedorModelo {
+    return FICHA_DEL_PROVEEDOR[this.configuracion.modelo.proveedor];
+  }
+
   private ficha(id: ProveedorModelo): ProveedorModeloDto {
     const { nombre, descripcion } = FICHAS[id];
-    if (id !== 'chatgpt') {
+    if (id !== this.integrado()) {
       return {
         id,
         nombre,

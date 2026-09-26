@@ -21,8 +21,25 @@ export const ESFUERZOS_RAZONAMIENTO = ['none', 'low', 'medium', 'high'] as const
 
 export type EsfuerzoRazonamiento = (typeof ESFUERZOS_RAZONAMIENTO)[number];
 
+/**
+ * Proveedores que el backend sabe invocar. Ambos hablan la API de Chat
+ * Completions con function calling: `ollama` sirve un modelo local en esta
+ * maquina por la misma API, sin credencial (decision 46).
+ */
+export const PROVEEDORES_MODELO_BACKEND = ['openai', 'ollama'] as const;
+
+export type ProveedorModeloBackend = (typeof PROVEEDORES_MODELO_BACKEND)[number];
+
+/** Donde escucha Ollama por defecto; `/v1` es su prefijo compatible con OpenAI. */
+export const URL_BASE_OLLAMA = 'http://localhost:11434/v1';
+
 export interface ConfiguracionModelo {
-  readonly proveedor: 'openai';
+  readonly proveedor: ProveedorModeloBackend;
+  /**
+   * URL base del proveedor, o `null` para la de OpenAI. Con `ollama` siempre
+   * hay una: `UNIHELP_MODELO_URL_BASE` o, si falta, `URL_BASE_OLLAMA`.
+   */
+  readonly urlBase: string | null;
   /** Identificador exacto con fecha de snapshot. Va a cada traza (RNF-08). */
   readonly id: string;
   readonly temperatura: number;
@@ -39,7 +56,11 @@ export interface ConfiguracionAgente {
    * que es el unico que usan las corridas del experimento (decision 27).
    */
   readonly modelosPermitidos: readonly string[];
-  /** `null` en `replay`: la reproduccion no requiere credenciales (HU-44). */
+  /**
+   * `null` en `replay`: la reproduccion no requiere credenciales (HU-44). Con
+   * `ollama` vale `ollama` si no hay `OPENAI_API_KEY`: el servidor local no
+   * autentica, pero el SDK exige un valor no vacio.
+   */
   readonly claveApi: string | null;
   readonly modoLlm: ModoLlm;
   readonly directorioCasetes: string | null;
@@ -91,13 +112,44 @@ function numero(
   return valor;
 }
 
-export function leerConfiguracionAgente(entorno: Entorno = process.env): ConfiguracionAgente {
-  const proveedor = obligatoria(entorno, 'UNIHELP_MODELO_PROVEEDOR');
-  if (proveedor !== 'openai') {
+function urlBase(entorno: Entorno, proveedor: ProveedorModeloBackend): string | null {
+  const crudo = entorno['UNIHELP_MODELO_URL_BASE']?.trim();
+  const valor = crudo || (proveedor === 'ollama' ? URL_BASE_OLLAMA : null);
+  if (valor === null) {
+    return null;
+  }
+  try {
+    new URL(valor);
+  } catch {
     throw new ConfiguracionAgenteInvalidaError(
-      `UNIHELP_MODELO_PROVEEDOR=«${proveedor}» no está soportado; solo «openai».`,
+      `UNIHELP_MODELO_URL_BASE no es una URL: «${valor}».`,
     );
   }
+  return valor;
+}
+
+function claveApi(
+  entorno: Entorno,
+  proveedor: ProveedorModeloBackend,
+  modo: ModoLlm,
+): string | null {
+  if (modo === 'replay') {
+    return null;
+  }
+  if (proveedor === 'ollama') {
+    return entorno['OPENAI_API_KEY']?.trim() || 'ollama';
+  }
+  return obligatoria(entorno, 'OPENAI_API_KEY');
+}
+
+export function leerConfiguracionAgente(entorno: Entorno = process.env): ConfiguracionAgente {
+  const proveedorCrudo = obligatoria(entorno, 'UNIHELP_MODELO_PROVEEDOR');
+  if (!(PROVEEDORES_MODELO_BACKEND as readonly string[]).includes(proveedorCrudo)) {
+    throw new ConfiguracionAgenteInvalidaError(
+      `UNIHELP_MODELO_PROVEEDOR=«${proveedorCrudo}» no está soportado; use ${PROVEEDORES_MODELO_BACKEND.join(', ')}.`,
+    );
+  }
+  const proveedor = proveedorCrudo as ProveedorModeloBackend;
   const modoLlm = obligatoria(entorno, 'UNIHELP_MODO_LLM');
   if (!(MODOS_LLM as readonly string[]).includes(modoLlm)) {
     throw new ConfiguracionAgenteInvalidaError(
@@ -107,7 +159,6 @@ export function leerConfiguracionAgente(entorno: Entorno = process.env): Configu
   const modo = modoLlm as ModoLlm;
   const directorioCasetes =
     modo === 'live' ? null : obligatoria(entorno, 'UNIHELP_DIRECTORIO_CASETES');
-  const claveApi = modo === 'replay' ? null : obligatoria(entorno, 'OPENAI_API_KEY');
   const positivo = (n: number) => n > 0;
 
   const modeloId = obligatoria(entorno, 'UNIHELP_MODELO_ID');
@@ -120,6 +171,7 @@ export function leerConfiguracionAgente(entorno: Entorno = process.env): Configu
     modelosPermitidos: [...new Set([modeloId, ...permitidos])],
     modelo: {
       proveedor,
+      urlBase: urlBase(entorno, proveedor),
       id: modeloId,
       // Valores por defecto de docs/07, seccion 2.
       temperatura: numero(entorno, 'UNIHELP_MODELO_TEMPERATURA', 0.2, (n) => n >= 0 && n <= 2),
@@ -127,7 +179,7 @@ export function leerConfiguracionAgente(entorno: Entorno = process.env): Configu
       maxTokens: numero(entorno, 'UNIHELP_MODELO_MAX_TOKENS', 2048, positivo),
       esfuerzoRazonamiento: esfuerzo(entorno),
     },
-    claveApi,
+    claveApi: claveApi(entorno, proveedor, modo),
     modoLlm: modo,
     directorioCasetes,
     limites: {

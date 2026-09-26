@@ -1,0 +1,11 @@
+# Modelo local del experimento (decision 46). Se construye con `pnpm ollama:crear`.
+#
+# Parte de una cuantizacion explicita (q4_K_M, unos 4,7 GB) para que el id sea
+# un artefacto fijo y no la etiqueta movil `qwen2.5:7b-instruct` (RNF-08). El
+# digest instalado con Ollama 0.34.4: 845dbda0ea48 (base) y ea2acca68908 (derivado).
+FROM qwen2.5:7b-instruct-q4_K_M
+
+# El prompt base (~21 KB) mas los esquemas de las cinco herramientas superan la
+# ventana por defecto de Ollama (4096 tokens), que truncaria el sistema sin
+# avisar. 16k cabe en la VRAM de 8 GB junto con el modelo.
+PARAMETER num_ctx 16384

@@ -12,6 +12,7 @@ const consumo = { entrada: 10, salida: 5, cacheados: 0 };
 const configuracion: ConfiguracionAgente = {
   modelo: {
     proveedor: 'openai',
+    urlBase: null,
     id: 'modelo-x',
     temperatura: 0.2,
     topP: 1,

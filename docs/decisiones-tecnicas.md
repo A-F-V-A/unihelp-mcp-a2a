@@ -1246,3 +1246,70 @@ quedan asi: `B1 - B0` = MCP; `B2 - B1` = coordinacion multiagente en proceso;
 Consecuencias: B2 depende de `mcp-server` (su identidad de salud lo declara).
 La fila "B2 y MCP" sale de la tabla de discrepancias y `docs/arquitecturas.md`
 muestra el salto MCP en B2.
+
+## 46. Un proveedor local por Ollama para correr el experimento sin costo de API
+
+> Tomada por el responsable del proyecto el 25 de septiembre de 2026 (RM-17):
+> "es necesario hacer las pruebas de este trabajo de grado con un agente local,
+> puede ser un Ollama"; y, sobre el alcance: "no se va a modificar el prompt,
+> simplemente se van a evaluar los mismos tests con diferentes modelos".
+> Convive con las decisiones 23 y 40, que siguen fijando el modelo de OpenAI de
+> las corridas con proveedor `openai`. Guia de instalacion, requisitos y
+> recomendaciones en `docs/modelo-local-ollama.md`.
+
+Contexto: cada corrida completa (40 tareas por arquitectura, varias
+repeticiones) gasta presupuesto de API y depende de la disponibilidad del
+proveedor. El trabajo de grado necesita poder repetir el experimento en una
+maquina propia. Ollama sirve modelos abiertos por la misma API de Chat
+Completions con function calling que ya usa `ClienteModelo`, asi que un
+proveedor local no toca la variable medida: el bucle del agente, el prompt
+base, las herramientas y los transportes MCP y A2A son los mismos.
+
+Decision: el experimento evalua LOS MISMOS tests con distintos modelos. El
+prompt base, las herramientas, las 40 tareas, la compuerta y el ejecutor no
+cambian por modelo; lo unico que varia entre campañas es el modelo que
+responde, y el modelo local es uno mas de ellos. Si un modelo falla ante ese
+prompt, el fallo es un resultado, no un defecto a corregir con un prompt
+propio: un prompt por modelo romperia la comparacion.
+
+Para hacerlo posible, `UNIHELP_MODELO_PROVEEDOR` acepta `openai` u `ollama`. Con `ollama`
+el cliente apunta a `UNIHELP_MODELO_URL_BASE` (por defecto
+`http://localhost:11434/v1`) y no exige `OPENAI_API_KEY`, porque el servidor
+local no autentica (el SDK recibe la cadena `ollama`). Nada mas cambia en la
+peticion: `temperature 0.2`, `top_p 1`, `max_completion_tokens 2048`,
+`parallel_tool_calls: false`, sin `reasoning_effort`. El modelo local del
+experimento es `unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k`, construido con
+`pnpm ollama:crear` desde `infra/ollama/Modelfile`: parte de la cuantizacion
+fija `qwen2.5:7b-instruct-q4_K_M` (digest `845dbda0ea48` en Ollama 0.34.4; el
+derivado queda con `ea2acca68908`; unos 4,7 GB, cabe entero en una GPU de
+8 GB) y sube la ventana de contexto a 16 384 tokens, porque la ventana por
+defecto de Ollama (4096) truncaria el prompt base y los esquemas de las cinco
+herramientas sin avisar. Se eligio Qwen2.5 7B Instruct por soportar function
+calling nativo en Ollama, responder bien en español y no tener modo de
+razonamiento que infle tokens y latencia. Requisitos minimos de la maquina:
+GPU con 8 GB de VRAM (o 16 GB de RAM para correr en CPU, solo como
+comprobacion), 16 GB de RAM y 10 GB de disco; validado en una RTX 5060 Laptop
+de 8 GB con Windows 11, donde una tarea tarda 5,4 s de mediana. En la interfaz, el proveedor local
+aparece como la ficha `local` ("Agente local"), la unica disponible cuando el
+backend arranca con `ollama`.
+
+Por que: separar el proveedor del resto de la configuracion permite repetir
+la matriz completa sin costo y sin red, y deja el identificador exacto del
+modelo en cada traza (`model.provider: ollama`, `model.id`, RNF-08). Fijar la
+cuantizacion y el contexto en un `Modelfile` versionado hace que el modelo sea
+un artefacto reproducible y no una etiqueta movil.
+
+Consecuencias: las cifras obtenidas con el modelo local son una campaña
+aparte; nunca se mezclan ni se comparan sin una decision de medicion con las
+de OpenAI (RM-17): un modelo de 7B no es equivalente a `gpt-5.5`. Los
+contrastes entre arquitecturas dentro de una misma campaña (B1-B0, B2-B1,
+B3-B2) si son validos, porque las cuatro miden con el mismo modelo local. La
+latencia del modelo pasa a depender de la GPU de la maquina, no del proveedor.
+Ollama reutiliza el prefijo del prompt en su cache KV y lo reporta en
+`prompt_tokens_details.cached_tokens`, que la traza registra en
+`cached_input_tokens` igual que con OpenAI; tampoco se puede desactivar por
+peticion, asi que D2 sigue pendiente (decision 23). La tarifa (M4.7) es 0 de
+verdad, pero el manifiesto sigue declarando `tarifa_configurada: false`. Los casetes del modelo local van a su propio
+directorio (`experiment/casetes/<modelo>`); un casete grabado con OpenAI no
+sirve para reproducir una corrida local ni al reves, porque la clave del
+casete incluye el id del modelo.

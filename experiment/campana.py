@@ -14,6 +14,12 @@ medicion aparte (RM-17).
 Uso (desde `experiment/`, con los backends ya compilados con `nx build`):
 
     uv run python campana.py --modelos gpt-5.5-2026-04-23,gpt-5.4-2026-03-05 --repeticiones 3
+    uv run python campana.py --proveedor ollama --modelos unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k
+
+Con `--proveedor ollama` (decision 46) los backends hablan con el servidor local
+de Ollama (`--url-base`, por defecto la suya) y no hace falta clave. Una sola GPU
+sirve un modelo a la vez: con Ollama conviene UNA campaña por corrida, porque
+dos modelos locales a la vez se turnarian la GPU y sus latencias se mezclarian.
 
 Por cada modelo deja `corridas/campana-<modelo>-r<R>`, el cuaderno ejecutado y
 sus salidas en `salidas/campana-<modelo>-r<R>` y una copia de los artefactos en
@@ -63,7 +69,7 @@ def leer_env(ruta: Path) -> dict[str, str]:
 
 
 def slug(modelo: str) -> str:
-    return modelo.replace('.', '-')
+    return modelo.replace('.', '-').replace(':', '-')
 
 
 def salud(url: str) -> bool:
@@ -75,8 +81,17 @@ def salud(url: str) -> bool:
 
 
 class Campana:
-    def __init__(self, indice: int, modelo: str, repeticiones: int, credenciales: dict[str, str]):
+    def __init__(
+        self,
+        indice: int,
+        modelo: str,
+        repeticiones: int,
+        credenciales: dict[str, str],
+        proveedor: str = 'openai',
+        url_base: str | None = None,
+    ):
         self.indice, self.modelo, self.repeticiones = indice, modelo, repeticiones
+        self.proveedor, self.url_base = proveedor, url_base
         self.base_puerto = 3000 + 100 * indice
         self.bd = f'unihelp_c{indice}'
         self.nombre = f'campana-{slug(modelo)}-r{repeticiones}'
@@ -93,8 +108,10 @@ class Campana:
         url_bd = f'postgres://{USUARIO_BD}:{CLAVE_BD}@localhost:5432/{self.bd}'
         base = {
             **os.environ,
-            'OPENAI_API_KEY': self.credenciales['OPENAI_API_KEY'],
-            'UNIHELP_MODELO_PROVEEDOR': 'openai',
+            # Ollama no autentica: la clave solo se exige con OpenAI (decision 46).
+            'OPENAI_API_KEY': self.credenciales.get('OPENAI_API_KEY', ''),
+            'UNIHELP_MODELO_PROVEEDOR': self.proveedor,
+            **({'UNIHELP_MODELO_URL_BASE': self.url_base} if self.url_base else {}),
             'UNIHELP_MODELO_ID': self.modelo,
             'UNIHELP_MODELOS_PERMITIDOS': self.modelo,
             'UNIHELP_MODELO_ESFUERZO': 'none',
@@ -193,10 +210,19 @@ def main() -> int:
     analizador = argparse.ArgumentParser(description=__doc__)
     analizador.add_argument('--modelos', required=True, help='identificadores separados por coma')
     analizador.add_argument('--repeticiones', type=int, default=3)
+    analizador.add_argument('--proveedor', choices=('openai', 'ollama'), default='openai')
+    analizador.add_argument('--url-base', dest='url_base', help='URL base del proveedor (Ollama)')
     args = analizador.parse_args()
     modelos = [m.strip() for m in args.modelos.split(',') if m.strip()]
-    credenciales = leer_env(RAIZ / 'apps/b0-directo/.env')
-    campanas = [Campana(i + 1, m, args.repeticiones, credenciales) for i, m in enumerate(modelos)]
+    ruta_env = RAIZ / 'apps/b0-directo/.env'
+    credenciales = leer_env(ruta_env) if ruta_env.exists() else {}
+    if args.proveedor == 'openai' and not credenciales.get('OPENAI_API_KEY'):
+        print(f'Falta OPENAI_API_KEY en {ruta_env}', file=sys.stderr)
+        return 1
+    campanas = [
+        Campana(i + 1, m, args.repeticiones, credenciales, args.proveedor, args.url_base)
+        for i, m in enumerate(modelos)
+    ]
     errores: dict[str, str] = {}
 
     def envolver(c: Campana) -> None:

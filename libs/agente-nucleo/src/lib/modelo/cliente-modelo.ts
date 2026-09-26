@@ -48,10 +48,18 @@ export class ClienteModelo {
     @Inject(CONFIGURACION_AGENTE) private readonly configuracion: ConfiguracionAgente,
     @Inject(CaseteModelo) private readonly casete: CaseteModelo,
   ) {
+    // `baseURL` solo cambia con un proveedor local (Ollama, decision 46); la
+    // peticion es la misma API de Chat Completions.
     this.cliente =
       configuracion.claveApi === null
         ? null
-        : new OpenAI({ apiKey: configuracion.claveApi, maxRetries: 0 });
+        : new OpenAI({
+            apiKey: configuracion.claveApi,
+            maxRetries: 0,
+            ...(configuracion.modelo.urlBase === null
+              ? {}
+              : { baseURL: configuracion.modelo.urlBase }),
+          });
   }
 
   /** `modeloId` lo decide `ConfiguracionModeloRuntime`: la interfaz en desarrollo, la configuracion en una corrida. */

@@ -19,6 +19,7 @@
     "down": "docker compose -f infra/docker/docker-compose.yml --profile b0 --profile b1 --profile b2 --profile b3 --profile conocimiento --profile simulacion down --remove-orphans",
     "logs": "docker compose -f infra/docker/docker-compose.yml --profile b0 --profile b1 --profile b2 --profile b3 --profile conocimiento --profile simulacion logs -f",
     "ps": "docker compose -f infra/docker/docker-compose.yml --profile b0 --profile b1 --profile b2 --profile b3 --profile conocimiento --profile simulacion ps",
+    "ollama:crear": "ollama create unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k -f infra/ollama/Modelfile",
     "conocimiento:db": "docker compose -f infra/docker/docker-compose.yml --profile conocimiento up -d --wait postgres",
     "simulador": "docker compose -f infra/docker/docker-compose.yml --profile simulacion up --build",
     "conocimiento:preparar": "nx run conocimiento:migrar && nx run conocimiento:sembrar",

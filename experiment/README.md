@@ -62,6 +62,8 @@ docker exec unihelp-postgres psql -U unihelp -d unihelp -c "CREATE DATABASE unih
 CONOCIMIENTO_DATABASE_URL=postgres://unihelp:unihelp@localhost:5432/unihelp_c1 TICKETS_DATABASE_URL=... pnpm conocimiento:preparar && pnpm tickets:migrar
 pnpm nx run-many -t build --projects=mcp-server,b0-directo,b1-mcp-agente,b2-multiagente-local,b3-a2a-orquestador,b3-a2a-conocimiento,b3-a2a-diagnostico
 cd experiment && uv run python campana.py --modelos gpt-5.5-2026-04-23,gpt-5.4-2026-03-05 --repeticiones 3
+# con el modelo local de Ollama (decision 46): sin clave, una campaña a la vez (una sola GPU)
+cd experiment && uv run python campana.py --proveedor ollama --modelos unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k --repeticiones 1
 ```
 
 `ejecutor correr --corrida <archivo>` acepta otro archivo de corrida (es lo

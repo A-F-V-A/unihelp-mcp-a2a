@@ -6,6 +6,7 @@ function configuracion(parcial: Partial<ConfiguracionAgente> = {}): Configuracio
   return {
     modelo: {
       proveedor: 'openai',
+      urlBase: null,
       id: 'modelo-oficial',
       temperatura: 0.2,
       topP: 1,
@@ -30,7 +31,7 @@ describe('ConfiguracionModeloRuntime (decision 27)', () => {
     const disponibles = estado.proveedores.filter((p) => p.disponible).map((p) => p.id);
     expect(disponibles).toEqual(['chatgpt']);
     expect(estado.proveedores.find((p) => p.id === 'claude')?.motivoNoDisponible).toMatch(
-      /todavía no integra/,
+      /no integra este proveedor/,
     );
   });
 
@@ -57,6 +58,29 @@ describe('ConfiguracionModeloRuntime (decision 27)', () => {
       /no está habilitado/,
     );
     expect(runtime.modeloVigente(false)).toBe('modelo-oficial');
+  });
+
+  it('con Ollama, la ficha disponible es «local» y no exige clave (decision 46)', () => {
+    const estado = new ConfiguracionModeloRuntime(
+      configuracion({
+        modelo: {
+          proveedor: 'ollama',
+          urlBase: 'http://localhost:11434/v1',
+          id: 'modelo-local',
+          temperatura: 0.2,
+          topP: 1,
+          maxTokens: 2048,
+          esfuerzoRazonamiento: 'none',
+        },
+        modelosPermitidos: ['modelo-local'],
+        claveApi: 'ollama',
+      }),
+    ).estado();
+
+    expect(estado.seleccion).toEqual({ proveedor: 'local', modelo: 'modelo-local' });
+    const disponibles = estado.proveedores.filter((p) => p.disponible).map((p) => p.id);
+    expect(disponibles).toEqual(['local']);
+    expect(estado.proveedores.find((p) => p.id === 'chatgpt')?.disponible).toBe(false);
   });
 
   it('sin clave, OpenAI aparece como no disponible', () => {
