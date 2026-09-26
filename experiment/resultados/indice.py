@@ -45,6 +45,8 @@ def fila(carpeta: Path) -> str:
         commit = [m.get('version_codigo') or corrida.get('version_codigo') or '—']
         modo = [m.get('modo_llm') or '—']
     validas = m.get('trazas_validas') or (corrida.get('ejecuciones') or {}).get('validas') or '—'
+    if m.get('interrumpida'):
+        ejec = f"{ejec} de {m['interrumpida'].get('planificadas', '?')} (interrumpida)"
     compuerta = sum(1 for p in puntos if p.get('exito')) if puntos else m.get('compuerta_superada')
     return (
         f"| [`{carpeta.name}`]({carpeta.name}/) | {', '.join(modelos)} | {', '.join(arqs) or '—'} | {rep} "
