@@ -1313,3 +1313,40 @@ verdad, pero el manifiesto sigue declarando `tarifa_configurada: false`. Los cas
 directorio (`experiment/casetes/<modelo>`); un casete grabado con OpenAI no
 sirve para reproducir una corrida local ni al reves, porque la clave del
 casete incluye el id del modelo.
+
+## 47. Los resultados archivados del experimento se versionan en `experiment/resultados/`
+
+> Tomada el 25 de septiembre de 2026 a pedido del responsable del trabajo de
+> grado, tras la campaña de cuatro modelos: los datos crudos son la evidencia
+> del estudio y no pueden depender de una sola maquina.
+
+Contexto: la regla 9 de AGENTS.md decia que las trazas y los resultados del
+experimento no se versionan, y `.gitignore` excluia `experiment/resultados/`.
+Con 1 920 ejecuciones de la campaña de modelos (unos 18 MB de trazas,
+puntuaciones y salidas del cuaderno), perderlos significaria repetir horas de
+corrida y gasto de tokens, y ningun informe seria verificable desde el
+repositorio.
+
+Decision:
+
+- `experiment/resultados/<fecha>-<nombre>/` **se versiona**. Cada carpeta lleva
+  el manifiesto del ejecutor (modelo por traza en `provenance.modelo_id`,
+  commit, semilla, `config_hash`), `trazas.jsonl`, `puntuaciones.jsonl`,
+  `huellas-esperadas.json`, el `resultados.json` del cuaderno con su
+  `manifiesto-cuaderno.json`, las tablas y las figuras. `resultados/README.md`
+  explica cada archivo y como analizarlos; `resultados/indice.py` regenera
+  `indice.md` con una fila por carpeta.
+- `experiment/corridas/`, `experiment/salidas/` y `experiment/casetes/` siguen
+  sin versionarse: son el area de trabajo y se regeneran. Archivar una corrida
+  es copiarla a `resultados/` (lo hace `campana.py`).
+- Sigue vigente que los datos son sinteticos (RNF-05): las conversaciones que
+  traen las trazas son las de `docs/tasks`, nunca de personas reales.
+
+Por que: la trazabilidad del experimento exige que cualquier cifra de un
+informe se pueda rehacer desde archivos que esten en el mismo repositorio que
+el codigo que los produjo, con el commit registrado en cada manifiesto.
+
+Consecuencias: la regla 9 de AGENTS.md cambia de redaccion. El repositorio
+crece unos pocos MB por corrida completa; si una corrida oficial con cinco
+repeticiones lo hiciera inmanejable, se pasaria a Git LFS, como preveia
+`docs/06` (actividad 7.10).

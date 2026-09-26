@@ -57,11 +57,12 @@ infra/docker/.env
 # ---------------------------------------------------------------------------
 # Resultados del experimento (trazas y corridas son artefactos, no fuente)
 # ---------------------------------------------------------------------------
+# `experiment/resultados/` SI se versiona: es el archivo de evidencia de cada
+# corrida que el equipo decidio conservar, con su modelo, commit y semilla
+# (decision 47). Lo que no se conserva (area de trabajo) sigue abajo.
 # Se usa `dir/*` y no `dir/` para que git siga descendiendo y respete el
 # .gitkeep que conserva la carpeta en el repositorio.
-experiment/resultados/*
 experiment/trazas/*
-!experiment/resultados/.gitkeep
 !experiment/trazas/.gitkeep
 # Salidas del cuaderno de analisis y corrida sintetica: se regeneran con un comando.
 experiment/salidas/*

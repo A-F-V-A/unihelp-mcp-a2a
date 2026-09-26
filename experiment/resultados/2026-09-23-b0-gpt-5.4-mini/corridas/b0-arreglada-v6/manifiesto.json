@@ -1,0 +1,21 @@
+{
+  "generado_en": "2026-09-23T03:29:10.421Z",
+  "actualizado_en": "2026-09-23T03:29:10.421Z",
+  "version_codigo": "6df0efa8f4fc+sucio",
+  "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+  "semilla": 20260922,
+  "modo_llm": "record",
+  "arquitecturas": [
+    "B0"
+  ],
+  "repeticiones": 1,
+  "tareas": 40,
+  "ejecuciones": 40,
+  "trazas_validas": 40,
+  "en_cuarentena": 0,
+  "compuerta_superada": 33,
+  "fallos_de_infraestructura": [],
+  "tarifa_configurada": false,
+  "juez": "no_ejecutado",
+  "reejecuciones": []
+}

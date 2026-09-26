@@ -196,12 +196,19 @@ class Campana:
             )
         if r.returncode != 0:
             raise RuntimeError(f'[{self.modelo}] el cuaderno termino con codigo {r.returncode}')
+        # Archivo versionado de la corrida (decision 47): el manifiesto del ejecutor
+        # conserva su nombre y el del cuaderno pasa a `manifiesto-cuaderno.json`,
+        # porque los dos se llaman igual y el segundo pisaba al primero.
         destino = EXPERIMENTO / 'resultados' / f'{dt.date.today().isoformat()}-{self.nombre}'
         destino.mkdir(parents=True, exist_ok=True)
-        for origen in [EXPERIMENTO / 'corridas' / self.nombre, EXPERIMENTO / 'salidas' / self.nombre]:
-            for archivo in origen.iterdir():
-                if archivo.is_file():
-                    shutil.copy2(archivo, destino / archivo.name)
+        for archivo in (EXPERIMENTO / 'corridas' / self.nombre).iterdir():
+            if archivo.is_file():
+                shutil.copy2(archivo, destino / archivo.name)
+        for archivo in (EXPERIMENTO / 'salidas' / self.nombre).iterdir():
+            if archivo.is_file():
+                nombre = 'manifiesto-cuaderno.json' if archivo.name == 'manifiesto.json' else archivo.name
+                shutil.copy2(archivo, destino / nombre)
+        subprocess.run(['uv', 'run', 'python', 'resultados/indice.py'], cwd=EXPERIMENTO, check=False)
         minutos = (time.monotonic() - inicio) / 60
         self.resultado = f'{self.nombre}: listo en {minutos:.0f} min -> {destino}'
 

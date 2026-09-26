@@ -156,7 +156,8 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   ejecutor/              Corre las 40 tareas contra una arquitectura: trazas y compuerta automatica
   visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
   juez/                  Fuente del juez LLM (futuro)
-  trazas/ resultados/ salidas/ corridas/ casetes/  Artefactos: NO se versionan
+  resultados/            Corridas archivadas con su procedencia: SI se versionan (decision 47)
+  trazas/ salidas/ corridas/ casetes/  Area de trabajo: NO se versiona
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
 infra/ollama/            Modelfile del modelo local (proveedor `ollama`, decision 46)
 docs/                    Documentacion (indice en docs/README.md)
@@ -216,8 +217,11 @@ y [`docs/arquitecturas.md`](docs/arquitecturas.md). Dentro de `apps/web/src/app/
    se retiro (decision 28); no se vuelve a introducir sin una decision nueva.
 8. **Un ticket solo nace de una accion explicita del usuario** (HU-17). Nunca
    por inferencia sobre el texto.
-9. **No se versionan** credenciales (`.env`), ni trazas o resultados del
-   experimento.
+9. **No se versionan** credenciales (`.env`) ni el area de trabajo del
+   experimento (`experiment/corridas/`, `salidas/`, `casetes/`). Los
+   resultados que el equipo decide conservar se archivan en
+   `experiment/resultados/` y **si se versionan**, con su modelo, commit y
+   semilla (decision 47; guia en `experiment/resultados/README.md`).
 10. **No se inventa contexto.** Las historias de usuario estan en
     `docs/08`; si una HU, decision o requisito no esta escrito, pregunta.
 11. **Lo que `docs/08` declara fuera de alcance no se construye** sin indicar

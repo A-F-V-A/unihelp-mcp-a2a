@@ -1,0 +1,48 @@
+{
+  "resultados": {
+    "archivo": "resultados.json",
+    "sha256_sin_marca_tiempo": "8bc0d9a7598653b7fc5c3e440ca93375850f7765ac7e73c56986053aadadaafa"
+  },
+  "salidas": [
+    {
+      "archivo": "figura_1.svg",
+      "etiqueta": "figura_1",
+      "sha256": "565b1e74a865a1e82d35a88c43dd114cce88fce64bb8d321d8c14766cecd2af0"
+    },
+    {
+      "archivo": "figura_2.svg",
+      "etiqueta": "figura_2",
+      "sha256": "abc2abd4f862d54eb6ebb763c20292d88da5b98ad1186c4240370a8ecf23d90a"
+    },
+    {
+      "archivo": "figura_3.svg",
+      "etiqueta": "figura_3",
+      "sha256": "adc776619abc9eb5316a15c8bd34f684d371df1637020e43c4010f92703a3867"
+    },
+    {
+      "archivo": "figura_4.svg",
+      "etiqueta": "figura_4",
+      "sha256": "a6e4fc06155e33c6083d9e3769992b83b1ba285940c858263b7637d12e55317c"
+    },
+    {
+      "archivo": "tabla_1.csv",
+      "etiqueta": "tabla_1",
+      "sha256": "5eb27d5d0db95f7ccbc446918f8966102389f847f3b9d79fe251c94b2ee6095e"
+    },
+    {
+      "archivo": "tabla_2.csv",
+      "etiqueta": "tabla_2",
+      "sha256": "1134b3a66bd0bff47f5fab247c8b8a164f85a71144e53292d7caf8c830f8c284"
+    },
+    {
+      "archivo": "tabla_4.csv",
+      "etiqueta": "tabla_4",
+      "sha256": "d7d668f9464d1624a057a6393415e56e705b4c29401399192b4344cce21e00e7"
+    },
+    {
+      "archivo": "tabla_7.csv",
+      "etiqueta": "tabla_7",
+      "sha256": "5168f68393dfc2529ca7af829ecc8299d332acb14acecd54da2172901f4077b2"
+    }
+  ]
+}

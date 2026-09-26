@@ -1,0 +1,617 @@
+{
+  "generado_en": "2026-09-24T02:10:44.529Z",
+  "corridas": [
+    {
+      "nombre": "panel-prueba-2",
+      "manifiesto": {
+        "generado_en": "2026-09-24T02:10:43.404Z",
+        "actualizado_en": "2026-09-24T02:10:43.404Z",
+        "version_codigo": "fa7c852d3da8+sucio",
+        "config_hash": "sha256:02001bc89a99bad7dd7dac9b2ebaff7700b41fc52b54f98bbc859ec03c740266",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 1,
+        "ejecuciones": 1,
+        "trazas_validas": 1,
+        "en_cuarentena": 0,
+        "compuerta_superada": 1,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "panel-prueba-1",
+      "manifiesto": {
+        "generado_en": "2026-09-24T02:05:32.307Z",
+        "actualizado_en": "2026-09-24T02:05:32.307Z",
+        "version_codigo": "fa7c852d3da8+sucio",
+        "config_hash": "sha256:02001bc89a99bad7dd7dac9b2ebaff7700b41fc52b54f98bbc859ec03c740266",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 1,
+        "ejecuciones": 1,
+        "trazas_validas": 1,
+        "en_cuarentena": 0,
+        "compuerta_superada": 1,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "visor-prueba",
+      "manifiesto": {
+        "generado_en": "2026-09-24T01:09:52.914Z",
+        "actualizado_en": "2026-09-24T01:09:52.914Z",
+        "version_codigo": "2d9881841a4a+sucio",
+        "config_hash": "sha256:91a9d4f131773602bed55f090b352e89ca56052ad75a7946499bcd875d1cfd13",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 2,
+        "ejecuciones": 2,
+        "trazas_validas": 2,
+        "en_cuarentena": 0,
+        "compuerta_superada": 2,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": [],
+        "origen": "visor",
+        "observaciones": "visor\\salidas\\prueba-visor\\observaciones.jsonl"
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v10",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:53:43.845Z",
+        "actualizado_en": "2026-09-23T03:53:43.845Z",
+        "version_codigo": "6df0efa8f4fc+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 33,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v9",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:50:06.017Z",
+        "actualizado_en": "2026-09-23T03:50:06.017Z",
+        "version_codigo": "6df0efa8f4fc+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 33,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v8",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:37:42.751Z",
+        "actualizado_en": "2026-09-23T03:37:42.751Z",
+        "version_codigo": "6df0efa8f4fc+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 31,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v7",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:34:03.234Z",
+        "actualizado_en": "2026-09-23T03:34:03.234Z",
+        "version_codigo": "6df0efa8f4fc+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 32,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v6",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:29:10.421Z",
+        "actualizado_en": "2026-09-23T03:29:10.421Z",
+        "version_codigo": "6df0efa8f4fc+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 33,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v5",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:17:26.554Z",
+        "actualizado_en": "2026-09-23T03:17:26.554Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 29,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "prueba-propuesta-4",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:14:23.961Z",
+        "actualizado_en": "2026-09-23T03:14:23.961Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:0158f6d25b35a10a6f2efbf1cb96cd00eb0c047fee995ce457e06678a24374cd",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 6,
+        "ejecuciones": 6,
+        "trazas_validas": 6,
+        "en_cuarentena": 0,
+        "compuerta_superada": 3,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "prueba-propuesta-3",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:12:19.440Z",
+        "actualizado_en": "2026-09-23T03:12:19.440Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:0158f6d25b35a10a6f2efbf1cb96cd00eb0c047fee995ce457e06678a24374cd",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 6,
+        "ejecuciones": 6,
+        "trazas_validas": 6,
+        "en_cuarentena": 0,
+        "compuerta_superada": 2,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "prueba-propuesta-2",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:10:29.525Z",
+        "actualizado_en": "2026-09-23T03:10:29.525Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:0bd6db95014a399317c1a7c0bb387c59b07552f3a36b0069193c14c3bf2d80bf",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 8,
+        "ejecuciones": 8,
+        "trazas_validas": 8,
+        "en_cuarentena": 0,
+        "compuerta_superada": 3,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "prueba-propuesta",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:08:42.802Z",
+        "actualizado_en": "2026-09-23T03:08:42.802Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:b63073aeebb89c9c37c71c4d2727f7ee86860f2407e43c51dc96d8d96cee04c0",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 6,
+        "ejecuciones": 6,
+        "trazas_validas": 6,
+        "en_cuarentena": 0,
+        "compuerta_superada": 1,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v4",
+      "manifiesto": {
+        "generado_en": "2026-09-23T03:06:46.191Z",
+        "actualizado_en": "2026-09-23T03:06:46.191Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 26,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v3",
+      "manifiesto": {
+        "generado_en": "2026-09-23T02:56:13.154Z",
+        "actualizado_en": "2026-09-23T02:56:13.154Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 27,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada-v2",
+      "manifiesto": {
+        "generado_en": "2026-09-23T02:41:54.425Z",
+        "actualizado_en": "2026-09-23T02:41:54.437Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 27,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-arreglada",
+      "manifiesto": {
+        "generado_en": "2026-09-23T02:38:51.244Z",
+        "actualizado_en": "2026-09-23T02:38:51.244Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 40,
+        "trazas_validas": 40,
+        "en_cuarentena": 0,
+        "compuerta_superada": 30,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "arreglo-v2",
+      "manifiesto": {
+        "generado_en": "2026-09-23T02:35:47.747Z",
+        "actualizado_en": "2026-09-23T02:35:47.747Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:0416963b66e6e9f8a3edb686d281b93c8e82790f8c62fba95f8eb5b7f0f020bc",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 9,
+        "ejecuciones": 9,
+        "trazas_validas": 9,
+        "en_cuarentena": 0,
+        "compuerta_superada": 8,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "arreglo-c1-c8",
+      "manifiesto": {
+        "generado_en": "2026-09-23T02:34:05.977Z",
+        "actualizado_en": "2026-09-23T02:34:05.977Z",
+        "version_codigo": "f9c685bf82b9+sucio",
+        "config_hash": "sha256:0416963b66e6e9f8a3edb686d281b93c8e82790f8c62fba95f8eb5b7f0f020bc",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 9,
+        "ejecuciones": 9,
+        "trazas_validas": 9,
+        "en_cuarentena": 0,
+        "compuerta_superada": 5,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "b0-completa",
+      "manifiesto": {
+        "generado_en": "2026-09-23T00:20:08.828Z",
+        "actualizado_en": "2026-09-23T02:20:27.809Z",
+        "version_codigo": "4bb3ecd1a770+sucio",
+        "config_hash": "sha256:963df4f9a8aca4229725d60790779a5e314ef112705f08390837e9b1ddff4efa",
+        "semilla": 20260922,
+        "modo_llm": "record",
+        "arquitecturas": [
+          "B0"
+        ],
+        "repeticiones": 1,
+        "tareas": 40,
+        "ejecuciones": 42,
+        "trazas_validas": 40,
+        "en_cuarentena": 2,
+        "compuerta_superada": 17,
+        "fallos_de_infraestructura": [],
+        "tarifa_configurada": false,
+        "juez": "no_ejecutado",
+        "reejecuciones": []
+      },
+      "archivos": [
+        "cuarentena/trazas.jsonl",
+        "huellas-esperadas.json",
+        "manifiesto.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    },
+    {
+      "nombre": "prueba-sin-duda",
+      "manifiesto": null,
+      "archivos": [
+        "huellas-esperadas.json",
+        "puntuaciones.jsonl",
+        "trazas.jsonl"
+      ]
+    }
+  ]
+}
