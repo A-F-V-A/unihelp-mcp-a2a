@@ -22,22 +22,34 @@ export const ESFUERZOS_RAZONAMIENTO = ['none', 'low', 'medium', 'high'] as const
 export type EsfuerzoRazonamiento = (typeof ESFUERZOS_RAZONAMIENTO)[number];
 
 /**
- * Proveedores que el backend sabe invocar. Ambos hablan la API de Chat
+ * Proveedores que el backend sabe invocar. Los tres hablan la API de Chat
  * Completions con function calling: `ollama` sirve un modelo local en esta
- * maquina por la misma API, sin credencial (decision 46).
+ * maquina por la misma API, sin credencial (decision 46); `gemini` es el
+ * endpoint compatible con OpenAI de Google AI Studio, con `GEMINI_API_KEY`
+ * (decision 48).
  */
-export const PROVEEDORES_MODELO_BACKEND = ['openai', 'ollama'] as const;
+export const PROVEEDORES_MODELO_BACKEND = ['openai', 'ollama', 'gemini'] as const;
 
 export type ProveedorModeloBackend = (typeof PROVEEDORES_MODELO_BACKEND)[number];
 
 /** Donde escucha Ollama por defecto; `/v1` es su prefijo compatible con OpenAI. */
 export const URL_BASE_OLLAMA = 'http://localhost:11434/v1';
 
+/** Endpoint de Gemini compatible con OpenAI (Chat Completions con herramientas). */
+export const URL_BASE_GEMINI = 'https://generativelanguage.googleapis.com/v1beta/openai';
+
+/** Variable con la clave de cada proveedor con credencial. */
+export const VARIABLE_CLAVE: Readonly<Record<'openai' | 'gemini', string>> = {
+  openai: 'OPENAI_API_KEY',
+  gemini: 'GEMINI_API_KEY',
+};
+
 export interface ConfiguracionModelo {
   readonly proveedor: ProveedorModeloBackend;
   /**
-   * URL base del proveedor, o `null` para la de OpenAI. Con `ollama` siempre
-   * hay una: `UNIHELP_MODELO_URL_BASE` o, si falta, `URL_BASE_OLLAMA`.
+   * URL base del proveedor, o `null` para la de OpenAI. Con `ollama` y
+   * `gemini` siempre hay una: `UNIHELP_MODELO_URL_BASE` o, si falta, la del
+   * proveedor (`URL_BASE_OLLAMA`, `URL_BASE_GEMINI`).
    */
   readonly urlBase: string | null;
   /** Identificador exacto con fecha de snapshot. Va a cada traza (RNF-08). */
@@ -114,7 +126,9 @@ function numero(
 
 function urlBase(entorno: Entorno, proveedor: ProveedorModeloBackend): string | null {
   const crudo = entorno['UNIHELP_MODELO_URL_BASE']?.trim();
-  const valor = crudo || (proveedor === 'ollama' ? URL_BASE_OLLAMA : null);
+  const porDefecto =
+    proveedor === 'ollama' ? URL_BASE_OLLAMA : proveedor === 'gemini' ? URL_BASE_GEMINI : null;
+  const valor = crudo || porDefecto;
   if (valor === null) {
     return null;
   }
@@ -139,7 +153,7 @@ function claveApi(
   if (proveedor === 'ollama') {
     return entorno['OPENAI_API_KEY']?.trim() || 'ollama';
   }
-  return obligatoria(entorno, 'OPENAI_API_KEY');
+  return obligatoria(entorno, VARIABLE_CLAVE[proveedor]);
 }
 
 export function leerConfiguracionAgente(entorno: Entorno = process.env): ConfiguracionAgente {

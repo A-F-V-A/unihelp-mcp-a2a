@@ -14,8 +14,8 @@ import { ErrorApi } from '../http/error-api';
 
 /**
  * Fichas de los proveedores que la interfaz muestra. El backend integra uno a
- * la vez, el de `UNIHELP_MODELO_PROVEEDOR`: OpenAI se muestra como `chatgpt`
- * y Ollama como `local` (decisiones 27 y 46).
+ * la vez, el de `UNIHELP_MODELO_PROVEEDOR`: OpenAI se muestra como `chatgpt`,
+ * Ollama como `local` y Gemini como `gemini` (decisiones 27, 46 y 48).
  */
 const FICHAS: Readonly<Record<ProveedorModelo, { nombre: string; descripcion: string }>> = {
   chatgpt: { nombre: 'ChatGPT', descripcion: 'Modelos GPT de OpenAI.' },
@@ -30,11 +30,12 @@ const FICHAS: Readonly<Record<ProveedorModelo, { nombre: string; descripcion: st
 const FICHA_DEL_PROVEEDOR: Readonly<Record<ProveedorModeloBackend, ProveedorModelo>> = {
   openai: 'chatgpt',
   ollama: 'local',
+  gemini: 'gemini',
 };
 
 const NO_IMPLEMENTADO =
   'El servidor no integra este proveedor; solo responde el configurado en UNIHELP_MODELO_PROVEEDOR.';
-const SIN_CLAVE = 'Falta la clave del proveedor en el servidor (OPENAI_API_KEY).';
+const SIN_CLAVE = 'Falta la clave del proveedor en el servidor (OPENAI_API_KEY o GEMINI_API_KEY).';
 const EN_REPRODUCCION =
   'En modo de reproducción el modelo no se puede cambiar: los casetes están grabados con uno concreto.';
 

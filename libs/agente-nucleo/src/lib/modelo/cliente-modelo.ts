@@ -48,8 +48,8 @@ export class ClienteModelo {
     @Inject(CONFIGURACION_AGENTE) private readonly configuracion: ConfiguracionAgente,
     @Inject(CaseteModelo) private readonly casete: CaseteModelo,
   ) {
-    // `baseURL` solo cambia con un proveedor local (Ollama, decision 46); la
-    // peticion es la misma API de Chat Completions.
+    // `baseURL` solo cambia con otro proveedor (Ollama, decision 46; Gemini,
+    // decision 48); la peticion es la misma API de Chat Completions.
     this.cliente =
       configuracion.claveApi === null
         ? null

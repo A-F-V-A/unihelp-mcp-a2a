@@ -1350,3 +1350,44 @@ Consecuencias: la regla 9 de AGENTS.md cambia de redaccion. El repositorio
 crece unos pocos MB por corrida completa; si una corrida oficial con cinco
 repeticiones lo hiciera inmanejable, se pasaria a Git LFS, como preveia
 `docs/06` (actividad 7.10).
+
+## 48. Gemini como tercer proveedor, por su endpoint compatible con OpenAI
+
+> Tomada el 25 de septiembre de 2026 a pedido del responsable del proyecto,
+> para comparar mas modelos con los mismos tests. Misma logica que la decision
+> 46: el experimento evalua LOS MISMOS tests con distintos modelos; el prompt,
+> las herramientas, las tareas, la compuerta y el ejecutor no cambian.
+
+Contexto: tras las campañas de OpenAI (cuatro modelos) y de Ollama (Qwen2.5 7B
+local), el equipo quiere sumar los modelos Gemini de Google. Google AI Studio
+publica un endpoint compatible con la API de Chat Completions de OpenAI, con
+function calling, en `https://generativelanguage.googleapis.com/v1beta/openai`.
+
+Decision:
+
+- `UNIHELP_MODELO_PROVEEDOR` acepta `gemini`. Con el, `ClienteModelo` apunta a
+  `URL_BASE_GEMINI` (o a `UNIHELP_MODELO_URL_BASE`) y la credencial sale de
+  `GEMINI_API_KEY`, nunca de `OPENAI_API_KEY`: cada proveedor tiene su
+  variable (`VARIABLE_CLAVE`). Sin la clave, el backend no arranca.
+- La peticion es la misma que con OpenAI (temperatura 0,2, `top_p` 1,
+  `max_completion_tokens`, `parallel_tool_calls: false`, herramientas con sus
+  JSON Schema). `reasoning_effort` no se envia: solo lo reciben los modelos
+  que lo admiten (`admiteRazonamiento`, familia GPT-5 y serie o).
+- `experiment/sondear-modelo.mjs` hace una llamada minima con esos parametros
+  y lista los modelos que el proveedor publica; se corre ANTES de una campaña
+  para saber si el endpoint acepta la peticion tal cual. Si un proveedor
+  rechazara un parametro, se registraria aqui la excepcion y su motivo, nunca
+  se cambiaria la peticion en silencio para uno solo.
+- `campana.py --proveedor gemini --modelos <ids>` corre la campaña con la
+  misma matriz y el mismo archivo de resultados; en la interfaz el proveedor
+  aparece como la ficha `gemini`.
+
+Por que: un tercer proveedor por la misma API deja intacta la variable
+medida; lo unico que cambia entre campañas sigue siendo el modelo, y el
+identificador exacto queda en cada traza (`model.provider: gemini`,
+`model.id`, RNF-08).
+
+Consecuencias: como con Ollama, las cifras de Gemini son campaña aparte y
+solo se comparan con las de OpenAI mediante una decision de medicion (RM-17);
+los contrastes entre arquitecturas dentro de una campaña si son validos. La
+clave de Gemini se guarda en los `.env` locales y jamas se versiona (regla 9).

@@ -43,6 +43,28 @@ describe('leerConfiguracionAgente', () => {
     );
   });
 
+  describe('proveedor Gemini por su endpoint compatible con OpenAI (decision 48)', () => {
+    const gemini = {
+      UNIHELP_MODELO_PROVEEDOR: 'gemini',
+      UNIHELP_MODELO_ID: 'gemini-2.5-flash',
+      UNIHELP_MODO_LLM: 'live',
+      GEMINI_API_KEY: 'AIza-prueba',
+    };
+
+    it('usa GEMINI_API_KEY y la URL de Google AI Studio por defecto', () => {
+      const c = leerConfiguracionAgente(gemini);
+      expect(c.modelo.proveedor).toBe('gemini');
+      expect(c.modelo.urlBase).toBe('https://generativelanguage.googleapis.com/v1beta/openai');
+      expect(c.claveApi).toBe('AIza-prueba');
+    });
+
+    it('sin GEMINI_API_KEY no arranca, aunque haya OPENAI_API_KEY', () => {
+      expect(() =>
+        leerConfiguracionAgente({ ...gemini, GEMINI_API_KEY: '', OPENAI_API_KEY: 'sk-x' }),
+      ).toThrow(/GEMINI_API_KEY/);
+    });
+  });
+
   describe('proveedor local por Ollama (decision 46)', () => {
     const ollama = {
       UNIHELP_MODELO_PROVEEDOR: 'ollama',
@@ -80,8 +102,8 @@ describe('leerConfiguracionAgente', () => {
 
     it('rechaza un proveedor desconocido', () => {
       expect(() =>
-        leerConfiguracionAgente({ ...base, UNIHELP_MODELO_PROVEEDOR: 'gemini' }),
-      ).toThrow(/openai, ollama/);
+        leerConfiguracionAgente({ ...base, UNIHELP_MODELO_PROVEEDOR: 'anthropic' }),
+      ).toThrow(/openai, ollama, gemini/);
     });
   });
 });

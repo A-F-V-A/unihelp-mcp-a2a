@@ -110,6 +110,7 @@ class Campana:
             **os.environ,
             # Ollama no autentica: la clave solo se exige con OpenAI (decision 46).
             'OPENAI_API_KEY': self.credenciales.get('OPENAI_API_KEY', ''),
+            'GEMINI_API_KEY': self.credenciales.get('GEMINI_API_KEY', ''),
             'UNIHELP_MODELO_PROVEEDOR': self.proveedor,
             **({'UNIHELP_MODELO_URL_BASE': self.url_base} if self.url_base else {}),
             'UNIHELP_MODELO_ID': self.modelo,
@@ -217,14 +218,18 @@ def main() -> int:
     analizador = argparse.ArgumentParser(description=__doc__)
     analizador.add_argument('--modelos', required=True, help='identificadores separados por coma')
     analizador.add_argument('--repeticiones', type=int, default=3)
-    analizador.add_argument('--proveedor', choices=('openai', 'ollama'), default='openai')
+    analizador.add_argument('--proveedor', choices=('openai', 'ollama', 'gemini'), default='openai')
     analizador.add_argument('--url-base', dest='url_base', help='URL base del proveedor (Ollama)')
     args = analizador.parse_args()
     modelos = [m.strip() for m in args.modelos.split(',') if m.strip()]
     ruta_env = RAIZ / 'apps/b0-directo/.env'
     credenciales = leer_env(ruta_env) if ruta_env.exists() else {}
-    if args.proveedor == 'openai' and not credenciales.get('OPENAI_API_KEY'):
-        print(f'Falta OPENAI_API_KEY en {ruta_env}', file=sys.stderr)
+    # Las claves salen del .env de B0 o del entorno del proceso (decision 48).
+    for variable in ('OPENAI_API_KEY', 'GEMINI_API_KEY'):
+        credenciales.setdefault(variable, os.environ.get(variable, ''))
+    clave = {'openai': 'OPENAI_API_KEY', 'gemini': 'GEMINI_API_KEY'}.get(args.proveedor)
+    if clave and not credenciales.get(clave):
+        print(f'Falta {clave} en {ruta_env} o en el entorno', file=sys.stderr)
         return 1
     campanas = [
         Campana(i + 1, m, args.repeticiones, credenciales, args.proveedor, args.url_base)
