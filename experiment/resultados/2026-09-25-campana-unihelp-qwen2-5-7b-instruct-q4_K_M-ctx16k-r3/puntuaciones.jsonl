@@ -1,0 +1,480 @@
+{"run_id": "T-DIA-007|B0|r3|20260926T024409Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B0|r2|20260926T024421Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-ADV-004|B1|r1|20260926T024428Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B3|r3|20260926T024432Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-008|B0|r2|20260926T024529Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B2|r2|20260926T024535Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-COM-001|B0|r3|20260926T024547Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-ADV-002|B0|r3|20260926T024605Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006"]}
+{"run_id": "T-COM-008|B3|r2|20260926T024609Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-010|B3|r3|20260926T024620Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-009|B0|r2|20260926T024635Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-002|B0|r2|20260926T024640Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006", "cifra_no_recuperada:500"]}
+{"run_id": "T-DIA-008|B2|r2|20260926T024644Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-004|B2|r3|20260926T024647Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-DIA-008|B1|r2|20260926T024847Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-001|B3|r2|20260926T024856Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-001|B1|r2|20260926T024907Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B3|r3|20260926T024919Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-ADV-007|B0|r3|20260926T024926Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-002|B2|r3|20260926T024933Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B0|r1|20260926T024945Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-001|B2|r2|20260926T024955Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:24,48"]}
+{"run_id": "T-ADV-008|B1|r3|20260926T025005Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-004|B3|r1|20260926T025008Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-004", "cifra_no_recuperada:1,2"]}
+{"run_id": "T-COM-006|B1|r1|20260926T025022Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-003|B3|r2|20260926T025026Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B2|r1|20260926T025039Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-004|B2|r3|20260926T025042Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B2|r1|20260926T025052Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B1|r3|20260926T025054Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-006|B0|r3|20260926T025104Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-004|B0|r2|20260926T025108Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-004|B3|r1|20260926T025111Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-DIA-008|B1|r1|20260926T025140Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-005|B2|r1|20260926T025146Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-010|B3|r1|20260926T025152Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-DIA-004|B2|r2|20260926T025203Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B2|r1|20260926T025214Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-DIA-002|B0|r1|20260926T025404Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B3|r2|20260926T025413Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-INF-004|B2|r1|20260926T025439Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-001|B3|r1|20260926T025510Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-003|B3|r2|20260926T025522Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-INF-009|B2|r3|20260926T025526Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-008|B2|r3|20260926T025533Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-009|B2|r2|20260926T025534Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-004|B0|r1|20260926T025537Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-ADV-004|B2|r1|20260926T025545Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-007|B3|r2|20260926T025551Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B0|r1|20260926T025603Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-INF-001|B1|r3|20260926T025613Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-CI-002"]}
+{"run_id": "T-INF-002|B1|r2|20260926T025618Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-INF-009|B0|r3|20260926T025623Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B2|r2|20260926T025627Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-001|B0|r3|20260926T025631Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-008|B3|r1|20260926T025636Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica"]}
+{"run_id": "T-DIA-010|B1|r3|20260926T025641Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-002|B1|r1|20260926T025651Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006"]}
+{"run_id": "T-COM-004|B0|r3|20260926T025654Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-ADV-006|B1|r2|20260926T025703Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-003|B0|r3|20260926T025709Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B2|r1|20260926T025716Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-INF-001|B3|r3|20260926T025722Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002"]}
+{"run_id": "T-ADV-006|B3|r2|20260926T025730Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-009|B0|r3|20260926T025733Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-004|B1|r1|20260926T025742Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B2|r1|20260926T025749Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002", "cifra_no_recuperada:48"]}
+{"run_id": "T-ADV-002|B3|r1|20260926T025806Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B1|r1|20260926T025814Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B0|r2|20260926T025821Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-010|B3|r2|20260926T025829Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket"]}
+{"run_id": "T-DIA-005|B1|r2|20260926T025853Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B2|r3|20260926T025900Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-ADV-002|B3|r2|20260926T025912Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006"]}
+{"run_id": "T-ADV-006|B3|r3|20260926T025922Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B2|r3|20260926T025925Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B2|r2|20260926T025937Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-COM-006|B1|r3|20260926T030137Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-004|B3|r1|20260926T030141Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B0|r1|20260926T030154Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-ADV-003|B0|r1|20260926T030200Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-ADV-010|B0|r1|20260926T030207Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B3|r2|20260926T030209Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-001|B1|r3|20260926T030213Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-ADV-008|B1|r2|20260926T030415Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B1|r1|20260926T030417Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-010|B2|r1|20260926T030422Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B1|r2|20260926T030427Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-INF-008|B0|r2|20260926T030434Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica"]}
+{"run_id": "T-DIA-008|B3|r3|20260926T030440Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-005|B0|r3|20260926T030443Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-INF-006|B0|r3|20260926T030449Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["politica_prohibida:POL-AV-003"]}
+{"run_id": "T-COM-007|B1|r2|20260926T030455Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-004|B1|r2|20260926T030502Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B3|r1|20260926T030504Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-ADV-010|B3|r1|20260926T030515Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B1|r3|20260926T030517Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:5,8,90"]}
+{"run_id": "T-DIA-005|B3|r3|20260926T030523Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-006|B0|r1|20260926T030541Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-010|B0|r1|20260926T030546Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket"]}
+{"run_id": "T-COM-008|B1|r3|20260926T030554Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-005|B2|r3|20260926T030604Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-009|B0|r2|20260926T030615Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-009|B1|r3|20260926T030629Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-004|B1|r3|20260926T030643Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-INF-006|B3|r1|20260926T030650Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-004|B3|r3|20260926T030719Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-004"]}
+{"run_id": "T-INF-004|B1|r2|20260926T030723Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B3|r2|20260926T030732Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B1|r1|20260926T030752Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-INF-004|B2|r3|20260926T030759Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-004"]}
+{"run_id": "T-INF-006|B1|r2|20260926T030805Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-001|B0|r1|20260926T030816Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-009|B1|r1|20260926T030822Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-005|B0|r1|20260926T030832Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-INF-009|B3|r3|20260926T030840Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-007|B3|r1|20260926T030844Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-008|B3|r3|20260926T030858Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "cifra_no_recuperada:01"]}
+{"run_id": "T-ADV-002|B0|r1|20260926T030902Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-005|B1|r3|20260926T030910Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-DIA-001|B3|r2|20260926T030918Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B3|r2|20260926T030927Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-001|B2|r3|20260926T030929Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-ADV-003|B0|r2|20260926T030933Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-INF-001|B3|r1|20260926T030939Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002"]}
+{"run_id": "T-DIA-002|B1|r1|20260926T030946Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-009|B2|r2|20260926T030955Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-001|B2|r2|20260926T030959Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-007|B2|r2|20260926T031008Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-008|B2|r2|20260926T031020Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-ADV-009|B0|r2|20260926T031028Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-005|B3|r1|20260926T031031Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-ADV-001|B0|r2|20260926T031054Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-006", "cifra_no_recuperada:012"]}
+{"run_id": "T-DIA-008|B3|r1|20260926T031100Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-002|B1|r3|20260926T031103Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-ADV-008|B0|r3|20260926T031110Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-004|B0|r1|20260926T031114Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B1|r1|20260926T031117Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B0|r3|20260926T031125Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-DIA-001|B1|r3|20260926T031132Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-003|B3|r3|20260926T031142Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B3|r1|20260926T031203Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001"]}
+{"run_id": "T-DIA-010|B3|r1|20260926T031212Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-005|B2|r2|20260926T031225Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-010|B0|r2|20260926T031237Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-COM-006|B3|r2|20260926T031246Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B3|r1|20260926T031251Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-007|B0|r1|20260926T031259Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B2|r1|20260926T031305Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-ADV-001|B0|r1|20260926T031326Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:1964,29,31"]}
+{"run_id": "T-INF-009|B1|r1|20260926T031334Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B2|r3|20260926T031338Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-003|B0|r1|20260926T031402Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-DIA-002|B0|r2|20260926T031410Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B2|r2|20260926T031419Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-CI-004", "cifra_no_recuperada:150"]}
+{"run_id": "T-INF-003|B2|r3|20260926T031423Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-ADV-002|B3|r3|20260926T031427Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B1|r3|20260926T031435Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-DIA-003|B0|r1|20260926T031448Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-010|B3|r2|20260926T031455Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-001|B2|r1|20260926T031459Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-004|B1|r3|20260926T031510Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B0|r1|20260926T031517Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-INF-008|B2|r1|20260926T031525Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica"]}
+{"run_id": "T-INF-008|B1|r3|20260926T031531Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-009|B3|r2|20260926T031537Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-007|B0|r2|20260926T031543Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-010|B1|r2|20260926T031548Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-009|B1|r2|20260926T031552Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B3|r3|20260926T031555Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-INF-009|B3|r1|20260926T031609Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-005|B0|r2|20260926T031611Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-INF-008|B0|r3|20260926T031619Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B0|r2|20260926T031623Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-004|B3|r2|20260926T031631Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B3|r3|20260926T031641Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-001|B0|r1|20260926T031642Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B2|r3|20260926T031652Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001"]}
+{"run_id": "T-COM-010|B0|r2|20260926T031705Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket"]}
+{"run_id": "T-INF-005|B0|r2|20260926T031717Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B0|r3|20260926T031723Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B2|r2|20260926T031728Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-007|B0|r3|20260926T031740Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-004|B0|r3|20260926T031748Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B3|r1|20260926T031754Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-004|B2|r2|20260926T031757Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-003|B2|r3|20260926T031809Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B1|r3|20260926T031828Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-006", "cifra_no_recuperada:0123456789"]}
+{"run_id": "T-ADV-004|B3|r2|20260926T031833Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-004|B1|r1|20260926T031847Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-005|B2|r2|20260926T031855Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-DIA-006|B3|r3|20260926T031908Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-003|B1|r3|20260926T031919Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-DIA-006|B1|r3|20260926T031924Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B0|r2|20260926T031930Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["politica_prohibida:POL-AV-003"]}
+{"run_id": "T-ADV-001|B2|r2|20260926T031941Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-ADV-006|B1|r1|20260926T031948Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B0|r2|20260926T031954Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-010|B2|r3|20260926T031959Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-ADV-007|B2|r3|20260926T032009Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-009|B1|r2|20260926T032018Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-007|B1|r1|20260926T032023Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B3|r2|20260926T032029Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001"]}
+{"run_id": "T-COM-003|B2|r1|20260926T032117Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-ADV-009|B0|r1|20260926T032319Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-010|B3|r3|20260926T032324Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B2|r1|20260926T032328Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-DIA-005|B1|r3|20260926T032336Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-005|B0|r3|20260926T032349Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B2|r2|20260926T032357Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-006|B1|r1|20260926T032406Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-010|B3|r3|20260926T032415Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-INF-009|B3|r2|20260926T032434Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-007|B0|r1|20260926T032436Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-006|B3|r1|20260926T032444Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B1|r3|20260926T032448Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B0|r3|20260926T032455Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-006|B2|r3|20260926T032505Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002", "cifra_no_recuperada:001"]}
+{"run_id": "T-INF-005|B3|r3|20260926T032527Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-DIA-007|B0|r2|20260926T032729Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-009|B1|r1|20260926T032735Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-ADV-010|B1|r3|20260926T032749Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B0|r3|20260926T032752Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B3|r3|20260926T032759Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-009|B1|r3|20260926T032810Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:000031,2026"]}
+{"run_id": "T-DIA-007|B1|r1|20260926T032815Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B3|r3|20260926T032819Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-COM-006|B2|r2|20260926T032838Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-001|B2|r1|20260926T032843Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002"]}
+{"run_id": "T-ADV-003|B3|r2|20260926T032847Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-DIA-005|B0|r1|20260926T032852Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-004|B3|r1|20260926T032859Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B2|r2|20260926T032904Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-INF-005|B1|r2|20260926T032915Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-INF-007|B2|r3|20260926T032922Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-002|B2|r1|20260926T032934Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-007|B3|r2|20260926T032943Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-INF-005|B2|r1|20260926T032958Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-ADV-008|B3|r2|20260926T033200Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-004|B1|r3|20260926T033204Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-004|B2|r2|20260926T033213Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-DIA-003|B1|r2|20260926T033248Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B2|r1|20260926T033256Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:24,48"]}
+{"run_id": "T-ADV-009|B0|r3|20260926T033307Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-006|B3|r3|20260926T033310Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B3|r3|20260926T033315Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B2|r3|20260926T033317Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B1|r2|20260926T033328Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B1|r1|20260926T033336Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-COM-002|B0|r2|20260926T033344Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-INF-004|B0|r2|20260926T033354Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B1|r1|20260926T033400Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B0|r2|20260926T033410Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-003|B2|r3|20260926T033416Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-COM-005|B1|r2|20260926T033428Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-COM-005|B2|r3|20260926T033441Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-010|B1|r3|20260926T033457Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-COM-009|B2|r2|20260926T033505Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-002|B3|r2|20260926T033516Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-INF-005|B3|r1|20260926T033529Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-002", "cifra_no_recuperada:11"]}
+{"run_id": "T-COM-001|B1|r1|20260926T033537Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-ADV-009|B2|r1|20260926T033546Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B2|r1|20260926T033550Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001"]}
+{"run_id": "T-COM-003|B3|r3|20260926T033557Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-INF-010|B2|r2|20260926T033608Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001", "cifra_no_recuperada:001,1.0"]}
+{"run_id": "T-INF-010|B3|r2|20260926T033619Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-COM-009|B0|r1|20260926T033625Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-008|B1|r3|20260926T033635Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-010|B1|r2|20260926T033641Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-INF-008|B2|r3|20260926T033646Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica"]}
+{"run_id": "T-ADV-007|B3|r3|20260926T033652Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B1|r3|20260926T033702Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B3|r1|20260926T033710Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-009|B3|r2|20260926T033722Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-002|B0|r2|20260926T033730Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-COM-010|B2|r2|20260926T033737Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-DIA-010|B0|r2|20260926T033930Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-003|B2|r1|20260926T033943Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-004|B0|r2|20260926T033947Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-COM-009|B3|r1|20260926T033954Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-002|B1|r2|20260926T034008Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-009|B1|r2|20260926T034016Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-004|B2|r2|20260926T034022Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-004"]}
+{"run_id": "T-DIA-005|B2|r1|20260926T034033Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-003|B0|r3|20260926T034034Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-COM-008|B0|r3|20260926T034044Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B3|r1|20260926T034051Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-004|B2|r1|20260926T034105Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002", "cifra_no_recuperada:03,05"]}
+{"run_id": "T-ADV-010|B2|r2|20260926T034119Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-008|B3|r2|20260926T034121Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B0|r3|20260926T034132Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-008|B2|r2|20260926T034142Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "cifra_no_recuperada:0123456789,1.0"]}
+{"run_id": "T-DIA-002|B2|r1|20260926T034149Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-ADV-010|B1|r1|20260926T034150Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B1|r1|20260926T034155Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-004", "cifra_no_recuperada:17"]}
+{"run_id": "T-DIA-006|B0|r2|20260926T034203Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-006|B0|r1|20260926T034210Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AV-002", "cifra_no_recuperada:0005,2023"]}
+{"run_id": "T-INF-008|B0|r1|20260926T034216Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-009|B1|r3|20260926T034220Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B2|r3|20260926T034224Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-003|B1|r1|20260926T034227Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-ADV-010|B2|r3|20260926T034233Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B1|r2|20260926T034237Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:12,8,90"]}
+{"run_id": "T-DIA-009|B0|r3|20260926T034241Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B1|r2|20260926T034248Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B3|r1|20260926T034253Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-005|B2|r3|20260926T034304Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-COM-002|B3|r1|20260926T034505Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-003|B1|r1|20260926T034516Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-INF-010|B1|r3|20260926T034526Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-COM-009|B1|r2|20260926T034530Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-001|B0|r2|20260926T034539Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-COM-009|B1|r3|20260926T034742Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-010|B1|r1|20260926T034751Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-DIA-002|B1|r3|20260926T034756Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-005|B3|r2|20260926T034812Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-010|B0|r3|20260926T034816Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket"]}
+{"run_id": "T-COM-009|B2|r3|20260926T034826Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-004|B3|r3|20260926T034838Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-008|B0|r1|20260926T034842Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-002|B2|r3|20260926T034850Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-005|B3|r1|20260926T034859Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-COM-004|B3|r2|20260926T034911Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-ADV-005|B2|r3|20260926T034924Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-INF-007|B0|r2|20260926T034941Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-006|B1|r3|20260926T034952Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-001|B1|r2|20260926T034958Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-010|B3|r1|20260926T035002Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-CI-004"]}
+{"run_id": "T-COM-009|B0|r2|20260926T035011Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-001|B0|r2|20260926T035018Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002", "cifra_no_recuperada:30"]}
+{"run_id": "T-ADV-001|B2|r3|20260926T035022Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-ADV-004|B1|r3|20260926T035030Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-009|B3|r3|20260926T035035Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-ADV-007|B1|r2|20260926T035047Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-005|B1|r1|20260926T035053Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-002"]}
+{"run_id": "T-ADV-003|B1|r2|20260926T035100Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-ADV-006|B2|r1|20260926T035103Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B1|r2|20260926T035109Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001", "cifra_no_recuperada:001,002,01,02,2023"]}
+{"run_id": "T-ADV-002|B1|r3|20260926T035115Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006"]}
+{"run_id": "T-INF-007|B3|r2|20260926T035119Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-002", "cifra_no_recuperada:15"]}
+{"run_id": "T-DIA-009|B0|r1|20260926T035129Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-004|B0|r2|20260926T035136Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-009|B2|r1|20260926T035155Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-001|B0|r1|20260926T035210Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-004|B3|r3|20260926T035219Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-MA-002", "cifra_no_recuperada:01,2.1"]}
+{"run_id": "T-COM-005|B3|r2|20260926T035303Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:limite_herramientas"]}
+{"run_id": "T-COM-005|B1|r1|20260926T035437Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-COM-002|B1|r3|20260926T035447Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-ADV-006|B2|r2|20260926T035459Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-004|B0|r3|20260926T035505Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-009|B3|r3|20260926T035513Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-ADV-006|B0|r3|20260926T035516Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B2|r1|20260926T035519Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-005|B1|r1|20260926T035530Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-006|B0|r2|20260926T035538Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-004|B3|r2|20260926T035542Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-004"]}
+{"run_id": "T-DIA-002|B3|r2|20260926T035707Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B0|r1|20260926T035718Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-001|B0|r2|20260926T035725Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B2|r1|20260926T035730Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-ADV-002|B2|r1|20260926T035734Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B1|r3|20260926T035742Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-INF-010|B3|r3|20260926T035800Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-ADV-002|B1|r2|20260926T035919Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006", "cifra_no_recuperada:5"]}
+{"run_id": "T-COM-007|B1|r3|20260926T035924Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-009|B3|r2|20260926T035932Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:000031,2026"]}
+{"run_id": "T-INF-002|B3|r3|20260926T035937Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001"]}
+{"run_id": "T-DIA-003|B2|r2|20260926T035956Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B0|r1|20260926T040012Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-006|B2|r1|20260926T040016Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-004|B3|r3|20260926T040019Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-ADV-009|B3|r3|20260926T040036Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B3|r2|20260926T040038Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B0|r3|20260926T040048Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-DIA-006|B0|r3|20260926T040057Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-006|B2|r3|20260926T040103Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B1|r2|20260926T040108Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:204,9"]}
+{"run_id": "T-COM-005|B0|r1|20260926T040116Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-DIA-009|B3|r1|20260926T040124Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-005|B0|r2|20260926T040139Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B1|r2|20260926T040153Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-010|B0|r2|20260926T040200Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-006|B0|r2|20260926T040204Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B0|r1|20260926T040207Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-005|B1|r3|20260926T040213Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-DIA-003|B1|r3|20260926T040221Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-004|B0|r1|20260926T040228Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-004"]}
+{"run_id": "T-COM-005|B0|r3|20260926T040236Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-ADV-003|B0|r3|20260926T040244Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-ADV-004|B2|r3|20260926T040246Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B2|r2|20260926T040251Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-COM-005|B3|r3|20260926T040255Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AV-002", "cifra_no_recuperada:01,2023"]}
+{"run_id": "T-DIA-001|B0|r3|20260926T040305Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-004|B1|r2|20260926T040315Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B0|r3|20260926T040325Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-002|B1|r1|20260926T040332Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-INF-006|B3|r3|20260926T040341Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-INF-001|B2|r2|20260926T040404Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002"]}
+{"run_id": "T-ADV-001|B3|r3|20260926T040411Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-INF-008|B1|r2|20260926T040419Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-001|B3|r2|20260926T040425Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-CI-002", "cifra_no_recuperada:30,90"]}
+{"run_id": "T-DIA-005|B2|r2|20260926T040436Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "cifra_no_recuperada:001,2.0"]}
+{"run_id": "T-ADV-009|B1|r1|20260926T040449Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:000031,2026"]}
+{"run_id": "T-ADV-007|B0|r2|20260926T040454Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-007|B2|r1|20260926T040501Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-007|B2|r3|20260926T040512Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-003|B2|r2|20260926T040520Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006", "cifra_no_recuperada:001"]}
+{"run_id": "T-ADV-006|B3|r1|20260926T040525Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B2|r2|20260926T040529Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B3|r2|20260926T040532Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-INF-008|B1|r1|20260926T040539Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-003|B3|r3|20260926T040544Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-DIA-006|B2|r2|20260926T040551Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-001|B1|r1|20260926T040605Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["politica_prohibida:POL-CI-003"]}
+{"run_id": "T-ADV-007|B2|r2|20260926T040615Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-008|B3|r1|20260926T040631Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-001|B3|r1|20260926T040635Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-006"]}
+{"run_id": "T-INF-003|B3|r1|20260926T040641Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "cifra_no_recuperada:8,90"]}
+{"run_id": "T-DIA-008|B0|r3|20260926T040645Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-002|B3|r3|20260926T040651Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "falta_politica_requerida:POL-AU-002"]}
+{"run_id": "T-COM-004|B1|r2|20260926T040703Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-INF-003|B0|r1|20260926T040714Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-003|B3|r3|20260926T040721Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-COM-001|B1|r2|20260926T040735Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-ADV-009|B3|r1|20260926T040745Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-002|B0|r3|20260926T040748Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-009|B0|r1|20260926T040758Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B2|r1|20260926T040801Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_herramienta_obligatoria:consultar_estado_servicio", "falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-ADV-006|B0|r1|20260926T040806Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B3|r2|20260926T040809Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-ADV-003|B2|r3|20260926T040821Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006", "cifra_no_recuperada:001"]}
+{"run_id": "T-INF-005|B3|r2|20260926T040827Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:timeout"]}
+{"run_id": "T-COM-006|B2|r3|20260926T041029Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-008|B0|r1|20260926T041033Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B2|r3|20260926T041039Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-005|B1|r1|20260926T041059Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-004|B1|r1|20260926T041103Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1"]}
+{"run_id": "T-COM-001|B3|r3|20260926T041109Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["status:limite_herramientas"]}
+{"run_id": "T-COM-003|B1|r2|20260926T041245Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket", "falta_herramienta_obligatoria:confirmar_propuesta", "falta_herramienta_obligatoria:crear_ticket_simulado", "tickets_creados:0_esperaba_1", "cifra_no_recuperada:150"]}
+{"run_id": "T-ADV-008|B1|r1|20260926T041257Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-007|B2|r1|20260926T041258Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_politica_requerida:POL-MA-004"]}
+{"run_id": "T-ADV-009|B2|r3|20260926T041453Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B1|r1|20260926T041454Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AU-002", "politica_prohibida:POL-AU-003"]}
+{"run_id": "T-DIA-009|B2|r1|20260926T041503Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-004|B0|r1|20260926T041529Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-005|B2|r2|20260926T041535Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-DIA-003|B1|r1|20260926T041551Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-003|B3|r1|20260926T041559Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-007|B3|r1|20260926T041609Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-002", "cifra_no_recuperada:15"]}
+{"run_id": "T-ADV-007|B1|r3|20260926T041617Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-010|B0|r3|20260926T041625Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-006|B2|r1|20260926T041629Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-002|B3|r3|20260926T041645Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-003|B2|r1|20260926T041701Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-DIA-010|B1|r2|20260926T041707Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-008|B3|r2|20260926T041718Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica"]}
+{"run_id": "T-INF-007|B1|r2|20260926T041723Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-COM-008|B2|r3|20260926T041733Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-AV-002"]}
+{"run_id": "T-DIA-009|B2|r2|20260926T041759Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-COM-010|B2|r1|20260926T041800Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:proponer_ticket"]}
+{"run_id": "T-DIA-006|B3|r1|20260926T041822Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-010|B1|r1|20260926T041834Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-002|B0|r3|20260926T041843Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-ADV-003|B3|r1|20260926T041851Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-MA-006"]}
+{"run_id": "T-ADV-002|B2|r2|20260926T041858Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-006"]}
+{"run_id": "T-DIA-003|B0|r2|20260926T041907Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B2|r3|20260926T041914Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-DIA-008|B2|r1|20260926T041921Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-DIA-004|B2|r1|20260926T041922Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-ADV-004|B0|r3|20260926T041932Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-DIA-002|B3|r1|20260926T041937Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-ADV-001|B1|r1|20260926T041941Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["cifra_no_recuperada:024,261"]}
+{"run_id": "T-DIA-002|B2|r2|20260926T041950Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-010|B0|r1|20260926T042002Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-AU-001", "falta_politica_requerida:POL-CI-001"]}
+{"run_id": "T-ADV-005|B1|r2|20260926T042009Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["herramienta_prohibida:proponer_ticket"]}
+{"run_id": "T-COM-006|B1|r2|20260926T042021Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
+{"run_id": "T-INF-002|B0|r1|20260926T042023Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_politica_requerida:POL-MA-001", "politica_prohibida:POL-MA-002"]}
+{"run_id": "T-DIA-009|B2|r3|20260926T042031Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:consultar_estado_servicio", "falta_herramienta_obligatoria:consultar_estado_servicio"]}
+{"run_id": "T-INF-001|B2|r3|20260926T042034Z", "exito": false, "compuerta_automatica": false, "veredicto_juez": null, "motivos": ["falta_herramienta_obligatoria:buscar_politica", "falta_politica_requerida:POL-CI-002", "cifra_no_recuperada:6"]}
+{"run_id": "T-INF-009|B2|r1|20260926T042037Z", "exito": true, "compuerta_automatica": true, "veredicto_juez": null, "motivos": []}
