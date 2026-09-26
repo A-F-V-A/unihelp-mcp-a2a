@@ -102,6 +102,11 @@ que una informativa). Los contrastes pareados si lo son: `B2 − B1` =
 
 ## Como completarla
 
+El 26 de septiembre se repitio solo el flash-lite tras una recarga y volvio a
+cortarse por 402 a las 348 de 480 ejecuciones; ese segundo parcial, con mucha
+mas cobertura, esta en
+[`resultados-2026-09-26-campana-gemini-flash-lite.md`](resultados-2026-09-26-campana-gemini-flash-lite.md).
+
 Recargar el saldo prepago del proyecto en AI Studio y relanzar exactamente:
 
 ```bash

@@ -19,3 +19,4 @@ La procedencia sale de las trazas: cada una lleva su modelo, arquitectura, repet
 | [`2026-09-25-campana-unihelp-qwen2-5-7b-instruct-q4_K_M-ctx16k-r3`](2026-09-25-campana-unihelp-qwen2-5-7b-instruct-q4_K_M-ctx16k-r3/) | unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k | B0, B1, B2, B3 | 3 | 480 | 480 | 211 | 480 | `96fb3d15a61d+sucio` | record |
 | [`2026-09-25-cuatro-arquitecturas-r1`](2026-09-25-cuatro-arquitecturas-r1/) | gpt-5.5-2026-04-23 | B0, B1, B2, B3 | 1 | 160 | 160 | 147 | 160 | `1fea73b8e556` | record |
 | [`2026-09-25-ollama-b0-qwen2.5-7b-r1`](2026-09-25-ollama-b0-qwen2.5-7b-r1/) | unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k | B0 | 1 | 40 | 40 | 21 | 40 | `dd09151f0540+sucio` | record |
+| [`2026-09-26-campana-gemini-3-1-flash-lite-r3`](2026-09-26-campana-gemini-3-1-flash-lite-r3/) | gemini-3.1-flash-lite | B0, B1, B2, B3 | 3 | 348 de 480 (interrumpida) | 348 | 267 | 348 | `d311bc077d36+sucio` | record |
