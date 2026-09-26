@@ -214,7 +214,9 @@ def _comando_importar_visor(args: argparse.Namespace) -> int:
 
 
 def _configuracion(args: argparse.Namespace):
-    base = leer_configuracion()
+    # `--corrida` apunta a otro archivo de corrida (una campaña con sus propios
+    # backends); sin el, el `corrida.yaml` de siempre.
+    base = leer_configuracion(Path(args.corrida)) if getattr(args, 'corrida', None) else leer_configuracion()
     tareas = None
     if getattr(args, 'tareas', None):
         # Admite `T-COM-001,T-ADV-*` y expande el comodin sobre el conjunto real.
@@ -243,6 +245,7 @@ def _analizador() -> argparse.ArgumentParser:
 
     def comunes(p: argparse.ArgumentParser) -> None:
         p.add_argument('--tareas', help='ids separados por coma; admite comodin (T-ADV-*)')
+        p.add_argument('--corrida', help='otro archivo de corrida (por ejemplo, el de una campaña)')
         p.add_argument('--repeticiones', type=int)
         p.add_argument('--arquitecturas', help='por ejemplo B0 o B0,B1')
         p.add_argument('--modo-llm', dest='modo_llm', choices=('live', 'record', 'replay'))

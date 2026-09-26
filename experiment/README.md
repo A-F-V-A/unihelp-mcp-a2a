@@ -48,6 +48,25 @@ lo aplica `mcp-server` (`apps/mcp-server/.env`). Con una sola arquitectura en
 la corrida, los contrastes salen `sin_datos` y las metricas por arquitectura se
 calculan igual.
 
+**Campañas de varios modelos** (`experiment/campana.py`): corre las cuatro
+arquitecturas con cada modelo en su propio entorno aislado (base `unihelp_cN`,
+`mcp-server` y siete backends en puertos `3N00..3N10`), todas las campañas a la
+vez, y al final ejecuta el cuaderno sobre cada corrida y copia los artefactos a
+`resultados/`. Dentro de cada campaña la matriz sigue en serie (RM-04); lo que
+las campañas comparten es la maquina, asi que comparar latencias ENTRE modelos
+corridos a la vez es una decision de medicion aparte (RM-17).
+
+```bash
+# una base por campaña, migrada y sembrada (SWC_NODE_PROJECT lo pone nx en los targets)
+docker exec unihelp-postgres psql -U unihelp -d unihelp -c "CREATE DATABASE unihelp_c1;"
+CONOCIMIENTO_DATABASE_URL=postgres://unihelp:unihelp@localhost:5432/unihelp_c1 TICKETS_DATABASE_URL=... pnpm conocimiento:preparar && pnpm tickets:migrar
+pnpm nx run-many -t build --projects=mcp-server,b0-directo,b1-mcp-agente,b2-multiagente-local,b3-a2a-orquestador,b3-a2a-conocimiento,b3-a2a-diagnostico
+cd experiment && uv run python campana.py --modelos gpt-5.5-2026-04-23,gpt-5.4-2026-03-05 --repeticiones 3
+```
+
+`ejecutor correr --corrida <archivo>` acepta otro archivo de corrida (es lo
+que usa la campaña para apuntar a sus backends).
+
 Para **ver** las tareas correr en el navegador, con una persona simulada que teclea y
 un panel con tokens, latencia y herramientas: [`visor/`](visor/README.md)
 (`pnpm visor`, `pnpm visor:ui`). El visor no calcula metricas: le pide el veredicto
