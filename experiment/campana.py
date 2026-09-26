@@ -89,12 +89,16 @@ class Campana:
         credenciales: dict[str, str],
         proveedor: str = 'openai',
         url_base: str | None = None,
+        esfuerzo: str = 'none',
     ):
         self.indice, self.modelo, self.repeticiones = indice, modelo, repeticiones
-        self.proveedor, self.url_base = proveedor, url_base
+        self.proveedor, self.url_base, self.esfuerzo = proveedor, url_base, esfuerzo
         self.base_puerto = 3000 + 100 * indice
         self.bd = f'unihelp_c{indice}'
-        self.nombre = f'campana-{slug(modelo)}-r{repeticiones}'
+        # El esfuerzo de razonamiento distinto de `none` es una excepcion
+        # documentada (decision 48) y queda en el nombre de la corrida.
+        sufijo = '' if esfuerzo == 'none' else f'-{esfuerzo}'
+        self.nombre = f'campana-{slug(modelo)}{sufijo}-r{repeticiones}'
         self.logs = EXPERIMENTO / 'corridas' / 'campana-logs' / self.nombre
         self.logs.mkdir(parents=True, exist_ok=True)
         self.procesos: list[subprocess.Popen] = []
@@ -115,7 +119,7 @@ class Campana:
             **({'UNIHELP_MODELO_URL_BASE': self.url_base} if self.url_base else {}),
             'UNIHELP_MODELO_ID': self.modelo,
             'UNIHELP_MODELOS_PERMITIDOS': self.modelo,
-            'UNIHELP_MODELO_ESFUERZO': 'none',
+            'UNIHELP_MODELO_ESFUERZO': self.esfuerzo,
             'UNIHELP_MODO_LLM': 'record',
             'UNIHELP_DIRECTORIO_CASETES': f'experiment/casetes/{slug(self.modelo)}',
             'UNIHELP_PERFIL': 'experimento',
@@ -218,8 +222,21 @@ def main() -> int:
     analizador = argparse.ArgumentParser(description=__doc__)
     analizador.add_argument('--modelos', required=True, help='identificadores separados por coma')
     analizador.add_argument('--repeticiones', type=int, default=3)
+    analizador.add_argument(
+        '--indice-inicial',
+        dest='indice_inicial',
+        type=int,
+        default=1,
+        help='primer entorno (base unihelp_cN y puertos 3N00) que usa esta invocacion, para correr dos a la vez',
+    )
     analizador.add_argument('--proveedor', choices=('openai', 'ollama', 'gemini'), default='openai')
     analizador.add_argument('--url-base', dest='url_base', help='URL base del proveedor (Ollama)')
+    analizador.add_argument(
+        '--esfuerzo',
+        choices=('none', 'low', 'medium', 'high'),
+        default='none',
+        help='reasoning_effort; `none` es el del experimento (decision 40); otro valor es una excepcion registrada',
+    )
     args = analizador.parse_args()
     modelos = [m.strip() for m in args.modelos.split(',') if m.strip()]
     ruta_env = RAIZ / 'apps/b0-directo/.env'
@@ -232,7 +249,9 @@ def main() -> int:
         print(f'Falta {clave} en {ruta_env} o en el entorno', file=sys.stderr)
         return 1
     campanas = [
-        Campana(i + 1, m, args.repeticiones, credenciales, args.proveedor, args.url_base)
+        Campana(
+            args.indice_inicial + i, m, args.repeticiones, credenciales, args.proveedor, args.url_base, args.esfuerzo
+        )
         for i, m in enumerate(modelos)
     ]
     errores: dict[str, str] = {}

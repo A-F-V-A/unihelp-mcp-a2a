@@ -1391,3 +1391,26 @@ Consecuencias: como con Ollama, las cifras de Gemini son campaña aparte y
 solo se comparan con las de OpenAI mediante una decision de medicion (RM-17);
 los contrastes entre arquitecturas dentro de una campaña si son validos. La
 clave de Gemini se guarda en los `.env` locales y jamas se versiona (regla 9).
+
+Lo que el sondeo del 25 de septiembre de 2026 mostro, y como se resolvio:
+
+- La familia `gemini-2.5-*` responde 404 ("no longer available to new users");
+  los modelos vigentes son `gemini-3.x`. La clave de AI Studio tiene hoy el
+  formato `AQ.…`, no `AIza…`.
+- Los Gemini 3.x piensan por defecto y esos tokens NO aparecen en
+  `completion_tokens`, solo en `total_tokens` (500-600 por respuesta en
+  `gemini-3.8-flash`). Con `reasoning_effort: none` el razonamiento oculto
+  baja a cero, igual que en OpenAI (decision 40), asi que `admiteRazonamiento`
+  incluye `gemini-` y el cliente envia el esfuerzo configurado.
+- `gemini-3.1-pro-preview` rechaza `none` y `minimal` ("this model only works
+  in thinking mode") y con `low` sigue pensando unos 450 tokens por llamada;
+  `gemini-3.5-flash-lite` rechaza `none`. **Excepcion registrada:** la campaña
+  del pro corre con `--esfuerzo low` y su corrida lleva el sufijo `-low` en el
+  nombre; no es comparable en tokens ni latencia con las campañas `none`, y
+  asi se reporta. `gemini-3.5-flash-lite` no se corre.
+- Los modelos abiertos `gemma-4-*` escriben su razonamiento como texto
+  `<thought>…` dentro de la respuesta, que llegaria a la persona: quedan fuera.
+- Campaña del 25 de septiembre: `gemini-3.8-flash`, `gemini-3.5-flash` y
+  `gemini-3.1-flash-lite` con `none`, y `gemini-3.1-pro-preview` con `low`,
+  las cuatro a la vez (`campana.py --indice-inicial` permite dos invocaciones
+  con entornos distintos).

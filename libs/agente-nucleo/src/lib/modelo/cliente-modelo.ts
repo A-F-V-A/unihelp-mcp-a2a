@@ -30,9 +30,14 @@ export interface RespuestaModelo {
   readonly rttMs: number;
 }
 
-/** Modelos que aceptan `reasoning_effort`: la familia GPT-5 y la serie o (`o3`, `o4-mini`). */
+/**
+ * Modelos que aceptan `reasoning_effort`: la familia GPT-5, la serie o (`o3`,
+ * `o4-mini`) y los Gemini 3.x, que piensan por defecto y solo con `none` dejan
+ * de hacerlo (decision 48). Un modelo sin razonamiento (gpt-4.1, Ollama) lo
+ * rechaza y no se le envia.
+ */
 export function admiteRazonamiento(modeloId: string): boolean {
-  return /^(gpt-5|o\d)/.test(modeloId);
+  return /^(gpt-5|o\d|gemini-)/.test(modeloId);
 }
 
 /**
