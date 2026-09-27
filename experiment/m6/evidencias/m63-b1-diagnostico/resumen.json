@@ -1,0 +1,30 @@
+{
+  "descripcion": "B1 de la base arriba; solo mcp-server reiniciado con la rama.",
+  "conversacion_previa_al_reinicio": true,
+  "pasos": [
+    {
+      "etiqueta": "0-caso9-en-la-base",
+      "uso_la_herramienta": false,
+      "tool_calls": [],
+      "error": null
+    },
+    {
+      "etiqueta": "1-caso9-tras-reiniciar-mcp",
+      "uso_la_herramienta": false,
+      "tool_calls": [],
+      "error": null
+    },
+    {
+      "etiqueta": "2-herramienta-existente",
+      "uso_la_herramienta": null,
+      "tool_calls": null,
+      "error": "<HTTPError 503: 'Service Unavailable'>"
+    },
+    {
+      "etiqueta": "3-caso9-otra-vez",
+      "uso_la_herramienta": false,
+      "tool_calls": [],
+      "error": null
+    }
+  ]
+}

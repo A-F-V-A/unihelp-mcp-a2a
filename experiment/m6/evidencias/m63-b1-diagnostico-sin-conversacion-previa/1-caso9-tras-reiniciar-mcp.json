@@ -1,0 +1,31 @@
+{
+  "etiqueta": "1-caso9-tras-reiniciar-mcp",
+  "trace_id": "m63-b1-1-caso9-tras-reiniciar-mcp-1790551252247106400",
+  "origen_servicios": {
+    "mcp-server": "rama",
+    "b1-mcp-agente": "base"
+  },
+  "uso_la_herramienta": true,
+  "texto": "No hay atención presencial en la sede norte el lunes 12 de octubre de 2026, ya que ese día es festivo. Puedes consultar otros canales de soporte disponibles en la universidad durante ese periodo.",
+  "tool_calls": [
+    {
+      "nombre": "consultar_disponibilidad_soporte",
+      "args": {
+        "sede": "norte",
+        "fecha": "2026-10-12"
+      },
+      "isError": false,
+      "transporte": "mcp",
+      "agente": "b1-mcp-agente",
+      "resultado": {
+        "sede": "norte",
+        "fecha": "2026-10-12",
+        "dia_semana": "lunes",
+        "disponible": false,
+        "franjas": [],
+        "motivo": "festivo"
+      }
+    }
+  ],
+  "segundos": 7.1
+}

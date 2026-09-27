@@ -1,0 +1,5 @@
+# pnpm nx lint analisis --skip-nx-cache en ../unihelp-m6-base (etiqueta m6-base, 1afafb7) tras uv sync. Resumen del registro completo (no versionado).
+✖ 190165 problems (190144 errors, 21 warnings)
+ NX   Running target lint for project analisis failed
+Failed tasks:
+- analisis:lint

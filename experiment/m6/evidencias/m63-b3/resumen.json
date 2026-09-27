@@ -1,0 +1,68 @@
+{
+  "arquitectura": "B3",
+  "servicios_de_la_arquitectura": [
+    "mcp-server",
+    "b3-a2a-conocimiento",
+    "b3-a2a-diagnostico",
+    "b3-a2a-orquestador"
+  ],
+  "pruebas": [
+    {
+      "reiniciados": [
+        "mcp-server"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "b3-a2a-conocimiento"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "b3-a2a-diagnostico"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "b3-a2a-orquestador"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "mcp-server",
+        "b3-a2a-conocimiento"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "mcp-server",
+        "b3-a2a-diagnostico"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "mcp-server",
+        "b3-a2a-orquestador"
+      ],
+      "uso_la_herramienta": true
+    }
+  ],
+  "binario_cambiado": {
+    "mcp-server": true,
+    "b3-a2a-conocimiento": true,
+    "b3-a2a-diagnostico": true,
+    "b3-a2a-orquestador": true
+  },
+  "base_uso_la_herramienta": false,
+  "servicios_reiniciados": [
+    "mcp-server",
+    "b3-a2a-orquestador"
+  ],
+  "solo_mcp_server_basto": false
+}

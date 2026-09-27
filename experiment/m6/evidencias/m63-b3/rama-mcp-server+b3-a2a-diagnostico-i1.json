@@ -1,0 +1,14 @@
+{
+  "etiqueta": "rama-mcp-server+b3-a2a-diagnostico-i1",
+  "trace_id": "m63-b3-rama-mcp-server+b3-a2a-diagnostico-i1-1790551514140461600",
+  "origen_servicios": {
+    "mcp-server": "rama",
+    "b3-a2a-conocimiento": "base",
+    "b3-a2a-diagnostico": "rama",
+    "b3-a2a-orquestador": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto que nos has planteado no corresponde a ninguno de los cuatro servicios que atiendemos. Te sugiero que contactes la mesa de ayuda general de la universidad o la dependencia responsable para obtener información sobre el soporte presencial en la sede norte el lunes 12 de octubre de 2026.",
+  "tool_calls": [],
+  "segundos": 6.7
+}

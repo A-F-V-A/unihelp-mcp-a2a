@@ -1,0 +1,24 @@
+{
+  "arquitectura": "B2",
+  "servicios_de_la_arquitectura": [
+    "mcp-server",
+    "b2-multiagente-local"
+  ],
+  "pruebas": [
+    {
+      "reiniciados": [
+        "b2-multiagente-local"
+      ],
+      "uso_la_herramienta": true
+    }
+  ],
+  "binario_cambiado": {
+    "mcp-server": false,
+    "b2-multiagente-local": true
+  },
+  "base_uso_la_herramienta": false,
+  "servicios_reiniciados": [
+    "b2-multiagente-local"
+  ],
+  "solo_mcp_server_basto": false
+}

@@ -1,0 +1,30 @@
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:54 p. m. [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +80ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSaludModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTicketsModule dependencies initialized[39m[38;5;3m +66ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConocimientoModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCapacidadesModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAgenteNucleoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSaludController {/api/health}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConversacionController {/api/conversaciones}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/mensajes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/:id/mensajes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTicketsController {/api/tickets/propuestas}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas/:id/confirmacion, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas/:id/rechazo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConsultasController {/api}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/politicas/:codigo, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/servicios/:servicio/estado, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mModeloIaController {/api/modelo-ia}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/modelo-ia, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/modelo-ia, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExperimentoController {/api/experimento}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/experimento/restablecer, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/experimento/trazas/:traceId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:16:55 p. m. [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32m[B0] b0-directo escuchando en http://localhost:3900 (salud: /health)[39m
+[32m[Nest] 38572  - [39m27/09/2026, 6:17:07 p. m. [32m    LOG[39m [38;5;3m[Instrumentacion] [39m[32m[m63-b0-base-1790551016485784300] fin=respuesta total=8577.3ms llm=8562.8 tool=0.0 transporte=0.00 orquestacion=14.5 tokens=5658/133 (cacheados 0) llamadasModelo=1 herramientas=0[39m

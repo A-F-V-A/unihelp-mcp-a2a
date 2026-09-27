@@ -1,0 +1,14 @@
+{
+  "etiqueta": "rama-b3-a2a-conocimiento-i2",
+  "trace_id": "m63-b3-rama-b3-a2a-conocimiento-i2-1790551400411223600",
+  "origen_servicios": {
+    "mcp-server": "base",
+    "b3-a2a-conocimiento": "rama",
+    "b3-a2a-diagnostico": "base",
+    "b3-a2a-orquestador": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto que nos has planteado no corresponde a ninguno de los cuatro servicios que atiende este asistente. Te sugiero que contactes la mesa de ayuda general de la universidad o la dependencia responsable para obtener la información sobre el soporte presencial en la sede norte.",
+  "tool_calls": [],
+  "segundos": 6.6
+}

@@ -1,0 +1,15 @@
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +51ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSaludModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTicketsModule dependencies initialized[39m[38;5;3m +28ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConocimientoModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCapacidadesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMcpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSaludController {/api/health}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMcpController {/api/mcp}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/mcp, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:15 p. m. [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32m[COMPARTIDO] mcp-server escuchando en http://localhost:3910 (salud: /health, MCP 2025-11-25: /mcp)[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:21 p. m. [32m    LOG[39m [38;5;3m[MCP] [39m[32mSesión MCP abierta: e95240e5-b03a-4b40-96a7-1610b38ededb[39m
+[32m[Nest] 35104  - [39m27/09/2026, 6:26:34 p. m. [32m    LOG[39m [38;5;3m[MCP] [39m[32mSesión MCP abierta: 4e58aa4f-8668-4d12-94f0-ccd007796207[39m

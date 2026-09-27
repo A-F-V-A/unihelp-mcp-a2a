@@ -1,0 +1,6 @@
+{
+  "descripcion": "Objetivos de pnpm verify que ya fallan en m6-base con el mismo entorno, y por eso no cuentan como regresion de ninguna rama (decision 60).",
+  "objetivos": ["analisis:lint"],
+  "causa": "El objetivo lint de analisis, inferido por @nx/eslint, recorre experiment/.venv (el entorno de uv que crea analisis:instalar/test) y reporta unos 190 000 errores de paquetes de terceros. La verificacion inicial de la base salio verde porque ese worktree aun no tenia .venv.",
+  "evidencia": ["evidencias/lint-analisis-base.resumen.txt", "evidencias/verify-b0.resumen.txt", "evidencias/verify-b1.resumen.txt", "evidencias/verify-b2.resumen.txt", "evidencias/verify-b3.resumen.txt"]
+}

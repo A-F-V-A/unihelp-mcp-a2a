@@ -48,6 +48,9 @@ INSUMOS = (
     'reproduccion',
     'control_instrumentacion',
     'tarifas',
+    'repositorio',
+    'verificacion_manual',
+    'integracion_continua',
 )
 
 COLUMNA_VALIDA = columna(ARTEFACTO_VALIDACION, 'valida')

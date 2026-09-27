@@ -1,0 +1,178 @@
+{
+  "fuente_metricas": "salidas/m6-prueba/resultados.json",
+  "version_registro": "1.3.0",
+  "base": "m6-base (1afafb7)",
+  "orden_sorteado": [
+    "B0",
+    "B3",
+    "B2",
+    "B1"
+  ],
+  "semilla_orden": 20261016,
+  "implementaciones": [
+    {
+      "arquitectura": "B0",
+      "orden": 1,
+      "modelo": "claude-opus-5-5",
+      "ventana_contexto_tokens": 1000000,
+      "esfuerzo": "por defecto de Claude Code (medio)",
+      "commit": "b6dad37",
+      "verde": true,
+      "m6_1_archivos": 14.0,
+      "m6_1_archivos_con_pruebas": 17.0,
+      "m6_2_lineas_netas": 356.0,
+      "m6_2_anadidas": 370.0,
+      "m6_2_eliminadas": 14.0,
+      "lineas_prueba_nuevas": 232.0,
+      "m6_3_servicios_reiniciados": 1.0,
+      "m6_3_servicios": [
+        "b0-directo"
+      ],
+      "m6_3_solo_mcp_server_basto": null,
+      "m6_4_minutos": 10.5552,
+      "fases_minutos": {
+        "planificacion": 1.434883,
+        "lectura_contexto": 0.647133,
+        "implementacion": 2.595067,
+        "pruebas": 5.87395
+      },
+      "iteraciones_de_prueba": 5,
+      "archivos_leidos": 35,
+      "archivos_leidos_parciales": 3,
+      "lineas_leidas": 6102,
+      "bytes_leidos": 379309,
+      "tokens_subagente": 172214,
+      "llamadas_herramientas": 52,
+      "duracion_subagente_min": 10.85,
+      "m6_5_regresion_ok": 1.0,
+      "evidencias": [
+        "evidencias/verify-b0.resumen.txt",
+        "evidencias/m63-b0/resumen.json"
+      ]
+    },
+    {
+      "arquitectura": "B1",
+      "orden": 4,
+      "modelo": "claude-opus-5-5",
+      "ventana_contexto_tokens": 1000000,
+      "esfuerzo": "por defecto de Claude Code (medio)",
+      "commit": "c4383fb",
+      "verde": true,
+      "m6_1_archivos": 12.0,
+      "m6_1_archivos_con_pruebas": 16.0,
+      "m6_2_lineas_netas": 343.0,
+      "m6_2_anadidas": 392.0,
+      "m6_2_eliminadas": 49.0,
+      "lineas_prueba_nuevas": 390.0,
+      "m6_3_servicios_reiniciados": 2.0,
+      "m6_3_servicios": [
+        "mcp-server",
+        "b1-mcp-agente"
+      ],
+      "m6_3_solo_mcp_server_basto": false,
+      "m6_4_minutos": 8.403917,
+      "fases_minutos": {
+        "planificacion": 0.495317,
+        "lectura_contexto": 1.372133,
+        "implementacion": 3.260933,
+        "pruebas": 3.271367
+      },
+      "iteraciones_de_prueba": 2,
+      "archivos_leidos": 36,
+      "archivos_leidos_parciales": 4,
+      "lineas_leidas": 4303,
+      "bytes_leidos": 221894,
+      "tokens_subagente": 174017,
+      "llamadas_herramientas": 48,
+      "duracion_subagente_min": 8.72,
+      "m6_5_regresion_ok": 1.0,
+      "evidencias": [
+        "evidencias/verify-b1.resumen.txt",
+        "evidencias/m63-b1/resumen.json",
+        "evidencias/m63-b1-diagnostico/resumen.json",
+        "evidencias/m63-b1-diagnostico-sin-conversacion-previa/resumen.json"
+      ]
+    },
+    {
+      "arquitectura": "B2",
+      "orden": 3,
+      "modelo": "claude-opus-5-5",
+      "ventana_contexto_tokens": 1000000,
+      "esfuerzo": "por defecto de Claude Code (medio)",
+      "commit": "1075a71",
+      "verde": true,
+      "m6_1_archivos": 18.0,
+      "m6_1_archivos_con_pruebas": 21.0,
+      "m6_2_lineas_netas": 494.0,
+      "m6_2_anadidas": 510.0,
+      "m6_2_eliminadas": 16.0,
+      "lineas_prueba_nuevas": 329.0,
+      "m6_3_servicios_reiniciados": 1.0,
+      "m6_3_servicios": [
+        "b2-multiagente-local"
+      ],
+      "m6_3_solo_mcp_server_basto": false,
+      "m6_4_minutos": 11.65495,
+      "fases_minutos": {
+        "planificacion": 0.50105,
+        "lectura_contexto": 2.208333,
+        "implementacion": 4.255717,
+        "pruebas": 4.685667
+      },
+      "iteraciones_de_prueba": 7,
+      "archivos_leidos": 55,
+      "archivos_leidos_parciales": 10,
+      "lineas_leidas": 7740,
+      "bytes_leidos": 391984,
+      "tokens_subagente": 228104,
+      "llamadas_herramientas": 85,
+      "duracion_subagente_min": 11.99,
+      "m6_5_regresion_ok": 1.0,
+      "evidencias": [
+        "evidencias/verify-b2.resumen.txt",
+        "evidencias/m63-b2/resumen.json"
+      ]
+    },
+    {
+      "arquitectura": "B3",
+      "orden": 2,
+      "modelo": "claude-opus-5-5",
+      "ventana_contexto_tokens": 1000000,
+      "esfuerzo": "por defecto de Claude Code (medio)",
+      "commit": "8107538",
+      "verde": true,
+      "m6_1_archivos": 22.0,
+      "m6_1_archivos_con_pruebas": 26.0,
+      "m6_2_lineas_netas": 473.0,
+      "m6_2_anadidas": 549.0,
+      "m6_2_eliminadas": 76.0,
+      "lineas_prueba_nuevas": 474.0,
+      "m6_3_servicios_reiniciados": 2.0,
+      "m6_3_servicios": [
+        "mcp-server",
+        "b3-a2a-orquestador"
+      ],
+      "m6_3_solo_mcp_server_basto": false,
+      "m6_4_minutos": 11.716917,
+      "fases_minutos": {
+        "planificacion": 0.548433,
+        "lectura_contexto": 1.778383,
+        "implementacion": 4.697133,
+        "pruebas": 4.68905
+      },
+      "iteraciones_de_prueba": 6,
+      "archivos_leidos": 40,
+      "archivos_leidos_parciales": 4,
+      "lineas_leidas": 4544,
+      "bytes_leidos": 222276,
+      "tokens_subagente": 210878,
+      "llamadas_herramientas": 68,
+      "duracion_subagente_min": 11.78,
+      "m6_5_regresion_ok": 1.0,
+      "evidencias": [
+        "evidencias/verify-b3.resumen.txt",
+        "evidencias/m63-b3/resumen.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "etiqueta": "3-caso9-otra-vez",
+  "trace_id": "m63-b1-3-caso9-otra-vez-1790551322819807900",
+  "origen_servicios": {
+    "mcp-server": "rama",
+    "b1-mcp-agente": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto de tu consulta no se relaciona con ninguno de los cuatro servicios digitales que atiendo. Te sugiero que contactes la mesa de ayuda general de la universidad o la dependencia responsable para obtener la información sobre el soporte presencial en la sede norte.",
+  "tool_calls": [],
+  "segundos": 6.2
+}

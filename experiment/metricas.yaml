@@ -11,7 +11,7 @@
 #     de `fuente[].campos` (alias -> campo exacto).
 #   - `valor_umbral` existe si y solo si `tipo_valor_esperado` es `umbral`.
 
-version_registro: '1.2.0'
+version_registro: '1.3.0'
 plan_de_medicion: 'docs/09-plan-de-medicion.md v1.0 (9 de septiembre de 2026)'
 
 arquitecturas: [B0, B1, B2, B3]
@@ -78,11 +78,20 @@ artefactos:
     esquema: 'schemas/insumos.schema.json#/$defs/controlInstrumentacion'
     provisional: true
   repositorio:
-    descripcion: 'Historial de git del commit aislado de la sexta herramienta.'
+    descripcion: 'Archivos del diff m6-base..m6/<arq> de la sexta herramienta, con lineas y clase (M6.1, M6.2, decision 60). Lo produce experiment/m6/recolectar.py.'
+    archivo: m6/repositorio.json
+    esquema: 'schemas/insumos.schema.json#/$defs/m6Repositorio'
+    alcance: experimento
   verificacion_manual:
-    descripcion: 'Verificacion manual o cronometrada, registrada en bitacora.'
+    descripcion: 'Marcas de la bitacora de M6 (reloj monotono) y servicios reiniciados en la verificacion practica de M6.3 (decision 60).'
+    archivo: m6/verificacion-manual.json
+    esquema: 'schemas/insumos.schema.json#/$defs/m6VerificacionManual'
+    alcance: experimento
   integracion_continua:
-    descripcion: 'Resultado de la suite en el commit aislado.'
+    descripcion: 'Resultado de pnpm verify en cada rama m6/<arq> y pruebas previas editadas (M6.5, decision 60).'
+    archivo: m6/integracion-continua.json
+    esquema: 'schemas/insumos.schema.json#/$defs/m6IntegracionContinua'
+    alcance: experimento
 
 # Campos de la traza que identifican una ejecucion (unidad de observacion).
 identidad:
@@ -1350,7 +1359,7 @@ metricas:
         patron_identificador: '\b(?:UH|UNI)-\d{4}-\d{6}\b'
 
   # ---------------------------------------------------------------------------
-  # M6 · Modularidad (pendiente: se mide una vez, en la semana 8)
+  # M6 · Modularidad (se mide una vez: sexta herramienta desarrollada con agentes de IA, decisiones 58 y 60)
   # ---------------------------------------------------------------------------
   - codigo: M6.1
     familia: M6
@@ -1363,7 +1372,11 @@ metricas:
     unidad_y_direccion: { unidad: Conteo, direccion: menor_es_mejor }
     fuente:
       - artefacto: repositorio
-        campos: { archivos: archivos_modificados }
+        campos:
+          implementaciones: implementaciones
+          arquitectura: 'implementaciones[].arquitectura'
+          archivos: 'implementaciones[].archivos'
+          clase: 'implementaciones[].archivos[].clase'
     fuente_plan: Historial de cambios del repositorio
     unidad_observacion: implementacion_por_arquitectura
     unidad_analisis: arquitectura
@@ -1376,8 +1389,12 @@ metricas:
       Depende de cómo esté organizado el código. Por eso se acompaña de M6.5, que no depende de
       la organización de archivos.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Fuera del alcance de esta entrega (familia M6).
+      estado: implementada
+      intervalo: ninguno
+      contrastes: false
+      parametros:
+        # Decision 60: se excluyen las pruebas y los archivos generados (instantaneas, lockfile).
+        clases_excluidas: [prueba, generado]
 
   - codigo: M6.2
     familia: M6
@@ -1388,7 +1405,13 @@ metricas:
     unidad_y_direccion: { unidad: Conteo de líneas, direccion: menor_es_mejor }
     fuente:
       - artefacto: repositorio
-        campos: { anadidas: lineas_anadidas, eliminadas: lineas_eliminadas }
+        campos:
+          implementaciones: implementaciones
+          arquitectura: 'implementaciones[].arquitectura'
+          archivos: 'implementaciones[].archivos'
+          clase: 'implementaciones[].archivos[].clase'
+          anadidas: 'implementaciones[].archivos[].anadidas'
+          eliminadas: 'implementaciones[].archivos[].eliminadas'
     fuente_plan: Historial de cambios del repositorio
     unidad_observacion: implementacion_por_arquitectura
     unidad_analisis: arquitectura
@@ -1401,8 +1424,12 @@ metricas:
       Es la métrica más fácil de manipular si se conoce de antemano la herramienta. El sobre
       sellado existe exactamente para impedirlo.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Fuera del alcance de esta entrega (familia M6).
+      estado: implementada
+      intervalo: ninguno
+      contrastes: false
+      parametros:
+        clases_excluidas: [prueba, generado]
+        clase_prueba: prueba
 
   - codigo: M6.3
     familia: M6
@@ -1415,7 +1442,10 @@ metricas:
     unidad_y_direccion: { unidad: Conteo, direccion: menor_es_mejor }
     fuente:
       - artefacto: verificacion_manual
-        campos: { servicios_reiniciados: servicios_reiniciados }
+        campos:
+          implementaciones: implementaciones
+          arquitectura: 'implementaciones[].arquitectura'
+          servicios_reiniciados: 'implementaciones[].servicios_reiniciados'
     fuente_plan: Verificación manual con la orquestación de contenedores
     unidad_observacion: implementacion_por_arquitectura
     unidad_analisis: arquitectura
@@ -1433,8 +1463,9 @@ metricas:
       Un valor de uno en B1 es precisamente la demostración de H1 y debe quedar grabada en
       video, no solo anotada.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Fuera del alcance de esta entrega (familia M6).
+      estado: implementada
+      intervalo: ninguno
+      contrastes: false
 
   - codigo: M6.4
     familia: M6
@@ -1448,7 +1479,13 @@ metricas:
     unidad_y_direccion: { unidad: Minutos, direccion: menor_es_mejor }
     fuente:
       - artefacto: verificacion_manual
-        campos: { minutos: minutos_hasta_verde }
+        campos:
+          implementaciones: implementaciones
+          arquitectura: 'implementaciones[].arquitectura'
+          marcas: 'implementaciones[].marcas'
+          fase: 'implementaciones[].marcas[].fase'
+          evento: 'implementaciones[].marcas[].evento'
+          monotono: 'implementaciones[].marcas[].monotono_ns'
     fuente_plan: Cronómetro y bitácora de la sesión
     unidad_observacion: implementacion_por_arquitectura
     unidad_analisis: arquitectura
@@ -1462,8 +1499,16 @@ metricas:
       implementación se aleatoriza y se declara; el aprendizaje entre implementaciones es una
       amenaza declarada.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Fuera del alcance de esta entrega (familia M6).
+      estado: implementada
+      intervalo: ninguno
+      contrastes: false
+      parametros:
+        # Decision 60: del inicio de la planificacion al fin de las pruebas, con reloj monotono.
+        fase_inicio: planificacion
+        fase_fin: pruebas
+        evento_inicio: inicio
+        evento_fin: fin
+        fases_desglose: [planificacion, lectura_contexto, implementacion, pruebas]
 
   - codigo: M6.5
     familia: M6
@@ -1474,7 +1519,11 @@ metricas:
     unidad_y_direccion: { unidad: Binario, direccion: mayor_es_mejor }
     fuente:
       - artefacto: integracion_continua
-        campos: { suite_verde: suite_verde, pruebas_editadas: pruebas_previas_editadas }
+        campos:
+          implementaciones: implementaciones
+          arquitectura: 'implementaciones[].arquitectura'
+          suite_verde: 'implementaciones[].suite_verde'
+          pruebas_editadas: 'implementaciones[].pruebas_previas_editadas'
     fuente_plan: Integración continua del commit aislado
     unidad_observacion: implementacion_por_arquitectura
     unidad_analisis: arquitectura
@@ -1495,8 +1544,9 @@ metricas:
       Un cero aquí invalida las otras cuatro métricas de la familia: si hubo que tocar pruebas,
       el cambio no fue aditivo y no es comparable.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Fuera del alcance de esta entrega (familia M6).
+      estado: implementada
+      intervalo: ninguno
+      contrastes: false
 
   # ---------------------------------------------------------------------------
   # M7 · Fiabilidad del experimento

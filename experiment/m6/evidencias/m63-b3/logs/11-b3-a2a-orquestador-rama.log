@@ -1,0 +1,45 @@
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +56ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRegistroA2aModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAgentCardModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEspecialistasA2aModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCapacidadesMcpModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:03 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSaludModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPuertoOrquestadorModule dependencies initialized[39m[38;5;3m +8ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConocimientoModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTicketsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrquestadorMultiagenteModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAgenteNucleoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSaludController {/api/health}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAgentCardController {/api}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/.well-known/agent-card.json, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mA2aOrquestadorController {/api}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/a2a, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConversacionController {/api/conversaciones}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/mensajes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/:id/mensajes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversaciones/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTicketsController {/api/tickets/propuestas}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas/:id/confirmacion, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tickets/propuestas/:id/rechazo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConsultasController {/api}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/politicas/:codigo, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/servicios/:servicio/estado, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mModeloIaController {/api/modelo-ia}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/modelo-ia, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/modelo-ia, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExperimentoController {/api/experimento}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/experimento/restablecer, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/experimento/trazas/:traceId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RegistroA2aService] [39m[32mConsultando Agent Card en http://localhost:3904/.well-known/agent-card.json...[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RegistroA2aService] [39m[32mHabilidad «knowledge_lookup» registrada hacia «UniHelp Knowledge Agent» (http://localhost:3904/a2a)[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RegistroA2aService] [39m[32mConsultando Agent Card en http://localhost:3905/.well-known/agent-card.json...[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[RegistroA2aService] [39m[32mHabilidad «incident_diagnosis» registrada hacia «UniHelp Diagnosis Agent» (http://localhost:3905/a2a)[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:04 p. m. [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32m[B3] b3-a2a-orquestador escuchando en http://localhost:3903 (salud: /health, A2A: /a2a, servidor MCP: http://localhost:3910)[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:07 p. m. [32m    LOG[39m [38;5;3m[CapacidadesMcp:orquestador] [39m[32mHerramientas descubiertas por tools/list: proponer_ticket, confirmar_propuesta, crear_ticket_simulado (de 5 publicadas; filtro por rol)[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:10 p. m. [32m    LOG[39m [38;5;3m[Instrumentacion] [39m[32m[m63-b3-rama-b3-a2a-orquestador-i1-1790551445326754000] fin=respuesta total=3284.2ms llm=3239.3 tool=0.0 transporte=0.00 orquestacion=44.9 tokens=6290/42 (cacheados 1001) llamadasModelo=1 herramientas=0[39m
+[32m[Nest] 32572  - [39m27/09/2026, 6:24:15 p. m. [32m    LOG[39m [38;5;3m[Instrumentacion] [39m[32m[m63-b3-rama-b3-a2a-orquestador-i2-1790551452750964700] fin=respuesta total=842.5ms llm=840.6 tool=0.0 transporte=0.00 orquestacion=1.9 tokens=6290/42 (cacheados 6289) llamadasModelo=1 herramientas=0[39m

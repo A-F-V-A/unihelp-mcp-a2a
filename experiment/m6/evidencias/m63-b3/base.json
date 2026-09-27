@@ -1,0 +1,14 @@
+{
+  "etiqueta": "base",
+  "trace_id": "m63-b3-base-1790551353291669400",
+  "origen_servicios": {
+    "mcp-server": "base",
+    "b3-a2a-conocimiento": "base",
+    "b3-a2a-diagnostico": "base",
+    "b3-a2a-orquestador": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto de tu consulta no se relaciona con ninguno de los cuatro servicios que atiendemos. Te sugiero que contactes la mesa de ayuda general de la universidad o la dependencia responsable para obtener la información sobre el soporte presencial en la sede norte.",
+  "tool_calls": [],
+  "segundos": 8.8
+}

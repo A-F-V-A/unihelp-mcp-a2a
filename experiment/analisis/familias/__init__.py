@@ -14,6 +14,7 @@ from . import (  # noqa: F401  (registran sus metricas)
     m3_calidad,
     m4_eficiencia,
     m5_seguridad,
+    m6_modularidad,
     m7_fiabilidad,
 )
 from .comun import Contexto, ResultadoMetrica, implementaciones

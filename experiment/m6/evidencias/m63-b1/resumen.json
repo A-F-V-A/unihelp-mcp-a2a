@@ -1,0 +1,38 @@
+{
+  "arquitectura": "B1",
+  "servicios_de_la_arquitectura": [
+    "mcp-server",
+    "b1-mcp-agente"
+  ],
+  "pruebas": [
+    {
+      "reiniciados": [
+        "mcp-server"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "b1-mcp-agente"
+      ],
+      "uso_la_herramienta": false
+    },
+    {
+      "reiniciados": [
+        "mcp-server",
+        "b1-mcp-agente"
+      ],
+      "uso_la_herramienta": true
+    }
+  ],
+  "binario_cambiado": {
+    "mcp-server": true,
+    "b1-mcp-agente": true
+  },
+  "base_uso_la_herramienta": false,
+  "servicios_reiniciados": [
+    "mcp-server",
+    "b1-mcp-agente"
+  ],
+  "solo_mcp_server_basto": false
+}

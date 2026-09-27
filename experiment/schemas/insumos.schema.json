@@ -7,6 +7,109 @@
     "veredicto": {
       "enum": ["aprobado", "reprobado"]
     },
+    "m6Arquitectura": { "enum": ["B0", "B1", "B2", "B3"] },
+    "m6Repositorio": {
+      "description": "m6/repositorio.json: archivos del diff m6-base..m6/<arq> de la sexta herramienta (M6.1, M6.2, decision 60).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "rama_base", "implementaciones"],
+      "properties": {
+        "base": { "type": "string", "minLength": 1 },
+        "rama_base": { "type": "string", "minLength": 1 },
+        "implementaciones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["arquitectura", "rama", "commit", "archivos"],
+            "properties": {
+              "arquitectura": { "$ref": "#/$defs/m6Arquitectura" },
+              "rama": { "type": "string", "minLength": 1 },
+              "commit": { "type": "string", "minLength": 1 },
+              "archivos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["ruta", "estado", "clase", "anadidas", "eliminadas"],
+                  "properties": {
+                    "ruta": { "type": "string", "minLength": 1 },
+                    "estado": { "enum": ["A", "M", "D", "R", "C"] },
+                    "clase": { "enum": ["fuente", "configuracion", "documentacion", "prueba", "generado"] },
+                    "anadidas": { "type": "integer", "minimum": 0 },
+                    "eliminadas": { "type": "integer", "minimum": 0 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "m6VerificacionManual": {
+      "description": "m6/verificacion-manual.json: marcas de la bitacora con reloj monotono (M6.4) y servicios reiniciados en la verificacion practica (M6.3).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "rama_base", "implementaciones"],
+      "properties": {
+        "base": { "type": "string", "minLength": 1 },
+        "rama_base": { "type": "string", "minLength": 1 },
+        "implementaciones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["arquitectura", "marcas", "servicios_reiniciados"],
+            "properties": {
+              "arquitectura": { "$ref": "#/$defs/m6Arquitectura" },
+              "servicios_reiniciados": {
+                "description": "null si la verificacion practica no se hizo.",
+                "type": ["array", "null"],
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "marcas": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["fase", "evento", "monotono_ns"],
+                  "properties": {
+                    "fase": { "type": "string", "minLength": 1 },
+                    "evento": { "enum": ["inicio", "fin"] },
+                    "monotono_ns": { "type": "integer", "minimum": 0 },
+                    "reloj_iso": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "m6IntegracionContinua": {
+      "description": "m6/integracion-continua.json: pnpm verify en cada rama y pruebas previas editadas (M6.5).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "rama_base", "implementaciones"],
+      "properties": {
+        "base": { "type": "string", "minLength": 1 },
+        "rama_base": { "type": "string", "minLength": 1 },
+        "implementaciones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["arquitectura", "suite_verde", "pruebas_previas_editadas"],
+            "properties": {
+              "arquitectura": { "$ref": "#/$defs/m6Arquitectura" },
+              "suite_verde": { "type": "boolean" },
+              "objetivos_fallidos": { "type": "array", "items": { "type": "string" } },
+              "pruebas_previas_editadas": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "puntuacion": {
       "description": "Una linea de puntuaciones.jsonl: compuerta automatica + juez por ejecucion.",
       "type": "object",

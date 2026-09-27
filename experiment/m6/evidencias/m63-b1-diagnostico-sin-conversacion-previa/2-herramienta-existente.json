@@ -1,0 +1,75 @@
+{
+  "etiqueta": "2-herramienta-existente",
+  "trace_id": "m63-b1-2-herramienta-existente-1790551259378488200",
+  "origen_servicios": {
+    "mcp-server": "rama",
+    "b1-mcp-agente": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El servicio de correo institucional está actualmente operativo desde el 14 de octubre de 2026 a las 12:00 UTC. No hay componentes afectados y se mantiene un alto nivel de servicio.",
+  "tool_calls": [
+    {
+      "nombre": "consultar_estado_servicio",
+      "args": {
+        "servicio": "correo_institucional"
+      },
+      "isError": false,
+      "transporte": "mcp",
+      "agente": "b1-mcp-agente",
+      "resultado": {
+        "servicio": {
+          "codigo": "correo_institucional",
+          "nombre": "Correo institucional",
+          "descripcion": "Buzón de correo de estudiantes, docentes y personal administrativo.",
+          "unidadResponsable": "Oficina de Tecnologías de la Información",
+          "area": "soporte-tecnico",
+          "nivelServicio": "alto"
+        },
+        "estado": {
+          "servicioCodigo": "correo_institucional",
+          "estado": "operativo",
+          "alcance": null,
+          "mensaje": null,
+          "ventanaEstimada": null,
+          "incidenteRef": null,
+          "desde": "2026-10-14T12:00:00Z"
+        },
+        "componentes": [
+          {
+            "codigo": "envio_externo",
+            "nombre": "Envío a destinatarios externos",
+            "estado": "operativo",
+            "ventanaEstimada": null,
+            "incidenteRef": null,
+            "actualizadoEn": "2026-10-14T12:00:00Z"
+          },
+          {
+            "codigo": "envio_interno",
+            "nombre": "Envío a destinatarios internos",
+            "estado": "operativo",
+            "ventanaEstimada": null,
+            "incidenteRef": null,
+            "actualizadoEn": "2026-10-14T12:00:00Z"
+          },
+          {
+            "codigo": "filtros",
+            "nombre": "Filtros de correo no deseado",
+            "estado": "operativo",
+            "ventanaEstimada": null,
+            "incidenteRef": null,
+            "actualizadoEn": "2026-10-14T12:00:00Z"
+          },
+          {
+            "codigo": "recepcion_de_correo",
+            "nombre": "Recepción de correo",
+            "estado": "operativo",
+            "ventanaEstimada": null,
+            "incidenteRef": null,
+            "actualizadoEn": "2026-10-14T12:00:00Z"
+          }
+        ]
+      }
+    }
+  ],
+  "segundos": 7.4
+}

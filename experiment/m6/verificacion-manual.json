@@ -1,0 +1,280 @@
+{
+  "base": "1afafb7",
+  "rama_base": "m6-base",
+  "implementaciones": [
+    {
+      "arquitectura": "B0",
+      "marcas": [
+        {
+          "fase": "planificacion",
+          "evento": "inicio",
+          "monotono_ns": 29962453000000,
+          "reloj_iso": "2026-09-27T22:18:21.353Z"
+        },
+        {
+          "fase": "planificacion",
+          "evento": "fin",
+          "monotono_ns": 30048546000000,
+          "reloj_iso": "2026-09-27T22:19:47.441Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "inicio",
+          "monotono_ns": 30048625000000,
+          "reloj_iso": "2026-09-27T22:19:47.522Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "fin",
+          "monotono_ns": 30087453000000,
+          "reloj_iso": "2026-09-27T22:20:26.346Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "inicio",
+          "monotono_ns": 30087546000000,
+          "reloj_iso": "2026-09-27T22:20:26.438Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "fin",
+          "monotono_ns": 30243250000000,
+          "reloj_iso": "2026-09-27T22:23:02.146Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "inicio",
+          "monotono_ns": 30243328000000,
+          "reloj_iso": "2026-09-27T22:23:02.224Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "fin",
+          "monotono_ns": 30595765000000,
+          "reloj_iso": "2026-09-27T22:28:54.666Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "inicio",
+          "monotono_ns": 33475296000000,
+          "reloj_iso": "2026-09-27T23:16:54.195Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "fin",
+          "monotono_ns": 33508828000000,
+          "reloj_iso": "2026-09-27T23:17:27.729Z"
+        }
+      ],
+      "servicios_reiniciados": [
+        "b0-directo"
+      ]
+    },
+    {
+      "arquitectura": "B1",
+      "marcas": [
+        {
+          "fase": "planificacion",
+          "evento": "inicio",
+          "monotono_ns": 32236468000000,
+          "reloj_iso": "2026-09-27T22:56:15.370Z"
+        },
+        {
+          "fase": "planificacion",
+          "evento": "fin",
+          "monotono_ns": 32266187000000,
+          "reloj_iso": "2026-09-27T22:56:45.090Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "inicio",
+          "monotono_ns": 32266281000000,
+          "reloj_iso": "2026-09-27T22:56:45.169Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "fin",
+          "monotono_ns": 32348609000000,
+          "reloj_iso": "2026-09-27T22:58:07.501Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "inicio",
+          "monotono_ns": 32348687000000,
+          "reloj_iso": "2026-09-27T22:58:07.580Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "fin",
+          "monotono_ns": 32544343000000,
+          "reloj_iso": "2026-09-27T23:01:23.242Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "inicio",
+          "monotono_ns": 32544421000000,
+          "reloj_iso": "2026-09-27T23:01:23.318Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "fin",
+          "monotono_ns": 32740703000000,
+          "reloj_iso": "2026-09-27T23:04:39.598Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "inicio",
+          "monotono_ns": 33515296000000,
+          "reloj_iso": "2026-09-27T23:17:34.194Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "fin",
+          "monotono_ns": 33603687000000,
+          "reloj_iso": "2026-09-27T23:19:02.575Z"
+        }
+      ],
+      "servicios_reiniciados": [
+        "mcp-server",
+        "b1-mcp-agente"
+      ]
+    },
+    {
+      "arquitectura": "B2",
+      "marcas": [
+        {
+          "fase": "planificacion",
+          "evento": "inicio",
+          "monotono_ns": 31492593000000,
+          "reloj_iso": "2026-09-27T22:43:51.483Z"
+        },
+        {
+          "fase": "planificacion",
+          "evento": "fin",
+          "monotono_ns": 31522656000000,
+          "reloj_iso": "2026-09-27T22:44:21.559Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "inicio",
+          "monotono_ns": 31522750000000,
+          "reloj_iso": "2026-09-27T22:44:21.638Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "fin",
+          "monotono_ns": 31655250000000,
+          "reloj_iso": "2026-09-27T22:46:34.146Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "inicio",
+          "monotono_ns": 31655328000000,
+          "reloj_iso": "2026-09-27T22:46:34.219Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "fin",
+          "monotono_ns": 31910671000000,
+          "reloj_iso": "2026-09-27T22:50:49.569Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "inicio",
+          "monotono_ns": 31910750000000,
+          "reloj_iso": "2026-09-27T22:50:49.642Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "fin",
+          "monotono_ns": 32191890000000,
+          "reloj_iso": "2026-09-27T22:55:30.786Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "inicio",
+          "monotono_ns": 34035875000000,
+          "reloj_iso": "2026-09-27T23:26:14.770Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "fin",
+          "monotono_ns": 34069828000000,
+          "reloj_iso": "2026-09-27T23:26:48.719Z"
+        }
+      ],
+      "servicios_reiniciados": [
+        "b2-multiagente-local"
+      ]
+    },
+    {
+      "arquitectura": "B3",
+      "marcas": [
+        {
+          "fase": "planificacion",
+          "evento": "inicio",
+          "monotono_ns": 30760078000000,
+          "reloj_iso": "2026-09-27T22:31:38.976Z"
+        },
+        {
+          "fase": "planificacion",
+          "evento": "fin",
+          "monotono_ns": 30792984000000,
+          "reloj_iso": "2026-09-27T22:32:11.875Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "inicio",
+          "monotono_ns": 30793062000000,
+          "reloj_iso": "2026-09-27T22:32:11.953Z"
+        },
+        {
+          "fase": "lectura_contexto",
+          "evento": "fin",
+          "monotono_ns": 30899765000000,
+          "reloj_iso": "2026-09-27T22:33:58.664Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "inicio",
+          "monotono_ns": 30899843000000,
+          "reloj_iso": "2026-09-27T22:33:58.741Z"
+        },
+        {
+          "fase": "implementacion",
+          "evento": "fin",
+          "monotono_ns": 31181671000000,
+          "reloj_iso": "2026-09-27T22:38:40.560Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "inicio",
+          "monotono_ns": 31181750000000,
+          "reloj_iso": "2026-09-27T22:38:40.647Z"
+        },
+        {
+          "fase": "pruebas",
+          "evento": "fin",
+          "monotono_ns": 31463093000000,
+          "reloj_iso": "2026-09-27T22:43:21.994Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "inicio",
+          "monotono_ns": 33805921000000,
+          "reloj_iso": "2026-09-27T23:22:24.818Z"
+        },
+        {
+          "fase": "verificacion_m63",
+          "evento": "fin",
+          "monotono_ns": 34035796000000,
+          "reloj_iso": "2026-09-27T23:26:14.696Z"
+        }
+      ],
+      "servicios_reiniciados": [
+        "mcp-server",
+        "b3-a2a-orquestador"
+      ]
+    }
+  ]
+}

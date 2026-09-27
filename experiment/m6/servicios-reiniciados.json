@@ -1,0 +1,50 @@
+{
+  "descripcion": "Minimo de servicios que hubo que reiniciar, verificado en la practica con verificar_m63.py (resumen.json de cada arquitectura).",
+  "B0": {
+    "servicios": [
+      "b0-directo"
+    ],
+    "binario_cambiado": {
+      "b0-directo": true
+    },
+    "solo_mcp_server_basto": null,
+    "evidencia": "evidencias/m63-b0/resumen.json"
+  },
+  "B1": {
+    "servicios": [
+      "mcp-server",
+      "b1-mcp-agente"
+    ],
+    "binario_cambiado": {
+      "mcp-server": true,
+      "b1-mcp-agente": true
+    },
+    "solo_mcp_server_basto": false,
+    "evidencia": "evidencias/m63-b1/resumen.json"
+  },
+  "B2": {
+    "servicios": [
+      "b2-multiagente-local"
+    ],
+    "binario_cambiado": {
+      "mcp-server": false,
+      "b2-multiagente-local": true
+    },
+    "solo_mcp_server_basto": false,
+    "evidencia": "evidencias/m63-b2/resumen.json"
+  },
+  "B3": {
+    "servicios": [
+      "mcp-server",
+      "b3-a2a-orquestador"
+    ],
+    "binario_cambiado": {
+      "mcp-server": true,
+      "b3-a2a-conocimiento": true,
+      "b3-a2a-diagnostico": true,
+      "b3-a2a-orquestador": true
+    },
+    "solo_mcp_server_basto": false,
+    "evidencia": "evidencias/m63-b3/resumen.json"
+  }
+}

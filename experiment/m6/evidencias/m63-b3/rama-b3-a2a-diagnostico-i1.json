@@ -1,0 +1,14 @@
+{
+  "etiqueta": "rama-b3-a2a-diagnostico-i1",
+  "trace_id": "m63-b3-rama-b3-a2a-diagnostico-i1-1790551419379544600",
+  "origen_servicios": {
+    "mcp-server": "base",
+    "b3-a2a-conocimiento": "base",
+    "b3-a2a-diagnostico": "rama",
+    "b3-a2a-orquestador": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto que nos has planteado no corresponde a ninguno de los cuatro servicios que atiendo. Te sugiero que consultes la información disponible en el sitio web de la universidad o en la página de la sede norte para obtener detalles sobre el soporte presencial. Si no encuentras la información necesaria, podrías dirigirte a la mesa de ayuda general de la universidad para obtener más detalles.",
+  "tool_calls": [],
+  "segundos": 7.0
+}

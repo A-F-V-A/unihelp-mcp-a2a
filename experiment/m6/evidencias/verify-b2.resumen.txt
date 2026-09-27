@@ -1,0 +1,109 @@
+# pnpm nx run-many -t lint,test,build --all --skip-nx-cache en ../unihelp-m6-b2 (rama m6/b2). Resumen del registro completo (29 MB, no versionado).
+## Tareas ejecutadas
+> nx run agente-nucleo:lint
+> nx run agente-nucleo:test
+> nx run analisis:lint
+> nx run analisis:test
+> nx run b0-directo:build
+> nx run b0-directo:lint
+> nx run b0-directo:test
+> nx run b1-mcp-agente:build
+> nx run b1-mcp-agente:lint
+> nx run b1-mcp-agente:test
+> nx run b2-multiagente-local:build
+> nx run b2-multiagente-local:lint
+> nx run b2-multiagente-local:test
+> nx run b3-a2a-conocimiento:build
+> nx run b3-a2a-conocimiento:lint
+> nx run b3-a2a-conocimiento:test
+> nx run b3-a2a-diagnostico:build
+> nx run b3-a2a-diagnostico:lint
+> nx run b3-a2a-diagnostico:test
+> nx run b3-a2a-orquestador:build
+> nx run b3-a2a-orquestador:lint
+> nx run b3-a2a-orquestador:test
+> nx run capacidades-mcp:lint
+> nx run capacidades-mcp:test
+> nx run capacidades:lint
+> nx run capacidades:test
+> nx run conocimiento:lint
+> nx run conocimiento:test
+> nx run consola-experimento:build
+> nx run consola-experimento:lint
+> nx run consola-experimento:test
+> nx run contratos:lint
+> nx run contratos:test
+> nx run dominio:lint
+> nx run dominio:test
+> nx run herramientas:lint
+> nx run herramientas:test
+> nx run mcp-server:build
+> nx run mcp-server:lint
+> nx run mcp-server:test
+> nx run multiagente-nucleo:lint
+> nx run multiagente-nucleo:test
+> nx run simulador-servicios:build
+> nx run simulador-servicios:lint
+> nx run simulador-servicios:test
+> nx run tickets:lint
+> nx run tickets:test
+> nx run trazas:lint
+> nx run trazas:test
+> nx run visor:lint
+> nx run visor:test
+> nx run web:build:production
+> nx run web:lint
+> nx run web:test
+## Resumenes de jest
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Test Suites: 2 passed, 2 total
+Tests:       39 passed, 39 total
+Test Suites: 9 passed, 9 total
+Tests:       91 passed, 91 total
+Test Suites: 1 passed, 1 total
+Tests:       13 passed, 13 total
+Test Suites: 5 passed, 5 total
+Tests:       32 passed, 32 total
+Test Suites: 4 passed, 4 total
+Tests:       23 passed, 23 total
+Test Suites: 2 passed, 2 total
+Tests:       11 passed, 11 total
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Test Suites: 4 passed, 4 total
+Tests:       31 passed, 31 total
+Test Suites: 3 passed, 3 total
+Tests:       16 passed, 16 total
+Test Suites: 20 passed, 20 total
+Tests:       103 passed, 103 total
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Test Suites: 2 passed, 2 total
+Tests:       5 passed, 5 total
+Test Suites: 5 passed, 5 total
+Tests:       15 passed, 15 total
+Test Suites: 3 passed, 3 total
+Tests:       23 passed, 23 total
+Test Suites: 3 passed, 3 total
+Tests:       24 passed, 24 total
+Test Suites: 2 passed, 2 total
+Tests:       19 passed, 19 total
+Test Suites: 2 passed, 2 total
+Tests:       5 passed, 5 total
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Test Suites: 3 passed, 3 total
+Tests:       12 passed, 12 total
+## pytest (analisis:test)
+123 passed in 19.64s
+## analisis:lint (eslint recorre experiment/.venv)
+✖ 4 problems (0 errors, 4 warnings)
+✖ 2 problems (0 errors, 2 warnings)
+✖ 190165 problems (190144 errors, 21 warnings)
+## Cierre
+Failed tasks:
+
+- analisis:lint
+
+  Run duration:      1m 44s

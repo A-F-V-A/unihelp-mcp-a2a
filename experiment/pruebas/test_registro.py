@@ -16,6 +16,7 @@ IMPLEMENTADAS_ESPERADAS = {
     *(f'M3.{i}' for i in range(1, 7)),
     *(f'M4.{i}' for i in range(1, 8)),
     *(f'M5.{i}' for i in range(1, 8)),
+    *(f'M6.{i}' for i in range(1, 6)),
     *(f'M7.{i}' for i in range(1, 8)),
 }
 
@@ -48,20 +49,12 @@ def test_toda_metrica_implementada_tiene_funcion_y_toda_funcion_tiene_ficha(regi
     assert diferencias_con_registro(registro) == ([], [])
 
 
-def test_falla_si_el_registro_declara_implementada_una_metrica_sin_funcion(tmp_path, contexto):
-    def marcar(datos):
-        _metrica(datos, 'M6.2')['implementacion'] = {
-            'estado': 'implementada',
-            'poblacion': 'efectividad',
-            'agregacion_tareas': 'media',
-            'intervalo': 'bootstrap_tareas',
-            'contrastes': False,
-        }
-
-    registro = cargar_registro(_registro_modificado(tmp_path, marcar))
+def test_falla_si_el_registro_declara_implementada_una_metrica_sin_funcion(registro, contexto, monkeypatch):
+    # Las 43 estan implementadas (decision 60): se simula la falta de la funcion de M6.2.
+    monkeypatch.delitem(comun._IMPLEMENTACIONES, 'M6.2')
     assert diferencias_con_registro(registro) == (['M6.2'], [])
     with pytest.raises(ErrorRegistro, match='M6.2'):
-        calcular(type(contexto)(**{**contexto.__dict__, 'registro': registro}))
+        calcular(contexto)
 
 
 def test_falla_si_hay_una_funcion_para_una_metrica_que_no_esta_en_el_registro(registro, monkeypatch):
@@ -69,8 +62,11 @@ def test_falla_si_hay_una_funcion_para_una_metrica_que_no_esta_en_el_registro(re
     assert diferencias_con_registro(registro) == ([], ['M9.1'])
 
 
-def test_falla_si_hay_una_funcion_para_una_metrica_pendiente(registro, monkeypatch):
-    monkeypatch.setitem(comun._IMPLEMENTACIONES, 'M6.1', lambda metrica, ctx: None)
+def test_falla_si_hay_una_funcion_para_una_metrica_pendiente(tmp_path):
+    def marcar(datos):
+        _metrica(datos, 'M6.1')['implementacion'] = {'estado': 'pendiente', 'bloqueada_por': 'prueba'}
+
+    registro = cargar_registro(_registro_modificado(tmp_path, marcar))
     assert diferencias_con_registro(registro) == ([], ['M6.1'])
 
 

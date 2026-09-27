@@ -1,0 +1,38 @@
+{
+  "base": "1afafb7",
+  "rama_base": "m6-base",
+  "implementaciones": [
+    {
+      "arquitectura": "B0",
+      "suite_verde": true,
+      "objetivos_fallidos": [
+        "analisis:lint"
+      ],
+      "pruebas_previas_editadas": []
+    },
+    {
+      "arquitectura": "B1",
+      "suite_verde": true,
+      "objetivos_fallidos": [
+        "analisis:lint"
+      ],
+      "pruebas_previas_editadas": []
+    },
+    {
+      "arquitectura": "B2",
+      "suite_verde": true,
+      "objetivos_fallidos": [
+        "analisis:lint"
+      ],
+      "pruebas_previas_editadas": []
+    },
+    {
+      "arquitectura": "B3",
+      "suite_verde": true,
+      "objetivos_fallidos": [
+        "analisis:lint"
+      ],
+      "pruebas_previas_editadas": []
+    }
+  ]
+}

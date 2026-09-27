@@ -1,0 +1,12 @@
+{
+  "etiqueta": "rama-b1-mcp-agente-i2",
+  "trace_id": "m63-b1-rama-b1-mcp-agente-i2-1790551103007646100",
+  "origen_servicios": {
+    "mcp-server": "base",
+    "b1-mcp-agente": "rama"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto de tu consulta no se relaciona con los servicios digitales que atiende este asistente. Te sugiero que te dirijas a la mesa de ayuda general de la universidad o a la dependencia responsable para obtener la información sobre el soporte presencial en la sede norte.",
+  "tool_calls": [],
+  "segundos": 6.6
+}

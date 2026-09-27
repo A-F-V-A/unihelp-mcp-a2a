@@ -1,0 +1,14 @@
+{
+  "etiqueta": "rama-b3-a2a-orquestador-i1",
+  "trace_id": "m63-b3-rama-b3-a2a-orquestador-i1-1790551445326754000",
+  "origen_servicios": {
+    "mcp-server": "base",
+    "b3-a2a-conocimiento": "base",
+    "b3-a2a-diagnostico": "base",
+    "b3-a2a-orquestador": "rama"
+  },
+  "uso_la_herramienta": false,
+  "texto": "",
+  "tool_calls": [],
+  "segundos": 7.4
+}

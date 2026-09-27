@@ -1,0 +1,594 @@
+{
+  "base": "1afafb7",
+  "rama_base": "m6-base",
+  "implementaciones": [
+    {
+      "arquitectura": "B0",
+      "rama": "m6/b0",
+      "commit": "b6dad37",
+      "archivos": [
+        {
+          "ruta": "apps/b0-directo/docs/ARQUITECTURA.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 21,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b0-directo/jest.e2e.config.cts",
+          "estado": "A",
+          "clase": "configuracion",
+          "anadidas": 17,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b0-directo/project.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 7,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b0-directo/src/app/app.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 34,
+          "eliminadas": 7
+        },
+        {
+          "ruta": "apps/b0-directo/src/e2e/disponibilidad-soporte.e2e-spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 66,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b0-directo/tsconfig.app.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 8,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/b0-directo/tsconfig.spec.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 3,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "libs/capacidades/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 6,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "libs/capacidades/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 128,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 157,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/registro-capacidades.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 3,
+          "eliminadas": 3
+        },
+        {
+          "ruta": "libs/herramientas/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/disponibilidad-soporte.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 38,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/disponibilidad-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 107,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/validador-argumentos.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 4,
+          "eliminadas": 0
+        }
+      ]
+    },
+    {
+      "arquitectura": "B1",
+      "rama": "m6/b1",
+      "commit": "c4383fb",
+      "archivos": [
+        {
+          "ruta": "apps/b1-mcp-agente/docs/ARQUITECTURA.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 20,
+          "eliminadas": 18
+        },
+        {
+          "ruta": "apps/b1-mcp-agente/src/e2e/disponibilidad-soporte.e2e-spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 71,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 6,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "apps/mcp-server/contrato/consultar-disponibilidad-soporte.instantanea.json",
+          "estado": "A",
+          "clase": "generado",
+          "anadidas": 75,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/herramientas-adicionales.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 164,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/herramientas-adicionales.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 35,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/mcp.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 4,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "libs/capacidades/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 15,
+          "eliminadas": 13
+        },
+        {
+          "ruta": "libs/capacidades/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 155,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 186,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 14,
+          "eliminadas": 13
+        },
+        {
+          "ruta": "libs/herramientas/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/definicion-disponibilidad-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 91,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/definiciones-herramientas.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 15,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/validador-argumentos.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 4,
+          "eliminadas": 0
+        }
+      ]
+    },
+    {
+      "arquitectura": "B2",
+      "rama": "m6/b2",
+      "commit": "1075a71",
+      "archivos": [
+        {
+          "ruta": "apps/b2-multiagente-local/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 22,
+          "eliminadas": 8
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/jest.e2e.config.cts",
+          "estado": "A",
+          "clase": "configuracion",
+          "anadidas": 17,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/project.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 7,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/app.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 20,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/calendario-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 70,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/capacidades-soporte-en-proceso.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 69,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/consultar-disponibilidad-soporte.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 160,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/consultar-disponibilidad-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 161,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/disponibilidad-soporte.module.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 9,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/app/disponibilidad-soporte/seccion-prompt-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 12,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/src/e2e/disponibilidad-soporte.e2e-spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 78,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/tsconfig.app.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 8,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/b2-multiagente-local/tsconfig.spec.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 3,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "docs/decisiones-tecnicas.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 29,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "docs/prompt-diffs.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 10,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 4,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 11,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/capacidades-orquestador.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 26,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/capacidades-propias.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 91,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/orquestador-multiagente.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 19,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/prompts/prompt-orquestador.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 13,
+          "eliminadas": 0
+        }
+      ]
+    },
+    {
+      "arquitectura": "B3",
+      "rama": "m6/b3",
+      "commit": "8107538",
+      "archivos": [
+        {
+          "ruta": "apps/b3-a2a-orquestador/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 16,
+          "eliminadas": 10
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/jest.e2e.config.cts",
+          "estado": "A",
+          "clase": "configuracion",
+          "anadidas": 18,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/project.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 7,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/src/app/app.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 6,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/src/e2e/disponibilidad-soporte.e2e-spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 73,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/tsconfig.app.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 8,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/b3-a2a-orquestador/tsconfig.spec.json",
+          "estado": "M",
+          "clase": "configuracion",
+          "anadidas": 3,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/mcp-server/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 10,
+          "eliminadas": 9
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/herramientas-adicionales.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 128,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/herramientas-adicionales.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 26,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/mcp.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 2,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "apps/mcp-server/src/app/mcp/servidor-herramientas-mcp.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 32,
+          "eliminadas": 5
+        },
+        {
+          "ruta": "libs/capacidades-mcp/src/lib/capacidades-mcp.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 6,
+          "eliminadas": 1
+        },
+        {
+          "ruta": "libs/capacidades/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 16,
+          "eliminadas": 12
+        },
+        {
+          "ruta": "libs/capacidades/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 5,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 176,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 169,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 14,
+          "eliminadas": 13
+        },
+        {
+          "ruta": "libs/herramientas/src/index.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 1,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/herramientas/src/lib/disponibilidad-soporte.ts",
+          "estado": "A",
+          "clase": "fuente",
+          "anadidas": 113,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/README.md",
+          "estado": "M",
+          "clase": "documentacion",
+          "anadidas": 17,
+          "eliminadas": 16
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/capacidades-orquestador.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 28,
+          "eliminadas": 2
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/herramientas-adicionales-orquestador.spec.ts",
+          "estado": "A",
+          "clase": "prueba",
+          "anadidas": 97,
+          "eliminadas": 0
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/orquestador/orquestador-multiagente.module.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 22,
+          "eliminadas": 4
+        },
+        {
+          "ruta": "libs/multiagente-nucleo/src/lib/prompts/prompt-orquestador.ts",
+          "estado": "M",
+          "clase": "fuente",
+          "anadidas": 29,
+          "eliminadas": 0
+        }
+      ]
+    }
+  ]
+}

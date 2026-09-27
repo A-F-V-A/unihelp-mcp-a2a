@@ -1,0 +1,125 @@
+{
+  "descripcion": "B1 de la base arriba; solo mcp-server reiniciado con la rama.",
+  "pasos": [
+    {
+      "etiqueta": "1-caso9-tras-reiniciar-mcp",
+      "uso_la_herramienta": true,
+      "tool_calls": [
+        {
+          "nombre": "consultar_disponibilidad_soporte",
+          "args": {
+            "sede": "norte",
+            "fecha": "2026-10-12"
+          },
+          "isError": false,
+          "transporte": "mcp",
+          "agente": "b1-mcp-agente",
+          "resultado": {
+            "sede": "norte",
+            "fecha": "2026-10-12",
+            "dia_semana": "lunes",
+            "disponible": false,
+            "franjas": [],
+            "motivo": "festivo"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "etiqueta": "2-herramienta-existente",
+      "uso_la_herramienta": false,
+      "tool_calls": [
+        {
+          "nombre": "consultar_estado_servicio",
+          "args": {
+            "servicio": "correo_institucional"
+          },
+          "isError": false,
+          "transporte": "mcp",
+          "agente": "b1-mcp-agente",
+          "resultado": {
+            "servicio": {
+              "codigo": "correo_institucional",
+              "nombre": "Correo institucional",
+              "descripcion": "Buzón de correo de estudiantes, docentes y personal administrativo.",
+              "unidadResponsable": "Oficina de Tecnologías de la Información",
+              "area": "soporte-tecnico",
+              "nivelServicio": "alto"
+            },
+            "estado": {
+              "servicioCodigo": "correo_institucional",
+              "estado": "operativo",
+              "alcance": null,
+              "mensaje": null,
+              "ventanaEstimada": null,
+              "incidenteRef": null,
+              "desde": "2026-10-14T12:00:00Z"
+            },
+            "componentes": [
+              {
+                "codigo": "envio_externo",
+                "nombre": "Envío a destinatarios externos",
+                "estado": "operativo",
+                "ventanaEstimada": null,
+                "incidenteRef": null,
+                "actualizadoEn": "2026-10-14T12:00:00Z"
+              },
+              {
+                "codigo": "envio_interno",
+                "nombre": "Envío a destinatarios internos",
+                "estado": "operativo",
+                "ventanaEstimada": null,
+                "incidenteRef": null,
+                "actualizadoEn": "2026-10-14T12:00:00Z"
+              },
+              {
+                "codigo": "filtros",
+                "nombre": "Filtros de correo no deseado",
+                "estado": "operativo",
+                "ventanaEstimada": null,
+                "incidenteRef": null,
+                "actualizadoEn": "2026-10-14T12:00:00Z"
+              },
+              {
+                "codigo": "recepcion_de_correo",
+                "nombre": "Recepción de correo",
+                "estado": "operativo",
+                "ventanaEstimada": null,
+                "incidenteRef": null,
+                "actualizadoEn": "2026-10-14T12:00:00Z"
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "etiqueta": "3-caso9-otra-vez",
+      "uso_la_herramienta": true,
+      "tool_calls": [
+        {
+          "nombre": "consultar_disponibilidad_soporte",
+          "args": {
+            "sede": "norte",
+            "fecha": "2026-10-12"
+          },
+          "isError": false,
+          "transporte": "mcp",
+          "agente": "b1-mcp-agente",
+          "resultado": {
+            "sede": "norte",
+            "fecha": "2026-10-12",
+            "dia_semana": "lunes",
+            "disponible": false,
+            "franjas": [],
+            "motivo": "festivo"
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "conversacion_previa_al_reinicio": false
+}

@@ -1840,3 +1840,53 @@ B1 - B0 = -6,7 [-14; -1]; en Qwen2.5 7B, B2 - B1 = -6,7 [-14; -1] y B1 - B0 = +5
 [+1; +11]. En los modelos donde M7.5 no llega al 85 % (gpt-5.4-mini, gpt-4.1-mini,
 Qwen2.5 7B, flash-lite) las metricas del juez son exploratorias. Detalle en
 `docs/evaluacion-del-sistema-limitacion-de-recuperacion.md`.
+
+## 60. Como se midio M6 y que se cuenta en cada metrica
+
+> Aplicacion de la decision 58, ejecutada el 27 de septiembre de 2026. Resultado
+> en `docs/resultados-2026-09-27-m6-modularidad.md`.
+
+Contexto: la decision 58 fijo QUIEN implementa la sexta herramienta (un agente de
+IA por arquitectura). Faltaba fijar como se cuenta cada metrica con los datos que
+deja ese desarrollo.
+
+Decision:
+
+- **Base y aislamiento**: etiqueta `m6-base` (1afafb7), un worktree y una rama
+  `m6/<arq>` por arquitectura, una base de datos propia y un subagente nuevo de
+  Claude Opus 5.5 (1 M de contexto, esfuerzo por defecto) por arquitectura, con el
+  mismo prompt salvo el nombre de la arquitectura. Orden sorteado con semilla
+  20261016: B0, B3, B2, B1.
+- **M6.1 y M6.2**: sobre `git diff m6-base..m6/<arq>`. Se excluyen las pruebas
+  (`*.spec.ts`, `*.e2e-spec.ts`) y los generados (instantaneas, lockfile); la
+  documentacion y la configuracion SI cuentan, porque son parte del cambio.
+  `experiment/m6/recolectar.py` solo clasifica cada archivo; el conteo lo hace el
+  cuaderno (RM-02).
+- **M6.3**: el minimo de servicios que hay que reiniciar, hallado en la practica
+  con `experiment/m6/verificar_m63.py`: se levanta la base, una conversacion
+  confirma que la herramienta no existe (asi el sistema esta "en uso", como en
+  produccion) y se prueban los subconjuntos de servicios cuyo binario cambio, de
+  menor a mayor, con una conversacion nueva del caso 9 tras cada uno (dos intentos
+  por el azar del modelo local). En B1 el primer subconjunto es solo `mcp-server`.
+- **M6.4**: minutos de reloj monotono desde el inicio de `planificacion` hasta el
+  fin de `pruebas` (bitacora de `experiment/m6/cronometro.py`), con el desglose por
+  fase.
+- **M6.5**: 1 si ninguna prueba que existia en la base se edito o borro y la suite
+  (`pnpm nx run-many -t lint,test,build --all`) pasa, sin contar los objetivos que
+  ya fallan en la base con el mismo entorno (`experiment/m6/fallos-preexistentes.json`:
+  `analisis:lint`, que recorre `experiment/.venv`).
+- Los tres artefactos (`repositorio`, `verificacion_manual`, `integracion_continua`)
+  son de alcance experimento, viven en `experiment/m6/` y tienen esquema en
+  `insumos.schema.json`. Registro 1.3.0: las 43 metricas quedan implementadas.
+
+Consecuencias: B1 dio M6.3 = 2, no 1. El cliente MCP de la base guarda la lista de
+herramientas y no se entera de que su sesion murio cuando `mcp-server` se reinicia
+(la siguiente llamada falla con "La sesion MCP no existe" y no reconecta), asi que
+en un sistema en uso tambien hay que reiniciar B1. Con B1 recien levantado, sin
+conversaciones previas, bastaba reiniciar `mcp-server`: el diagnostico queda como
+evidencia. **Pendiente del responsable (RM-17)**: si M6.3 debe contar ese segundo
+reinicio, que se debe a la cache del cliente y no a codigo nuevo de B1; hasta
+decidirlo se reporta 2 con el diagnostico al lado. Las ramas `m6/*` no se integran
+(decision 58, RM-13); ademas quedo a la vista un defecto de robustez de la base
+(el cliente MCP no reconecta tras reiniciar el servidor) que no se corrige en este
+estudio.

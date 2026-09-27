@@ -1,0 +1,11 @@
+{
+  "etiqueta": "base",
+  "trace_id": "m63-b0-base-1790551016485784300",
+  "origen_servicios": {
+    "b0-directo": "base"
+  },
+  "uso_la_herramienta": false,
+  "texto": "El asunto de tu consulta no se relaciona con los servicios digitales que atiende este asistente. Te sugiero que contactes la mesa de ayuda general de la universidad o la dependencia responsable para obtener información sobre el soporte presencial en la sede norte.",
+  "tool_calls": [],
+  "segundos": 12.7
+}

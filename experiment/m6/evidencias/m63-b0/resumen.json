@@ -1,0 +1,22 @@
+{
+  "arquitectura": "B0",
+  "servicios_de_la_arquitectura": [
+    "b0-directo"
+  ],
+  "pruebas": [
+    {
+      "reiniciados": [
+        "b0-directo"
+      ],
+      "uso_la_herramienta": true
+    }
+  ],
+  "binario_cambiado": {
+    "b0-directo": true
+  },
+  "base_uso_la_herramienta": false,
+  "servicios_reiniciados": [
+    "b0-directo"
+  ],
+  "solo_mcp_server_basto": null
+}

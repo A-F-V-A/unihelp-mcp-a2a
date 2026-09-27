@@ -1,0 +1,30 @@
+{
+  "etiqueta": "rama-b0-directo-i1",
+  "trace_id": "m63-b0-rama-b0-directo-i1-1790551035346386700",
+  "origen_servicios": {
+    "b0-directo": "rama"
+  },
+  "uso_la_herramienta": true,
+  "texto": "El lunes 12 de octubre de 2026 no hay soporte presencial en la sede norte debido a que es un día festivo.",
+  "tool_calls": [
+    {
+      "nombre": "consultar_disponibilidad_soporte",
+      "args": {
+        "fecha": "2026-10-12",
+        "sede": "norte"
+      },
+      "isError": false,
+      "transporte": "directo",
+      "agente": "b0-directo",
+      "resultado": {
+        "sede": "norte",
+        "fecha": "2026-10-12",
+        "dia_semana": "lunes",
+        "disponible": false,
+        "franjas": [],
+        "motivo": "festivo"
+      }
+    }
+  ],
+  "segundos": 8.2
+}
