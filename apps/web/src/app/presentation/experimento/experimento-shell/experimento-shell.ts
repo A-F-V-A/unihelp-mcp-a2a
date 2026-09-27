@@ -6,6 +6,7 @@ const SECCIONES = [
   { ruta: 'resultados', etiqueta: 'Resultados' },
   { ruta: 'corridas', etiqueta: 'Corridas' },
   { ruta: 'tareas', etiqueta: 'Tareas' },
+  { ruta: 'revision', etiqueta: 'Revisión humana' },
   { ruta: 'preparar', etiqueta: 'Correr una corrida' },
 ] as const;
 

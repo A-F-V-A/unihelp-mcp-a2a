@@ -79,6 +79,9 @@ experiment/resultados-finales/*/
 # La clave no se versiona para que el juez no la tenga a la vista.
 experiment/juez/lotes/
 experiment/juez/clave-ciega.json
+# Clave de la muestra de la revision humana (juez/preparar_muestra_humana.py): los
+# revisores no deben tenerla a la vista. La muestra ciega y las calificaciones si se versionan.
+experiment/juez/revision-humana/clave-muestra.json
 # Corridas del visor en vivo: observaciones, reporte HTML, videos y trazas de Playwright.
 experiment/visor/salidas/
 

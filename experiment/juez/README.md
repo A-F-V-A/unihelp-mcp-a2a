@@ -14,6 +14,11 @@ API (decision 52).
 | [`incorporar.py`](incorporar.py) | Valida los veredictos, deshace el cegado y actualiza las corridas completas | si |
 | `lotes/lote-NNN.jsonl` | 20 ejecuciones por lote, una corrida por bloque de lotes | no (se regenera igual con la semilla) |
 | `clave-ciega.json` | Identificador ciego -> corrida y `run_id`. **El juez no la abre** | no |
+| [`preparar_muestra_humana.py`](preparar_muestra_humana.py) | Muestra ciega de 160 ejecuciones para la revision humana (M7.4, M7.5) | si |
+| [`incorporar_humana.py`](incorporar_humana.py) | Con la revision completa, escribe `calificacion-humana.jsonl` en cada corrida | si |
+| `revision-humana/muestra.json` | La muestra ciega (`MuestraRevisionDto`), lo que sirve la consola | si |
+| `revision-humana/clave-muestra.json` | Id -> corrida, `run_id`, tarea, arquitectura y modelo. **Los revisores no la abren** | no |
+| `revision-humana/calificaciones-{A,B}.jsonl`, `adjudicaciones.jsonl` | Lo que guardan los revisores desde el panel | si |
 | `veredictos/lote-NNN.jsonl` | Lo que escribe el juez v2, con su justificacion | si |
 | `veredictos-v1/lote-001..024.jsonl` | Primera pasada (v1) sobre gpt-5.5: sirve para medir la consistencia del juez | si |
 
@@ -52,6 +57,26 @@ Varias sesiones pueden trabajar a la vez si cada una toma un rango distinto.
 **No regenerar los lotes con un juicio en curso**: si cambia el contenido de
 `resultados/`, la numeracion de lotes y la clave cambian y los veredictos ya
 escritos dejarian de corresponder.
+
+## Revision humana (M7.4, M7.5; docs/04, capa 3)
+
+Dos personas (A y B) califican a ciegas, con la misma rubrica del juez, una
+muestra estratificada de 160 ejecuciones: 4 categorias de tarea x 4
+arquitecturas x 10, repartidas entre los seis modelos de las campanas `-r3`
+(26 o 27 por modelo) y con tareas distintas dentro de cada celda (semilla
+20261015). La calificacion se hace en el panel (`/experimento/revision`) contra
+la consola del experimento (`/revision/*`).
+
+```bash
+cd experiment
+uv run python juez/preparar_muestra_humana.py   # 1. muestra.json y clave-muestra.json
+pnpm dev:consola && pnpm dev:web                # 2. A y B califican en /experimento/revision; luego se adjudican los desacuerdos
+uv run python juez/incorporar_humana.py         # 3. calificacion-humana.jsonl en cada corrida
+```
+
+`incorporar_humana.py` no escribe nada mientras falte una calificacion o un
+desacuerdo sin adjudicar, y lo dice. **No regenerar la muestra con la revision
+en curso**: los `R-NNN` dejarian de corresponder a lo calificado.
 
 ## Limites conocidos
 

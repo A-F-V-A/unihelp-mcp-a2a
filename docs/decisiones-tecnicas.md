@@ -1640,3 +1640,102 @@ respuestas de fuera de alcance) no quedaron marcados igual por todos; el
 veredicto no depende de ellos. Varios agentes usaron comandos de solo lectura,
 fuera de la letra del prompt, sin tocar nada ajeno a sus carpetas. Resultados en
 `docs/resultados-2026-09-27-juez.md`.
+
+## 55. Microbenchmark de transporte (M4.3): que operacion mide cada transporte, y se mide despues de las corridas
+
+> Tomada el 27 de septiembre de 2026, al construir `experiment/bench/`.
+
+Contexto: M4.3 pide mil invocaciones de una operacion sin trabajo util por
+transporte, tras cien de calentamiento (`docs/09`), y `docs/05` (seccion 5)
+proponia una herramienta `noop` por MCP y un "A2A + MCP" completo. Agregar una
+herramienta a `tools/list` cambiaria lo que ven los modelos y la instantanea del
+contrato (RM-12), y una ruta nueva en los backends romperia la simetria del
+contrato; ademas la ruta B3 completa no se puede recorrer sin modelo. Se eligen
+operaciones que ya existen, cada una medida con el cliente que usa ese salto en
+la corrida:
+
+| Transporte            | Operacion                                                                                                                                                                                         | Por que                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `adaptador_local`     | `CapacidadesLocales.listar()` en proceso, con `CapacidadesModule` real                                                                                                                            | Es el puerto de B0; `invocar` pasa por `EjecutorCapacidad`, que audita en PostgreSQL aun al rechazar, y eso ya es trabajo               |
+| `mcp_streamable_http` | `ping` de MCP con `Client` y `StreamableHTTPClientTransport` del SDK 1.30.1 contra `mcp-server`, una sesion reutilizada                                                                            | Es el mismo cliente, transporte y sesion que `CapacidadesMcp`; `tools/call` tambien audita, y `tools/list` serializa los cinco esquemas |
+| `a2a_salto`           | `message/send` a `b3-a2a-conocimiento` con el sobre y las cabeceras de `EspecialistasA2a`, pero con un DataPart sin habilidad: el controlador responde `-32602` sin llamar al agente ni al modelo | El especialista solo atiende `message/send`; no existe un metodo sin trabajo, asi que se usa el rechazo mas barato del mismo metodo     |
+| `ruta_completa_http`  | `GET /health` de `b0-directo` con `ejecutor.cliente.ClienteBackend` (httpx)                                                                                                                      | Es la peticion mas barata del contrato y el cliente que recorre esa ruta en la corrida                                                  |
+
+Resultado de esta medicion (`experiment/bench-transport.json`, 1000 iteraciones
+tras 100 de calentamiento; Windows 11, 28 hilos, Node 24.20.0, undici 7.29.0):
+
+| Transporte            | p50 (ms) | p95 (ms) | p99 (ms) |
+| --------------------- | -------- | -------- | -------- |
+| `adaptador_local`     | 0,0009   | 0,0033   | 0,0140   |
+| `mcp_streamable_http` | 13,12    | 16,69    | 21,61    |
+| `a2a_salto`           | 15,22    | 16,75    | 23,11    |
+| `ruta_completa_http`  | 0,94     | 1,17     | 1,35     |
+
+**Hallazgo.** En esta maquina el `fetch` de Node (undici) tarda unos 12-15 ms
+entre la llamada y la escritura de la peticion en el socket en la mayoria de las
+iteraciones, incluso contra un servidor HTTP vacio del mismo proceso; con
+`http.get` y conexion persistente el mismo servidor responde en ~0,2 ms y con
+httpx en ~0,7 ms. El SDK de MCP y `EspecialistasA2a` usan `fetch`, asi que ese
+costo es parte del piso real de MCP y de A2A en las corridas hechas aqui; no se
+corrige porque cambiaria el sistema medido. Por lo mismo la ruta completa
+(httpx) sale menor que un salto A2A: no es una contradiccion, son clientes
+distintos.
+
+**Desviacion de D9.** El plan pide correr el microbenchmark inmediatamente
+antes de la corrida oficial y dejarlo en su directorio. Se corrio despues, el
+27 de septiembre de 2026, en la misma maquina de las campañas, sin carga del
+modelo y con otras sesiones del equipo activas en la maquina (carga de CPU
+cercana al 26 %). Para que sirva a todas las corridas ya archivadas, el
+artefacto `bench_transporte` pasa a alcance `experimento` en `metricas.yaml`: se
+usa el de la corrida si lo trae y, si no, `experiment/bench-transport.json`,
+como las tarifas (decision 50).
+
+Consecuencias: M4.3 deja de salir `sin_datos`. Es un piso de referencia, no el
+costo bajo la carga de la corrida (lo dice la ficha); compararlo con M4.2 de
+corridas de otros dias asume que la maquina no cambio. Una corrida futura que
+quiera cumplir D9 al pie de la letra corre `experiment/bench/` justo antes y
+deja el JSON en su directorio, que manda sobre el comun. El script levanta los
+servicios en el entorno 9 (puertos `3900..3910`, base `unihelp_c9`), en
+`replay` y sin clave, de modo que ningun servicio puede llamar a un modelo.
+
+## 56. La revision humana del juez se hace en el panel web, con la rubrica siempre visible
+
+> Tomada el 27 de septiembre de 2026 a pedido del responsable del proyecto: que
+> la revision humana sea rapida, por una interfaz, y que el sistema guarde el
+> veredicto.
+
+Contexto: M7.4 (acuerdo entre revisores) y M7.5 (acuerdo juez-humano) exigen
+que dos personas califiquen a ciegas una muestra con la misma rubrica del juez y
+que los desacuerdos se adjudiquen (docs/04, capa 3).
+
+Decision:
+
+- **Muestra:** 160 ejecuciones estratificadas, 10 por celda de categoria x
+  arquitectura, repartidas entre los seis modelos de las corridas completas y
+  flash-lite (`experiment/juez/preparar_muestra_humana.py`, semilla 20261015).
+  Los items se arman ciegos con el mismo saneador del juez; la clave
+  (`clave-muestra.json`) no se versiona.
+- **Interfaz:** pestaña "Revision humana" del panel (`/experimento/revision`),
+  servida por la consola del experimento (`RUTAS_REVISION` en
+  `libs/contratos`). Cada persona escribe su nombre y toma el rol A o B (uno por
+  persona, sin mezclar); ve la conversacion, la respuesta y lo recuperado, y a
+  la derecha, siempre visibles, las reglas: marca puntos clave cubiertos y
+  prohibiciones violadas. **El veredicto no se elige: lo deriva la rubrica** en
+  vivo (aprueba solo con todos los puntos y ninguna prohibicion), y el servidor
+  rechaza una calificacion cuyo veredicto no coincida con sus marcas. Se retoma
+  donde se quedo; ningun revisor ve lo del otro ni el veredicto del juez.
+- **Adjudicacion:** cuando A y B terminan, la vista conjunta muestra solo los
+  desacuerdos con las marcas de ambos; el veredicto acordado se guarda con su
+  motivo como precedente.
+- **Datos:** `experiment/juez/revision-humana/calificaciones-A.jsonl`, `-B` y
+  `adjudicaciones.jsonl` (solo agregar, la ultima por item manda; se
+  versionan). `experiment/juez/incorporar_humana.py` escribe
+  `calificacion-humana.jsonl` en cada corrida cuando todo esta completo, y el
+  cuaderno calcula M7.4 y M7.5.
+
+Consecuencias: M7.4 y M7.5 se calculan por corrida (unas 27 ejecuciones de la
+muestra en cada una); una lectura conjunta de las 160 requiere una decision
+aparte sobre como agregarlas. En R-074 y R-114 la respuesta dice "el
+especialista" y delata el multiagente (es el texto calificado, no se altera).
+Validado en navegador: inicio sin nombre, calificacion y avance, rol tomado por
+otra persona, retomar, adjudicacion no disponible, consola apagada y ancho 400 px.

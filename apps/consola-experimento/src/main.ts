@@ -22,13 +22,14 @@ const DATOS_EXPERIMENTO: readonly (readonly [string, string])[] = [
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // `/health`, `/consola/*` y `/datos-experimento/*` viven fuera del prefijo
+  // `/health`, `/consola/*`, `/revision/*` y `/datos-experimento/*` viven fuera del prefijo
   // `/api`: ese prefijo es el contrato de triaje que atiende el frontend contra
   // B0-B3 (decisiones 6 y 32) y la consola no forma parte de el.
   app.setGlobalPrefix('api', {
     exclude: [
       { path: 'health', method: RequestMethod.GET },
       { path: 'consola/(.*)', method: RequestMethod.ALL },
+      { path: 'revision/(.*)', method: RequestMethod.ALL },
       { path: 'datos-experimento/(.*)', method: RequestMethod.ALL },
     ],
   });
@@ -53,7 +54,7 @@ async function bootstrap(): Promise<void> {
   await app.listen(puerto, process.env.CONSOLA_INTERFAZ ?? '127.0.0.1');
 
   Logger.log(
-    `[${IDENTIDAD.arquitectura}] ${IDENTIDAD.servicio} escuchando en http://localhost:${puerto} (salud: /health, estado: /consola/estado, datos: /datos-experimento)`,
+    `[${IDENTIDAD.arquitectura}] ${IDENTIDAD.servicio} escuchando en http://localhost:${puerto} (salud: /health, estado: /consola/estado, revision: /revision/muestra, datos: /datos-experimento)`,
     'Bootstrap',
   );
 }

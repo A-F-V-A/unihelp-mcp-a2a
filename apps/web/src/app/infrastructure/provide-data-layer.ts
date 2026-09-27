@@ -6,6 +6,7 @@ import {
   MODELO_IA_REPOSITORY,
   POLITICA_REPOSITORY,
   PREFERENCIAS_REPOSITORY,
+  REVISION_HUMANA_REPOSITORY,
   SERVICIO_REPOSITORY,
   SESION_CONVERSACION,
   TICKET_REPOSITORY,
@@ -18,6 +19,7 @@ import { HttpChatRepository } from './http/http-chat.repository';
 import { HttpConsolaExperimentoRepository } from './http/http-consola-experimento.repository';
 import { HttpModeloIaRepository } from './http/http-modelo-ia.repository';
 import { HttpPoliticaRepository } from './http/http-politica.repository';
+import { HttpRevisionHumanaRepository } from './http/http-revision-humana.repository';
 import { HttpServicioRepository } from './http/http-servicio.repository';
 import { HttpTicketRepository } from './http/http-ticket.repository';
 
@@ -28,7 +30,8 @@ import { HttpTicketRepository } from './http/http-ticket.repository';
  *
  * Las excepciones son las del panel del experimento: lee archivos estaticos del
  * mismo origen (decision 38) y lanza corridas contra la consola local en
- * `consolaUrl` (decision 39), nunca contra la API del backend.
+ * `consolaUrl` (decision 39), nunca contra la API del backend. La revision
+ * humana del juez tambien vive en la consola (decision 56).
  */
 export function provideDataLayer(): EnvironmentProviders {
   const proveedores: Provider[] = [
@@ -40,6 +43,7 @@ export function provideDataLayer(): EnvironmentProviders {
     HttpModeloIaRepository,
     EstaticosExperimentoRepository,
     HttpConsolaExperimentoRepository,
+    HttpRevisionHumanaRepository,
 
     { provide: CHAT_REPOSITORY, useExisting: HttpChatRepository },
     { provide: TICKET_REPOSITORY, useExisting: HttpTicketRepository },
@@ -48,6 +52,7 @@ export function provideDataLayer(): EnvironmentProviders {
     { provide: MODELO_IA_REPOSITORY, useExisting: HttpModeloIaRepository },
     { provide: EXPERIMENTO_REPOSITORY, useExisting: EstaticosExperimentoRepository },
     { provide: CONSOLA_EXPERIMENTO_REPOSITORY, useExisting: HttpConsolaExperimentoRepository },
+    { provide: REVISION_HUMANA_REPOSITORY, useExisting: HttpRevisionHumanaRepository },
 
     { provide: SESION_CONVERSACION, useClass: SesionConversacionNavegador },
     { provide: PREFERENCIAS_REPOSITORY, useClass: PreferenciasNavegador },

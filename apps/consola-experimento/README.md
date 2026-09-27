@@ -44,7 +44,32 @@ Viven fuera de `/api` (decisiones 6 y 32).
 | `GET /consola/trabajos/:id`           | El trabajo con toda su salida hasta ahora                                  |
 | `GET /consola/trabajos/:id/eventos`   | SSE: una línea por evento y un evento `fin` al terminar                    |
 | `POST /consola/trabajos/:id/cancelar` | Termina el árbol de procesos (`taskkill /T` en Windows, `SIGTERM` en Unix) |
+| `GET /revision/muestra`               | Muestra ciega de la revisión humana del juez (`experiment/juez/revision-humana/muestra.json`) |
+| `GET /revision/revisores/:rol`        | Progreso de A o B: **solo** sus propias calificaciones (la última por ítem) |
+| `POST /revision/calificaciones`       | Guarda una calificación; 409 si el rol es de otra persona, 400 si el veredicto no sale de la rúbrica |
+| `GET /revision/adjudicacion`          | Desacuerdos entre A y B; vacío (`disponible: false`) hasta que ambos califican toda la muestra |
+| `POST /revision/adjudicaciones`       | Resuelve un desacuerdo con veredicto y motivo obligatorio               |
 | `GET /datos-experimento/*`            | Solo lectura: `docs/tasks`, `experiment/ejecutor/corrida.yaml`, `experiment/salidas`, `experiment/corridas`. En desarrollo el servidor de Angular reenvía aquí (`apps/web/proxy.conf.json`) |
+
+## Revisión humana del juez (M7.4, M7.5)
+
+Contrato en [`libs/contratos/src/lib/revision-humana.contrato.ts`](../../libs/contratos/src/lib/revision-humana.contrato.ts);
+la usa el panel en `/experimento/revision`. Trabaja sobre
+`<UNIHELP_DIRECTORIO_EXPERIMENTO>/juez/revision-humana/` (`experiment/` por defecto):
+
+| Archivo                   | Quién lo escribe                                                 |
+| ------------------------- | ---------------------------------------------------------------- |
+| `muestra.json`            | `juez/preparar_muestra_humana.py` (160 ítems ciegos). La consola solo lo lee |
+| `clave-muestra.json`      | El mismo script. **La consola nunca lo lee ni lo sirve**; no se versiona |
+| `calificaciones-A.jsonl`, `calificaciones-B.jsonl` | La consola, solo agregar; la última línea de cada ítem manda |
+| `adjudicaciones.jsonl`    | La consola, solo agregar; la última línea de cada ítem manda     |
+
+- Un rol pertenece a quien lo tomó primero (el nombre se compara sin mayúsculas
+  ni espacios de los extremos) y una persona no puede tomar los dos.
+- El veredicto no se elige: debe ser `aprobado` exactamente cuando todos los
+  puntos clave están cubiertos y ninguna prohibición violada.
+- Cuando A y B terminaron y todo desacuerdo está adjudicado,
+  `juez/incorporar_humana.py` escribe `calificacion-humana.jsonl` en cada corrida.
 
 ## Seguridad
 
@@ -63,5 +88,7 @@ Viven fuera de `/api` (decisiones 6 y 32).
 | `src/app/consola/argumentos.ts`    | Validación y traducción de los DTOs a la lista de argumentos de `uv`   |
 | `src/app/consola/trabajos.service.ts` | Un trabajo a la vez: lanza, captura la salida, cancela y reescribe el índice |
 | `src/app/consola/consola.controller.ts` | Las rutas de `RUTAS_CONSOLA`, incluido el flujo SSE                 |
+| `src/app/revision/revision.service.ts` | Muestra, calificaciones y adjudicación de la revisión humana, con sus validaciones |
+| `src/app/revision/revision.controller.ts` | Las rutas de `RUTAS_REVISION`                                     |
 | `src/app/salud/`                   | `/health`, idéntico al resto de apps salvo `identidad.ts`              |
 | `src/app/http/`                    | `ErrorApi` y su filtro, con el `ErrorApiDto` del contrato              |

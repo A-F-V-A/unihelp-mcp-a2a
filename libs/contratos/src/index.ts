@@ -6,6 +6,7 @@ export * from './lib/experimento.contrato';
 export * from './lib/mcp.contrato';
 export * from './lib/modelo-ia.contrato';
 export * from './lib/politica.contrato';
+export * from './lib/revision-humana.contrato';
 export * from './lib/salud.contrato';
 export * from './lib/servicio.contrato';
 export * from './lib/simulacion.contrato';

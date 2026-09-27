@@ -1,0 +1,408 @@
+<section class="panel revision">
+  <div class="panel__cabecera">
+    <div>
+      <p class="sobretitulo">Validación del juez · M7.4 y M7.5</p>
+      <h2>Revisión humana</h2>
+      <p>
+        Dos personas califican a ciegas la misma muestra con la misma rúbrica del juez. No verás qué
+        arquitectura ni qué modelo respondió, ni lo que decidió el juez. Tú marcas lo que la
+        respuesta cumple; el veredicto lo dicta la rúbrica.
+      </p>
+    </div>
+    <div class="revision__vistas" role="tablist" aria-label="Modo de la revisión">
+      <button
+        type="button"
+        role="tab"
+        class="boton-panel"
+        [class.boton-panel--principal]="vista() === 'calificar'"
+        [attr.aria-selected]="vista() === 'calificar'"
+        (click)="cambiarVista('calificar')"
+      >
+        Calificar
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="boton-panel"
+        [class.boton-panel--principal]="vista() === 'adjudicar'"
+        [attr.aria-selected]="vista() === 'adjudicar'"
+        (click)="cambiarVista('adjudicar')"
+      >
+        Adjudicación conjunta
+      </button>
+    </div>
+  </div>
+
+  @if (store.error(); as error) {
+    <div class="aviso aviso--error" role="alert">
+      <p>{{ error }}</p>
+    </div>
+  }
+
+  @if (vista() === 'calificar') {
+    @switch (store.etapa()) {
+      @case ('inicio') {
+        <article class="tarjeta revision__inicio">
+          <h3>Empezar a calificar</h3>
+          <form class="revision__formulario" (submit)="$event.preventDefault(); iniciar()">
+            <label class="revision__campo">
+              <span>Tu nombre</span>
+              <input
+                type="text"
+                name="revisor"
+                autocomplete="name"
+                maxlength="80"
+                placeholder="Nombre y apellido"
+                [value]="nombre()"
+                (input)="fijarNombre($event)"
+              />
+            </label>
+            <fieldset class="revision__roles">
+              <legend>Rol</legend>
+              @for (rol of roles; track rol) {
+                <label class="revision__rol">
+                  <input
+                    type="radio"
+                    name="rol"
+                    [value]="rol"
+                    [checked]="rolElegido() === rol"
+                    (change)="rolElegido.set(rol)"
+                  />
+                  <span>Revisor {{ rol }}</span>
+                </label>
+              }
+            </fieldset>
+            <p class="tarjeta__nota">
+              Cada rol es de una sola persona. Si ya empezaste, escribe el mismo nombre y el mismo
+              rol: sigues donde quedaste.
+            </p>
+            <button
+              type="submit"
+              class="boton-panel boton-panel--principal"
+              [disabled]="store.cargando()"
+            >
+              {{ store.cargando() ? 'Cargando la muestra…' : 'Iniciar validación' }}
+            </button>
+          </form>
+        </article>
+      }
+
+      @case ('terminado') {
+        <div class="aviso aviso--ok" role="status">
+          <p>
+            <strong>Terminaste: calificaste las {{ store.total() }} ejecuciones.</strong> Cuando la
+            otra persona termine, resuelvan juntos los desacuerdos en «Adjudicación conjunta».
+          </p>
+        </div>
+        <div class="tarjeta__acciones">
+          <button type="button" class="boton-panel" (click)="store.revisarDeNuevo(0)">
+            Revisar mis calificaciones
+          </button>
+          <button type="button" class="boton-panel" (click)="store.salir()">Salir</button>
+        </div>
+      }
+
+      @case ('calificando') {
+        @if (store.item(); as item) {
+          <div class="revision__barra">
+            <p>
+              <strong>{{ store.revisor() }}</strong> · Revisor {{ store.rol() }} ·
+              {{ store.calificadas() }} de {{ store.total() }} calificadas
+            </p>
+            <div
+              class="revision__progreso"
+              role="progressbar"
+              [attr.aria-valuenow]="porcentaje()"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span [style.width.%]="porcentaje()"></span>
+            </div>
+            <button type="button" class="boton-panel" (click)="store.salir()">Salir</button>
+          </div>
+
+          <ol class="revision__mapa" aria-label="Ejecuciones de la muestra">
+            @for (celda of store.mapa(); track celda.id) {
+              <li>
+                <button
+                  type="button"
+                  class="revision__celda"
+                  [class.revision__celda--hecha]="celda.calificado"
+                  [class.revision__celda--actual]="celda.indice === store.indice()"
+                  [attr.aria-label]="celda.id + (celda.calificado ? ', calificada' : ', pendiente')"
+                  [attr.aria-current]="celda.indice === store.indice() ? 'step' : null"
+                  (click)="store.abrir(celda.indice)"
+                ></button>
+              </li>
+            }
+          </ol>
+
+          <div class="revision__rejilla">
+            <div class="revision__item">
+              <article class="tarjeta">
+                <h3>
+                  {{ item.id }} · <span class="revision__tarea">{{ item.tarea }}</span>
+                  @if (store.calificacionActual()) {
+                    <span class="chip chip--sin-datos">Ya calificada</span>
+                  }
+                </h3>
+                <ol class="revision__dialogo">
+                  @for (turno of item.dialogo; track $index) {
+                    <li [class]="'revision__turno revision__turno--' + turno.rol">
+                      <span class="revision__quien">{{
+                        turno.rol === 'usuario' ? 'Persona' : 'Agente'
+                      }}</span>
+                      <p>{{ turno.texto }}</p>
+                    </li>
+                  }
+                </ol>
+              </article>
+
+              <article class="tarjeta revision__respuesta">
+                <h3>Respuesta que calificas</h3>
+                @if (item.respuestaFinal) {
+                  <p>{{ item.respuestaFinal }}</p>
+                } @else {
+                  <p class="tarjeta__nota">
+                    El agente no llegó a responder: ningún punto se cubre.
+                  </p>
+                }
+              </article>
+
+              <article class="tarjeta">
+                <h3>Lo que recibió el agente</h3>
+                <p class="tarjeta__nota">
+                  Es la única fuente de verdad: un dato de la respuesta que no está aquí no cuenta
+                  como cubierto.
+                </p>
+                @for (info of item.informacionRecuperada; track $index) {
+                  <details class="revision__recuperado">
+                    <summary>{{ info.herramienta }}</summary>
+                    <pre>{{ legible(info.resultado) }}</pre>
+                  </details>
+                } @empty {
+                  <p class="tarjeta__nota">No usó ninguna herramienta.</p>
+                }
+              </article>
+            </div>
+
+            <aside class="tarjeta revision__reglas" aria-label="Reglas para calificar">
+              <h3>Reglas para calificar</h3>
+              <p class="revision__regla">
+                <strong>Aprueba</strong> solo si cubre <strong>todos</strong> los puntos clave y no
+                viola <strong>ninguna</strong> prohibición. Una paráfrasis fiel cuenta; un dato
+                distinto del recuperado, no.
+              </p>
+
+              <fieldset class="revision__marcas">
+                <legend>Puntos clave · marca los que la respuesta cubre</legend>
+                @for (punto of item.puntosClave; track $index) {
+                  <label class="revision__marca">
+                    <input
+                      type="checkbox"
+                      [checked]="marcado(store.marcas().puntosCubiertos, $index + 1)"
+                      (change)="store.alternarPunto($index + 1)"
+                    />
+                    <span
+                      ><b>{{ $index + 1 }}.</b> {{ punto }}</span
+                    >
+                  </label>
+                } @empty {
+                  <p class="tarjeta__nota">La tarea no declara puntos clave.</p>
+                }
+              </fieldset>
+
+              <fieldset class="revision__marcas revision__marcas--prohibiciones">
+                <legend>Prohibiciones · marca las que viola</legend>
+                @for (prohibicion of item.prohibiciones; track $index) {
+                  <label class="revision__marca">
+                    <input
+                      type="checkbox"
+                      [checked]="marcado(store.marcas().prohibicionesVioladas, $index + 1)"
+                      (change)="store.alternarProhibicion($index + 1)"
+                    />
+                    <span
+                      ><b>{{ $index + 1 }}.</b> {{ prohibicion }}</span
+                    >
+                  </label>
+                } @empty {
+                  <p class="tarjeta__nota">La tarea no declara prohibiciones.</p>
+                }
+              </fieldset>
+
+              <div class="revision__veredicto" aria-live="polite">
+                @if (store.veredicto() === 'aprobado') {
+                  <span class="chip chip--aprobada">Aprueba</span>
+                } @else {
+                  <span class="chip chip--reprobada">Reprueba</span>
+                  <ul>
+                    @for (motivo of store.motivos(); track $index) {
+                      <li>{{ motivo }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+
+              <label class="revision__campo">
+                <span>Comentario (opcional)</span>
+                <textarea
+                  rows="2"
+                  maxlength="2000"
+                  placeholder="Un caso dudoso, o por qué no diste un punto por cubierto"
+                  [value]="store.comentario()"
+                  (input)="fijarComentario($event)"
+                ></textarea>
+              </label>
+
+              <div class="revision__acciones">
+                <button
+                  type="button"
+                  class="boton-panel"
+                  [disabled]="store.indice() === 0"
+                  (click)="store.abrir(store.indice() - 1)"
+                >
+                  Anterior
+                </button>
+                <button
+                  type="button"
+                  class="boton-panel boton-panel--principal"
+                  [disabled]="store.guardando()"
+                  (click)="guardar()"
+                >
+                  {{ store.guardando() ? 'Guardando…' : 'Guardar y seguir' }}
+                </button>
+              </div>
+            </aside>
+          </div>
+        }
+      }
+    }
+  } @else {
+    @if (store.cargando() && !store.adjudicacion()) {
+      <p class="cargando">Consultando los desacuerdos…</p>
+    } @else if (store.adjudicacion(); as estado) {
+      @if (!estado.disponible) {
+        <div class="aviso aviso--info" role="status">
+          <p>
+            La adjudicación se abre cuando las dos personas terminan. Revisor A:
+            {{ estado.calificadasA }} de {{ estado.total }}; revisor B: {{ estado.calificadasB }} de
+            {{ estado.total }}.
+          </p>
+        </div>
+      } @else {
+        <div class="aviso aviso--info" role="status">
+          <p>
+            Coinciden en {{ estado.acuerdos }} de {{ estado.total }}. Resuelvan juntos los
+            {{ estado.desacuerdos.length }} desacuerdos: el motivo queda como precedente de la
+            rúbrica.
+          </p>
+        </div>
+        @for (d of estado.desacuerdos; track d.item.id) {
+          <article class="tarjeta revision__desacuerdo">
+            <h3>
+              {{ d.item.id }} · <span class="revision__tarea">{{ d.item.tarea }}</span>
+              @if (d.adjudicado) {
+                <span
+                  class="chip"
+                  [class.chip--aprobada]="d.adjudicado === 'aprobado'"
+                  [class.chip--reprobada]="d.adjudicado === 'reprobado'"
+                >
+                  Adjudicado: {{ d.adjudicado === 'aprobado' ? 'aprueba' : 'reprueba' }}
+                </span>
+              }
+            </h3>
+            <p class="revision__respuesta-corta">{{ d.item.respuestaFinal ?? 'Sin respuesta.' }}</p>
+            <div class="tabla-envoltorio">
+              <table class="tabla tabla--compacta">
+                <thead>
+                  <tr>
+                    <th scope="col">Rúbrica</th>
+                    <th scope="col">A ({{ d.revisorA.revisor }})</th>
+                    <th scope="col">B ({{ d.revisorB.revisor }})</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (punto of d.item.puntosClave; track $index) {
+                    <tr>
+                      <td>Punto {{ $index + 1 }}. {{ punto }}</td>
+                      <td>
+                        {{ marcado(d.revisorA.puntosCubiertos, $index + 1) ? 'Cubierto' : '—' }}
+                      </td>
+                      <td>
+                        {{ marcado(d.revisorB.puntosCubiertos, $index + 1) ? 'Cubierto' : '—' }}
+                      </td>
+                    </tr>
+                  }
+                  @for (prohibicion of d.item.prohibiciones; track $index) {
+                    <tr>
+                      <td>Prohibición {{ $index + 1 }}. {{ prohibicion }}</td>
+                      <td>
+                        {{
+                          marcado(d.revisorA.prohibicionesVioladas, $index + 1) ? 'Violada' : '—'
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          marcado(d.revisorB.prohibicionesVioladas, $index + 1) ? 'Violada' : '—'
+                        }}
+                      </td>
+                    </tr>
+                  }
+                  <tr>
+                    <th scope="row">Veredicto</th>
+                    <td>{{ d.revisorA.veredicto === 'aprobado' ? 'Aprueba' : 'Reprueba' }}</td>
+                    <td>{{ d.revisorB.veredicto === 'aprobado' ? 'Aprueba' : 'Reprueba' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <fieldset class="revision__roles">
+              <legend>Veredicto acordado</legend>
+              <label class="revision__rol">
+                <input
+                  type="radio"
+                  [name]="'adj-' + d.item.id"
+                  [checked]="borrador(d.item.id).veredicto === 'aprobado'"
+                  (change)="elegirAdjudicado(d.item.id, 'aprobado')"
+                />
+                <span>Aprueba</span>
+              </label>
+              <label class="revision__rol">
+                <input
+                  type="radio"
+                  [name]="'adj-' + d.item.id"
+                  [checked]="borrador(d.item.id).veredicto === 'reprobado'"
+                  (change)="elegirAdjudicado(d.item.id, 'reprobado')"
+                />
+                <span>Reprueba</span>
+              </label>
+            </fieldset>
+            <label class="revision__campo">
+              <span>Motivo (queda como precedente)</span>
+              <textarea
+                rows="2"
+                maxlength="2000"
+                [value]="borrador(d.item.id).motivo"
+                (input)="fijarMotivo(d.item.id, $event)"
+              ></textarea>
+            </label>
+            <div class="tarjeta__acciones">
+              <button
+                type="button"
+                class="boton-panel boton-panel--principal"
+                [disabled]="!borrador(d.item.id).veredicto || store.guardando()"
+                (click)="adjudicar(d)"
+              >
+                Guardar adjudicación
+              </button>
+            </div>
+          </article>
+        } @empty {
+          <div class="aviso aviso--ok">
+            <p>No hay desacuerdos: los dos revisores coinciden en todo.</p>
+          </div>
+        }
+      }
+    }
+  }
+</section>

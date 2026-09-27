@@ -5,6 +5,7 @@ import { ExecutionDetail } from './corridas/execution-detail/execution-detail';
 import { ExperimentoShell } from './experimento-shell/experimento-shell';
 import { RunPlanner } from './preparar/run-planner/run-planner';
 import { ResultsPage } from './resultados/results-page/results-page';
+import { RevisionPage } from './revision/revision-page/revision-page';
 import { TaskDetail } from './tareas/task-detail/task-detail';
 import { TaskExplorer } from './tareas/task-explorer/task-explorer';
 
@@ -28,6 +29,11 @@ export const EXPERIMENTO_ROUTES: Routes = [
       },
       { path: 'tareas', component: TaskExplorer, title: 'Tareas · Experimento UniHelp' },
       { path: 'tareas/:id', component: TaskDetail, title: 'Tarea · Experimento UniHelp' },
+      {
+        path: 'revision',
+        component: RevisionPage,
+        title: 'Revisión humana · Experimento UniHelp',
+      },
       {
         path: 'preparar',
         component: RunPlanner,

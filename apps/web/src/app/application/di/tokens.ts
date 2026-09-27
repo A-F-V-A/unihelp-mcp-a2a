@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import type { ChatRepository } from '../../domain/ports/chat.repository';
 import type { ConsolaExperimentoRepository } from '../../domain/ports/consola-experimento.repository';
+import type { RevisionHumanaRepository } from '../../domain/ports/revision-humana.repository';
 import type { ExperimentoRepository } from '../../domain/ports/experimento.repository';
 import type { PoliticaRepository } from '../../domain/ports/politica.repository';
 import type { PreferenciasRepository } from '../../domain/ports/preferencias.repository';
@@ -41,4 +42,9 @@ export const EXPERIMENTO_REPOSITORY = new InjectionToken<ExperimentoRepository>(
 /** Consola del experimento: lo unico que lanza corridas desde el panel (decision 39). */
 export const CONSOLA_EXPERIMENTO_REPOSITORY = new InjectionToken<ConsolaExperimentoRepository>(
   'CONSOLA_EXPERIMENTO_REPOSITORY',
+);
+
+/** Revision humana del juez, servida por la consola del experimento (M7.4, M7.5; decision 56). */
+export const REVISION_HUMANA_REPOSITORY = new InjectionToken<RevisionHumanaRepository>(
+  'REVISION_HUMANA_REPOSITORY',
 );
