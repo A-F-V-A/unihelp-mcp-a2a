@@ -1,7 +1,7 @@
 {
   "resultados": {
     "archivo": "resultados.json",
-    "sha256_sin_marca_tiempo": "0f7f01c02791d6e001c7c7f22f6db1e2939ce7fcf2f804eb70a8972be541f22a"
+    "sha256_sin_marca_tiempo": "db46ab1ca4514b3386b79828269db4e626aa91e4328ca86b2cf74c8bd0699183"
   },
   "salidas": [
     {
@@ -37,7 +37,7 @@
     {
       "archivo": "tabla_4.csv",
       "etiqueta": "tabla_4",
-      "sha256": "0cad5ca7501d2826d418a686f8147e76eefe5e8fda296b461a96744985417413"
+      "sha256": "74854e528d055593386eb958d285855bde04fa6b6e6264ae5f743604114a5e22"
     },
     {
       "archivo": "tabla_7.csv",

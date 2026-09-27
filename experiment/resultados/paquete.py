@@ -92,15 +92,16 @@ FALTA = {
 }
 
 NOTAS = {
-    'M4.7': 'Calculada, pero vale 0: la corrida no configuro tarifa (tarifa_configurada=false) y '
-    'usage.cost_usd_est es 0 en todas las trazas. Los tokens (M4.6) si estan; fijar la tarifa por '
-    'modelo es una decision de medicion (RM-17).',
+    'M4.7': 'Tokens de la traza x tarifa de lista de experiment/tarifas.yaml (decision 50, consultada el '
+    '2026-09-27). Las corridas historicas sin trazas conservan su calculo anterior (0).',
     'M1.1': 'El exito viene solo de la compuerta automatica: el juez no ha corrido (veredicto_juez=null). '
     'El juez solo puede quitar exito, nunca otorgarlo (RM-16).',
-    'M5.1': 'La traza guarda server_audit[].tokenValido; el registro lo llama token_valido. Hay que '
-    'alinear el alias en metricas.yaml antes de implementarla.',
-    'M5.6': 'La traza guarda server_audit[].actor (p. ej. b3-conocimiento); el registro pide '
-    'server_audit[].agente. Hay que alinear el alias antes de implementarla.',
+    'M3.5': 'Se mide sobre las 5 tareas que declaran esperado.ticket.prioridad; el plan habla de 20 '
+    '(decision 51, pendiente).',
+    'M5.2': 'Sin valor en todas las corridas: ningun agente intento crear sin token valido.',
+    'M5.4': 'Sin datos en Qwen2.5 7B: casi nunca pidio confirmacion y nadie llego a otorgarla.',
+    'M5.6': 'Se mide con tool_calls[] y los permisos por rol (el rechazo no deja evento de auditoria). '
+    'Sin valor en todas las corridas: ningun agente intento una herramienta fuera de su rol.',
 }
 
 
@@ -496,6 +497,7 @@ def main() -> None:
     escribir_csv(cat / 'metricas.csv', catalogo, list(catalogo[0].keys()))
     escribir_csv(cat / 'tareas.csv', tareas_filas, list(tareas_filas[0].keys()))
     shutil.copy(RAIZ_EXP / 'metricas.yaml', cat / 'metricas.yaml')
+    shutil.copy(RAIZ_EXP / 'tarifas.yaml', cat / 'tarifas.yaml')
     shutil.copytree(RAIZ_EXP / 'schemas', cat / 'esquemas', ignore=shutil.ignore_patterns('ejemplos'))
     shutil.copytree(RAIZ_REPO / 'docs' / 'tasks', base / 'tareas')
     inf = base / 'informes'
@@ -585,7 +587,7 @@ def componer_readme(fecha, commit, corridas, catalogo, ejecuciones, cuarentena, 
             s += f" n={r['n_tareas']}"
         return s
 
-    filas_efect, filas_contr, filas_costo = [], [], []
+    filas_efect, filas_contr, filas_costo, filas_nuevas = [], [], [], []
     for c in sorted(corridas, key=lambda c: (c['clasificacion'], c['carpeta'])):
         if c['clasificacion'] == HISTORICO:
             continue
@@ -597,6 +599,21 @@ def componer_readme(fecha, commit, corridas, catalogo, ejecuciones, cuarentena, 
         )
         filas_efect.append([etiqueta] + [ic(valor(k, 'M1.1', a, 'media_entre_tareas'), 100, 1, c['clasificacion'] == PARCIAL) for a in ('B0', 'B1', 'B2', 'B3')])
         filas_contr.append([etiqueta] + [ic(contraste(k, 'M1.1', p), 100, 1, True) for p in ('B1-B0', 'B2-B1', 'B3-B2', 'B3-B1')])
+        def cuatro(cod, k=k):
+            celdas = []
+            for a in ('B0', 'B1', 'B2', 'B3'):
+                v = valor(k, cod, a, 'media_entre_tareas')
+                celdas.append('—' if not v or v['valor'] is None else f"{v['valor'] * 100:.0f}")
+            return ' / '.join(celdas)
+
+        def total(cod, est, dec, k=k):
+            v = valor(k, cod, None, est)
+            return '—' if not v or v['valor'] is None else f"{v['valor']:.{dec}f}"
+
+        filas_nuevas.append(
+            [etiqueta, cuatro('M2.2'), cuatro('M3.1'), cuatro('M5.3'), total('M5.1', 'conteo', 0),
+             total('M4.7', 'suma_corrida', 2)]
+        )
         filas_costo.append(
             [etiqueta]
             + [
@@ -605,6 +622,14 @@ def componer_readme(fecha, commit, corridas, catalogo, ejecuciones, cuarentena, 
                 for a in ('B0', 'B1', 'B2', 'B3')
             ]
         )
+
+    seccion_crudo = (
+        tabla(['Codigo', 'Metrica', 'Rol', 'Hipotesis', 'Que falta'], grupos['crudo_disponible'])
+        if grupos['crudo_disponible']
+        else 'Ninguna. Las 16 que tenian sus datos en las trazas (M2.1-M2.6, M3.1, M3.5, M3.6 y M5.1-M5.7) '
+        'se implementaron el 27 de septiembre de 2026 y se recalcularon sobre todas las corridas sin volver a '
+        'ejecutar ninguna tarea (decision 51).'
+    )
 
     return f"""# UniHelp: paquete de datos del experimento ({fecha})
 
@@ -652,6 +677,7 @@ catalogo/
   metricas.csv               las 43 metricas: definicion, formula, situacion, campos presentes/ausentes
   tareas.csv                 las 40 tareas: categoria, servicios, ejes
   metricas.yaml              registro oficial de metricas (fuente de todo nombre de campo)
+  tarifas.yaml               tarifa de lista por modelo con su fuente y fecha (costo M4.7)
   esquemas/                  JSON Schema de traza, insumos, metricas y resultados
 consolidado/                 TODO el experimento en tablas planas (CSV UTF-8 con BOM)
   ejecuciones.csv            una fila por ejecucion (unidad de observacion)
@@ -701,8 +727,9 @@ H3 A2A) se apoyan en la clase A: cinco campañas de 480 ejecuciones (40 tareas x
 conjunta de 160. La clase B sirve como replica con otro proveedor (Gemini), con
 la reserva de su `n`; la de flash-lite del 26 de septiembre cubre 34 tareas
 pareadas en las cuatro arquitecturas. La clase C no entra a los contrastes.
-**Elegir la corrida oficial** (un modelo, o todos como factor) es una decision
-del equipo que debe registrarse (RM-17); este paquete no la toma.
+**Todos los modelos entran al analisis como factor** (decision 49): cada
+hipotesis se evalua con los contrastes dentro de cada modelo y la conclusion se
+lee a traves de modelos; no se promedian cifras entre modelos.
 
 ---
 
@@ -790,23 +817,16 @@ Estan en cada `resultados.json` y en `consolidado/metricas-calculadas.csv`.
 
 {tabla(['Codigo', 'Metrica', 'Rol', 'Hipotesis', 'Pendiente'], grupos['calculada'])}
 
-Notas: **M1.1** usa solo la compuerta automatica, porque el juez no ha corrido;
-**M4.7** vale 0 porque no se configuro tarifa (los tokens de M4.6 si estan);
-**M4.3** y **M7.4-M7.7** aparecen como `sin_datos` en `resultados.json`.
+Notas: **M1.1** y **M5.5** usan solo la compuerta automatica, porque el juez no
+ha corrido. **M4.7** multiplica los tokens de cada ejecucion por la tarifa de
+lista de `catalogo/tarifas.yaml` (decision 50). **M3.5** se mide sobre 5 tareas,
+no 20 (decision 51, pendiente). **M5.2** y **M5.6** estan calculadas pero sin
+valor: ninguna corrida intento lo que esas defensas rechazan. Las definiciones
+operativas de M2, M3 y M5 estan en la decision 51 y en `catalogo/metricas.csv`.
 
-### 5.2 Con los datos crudos ya disponibles: falta implementarlas ({sit['crudo_disponible']})
+### 5.2 Con los datos crudos disponibles pero sin implementar ({sit['crudo_disponible']})
 
-Los campos que piden ya estan en las trazas de este paquete (verificado campo
-por campo en `catalogo/metricas.csv`, columnas `campos_fuente_presentes` y
-`campos_fuente_ausentes`). Solo falta su funcion en
-`experiment/analisis/familias/` y correr el cuaderno otra vez sobre cada corrida;
-**no hace falta volver a ejecutar ninguna tarea ni gastar tokens**.
-
-{tabla(['Codigo', 'Metrica', 'Rol', 'Hipotesis', 'Que falta'], grupos['crudo_disponible'])}
-
-Cuidado con **M5.1** y **M5.6**: la traza nombra `tokenValido` y `actor` lo que
-el registro llama `token_valido` y `agente`; hay que alinear el alias en
-`metricas.yaml` antes de implementarlas (RM-08).
+{seccion_crudo}
 
 ### 5.3 Les falta un insumo que ninguna corrida produjo ({sit['falta_insumo']})
 
@@ -836,6 +856,15 @@ Transcritas de `metricas-calculadas.csv` y `contrastes.csv` (IC 95 %).
 ### Latencia M4.1 y llamadas al modelo M4.4 (medianas por tarea)
 
 {tabla(['Corrida', 'B0', 'B1', 'B2', 'B3'], filas_costo)}
+
+### Herramientas, calidad, seguridad y costo (B0 / B1 / B2 / B3)
+
+{tabla(['Corrida', 'M2.2 invoca prohibida %', 'M3.1 fidelidad %', 'M5.3 pide confirmacion %', 'M5.1 escrituras sin token', 'M4.7 USD de la corrida'], filas_nuevas)}
+
+Lectura: el control de escritura (M5.1, M5.4, M5.7) da cero en todos los
+modelos; pedir confirmacion (M5.3) y no invocar herramientas prohibidas (M2.2)
+depende del modelo y, en los pequeños, del multiagente. Detalle en
+`informes/resultados-2026-09-27-metricas-m2-m3-m5-y-costo.md`.
 
 Lectura de conjunto (detalle en `informes/`): MCP (B1 - B0) no cambia ni la
 efectividad ni la latencia con ningun modelo (todos sus intervalos de M1.1
@@ -885,7 +914,10 @@ cifra que se reporta es la del cuaderno.
 - **Juez no ejecutado:** `veredicto_juez` es `null`; el exito es solo la compuerta automatica.
 - **Cache de contexto (D2, decision 23):** OpenAI y Gemini cachean prompts largos
   sin opcion de apagarlo; queda registrado en `cached_input_tokens`.
-- **Tarifa sin configurar:** `cost_usd_est` = 0; el costo en dinero se deriva de los tokens cuando se fije la tarifa.
+- **Costo de lista:** M4.7 usa la tarifa publicada el 27 de septiembre de 2026 (`catalogo/tarifas.yaml`), sin
+  descuentos ni recargos; el de gemini-3.1-pro-preview queda subestimado (su pensamiento no esta en la traza) y
+  el de gemini-3.8-flash es promocional hasta el 31-12-2026.
+- **M3.5 sobre 5 tareas** y **M5.2/M5.6 sin poner a prueba** (decision 51).
 - **Campañas Gemini incompletas:** no se mezclan con otra corrida para completar
   la matriz sin registrar antes la decision.
 - **Decisiones del equipo abiertas:** P1 (citacion en T-COM-009), P2 (T-INF-010)
