@@ -24,6 +24,16 @@ B2 y B3 comparten `libs/multiagente-nucleo`: el orquestador recibe
 arquitecturas. Lo unico que cambia entre B2 y B3 es por donde viaja la
 delegacion (en proceso o A2A), que el modelo no ve.
 
+**Excepcion (decision 60): la sexta herramienta solo en B2.** El orquestador de
+B2 recibe ademas la seccion `DISPONIBILIDAD DEL SOPORTE TÉCNICO POR SEDE`
+(`SECCION_PROMPT_SOPORTE` en
+[`apps/b2-multiagente-local/src/app/disponibilidad-soporte/`](../apps/b2-multiagente-local/src/app/disponibilidad-soporte/)),
+insertada con `conSeccionAdicional` justo antes de `QUÉ FUENTES CONSULTAR`, y una
+herramienta mas en su lista, `consultar_disponibilidad_soporte` (HU-43). La
+seccion amplia el alcance: sin ella, la regla de `ALCANCE` trata la pregunta por
+el soporte de una sede como fuera de alcance y prohibe llamar herramientas. Por
+eso `prompt_hash` de B2 difiere del de B3 desde este cambio.
+
 ## Orquestador (B2 y B3) frente al agente unico (B0 y B1)
 
 `PROMPT_ORQUESTADOR = componerPromptOrquestador(PROMPT_BASE)`, version

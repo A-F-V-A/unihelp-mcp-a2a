@@ -35,6 +35,7 @@ viajan, nunca como se llama al modelo.
 | [`especialista/tarjetas-agente.ts`](src/lib/especialista/tarjetas-agente.ts)                             | Las tres Agent Cards de docs/03 (HU-29), una sola fuente con los `skills[].id`.                                        |
 | [`orquestador/puerto-especialistas.ts`](src/lib/orquestador/puerto-especialistas.ts)                     | `PuertoEspecialistas`: la unica frontera entre el nucleo y el transporte entre agentes.                                |
 | [`orquestador/capacidades-orquestador.ts`](src/lib/orquestador/capacidades-orquestador.ts)               | `PuertoCapacidades` compuesto: delegaciones al puerto de especialistas + tickets por MCP; valida y registra el salto.  |
+| [`orquestador/capacidades-propias.spec.ts`](src/lib/orquestador/capacidades-propias.spec.ts)             | Capacidades propias opcionales (`CAPACIDADES_PROPIAS_ORQUESTADOR`) y `conSeccionAdicional` (decision 60).              |
 | [`orquestador/orquestador-multiagente.module.ts`](src/lib/orquestador/orquestador-multiagente.module.ts) | `OrquestadorMultiagenteModule.forRoot({ identidad, especialistas, exponerA2a })`: arma el nucleo con lo anterior.      |
 | [`orquestador/a2a-orquestador.controller.ts`](src/lib/orquestador/a2a-orquestador.controller.ts)         | Entrada A2A del orquestador de B3: `message/send` sobre la misma conversacion, con `resultado_triaje`.                 |
 
@@ -95,6 +96,16 @@ EspecialistaModule.forRoot({ rol: 'conocimiento', identidad: IDENTIDAD });
 - Un especialista caido o con su infraestructura fallida es
   `ErrorInfraestructura`: `error_infraestructura`, nunca un diagnostico
   inventado (RM-15; docs/03, 7).
+
+## Capacidades propias de una arquitectura (decision 60)
+
+`OrquestadorMultiagenteModule.forRoot` acepta `capacidadesPropias`: un modulo
+que enlaza `CAPACIDADES_PROPIAS_ORQUESTADOR` con un `PuertoCapacidades` y una
+seccion de prompt que se inserta con `conSeccionAdicional` antes de `QUÉ FUENTES
+CONSULTAR`. `CapacidadesOrquestador` agrega esas herramientas al final de su
+lista y las enruta a ese puerto, con el protocolo del agente. Es opcional: B3
+no lo usa y su orquestador queda exactamente como en la decision 44; B2 lo usa
+para la sexta herramienta, `consultar_disponibilidad_soporte` (HU-43).
 
 **Lo que NO contiene**: la implementacion de ningun `PuertoEspecialistas`, el
 registro de descubrimiento de B3 ni el calculo de metricas (RM-02).

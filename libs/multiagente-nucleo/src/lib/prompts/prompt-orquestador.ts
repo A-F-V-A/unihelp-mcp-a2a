@@ -53,3 +53,16 @@ export function componerPromptOrquestador(base: string = PROMPT_BASE): string {
 }
 
 export const PROMPT_ORQUESTADOR = componerPromptOrquestador();
+
+/**
+ * Inserta una seccion propia de una arquitectura justo antes de QUÉ FUENTES
+ * CONSULTAR, es decir, despues de ALCANCE y de la coordinacion: la seccion
+ * puede ampliar el alcance y el modelo la lee antes de decidir que consultar
+ * (decision 60). Falla si el ancla ya no existe.
+ */
+export function conSeccionAdicional(prompt: string, seccion: string): string {
+  if (!prompt.includes(ANCLA_INSERCION)) {
+    throw new Error('El prompt ya no tiene la sección «QUÉ FUENTES CONSULTAR».');
+  }
+  return prompt.replace(ANCLA_INSERCION, `\n${seccion.trim()}\n${ANCLA_INSERCION}`);
+}

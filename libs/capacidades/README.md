@@ -34,7 +34,10 @@ salida NO se redefinen aqui: son los de `@unihelp/herramientas`, fuente unica.
 - Arranca con exactamente las cinco herramientas de `DEFINICIONES_HERRAMIENTAS`,
   en el orden del contrato.
 - `agregar` no toca las existentes, rechaza un nombre repetido y compila el
-  esquema nuevo en el validador. La **sexta herramienta no existe**: su
+  esquema nuevo en el validador. La sexta herramienta
+  (`consultar_disponibilidad_soporte`, HU-43) NO pasa por este registro: solo
+  la tiene B2, en su propio proceso (decision 60), para no cambiar lo que B0, B1
+  y `mcp-server` publican. Antes de abrirse, su
   especificacion esta sellada hasta la semana 8; el mecanismo se prueba con
   `herramienta_de_prueba`, que solo existe en `registro-capacidades.spec.ts`.
 

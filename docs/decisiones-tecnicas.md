@@ -1840,3 +1840,32 @@ B1 - B0 = -6,7 [-14; -1]; en Qwen2.5 7B, B2 - B1 = -6,7 [-14; -1] y B1 - B0 = +5
 [+1; +11]. En los modelos donde M7.5 no llega al 85 % (gpt-5.4-mini, gpt-4.1-mini,
 Qwen2.5 7B, flash-lite) las metricas del juez son exploratorias. Detalle en
 `docs/evaluacion-del-sistema-limitacion-de-recuperacion.md`.
+
+## 60. La sexta herramienta (`consultar_disponibilidad_soporte`) se agrega solo a B2, en su propio proceso
+
+> Tomada el 27 de septiembre de 2026 al implementar HU-43 en B2.
+
+Contexto: la especificacion abierta de la sexta herramienta pide que el agente de
+B2 la use, sin exigirla en las demas arquitecturas y sin romperlas. El camino
+"natural" (registrarla en `RegistroCapacidades` y publicarla en `mcp-server`)
+cambiaria el `tools/list` que ve B1 (sin `X-Agent-Id` no hay filtro) y su
+instantanea de contrato, y darle permiso en `PERMISOS_AGENTE` la llevaria
+tambien al orquestador de B3, que comparte rol y nucleo.
+
+Decision: la herramienta vive en `apps/b2-multiagente-local/src/app/disponibilidad-soporte/`
+(datos sinteticos, funcion pura, contrato con la forma de `DefinicionHerramienta`
+y un `PuertoCapacidades` en proceso sobre `EjecutorCapacidad`). La usa el
+orquestador de B2 directamente, no un especialista: la pregunta no es de ninguno
+de los cuatro servicios y no encaja en `knowledge_lookup` ni en
+`incident_diagnosis`. El nucleo multiagente gana un punto de extension opcional,
+`capacidadesPropias` (`CAPACIDADES_PROPIAS_ORQUESTADOR` + seccion de prompt con
+`conSeccionAdicional`); sin el, el orquestador es identico al de la decision 44.
+
+Consecuencias: B0, B1, B3 y `mcp-server` no cambian (misma lista de herramientas
+y mismo prompt). El orquestador de B2 ve una herramienta mas y un prompt con una
+seccion mas, asi que su `prompt_hash` y sus tokens de entrada difieren de B3 en
+toda corrida posterior: `B3 - B2` sobre corridas nuevas ya no mide solo el
+transporte A2A, y las corridas archivadas de B2 anteriores a este cambio no son
+comparables con las nuevas. La herramienta viaja por el protocolo de B2
+(`en-proceso`), no por MCP, y su consulta no se audita (solo lectura, sin base;
+RM-09 cubre escrituras).

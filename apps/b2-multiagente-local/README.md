@@ -10,14 +10,28 @@ especialistas en el mismo proceso, sin red entre agentes. Los tres agentes
 alcanzan sus herramientas por MCP con su rol en `X-Agent-Id`, igual que en B3
 (decision 45), asi que `B3 - B2` mide solo el transporte A2A (H3).
 
-| Archivo                                                                                                                                      | Contenido                                                                                                |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [`src/app/app.module.ts`](src/app/app.module.ts)                                                                                             | Cablea `OrquestadorMultiagenteModule` con `EspecialistasEnProceso`. Nada mas es propio de B2.            |
-| [`src/app/especialistas-en-proceso/especialistas-en-proceso.ts`](src/app/especialistas-en-proceso/especialistas-en-proceso.ts)               | `PuertoEspecialistas` en proceso: invoca al especialista, pasa la tarea por JSON y mide la ida y vuelta. |
-| [`src/app/especialistas-en-proceso/especialistas-en-proceso.module.ts`](src/app/especialistas-en-proceso/especialistas-en-proceso.module.ts) | Construye los dos especialistas con la misma fabrica que B3 (`crearAgenteEspecialista`).                 |
-| [`src/app/salud/`](src/app/salud/)                                                                                                           | `GET /health` con la identidad de B2 (`protocolo: en-proceso`, depende de `mcp-server`).                 |
-| [`src/entorno.ts`](src/entorno.ts)                                                                                                           | Carga `apps/b2-multiagente-local/.env` en desarrollo.                                                    |
-| [`.env.example`](.env.example)                                                                                                               | Variables: servidor MCP, modelo, casetes, perfil de experimento, PostgreSQL.                             |
+| Archivo                                                                                                                                      | Contenido                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`src/app/app.module.ts`](src/app/app.module.ts)                                                                                             | Cablea `OrquestadorMultiagenteModule` con `EspecialistasEnProceso`. Nada mas es propio de B2.                                                              |
+| [`src/app/especialistas-en-proceso/especialistas-en-proceso.ts`](src/app/especialistas-en-proceso/especialistas-en-proceso.ts)               | `PuertoEspecialistas` en proceso: invoca al especialista, pasa la tarea por JSON y mide la ida y vuelta.                                                   |
+| [`src/app/especialistas-en-proceso/especialistas-en-proceso.module.ts`](src/app/especialistas-en-proceso/especialistas-en-proceso.module.ts) | Construye los dos especialistas con la misma fabrica que B3 (`crearAgenteEspecialista`).                                                                   |
+| [`src/app/disponibilidad-soporte/`](src/app/disponibilidad-soporte/)                                                                         | Sexta herramienta, solo de B2 (HU-43, decision 60): calendario sintetico, `consultar_disponibilidad_soporte`, su puerto en proceso y su seccion de prompt. |
+| [`src/e2e/disponibilidad-soporte.e2e-spec.ts`](src/e2e/disponibilidad-soporte.e2e-spec.ts)                                                   | Caso 9 de punta a punta con el modelo configurado: `pnpm nx e2e b2-multiagente-local` (exige `pnpm dev:b2`).                                               |
+| [`src/app/salud/`](src/app/salud/)                                                                                                           | `GET /health` con la identidad de B2 (`protocolo: en-proceso`, depende de `mcp-server`).                                                                   |
+| [`src/entorno.ts`](src/entorno.ts)                                                                                                           | Carga `apps/b2-multiagente-local/.env` en desarrollo.                                                                                                      |
+| [`.env.example`](.env.example)                                                                                                               | Variables: servidor MCP, modelo, casetes, perfil de experimento, PostgreSQL.                                                                               |
+
+## Sexta herramienta: `consultar_disponibilidad_soporte`
+
+Solo en B2 (decision 60). Dice si hay soporte tecnico atendiendo en una sede
+(`central`, `norte`, `sur`, `virtual`) en una fecha `AAAA-MM-DD`, con sus franjas
+y canal, o el motivo si no lo hay (`festivo`, `fuera_de_horario`,
+`cierre_programado`). Es de solo lectura, determinista y sus datos son
+sinteticos (`calendario-soporte.ts`). La atiende el orquestador en este mismo
+proceso, a traves de `EjecutorCapacidad` (validacion, limite, duracion y errores
+`VALIDACION_ENTRADA` en español), enchufada al nucleo con `capacidadesPropias`;
+no pasa por `mcp-server`, asi que B0, B1 y B3 no la ven. Una seccion propia del
+prompt del orquestador le dice cuando usarla (`docs/prompt-diffs.md`).
 
 ## Levantar
 

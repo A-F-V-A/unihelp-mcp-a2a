@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { CapacidadesMcp } from '@unihelp/capacidades-mcp';
 import type { MedicionReceptorDto } from '@unihelp/contratos';
 import { META_A2A } from '@unihelp/contratos';
@@ -27,6 +27,14 @@ import { PUERTO_ESPECIALISTAS, type PuertoEspecialistas } from './puerto-especia
 export const PROTOCOLO_DELEGACION = Symbol('PROTOCOLO_DELEGACION');
 
 /**
+ * Capacidades que una arquitectura agrega a su orquestador, fuera de las
+ * delegaciones y de las herramientas de tickets (decision 60). Es opcional: B3
+ * no lo enlaza y su orquestador ve exactamente lo mismo que antes; B2 lo enlaza
+ * con `consultar_disponibilidad_soporte`, que atiende en su propio proceso.
+ */
+export const CAPACIDADES_PROPIAS_ORQUESTADOR = Symbol('CAPACIDADES_PROPIAS_ORQUESTADOR');
+
+/**
  * Puerto de capacidades del orquestador de B2 y B3 (decision 44). Para el
  * nucleo es un `PuertoCapacidades` mas; por dentro reparte: las dos habilidades
  * de delegacion van al puerto de especialistas (en proceso o A2A) y las tres
@@ -46,6 +54,9 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
     @Inject(PUERTO_ESPECIALISTAS) private readonly especialistas: PuertoEspecialistas,
     @Inject(CapacidadesMcp) private readonly mcp: CapacidadesMcp,
     @Inject(PROTOCOLO_DELEGACION) private readonly protocolo: ProtocoloIntegracion,
+    @Optional()
+    @Inject(CAPACIDADES_PROPIAS_ORQUESTADOR)
+    private readonly propias: PuertoCapacidades | null = null,
   ) {
     const ajv = new Ajv({ allErrors: true, strict: false });
     for (const definicion of DEFINICIONES_HABILIDADES) {
@@ -54,7 +65,16 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
   }
 
   async listar(): Promise<readonly DescripcionCapacidad[]> {
-    return [...descripcionesHabilidades(), ...(await this.mcp.listar())];
+    const propias = this.propias === null ? [] : await this.propias.listar();
+    return [...descripcionesHabilidades(), ...(await this.mcp.listar()), ...propias];
+  }
+
+  /** `true` si la herramienta la atiende la arquitectura y no el servidor MCP (decision 60). */
+  private async esPropia(nombre: string): Promise<boolean> {
+    if (this.propias === null) {
+      return false;
+    }
+    return (await this.propias.listar()).some((d) => d.nombre === nombre);
   }
 
   async invocar(
@@ -63,6 +83,10 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
     contexto: ContextoInvocacion,
   ): Promise<ResultadoInvocacion> {
     const definicion = definicionHabilidadDe(nombre);
+    if (definicion === undefined && this.propias !== null && (await this.esPropia(nombre))) {
+      // Capacidad propia de la arquitectura: viaja por el protocolo del agente.
+      return this.propias.invocar(nombre, argumentos, contexto);
+    }
     if (definicion === undefined) {
       // Herramienta de tickets: viaja por MCP aunque el agente delegue por otro protocolo.
       return { ...(await this.mcp.invocar(nombre, argumentos, contexto)), transporte: 'mcp' };

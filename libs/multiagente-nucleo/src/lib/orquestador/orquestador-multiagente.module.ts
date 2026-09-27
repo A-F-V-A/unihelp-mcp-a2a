@@ -10,7 +10,7 @@ import { ConocimientoModule } from '@unihelp/conocimiento';
 import type { IdentidadServicio } from '@unihelp/contratos';
 import { PUERTO_CAPACIDADES } from '@unihelp/herramientas';
 import { TicketsModule } from '@unihelp/tickets';
-import { PROMPT_ORQUESTADOR } from '../prompts/prompt-orquestador';
+import { PROMPT_ORQUESTADOR, conSeccionAdicional } from '../prompts/prompt-orquestador';
 import { A2aOrquestadorController } from './a2a-orquestador.controller';
 import { CapacidadesOrquestador, PROTOCOLO_DELEGACION } from './capacidades-orquestador';
 
@@ -27,6 +27,17 @@ export interface OpcionesOrquestadorMultiagente {
   readonly especialistas: {
     readonly imports: readonly (Type<unknown> | DynamicModule)[];
     readonly puerto: Provider;
+  };
+  /**
+   * Opcional: capacidades que la arquitectura agrega a su orquestador y la
+   * seccion de prompt que le dice al modelo cuando usarlas (decision 60). El
+   * `puerto` enlaza `CAPACIDADES_PROPIAS_ORQUESTADOR`. Sin esta opcion (B3) el
+   * orquestador es exactamente el de la decision 44.
+   */
+  readonly capacidadesPropias?: {
+    readonly imports?: readonly (Type<unknown> | DynamicModule)[];
+    readonly puerto: Provider;
+    readonly seccionPrompt?: string;
   };
   /** B3: ademas del contrato REST, atiende `message/send` en `POST /a2a` (docs/03, 2.3). */
   readonly exponerA2a?: boolean;
@@ -54,10 +65,12 @@ export class OrquestadorMultiagenteModule {
   static forRoot(opciones: OpcionesOrquestadorMultiagente): DynamicModule {
     const entorno = opciones.entorno ?? process.env;
     const configuracion = opciones.configuracion ?? leerConfiguracionAgente(entorno);
+    const propias = opciones.capacidadesPropias;
     const puerto: DynamicModule = {
       module: PuertoOrquestadorModule,
       imports: [
         ...opciones.especialistas.imports,
+        ...(propias?.imports ?? []),
         CapacidadesMcpModule.forRoot({
           urlServidorMcp: leerUrlServidorMcp(entorno),
           agente: 'orquestador',
@@ -66,6 +79,7 @@ export class OrquestadorMultiagenteModule {
       ],
       providers: [
         opciones.especialistas.puerto,
+        ...(propias === undefined ? [] : [propias.puerto]),
         { provide: PROTOCOLO_DELEGACION, useValue: opciones.identidad.protocolo },
         CapacidadesOrquestador,
       ],
@@ -79,7 +93,10 @@ export class OrquestadorMultiagenteModule {
           identidad: opciones.identidad,
           configuracion,
           entorno,
-          prompt: PROMPT_ORQUESTADOR,
+          prompt:
+            propias?.seccionPrompt === undefined
+              ? PROMPT_ORQUESTADOR
+              : conSeccionAdicional(PROMPT_ORQUESTADOR, propias.seccionPrompt),
           agente: { nombre: 'orquestador' },
           imports: [ConocimientoModule.forRoot(), TicketsModule.forRoot(), puerto],
           puertoCapacidades: { provide: PUERTO_CAPACIDADES, useExisting: CapacidadesOrquestador },
