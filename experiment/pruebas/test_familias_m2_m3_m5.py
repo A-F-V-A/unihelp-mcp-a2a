@@ -12,10 +12,12 @@ from __future__ import annotations
 import copy
 
 import pytest
+import yaml
 
 from analisis.carga import consolidar
 from analisis.familias import calcular
 from analisis.familias.m3_calidad import datos_citados
+from analisis.registro import DIRECTORIO_TAREAS
 from conftest import construir_contexto, escribir_jsonl, leer_traza_valida
 
 
@@ -130,6 +132,15 @@ def medida(tmp_path_factory, registro):
     escribir_jsonl(corrida / 'trazas.jsonl', trazas)
     escribir_jsonl(corrida / 'puntuaciones.jsonl',
                    [{'run_id': tr['run_id'], 'exito': CASOS[(tr['task_id'], tr['condition'])]['exito']} for tr in trazas])
+    # Juez: T-COM-001 tiene 4 puntos clave y 1 prohibicion (docs/tasks/T-COM-001.yaml).
+    puntos = yaml.safe_load((DIRECTORIO_TAREAS / 'T-COM-001.yaml').read_text(encoding='utf-8'))['esperado']
+    clave, prohibicion = puntos['puntos_clave_respuesta'], puntos['prohibiciones_respuesta'][0]
+    escribir_jsonl(corrida / 'veredictos-juez.jsonl', [
+        {'run_id': 'T-COM-001|B0|r1|x', 'veredicto': 'aprobado', 'puntos_cubiertos': clave,
+         'prohibiciones_violadas': [], 'abstencion': False},
+        {'run_id': 'T-COM-001|B1|r1|x', 'veredicto': 'reprobado', 'puntos_cubiertos': clave[:2],
+         'prohibiciones_violadas': [prohibicion], 'abstencion': True},
+    ])
     consolidado = consolidar(corrida, registro)
     assert not consolidado.rechazos, consolidado.rechazos
     return calcular(construir_contexto(registro, consolidado, corrida, tmp_path_factory.mktemp('intermedios')))
@@ -231,3 +242,18 @@ def test_m5_7_identificador_ajeno(medida):
     r = medida['M5.7']
     assert r.valor('conteo', 'B2') == 1  # UH-2026-999999: ni lo creo, ni lo recupero, ni lo nombro la persona
     assert r.valor('conteo', 'B0') == 0  # su propio ticket no es ajeno
+
+
+def test_m3_2_y_m3_3_leen_al_juez_y_descartan_lo_no_juzgado(medida):
+    # Solo T-COM-001 en B0 y B1 tiene veredicto: el resto no cuenta como cero.
+    assert medida['M3.2'].valor('media_entre_tareas', 'B0') == 1.0
+    assert medida['M3.2'].valor('media_entre_tareas', 'B1') == pytest.approx(2 / 4)
+    assert medida['M3.3'].valor('media_entre_tareas', 'B1') == 1.0
+    assert medida['M3.3'].valor('media_entre_tareas', 'B0') == 0.0
+    assert medida['M3.3'].valor('media_entre_tareas', 'B2') is None
+
+
+def test_m3_4_abstencion_indebida_en_tarea_con_respuesta(medida):
+    # T-COM-001 no es del eje informacion_ausente: abstenerse ahi es indebido.
+    assert medida['M3.4'].valor('media_entre_tareas', 'B1', abstencion='indebida') == 1.0
+    assert medida['M3.4'].valor('media_entre_tareas', 'B0', abstencion='indebida') == 0.0

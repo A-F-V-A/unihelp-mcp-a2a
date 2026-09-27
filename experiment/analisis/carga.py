@@ -38,7 +38,7 @@ ARTEFACTO_VALIDACION = 'validacion'
 ARTEFACTO_TAREAS = 'tareas'
 ARTEFACTO_CUARENTENA = 'cuarentena'
 # Artefactos con una fila por ejecucion que se unen a la tabla consolidada.
-ARTEFACTOS_POR_EJECUCION = ('puntuaciones',)
+ARTEFACTOS_POR_EJECUCION = ('puntuaciones', 'veredictos_juez')
 # Artefactos que las familias consumen tal cual, sin unirlos a la tabla.
 INSUMOS = (
     'huellas_esperadas',
@@ -448,7 +448,7 @@ def _unir_por_ejecucion(
             continue
         clave = registro.artefactos[nombre]['clave']
         tabla = pd.DataFrame(
-            [{clave: extraer(d, clave), **{columna(nombre, c): extraer(d, c) for c in campos}} for d in datos],
+            [{clave: extraer(d, clave), **{columna(nombre, c): _plano(extraer(d, c)) for c in campos}} for d in datos],
             columns=[clave, *(columna(nombre, c) for c in campos)],
         )
         repetidas = tabla[tabla[clave].duplicated()][clave].tolist()

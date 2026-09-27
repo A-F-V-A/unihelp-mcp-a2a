@@ -46,8 +46,8 @@ multiagente (orquestador con modelo que delega en dos especialistas con modelo,
 (decisiones 44 y 45). Todas consumen `libs/conocimiento` y `libs/tickets` sobre
 PostgreSQL y responden el mismo contrato al frontend y al ejecutor, incluidas las
 rutas de restablecimiento y traza. El sistema de metricas (`experiment/`,
-Python) implementa 35 de las 43 metricas (M1, M2, M3.1, M3.5, M3.6, M4, M5 y M7;
-decision 51) y 30 tienen valor en las corridas reales, con el costo sobre la tabla `experiment/tarifas.yaml` (decision
+Python) implementa 38 de las 43 metricas (M1, M2, M3, M4, M5 y M7; decisiones 51
+y 52) y 30 tienen valor en las corridas reales (M3.2-M3.4 esperan al juez), con el costo sobre la tabla `experiment/tarifas.yaml` (decision
 50); faltan las que exigen juez, revisores, microbenchmark o la sexta
 herramienta. Las cuatro arquitecturas tienen corridas completas de las 40
 tareas con cinco modelos, y todos entran al analisis como factor (decision 49).
@@ -159,7 +159,7 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   fixtures/ pruebas/     Generador de corrida sintetica y pytest
   ejecutor/              Corre las 40 tareas contra una arquitectura: trazas y compuerta automatica
   visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
-  juez/                  Fuente del juez LLM (futuro)
+  juez/                  Juez de calidad: prompt versionado, lotes ciegos y veredictos (decision 52)
   resultados/            Corridas archivadas con su procedencia: SI se versionan (decision 47)
   resultados-finales/    Zip con todos los datos clasificados, consolidados y el catalogo de metricas
                          (resultados/paquete.py); se versiona solo el .zip

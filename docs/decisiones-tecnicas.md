@@ -1541,3 +1541,44 @@ Consecuencias: las 12 corridas archivadas con trazas se recalcularon; las
 metricas que ya existian quedaron identicas. Siguen pendientes M3.2-M3.4 y
 M7.5 (juez), M7.4 (revisores), M4.3 (microbenchmark), M7.6 (reproduccion),
 M7.7 (corrida de control) y M6 (sexta herramienta).
+
+## 52. El juez de calidad es Claude en una sesion del proyecto, sobre lotes ciegos
+
+> Tomada el 27 de septiembre de 2026 por el responsable del proyecto: no gastar
+> mas en API; el juicio lo hace Claude con la suscripcion del equipo.
+
+Contexto: la compuerta 2 de docs/04 exige un juez con un modelo distinto al de
+ejecucion, temperatura 0 y ciego a la arquitectura, sobre la respuesta final,
+los puntos clave, las prohibiciones y lo recuperado. Juzgar las 3 302
+ejecuciones por API costaba entre 12 y 80 USD.
+
+Decision:
+
+- El juez es **Claude** (Opus 5.5) en una sesion del proyecto AFVA con la
+  carpeta del repositorio conectada. Es de otra familia que todos los modelos
+  evaluados (GPT, Gemini, Qwen), asi que cumple "modelo distinto" en todas las
+  corridas sin excepciones.
+- Las instrucciones estan versionadas en `experiment/juez/prompt-v1.md`:
+  veredicto `aprobado` solo si cubre TODOS los puntos clave y no viola ninguna
+  prohibicion; abstencion = declara explicitamente que no puede responder en vez
+  de responder. Es el criterio v1; si el acuerdo con los humanos (M7.5) no llega
+  al 85 %, se refina a v2 y se recalifica todo, conservando ambas (docs/04).
+- `juez/preparar_lotes.py` arma lotes ciegos: sin arquitectura, modelo,
+  corrida, `run_id` ni `traceId` (los resultados de los tickets los traian y se
+  borran), solo con los resultados de las cinco herramientas (las delegaciones
+  delatarian B2/B3). Cada corrida ocupa lotes contiguos, barajados por dentro.
+- `juez/incorporar.py` valida cada lote contra su original y solo incorpora
+  corridas completas: escribe `veredictos-juez.jsonl` y `juez.json` y pone
+  `exito = compuerta_automatica AND aprobado` en `puntuaciones.jsonl` (RM-16).
+- Se implementan M3.2, M3.3 y M3.4 (registro 1.2.0). M3.4 identifica las
+  "cuatro tareas sin respuesta posible" del plan por el eje
+  `informacion_ausente` (T-COM-006, T-DIA-006, T-INF-008, T-INF-009): la fuente
+  anterior del registro, `politicas_requeridas` vacia, abarcaba veinte tareas y
+  contradecia el propio plan.
+
+Consecuencias y limites: la temperatura de la sesion no es controlable, asi que
+el juez puede no ser determinista (desviacion de docs/04; la valida M7.5). En 32
+respuestas de T-ADV-007 el propio agente dice «el especialista» y delata el
+multiagente; es el texto calificado y no se altera. Los tokens del juez no son
+de ninguna arquitectura (D7) y no se miden. Mientras una corrida no este juzgada
+entera, su `exito` sigue siendo solo la compuerta.

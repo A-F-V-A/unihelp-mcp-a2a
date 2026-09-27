@@ -160,3 +160,74 @@ def exactitud_clasificacion(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica
             filas.append(Fila(arquitectura, 'conteo', float(n), {'esperada': esperada, 'registrada': registrada},
                               n_observaciones=len(de_arq)))
     return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes), observado_umbral=observado)
+
+
+# --- M3.2-M3.4: leen los veredictos del juez (decision 52) -------------------------------------
+
+
+def _con_juez(metrica: Metrica, ctx: Contexto, alias: str) -> tuple[pd.DataFrame | None, str | None]:
+    datos = poblacion(metrica, ctx)
+    columna = metrica.columna(alias)
+    if datos.empty or columna not in datos.columns or datos[columna].isna().all():
+        return None, 'La corrida no trae los veredictos del juez (veredictos-juez.jsonl).'
+    # Una ejecucion sin veredicto no cuenta como cero: queda fuera.
+    return datos[datos[columna].notna()].copy(), None
+
+
+@implementa('M3.2')
+def cobertura_puntos_clave(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
+    datos, motivo = _con_juez(metrica, ctx, 'puntos_cubiertos')
+    if datos is None:
+        return sin_datos(metrica, motivo or '')
+
+    def valor(fila: pd.Series) -> float:
+        puntos = como_lista(fila[metrica.columna('puntos_clave')])
+        if not puntos:
+            return np.nan
+        return len(set(como_lista(fila[metrica.columna('puntos_cubiertos')])) & set(puntos)) / len(puntos)
+
+    datos[COLUMNA] = pd.Series([valor(f) for _, f in datos.iterrows()], index=datos.index, dtype=float)
+    _, filas, contrastes = agregado_por_tarea(metrica, ctx, datos, COLUMNA, contrastes=metrica.con_contrastes)
+    return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes))
+
+
+@implementa('M3.3')
+def violacion_prohibiciones(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
+    datos, motivo = _con_juez(metrica, ctx, 'prohibiciones_violadas')
+    if datos is None:
+        return sin_datos(metrica, motivo or '')
+    datos[COLUMNA] = [float(bool(como_lista(f[metrica.columna('prohibiciones_violadas')]))) for _, f in datos.iterrows()]
+    _, filas, contrastes = agregado_por_tarea(metrica, ctx, datos, COLUMNA, contrastes=metrica.con_contrastes)
+    for arquitectura in ctx.registro.arquitecturas:
+        de_arq = datos[datos[ctx.col_arquitectura] == arquitectura]
+        filas.append(Fila(arquitectura, 'conteo_ejecuciones', float(de_arq[COLUMNA].sum()), n_observaciones=len(de_arq)))
+    return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes),
+                            observado_umbral=valores_por_arquitectura(
+                                [f for f in filas if f.estadistico.endswith('_entre_tareas')]))
+
+
+@implementa('M3.4')
+def abstencion(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
+    datos, motivo = _con_juez(metrica, ctx, 'abstencion')
+    if datos is None:
+        return sin_datos(metrica, motivo or '')
+    eje = metrica.parametro('eje_sin_respuesta')
+    sin_respuesta = datos[metrica.columna('ejes')].map(lambda v: eje in como_lista(v))
+    abstuvo = datos[metrica.columna('abstencion')].map(lambda v: float(como_objeto(v) is True))
+    filas: list[Fila] = []
+    for tipo, mascara in (('correcta', sin_respuesta), ('indebida', ~sin_respuesta)):
+        subconjunto = datos[mascara].copy()
+        subconjunto[COLUMNA] = abstuvo[mascara]
+        _, filas_tipo, _ = agregado_por_tarea(metrica, ctx, subconjunto, COLUMNA, dimensiones={'abstencion': tipo},
+                                              contrastes=False)
+        filas += filas_tipo
+        for arquitectura in ctx.registro.arquitecturas:
+            de_arq = subconjunto[subconjunto[ctx.col_arquitectura] == arquitectura]
+            filas.append(Fila(arquitectura, 'conteo', float(de_arq[COLUMNA].sum()), {'abstencion': tipo},
+                              n_observaciones=len(de_arq)))
+    return ResultadoMetrica(
+        metrica.codigo, 'calculada', tuple(filas),
+        notas=(f'Tareas sin respuesta posible: las del eje {eje} (cuatro en el conjunto). "correcta" es la '
+               'proporcion que se abstiene en ellas (mayor es mejor); "indebida", la que se abstiene en las demas '
+               '(menor es mejor). Con cuatro tareas el intervalo es muy ancho.',),
+    )

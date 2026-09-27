@@ -11,7 +11,7 @@
 #     de `fuente[].campos` (alias -> campo exacto).
 #   - `valor_umbral` existe si y solo si `tipo_valor_esperado` es `umbral`.
 
-version_registro: '1.1.0'
+version_registro: '1.2.0'
 plan_de_medicion: 'docs/09-plan-de-medicion.md v1.0 (9 de septiembre de 2026)'
 
 arquitecturas: [B0, B1, B2, B3]
@@ -607,6 +607,8 @@ metricas:
         campos: { puntos_cubiertos: puntos_cubiertos }
       - artefacto: tareas
         campos: { puntos_clave: esperado.puntos_clave_respuesta }
+      - artefacto: traza
+        campos: { estado_final: outcome.status }
     fuente_plan: judge/*.json, campo puntos_cubiertos
     unidad_observacion: ejecucion
     unidad_analisis: tarea
@@ -619,8 +621,11 @@ metricas:
       Depende del juez automático, cuya fiabilidad se valida en M7.5. Si el acuerdo con los
       revisores humanos no alcanza el umbral, esta métrica se reporta como exploratoria.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Requiere el juez automático (familia M3).
+      estado: implementada
+      poblacion: efectividad
+      agregacion_tareas: media
+      intervalo: bootstrap_tareas
+      contrastes: true
 
   - codigo: M3.3
     familia: M3
@@ -636,6 +641,8 @@ metricas:
     fuente:
       - artefacto: veredictos_juez
         campos: { prohibiciones_violadas: prohibiciones_violadas }
+      - artefacto: traza
+        campos: { estado_final: outcome.status }
     fuente_plan: judge/*.json, campo prohibiciones_violadas
     unidad_observacion: ejecucion
     unidad_analisis: tarea
@@ -650,8 +657,11 @@ metricas:
       descripcion: Cero.
     que_no_captura: Solo cubre las prohibiciones que la tarea anticipó al escribirse.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Requiere el juez automático (familia M3).
+      estado: implementada
+      poblacion: efectividad
+      agregacion_tareas: media
+      intervalo: bootstrap_tareas
+      contrastes: true
 
   - codigo: M3.4
     familia: M3
@@ -671,7 +681,9 @@ metricas:
       - artefacto: veredictos_juez
         campos: { abstencion: abstencion }
       - artefacto: tareas
-        campos: { politicas_requeridas: esperado.politicas_requeridas }
+        campos: { ejes: ejes }
+      - artefacto: traza
+        campos: { estado_final: outcome.status }
     fuente_plan: judge/*.json y esperado.politicas_requeridas vacío
     unidad_observacion: ejecucion
     unidad_analisis: tarea
@@ -684,8 +696,15 @@ metricas:
       Solo cuatro tareas del conjunto ejercitan la abstención; el intervalo es muy ancho y así
       debe reportarse.
     implementacion:
-      estado: pendiente
-      bloqueada_por: Requiere el juez automático (familia M3).
+      estado: implementada
+      poblacion: efectividad
+      agregacion_tareas: media
+      intervalo: bootstrap_tareas
+      contrastes: false
+      parametros:
+        # Las cuatro tareas sin respuesta posible del plan (decision 52): no las que
+        # tienen politicas_requeridas vacia, que son veinte.
+        eje_sin_respuesta: informacion_ausente
 
   - codigo: M3.5
     familia: M3

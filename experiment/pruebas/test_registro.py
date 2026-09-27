@@ -13,7 +13,7 @@ from analisis.registro import RUTA_REGISTRO, ErrorRegistro, cargar_registro
 IMPLEMENTADAS_ESPERADAS = {
     *(f'M1.{i}' for i in range(1, 6)),
     *(f'M2.{i}' for i in range(1, 7)),
-    'M3.1', 'M3.5', 'M3.6',
+    *(f'M3.{i}' for i in range(1, 7)),
     *(f'M4.{i}' for i in range(1, 8)),
     *(f'M5.{i}' for i in range(1, 8)),
     *(f'M7.{i}' for i in range(1, 8)),
@@ -50,7 +50,7 @@ def test_toda_metrica_implementada_tiene_funcion_y_toda_funcion_tiene_ficha(regi
 
 def test_falla_si_el_registro_declara_implementada_una_metrica_sin_funcion(tmp_path, contexto):
     def marcar(datos):
-        _metrica(datos, 'M3.2')['implementacion'] = {
+        _metrica(datos, 'M6.2')['implementacion'] = {
             'estado': 'implementada',
             'poblacion': 'efectividad',
             'agregacion_tareas': 'media',
@@ -59,8 +59,8 @@ def test_falla_si_el_registro_declara_implementada_una_metrica_sin_funcion(tmp_p
         }
 
     registro = cargar_registro(_registro_modificado(tmp_path, marcar))
-    assert diferencias_con_registro(registro) == (['M3.2'], [])
-    with pytest.raises(ErrorRegistro, match='M3.2'):
+    assert diferencias_con_registro(registro) == (['M6.2'], [])
+    with pytest.raises(ErrorRegistro, match='M6.2'):
         calcular(type(contexto)(**{**contexto.__dict__, 'registro': registro}))
 
 

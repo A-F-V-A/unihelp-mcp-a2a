@@ -75,6 +75,10 @@ experiment/casetes/
 # Paquete final de datos: se versiona solo el .zip; la carpeta descomprimida
 # repite lo que ya esta en experiment/resultados/ (resultados/paquete.py la rehace).
 experiment/resultados-finales/*/
+# Lotes ciegos del juez y su clave: se regeneran con juez/preparar_lotes.py (semilla fija).
+# La clave no se versiona para que el juez no la tenga a la vista.
+experiment/juez/lotes/
+experiment/juez/clave-ciega.json
 # Corridas del visor en vivo: observaciones, reporte HTML, videos y trazas de Playwright.
 experiment/visor/salidas/
 
