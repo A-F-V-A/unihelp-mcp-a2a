@@ -35,7 +35,7 @@
     "version_esquema_traza": "1.0.0",
     "version_registro": "1.2.0"
   },
-  "generado_en": "2026-09-27T16:14:33Z",
+  "generado_en": "2026-09-27T21:35:46Z",
   "metricas": [
     {
       "codigo": "M1.1",
@@ -7125,22 +7125,76 @@
       "codigo": "M7.4",
       "contrastes": [],
       "direccion": "mayor_es_mejor",
-      "estado": "sin_datos",
+      "estado": "calculada",
       "familia": "M7",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": null,
+          "dimensiones": {},
+          "estadistico": "kappa_cohen",
+          "intervalo": null,
+          "n_observaciones": 27,
+          "n_tareas": null,
+          "valor": 0.44898
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "categoria": "informativa"
+          },
+          "estadistico": "kappa_cohen",
+          "intervalo": null,
+          "n_observaciones": 6,
+          "n_tareas": null,
+          "valor": 0.666667
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "categoria": "diagnostico"
+          },
+          "estadistico": "kappa_cohen",
+          "intervalo": null,
+          "n_observaciones": 7,
+          "n_tareas": null,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "categoria": "compuesta"
+          },
+          "estadistico": "kappa_cohen",
+          "intervalo": null,
+          "n_observaciones": 7,
+          "n_tareas": null,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "categoria": "adversarial"
+          },
+          "estadistico": "kappa_cohen",
+          "intervalo": null,
+          "n_observaciones": 7,
+          "n_tareas": null,
+          "valor": 0.125
+        }
+      ],
       "hipotesis": [
         "ninguna"
       ],
-      "motivo_estado": "La corrida no trae la calificacion humana.",
+      "motivo_estado": null,
       "nombre": "Acuerdo entre revisores",
       "notas": [],
       "rol": "control",
       "tipo_valor_esperado": "umbral",
       "umbral": {
-        "alcanza": null,
+        "alcanza": false,
         "consecuencia": "La rúbrica no es aplicable de forma replicable: los desacuerdos se adjudican y las métricas que dependen de la calificación se reportan como exploratorias.",
         "descripcion": "Al menos 0,75 (global).",
-        "observado": null,
+        "observado": 0.44898,
         "operador": ">=",
         "valor": 0.75
       },
@@ -7151,22 +7205,68 @@
       "codigo": "M7.5",
       "contrastes": [],
       "direccion": "mayor_es_mejor",
-      "estado": "sin_datos",
+      "estado": "calculada",
       "familia": "M7",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": null,
+          "dimensiones": {},
+          "estadistico": "proporcion",
+          "intervalo": null,
+          "n_observaciones": 27,
+          "n_tareas": null,
+          "valor": 0.703704
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {},
+          "estadistico": "proporcion",
+          "intervalo": null,
+          "n_observaciones": 8,
+          "n_tareas": null,
+          "valor": 0.875
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {},
+          "estadistico": "proporcion",
+          "intervalo": null,
+          "n_observaciones": 6,
+          "n_tareas": null,
+          "valor": 0.666667
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {},
+          "estadistico": "proporcion",
+          "intervalo": null,
+          "n_observaciones": 7,
+          "n_tareas": null,
+          "valor": 0.571429
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {},
+          "estadistico": "proporcion",
+          "intervalo": null,
+          "n_observaciones": 6,
+          "n_tareas": null,
+          "valor": 0.666667
+        }
+      ],
       "hipotesis": [
         "ninguna"
       ],
-      "motivo_estado": "Faltan los veredictos del juez o la calificacion humana.",
+      "motivo_estado": null,
       "nombre": "Acuerdo entre juez y humano",
       "notas": [],
       "rol": "control",
       "tipo_valor_esperado": "umbral",
       "umbral": {
-        "alcanza": null,
+        "alcanza": false,
         "consecuencia": "Si el acuerdo es desigual entre arquitecturas, hay sesgo del juez y todas las métricas que dependen de él pasan a exploratorias.",
         "descripcion": "Al menos 0,85 global. La ausencia de diferencia sistemática entre arquitecturas se muestra en el desglose y se juzga a mano: el plan no fija un criterio numérico para ella.",
-        "observado": null,
+        "observado": 0.703704,
         "operador": ">=",
         "valor": 0.85
       },

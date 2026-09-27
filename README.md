@@ -28,9 +28,9 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 > arquitectura corre todavia en Docker con el agente real (ver
 > [B0 con el agente real](#b0-con-el-agente-real)).
 > El sistema de metricas ([`experiment/`](experiment/README.md)) implementa 38
-> de las 43 metricas (M1 a M5 y M7) y 34 tienen valor sobre las corridas reales
+> de las 43 metricas (M1 a M5 y M7) y 36 tienen valor sobre las corridas reales
 > archivadas en `experiment/resultados/`, con cinco modelos y el juez de calidad;
-> M7.4-M7.7 esperan su insumo (revision humana, reproduccion, corrida de control)
+> M7.6 y M7.7 esperan su insumo (reproduccion, corrida de control)
 > y M6 la sexta herramienta.
 
 ---

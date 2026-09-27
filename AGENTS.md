@@ -47,7 +47,7 @@ multiagente (orquestador con modelo que delega en dos especialistas con modelo,
 PostgreSQL y responden el mismo contrato al frontend y al ejecutor, incluidas las
 rutas de restablecimiento y traza. El sistema de metricas (`experiment/`,
 Python) implementa 38 de las 43 metricas (M1, M2, M3, M4, M5 y M7; decisiones 51
-y 52) y 34 tienen valor en las corridas reales (juez incorporado; M4.3 del
+y 52) y 36 tienen valor en las corridas reales (juez, revision humana y M4.3 del
 microbenchmark, decision 55), con el costo sobre la tabla `experiment/tarifas.yaml` (decision
 50) y el piso de transporte M4.3 sobre `experiment/bench-transport.json`
 (decision 55); faltan las que exigen revisores o la sexta herramienta. Las cuatro arquitecturas tienen corridas completas de las 40
