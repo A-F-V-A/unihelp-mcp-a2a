@@ -1,5 +1,6 @@
 export * from './lib/definiciones-herramientas';
 export * from './lib/detector-instrucciones';
+export * from './lib/disponibilidad-soporte';
 export * from './lib/ejecutor-capacidad';
 export * from './lib/entorno-local';
 export * from './lib/errores-herramienta';

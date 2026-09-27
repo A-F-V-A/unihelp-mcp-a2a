@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import type { DynamicModule } from '@nestjs/common';
 import { CapacidadesModule } from '@unihelp/capacidades';
 import { type ConfiguracionMcp, leerConfiguracionMcp } from './configuracion-mcp';
+import { HerramientasAdicionales } from './herramientas-adicionales';
 import { McpController } from './mcp.controller';
 import { ServidorHerramientasMcp } from './servidor-herramientas-mcp';
 import { SesionesMcp } from './sesiones-mcp';
@@ -18,7 +19,7 @@ export class McpModule {
       module: McpModule,
       imports: [CapacidadesModule.forRoot({ limiteLlamadas: configuracion.limiteLlamadas })],
       controllers: [McpController],
-      providers: [ServidorHerramientasMcp, SesionesMcp],
+      providers: [ServidorHerramientasMcp, SesionesMcp, HerramientasAdicionales],
     };
   }
 }

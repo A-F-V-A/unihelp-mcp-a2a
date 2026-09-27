@@ -12,16 +12,22 @@ prompt derivado del base ([`docs/prompt-diffs.md`](../../docs/prompt-diffs.md)),
 dos herramientas de delegacion y las tres de tickets por MCP con
 `X-Agent-Id: orquestador` (HU-20).
 
-| Archivo                                                                                            | Contenido                                                                                                               |
-| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| [`src/app/app.module.ts`](src/app/app.module.ts)                                                   | Cablea `OrquestadorMultiagenteModule` con `EspecialistasA2a` y expone `/a2a`.                                           |
-| [`src/app/especialistas-a2a/especialistas-a2a.ts`](src/app/especialistas-a2a/especialistas-a2a.ts) | `PuertoEspecialistas` por A2A: resuelve por `skills[].id`, envia `message/send` con `X-Trace-Id`, mide la ida y vuelta. |
-| [`src/app/registro-a2a/registro-a2a.service.ts`](src/app/registro-a2a/registro-a2a.service.ts)     | Descubrimiento (HU-29): lee `config/a2a-registry.yaml`, consulta cada Agent Card y reintenta si una habilidad falta.    |
-| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts)       | `GET /.well-known/agent-card.json` con la tarjeta del orquestador (`tarjetaAgente`).                                    |
-| [`src/app/aislamiento.spec.ts`](src/app/aislamiento.spec.ts)                                       | Prueba de arquitectura: el orquestador no importa a los especialistas (docs/03, 1).                                     |
-| [`src/app/salud/`](src/app/salud/)                                                                 | `GET /health` con la identidad de B3 (`protocolo: a2a`).                                                                |
-| [`config/a2a-registry.yaml`](config/a2a-registry.yaml)                                             | URL base de cada especialista (`${A2A_CONOCIMIENTO_URL}`, `${A2A_DIAGNOSTICO_URL}`).                                    |
-| [`.env.example`](.env.example)                                                                     | Variables: servidor MCP, registro, `A2A_SELF_URL`, modelo, casetes, perfil de experimento, PostgreSQL.                  |
+Ademas, B3 habilita en su orquestador la **sexta herramienta**,
+`consultar_disponibilidad_soporte` (HU-43): viaja por MCP con el mismo rol y el
+prompt agrega la seccion DISPONIBILIDAD DE SOPORTE TECNICO EN LAS SEDES. B2 no
+la habilita, asi que su orquestador ve y lee exactamente lo mismo que antes.
+
+| Archivo                                                                                            | Contenido                                                                                                                     |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`src/app/app.module.ts`](src/app/app.module.ts)                                                   | Cablea `OrquestadorMultiagenteModule` con `EspecialistasA2a` y expone `/a2a`.                                                 |
+| [`src/app/especialistas-a2a/especialistas-a2a.ts`](src/app/especialistas-a2a/especialistas-a2a.ts) | `PuertoEspecialistas` por A2A: resuelve por `skills[].id`, envia `message/send` con `X-Trace-Id`, mide la ida y vuelta.       |
+| [`src/app/registro-a2a/registro-a2a.service.ts`](src/app/registro-a2a/registro-a2a.service.ts)     | Descubrimiento (HU-29): lee `config/a2a-registry.yaml`, consulta cada Agent Card y reintenta si una habilidad falta.          |
+| [`src/app/agent-card/agent-card.controller.ts`](src/app/agent-card/agent-card.controller.ts)       | `GET /.well-known/agent-card.json` con la tarjeta del orquestador (`tarjetaAgente`).                                          |
+| [`src/e2e/disponibilidad-soporte.e2e-spec.ts`](src/e2e/disponibilidad-soporte.e2e-spec.ts)         | Punta a punta de la sexta herramienta con `pnpm dev:b3` arriba: `pnpm nx e2e b3-a2a-orquestador` (no entra en `pnpm verify`). |
+| [`src/app/aislamiento.spec.ts`](src/app/aislamiento.spec.ts)                                       | Prueba de arquitectura: el orquestador no importa a los especialistas (docs/03, 1).                                           |
+| [`src/app/salud/`](src/app/salud/)                                                                 | `GET /health` con la identidad de B3 (`protocolo: a2a`).                                                                      |
+| [`config/a2a-registry.yaml`](config/a2a-registry.yaml)                                             | URL base de cada especialista (`${A2A_CONOCIMIENTO_URL}`, `${A2A_DIAGNOSTICO_URL}`).                                          |
+| [`.env.example`](.env.example)                                                                     | Variables: servidor MCP, registro, `A2A_SELF_URL`, modelo, casetes, perfil de experimento, PostgreSQL.                        |
 
 ## Rutas
 

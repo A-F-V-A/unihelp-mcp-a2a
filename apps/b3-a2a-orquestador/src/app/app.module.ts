@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { NOMBRE_DISPONIBILIDAD_SOPORTE } from '@unihelp/herramientas';
 import { OrquestadorMultiagenteModule, PUERTO_ESPECIALISTAS } from '@unihelp/multiagente-nucleo';
 import { AgentCardModule } from './agent-card/agent-card.module';
 import { EspecialistasA2a } from './especialistas-a2a/especialistas-a2a';
@@ -11,7 +12,8 @@ import { SaludModule } from './salud/salud.module';
  * dos delegaciones y las herramientas de tickets por MCP) con una sola
  * diferencia: `PUERTO_ESPECIALISTAS` se enlaza con `EspecialistasA2a`, un
  * cliente que descubre a los especialistas por su Agent Card y les envia
- * `message/send` por HTTP. Nada mas cambia (H3, RNF-01; decision 44).
+ * `message/send` por HTTP. Nada mas cambia (H3, RNF-01; decision 44), salvo
+ * que B3 habilita la sexta herramienta en su orquestador (HU-43).
  *
  * Ademas del contrato REST que usan el frontend y el ejecutor, publica su Agent
  * Card y atiende `message/send` en `/a2a` (docs/03, 2.3). Las rutas del ejecutor
@@ -28,6 +30,9 @@ import { SaludModule } from './salud/salud.module';
         puerto: { provide: PUERTO_ESPECIALISTAS, useExisting: EspecialistasA2a },
       },
       exponerA2a: true,
+      // Sexta herramienta (HU-43): solo el orquestador de B3 la ve y la invoca,
+      // por MCP con X-Agent-Id: orquestador. B2 no la habilita.
+      herramientasAdicionales: [NOMBRE_DISPONIBILIDAD_SOPORTE],
     }),
   ],
 })

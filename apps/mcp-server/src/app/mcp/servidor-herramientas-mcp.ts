@@ -23,6 +23,8 @@ import {
   type DefinicionHerramienta,
   type ResultadoCapacidad,
   ahoraMonotonoMs,
+  esHerramientaAdicional,
+  herramientasAdicionalesDe,
 } from '@unihelp/herramientas';
 
 /**
@@ -66,9 +68,25 @@ export function sinPrivilegio(
   nombreHerramienta: string,
 ): CallToolResult | null {
   const agentId = cabecera(cabeceras, CABECERA_AGENT_ID);
-  if (!agentId) return null; // B1 o inspector: sin restriccion
+  if (!agentId) {
+    // B1 o inspector: sin restriccion sobre las cinco del contrato. Una
+    // herramienta adicional (HU-43) exige un rol con permiso: sin rol no se
+    // publica en tools/list y tampoco se puede invocar.
+    if (!esHerramientaAdicional(nombreHerramienta)) return null;
+    const error: ErrorHerramientaMcpDto = {
+      codigo: 'SIN_AUTORIZACION',
+      mensaje: `La herramienta «${nombreHerramienta}» solo está disponible para agentes con un rol autorizado (cabecera ${CABECERA_AGENT_ID}).`,
+    };
+    return {
+      isError: true,
+      content: [{ type: 'text', text: JSON.stringify({ error }) }],
+      _meta: { [META_MCP.error]: error },
+    };
+  }
 
-  const permitidas = PERMISOS_AGENTE[agentId];
+  const base = PERMISOS_AGENTE[agentId];
+  const permitidas =
+    base === undefined ? undefined : [...base, ...herramientasAdicionalesDe(agentId)];
   if (!permitidas) {
     // Agente desconocido: ninguna herramienta permitida
     const error: ErrorHerramientaMcpDto = {
@@ -173,9 +191,18 @@ export class ServidorHerramientasMcp {
       capabilities: { tools: { listChanged: true } },
     });
 
-    servidor.setRequestHandler(ListToolsRequestSchema, async () => ({
-      tools: this.registro.definiciones.map(aHerramientaMcp),
-    }));
+    servidor.setRequestHandler(ListToolsRequestSchema, async (_peticion, extra) => {
+      // Las herramientas adicionales (HU-43) solo se publican al rol que puede
+      // invocarlas: sin rol, la lista es la del contrato y su instantanea (RNF-01).
+      const adicionales = herramientasAdicionalesDe(
+        cabecera(extra.requestInfo?.headers, CABECERA_AGENT_ID),
+      );
+      return {
+        tools: this.registro.definiciones
+          .filter((d) => !esHerramientaAdicional(d.nombre) || adicionales.includes(d.nombre))
+          .map(aHerramientaMcp),
+      };
+    });
 
     servidor.setRequestHandler(CallToolRequestSchema, async (peticion, extra) => {
       // Filtro de privilegios: cada agente B3 solo puede invocar sus herramientas (HU-20).

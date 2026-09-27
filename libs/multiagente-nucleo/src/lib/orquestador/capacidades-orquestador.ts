@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { CapacidadesMcp } from '@unihelp/capacidades-mcp';
 import type { MedicionReceptorDto } from '@unihelp/contratos';
 import { META_A2A } from '@unihelp/contratos';
@@ -12,6 +12,7 @@ import {
   type PuertoCapacidades,
   type ResultadoInvocacion,
   envolverContenidoRecuperado,
+  esHerramientaAdicional,
   marcadorDeEjecucion,
 } from '@unihelp/herramientas';
 import Ajv, { type ValidateFunction } from 'ajv';
@@ -25,6 +26,14 @@ import { PUERTO_ESPECIALISTAS, type PuertoEspecialistas } from './puerto-especia
 
 /** `a2a` en B3, `en-proceso` en B2: el transporte con el que se firma cada delegacion en la traza. */
 export const PROTOCOLO_DELEGACION = Symbol('PROTOCOLO_DELEGACION');
+
+/**
+ * Herramientas adicionales (fuera de las cinco del contrato) que la arquitectura
+ * habilita en el orquestador. B3 habilita `consultar_disponibilidad_soporte`
+ * (HU-43); B2 no enlaza el token y su orquestador sigue viendo exactamente lo
+ * mismo que antes, aunque el servidor MCP le publique la herramienta a su rol.
+ */
+export const HERRAMIENTAS_ADICIONALES_ORQUESTADOR = Symbol('HERRAMIENTAS_ADICIONALES_ORQUESTADOR');
 
 /**
  * Puerto de capacidades del orquestador de B2 y B3 (decision 44). Para el
@@ -46,6 +55,9 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
     @Inject(PUERTO_ESPECIALISTAS) private readonly especialistas: PuertoEspecialistas,
     @Inject(CapacidadesMcp) private readonly mcp: CapacidadesMcp,
     @Inject(PROTOCOLO_DELEGACION) private readonly protocolo: ProtocoloIntegracion,
+    @Optional()
+    @Inject(HERRAMIENTAS_ADICIONALES_ORQUESTADOR)
+    private readonly adicionales: readonly string[] | null = null,
   ) {
     const ajv = new Ajv({ allErrors: true, strict: false });
     for (const definicion of DEFINICIONES_HABILIDADES) {
@@ -54,7 +66,13 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
   }
 
   async listar(): Promise<readonly DescripcionCapacidad[]> {
-    return [...descripcionesHabilidades(), ...(await this.mcp.listar())];
+    const mcp = await this.mcp.listar();
+    return [...descripcionesHabilidades(), ...mcp.filter((h) => this.habilitada(h.nombre))];
+  }
+
+  /** Una herramienta adicional solo existe para el modelo si la arquitectura la habilito. */
+  private habilitada(nombre: string): boolean {
+    return !esHerramientaAdicional(nombre) || (this.adicionales ?? []).includes(nombre);
   }
 
   async invocar(
@@ -63,6 +81,14 @@ export class CapacidadesOrquestador implements PuertoCapacidades {
     contexto: ContextoInvocacion,
   ): Promise<ResultadoInvocacion> {
     const definicion = definicionHabilidadDe(nombre);
+    if (definicion === undefined && !this.habilitada(nombre)) {
+      return {
+        ok: false,
+        error: new ErrorHerramienta('VALIDACION_ENTRADA', `La herramienta «${nombre}» no existe.`),
+        durMs: 0,
+        rttMs: 0,
+      };
+    }
     if (definicion === undefined) {
       // Herramienta de tickets: viaja por MCP aunque el agente delegue por otro protocolo.
       return { ...(await this.mcp.invocar(nombre, argumentos, contexto)), transporte: 'mcp' };

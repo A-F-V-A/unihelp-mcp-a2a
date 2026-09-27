@@ -26,15 +26,16 @@ agentes que hablan MCP: B1 hoy, los especialistas de B3 despues.
   La sexta herramienta sigue sellada; el mecanismo se prueba con una
   herramienta que solo existe en los specs.
 
-| Archivo                                                                                | Contenido                                                              |
-| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [`src/app/mcp/mcp.module.ts`](src/app/mcp/mcp.module.ts)                               | Importa `CapacidadesModule` y registra el servidor.                    |
-| [`src/app/mcp/mcp.controller.ts`](src/app/mcp/mcp.controller.ts)                       | `POST`/`GET`/`DELETE /mcp` -> transporte del SDK.                      |
-| [`src/app/mcp/sesiones-mcp.ts`](src/app/mcp/sesiones-mcp.ts)                           | Una sesion por cliente; emite `list_changed` a todas.                  |
-| [`src/app/mcp/servidor-herramientas-mcp.ts`](src/app/mcp/servidor-herramientas-mcp.ts) | `tools/list`, `tools/call`, contexto de la llamada y `_meta`.          |
-| [`src/app/mcp/configuracion-mcp.ts`](src/app/mcp/configuracion-mcp.ts)                 | `UNIHELP_LIMITE_LLAMADAS_HERRAMIENTA` (20).                            |
-| [`src/app/mcp/contrato.spec.ts`](src/app/mcp/contrato.spec.ts)                         | Instantanea, equivalencia B0-B1, anotaciones, errores, `list_changed`. |
-| [`src/app/mcp/transporte-http.spec.ts`](src/app/mcp/transporte-http.spec.ts)           | Cabecera de traza, sesiones y SSE sobre HTTP real.                     |
+| Archivo                                                                                | Contenido                                                                                     |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| [`src/app/mcp/mcp.module.ts`](src/app/mcp/mcp.module.ts)                               | Importa `CapacidadesModule` y registra el servidor.                                           |
+| [`src/app/mcp/mcp.controller.ts`](src/app/mcp/mcp.controller.ts)                       | `POST`/`GET`/`DELETE /mcp` -> transporte del SDK.                                             |
+| [`src/app/mcp/sesiones-mcp.ts`](src/app/mcp/sesiones-mcp.ts)                           | Una sesion por cliente; emite `list_changed` a todas.                                         |
+| [`src/app/mcp/servidor-herramientas-mcp.ts`](src/app/mcp/servidor-herramientas-mcp.ts) | `tools/list`, `tools/call`, contexto de la llamada y `_meta`.                                 |
+| [`src/app/mcp/herramientas-adicionales.ts`](src/app/mcp/herramientas-adicionales.ts)   | Agrega la sexta herramienta al registro; solo la ven e invocan los roles con permiso (HU-43). |
+| [`src/app/mcp/configuracion-mcp.ts`](src/app/mcp/configuracion-mcp.ts)                 | `UNIHELP_LIMITE_LLAMADAS_HERRAMIENTA` (20).                                                   |
+| [`src/app/mcp/contrato.spec.ts`](src/app/mcp/contrato.spec.ts)                         | Instantanea, equivalencia B0-B1, anotaciones, errores, `list_changed`.                        |
+| [`src/app/mcp/transporte-http.spec.ts`](src/app/mcp/transporte-http.spec.ts)           | Cabecera de traza, sesiones y SSE sobre HTTP real.                                            |
 
 Variables: `apps/mcp-server/.env.example`. Diseño completo en
 [`apps/b1-mcp-agente/docs/ARQUITECTURA.md`](../b1-mcp-agente/docs/ARQUITECTURA.md)

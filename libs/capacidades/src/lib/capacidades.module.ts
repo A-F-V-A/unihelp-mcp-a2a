@@ -10,6 +10,7 @@ import { RegistroAuditoria, TicketsModule } from '@unihelp/tickets';
 import { CapacidadesLocales } from './capacidades-locales';
 import { BuscarPoliticaCapacidad } from './capacidades/buscar-politica.capacidad';
 import { ConfirmarPropuestaCapacidad } from './capacidades/confirmar-propuesta.capacidad';
+import { ConsultarDisponibilidadSoporteCapacidad } from './capacidades/consultar-disponibilidad-soporte.capacidad';
 import { ConsultarEstadoServicioCapacidad } from './capacidades/consultar-estado-servicio.capacidad';
 import { CrearTicketSimuladoCapacidad } from './capacidades/crear-ticket-simulado.capacidad';
 import { ProponerTicketCapacidad } from './capacidades/proponer-ticket.capacidad';
@@ -59,6 +60,9 @@ export class CapacidadesModule {
           inject: [ValidadorArgumentos, RegistroAuditoria],
         },
         ...CAPACIDADES,
+        // Sexta herramienta (HU-43): se provee pero NO entra al registro al
+        // arrancar; solo `mcp-server` la agrega, asi B0 conserva las cinco.
+        ConsultarDisponibilidadSoporteCapacidad,
         RegistroCapacidades,
         InvocadorCapacidades,
         CapacidadesLocales,
@@ -71,6 +75,7 @@ export class CapacidadesModule {
         RegistroCapacidades,
         InvocadorCapacidades,
         CapacidadesLocales,
+        ConsultarDisponibilidadSoporteCapacidad,
       ],
     };
   }

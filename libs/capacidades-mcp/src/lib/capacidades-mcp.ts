@@ -28,6 +28,7 @@ import {
   ahoraMonotonoMs,
   descripcionDesdeHerramientaPublicada,
   esCodigoErrorHerramienta,
+  herramientasAdicionalesDe,
 } from '@unihelp/herramientas';
 import {
   CONFIGURACION_CLIENTE_MCP,
@@ -199,9 +200,13 @@ export class CapacidadesMcp implements PuertoCapacidades, OnModuleDestroy {
   }
 
   private permitidas(): readonly string[] {
+    // Las herramientas adicionales del rol (HU-43) se suman al mapa del contrato.
     return this.configuracion.agente === null
       ? []
-      : (PERMISOS_AGENTE[this.configuracion.agente] ?? []);
+      : [
+          ...(PERMISOS_AGENTE[this.configuracion.agente] ?? []),
+          ...herramientasAdicionalesDe(this.configuracion.agente),
+        ];
   }
 
   /** Conecta una vez y reutiliza la sesion; tras un cierre, la siguiente llamada reconecta. */

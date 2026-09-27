@@ -53,3 +53,32 @@ export function componerPromptOrquestador(base: string = PROMPT_BASE): string {
 }
 
 export const PROMPT_ORQUESTADOR = componerPromptOrquestador();
+
+/**
+ * Seccion que se agrega al prompt del orquestador SOLO cuando la arquitectura
+ * habilita la sexta herramienta, `consultar_disponibilidad_soporte` (HU-43;
+ * hoy solo B3). Sin ella el modelo aplicaria el ALCANCE del prompt base, que
+ * trata como fuera de alcance todo lo que no es de los cuatro servicios, y no
+ * llamaria a la herramienta. Por eso va ANTES de QUE FUENTES CONSULTAR: el
+ * modelo la lee como excepcion al alcance, no como una regla mas al final.
+ */
+export const SECCION_DISPONIBILIDAD_SOPORTE = `DISPONIBILIDAD DE SOPORTE TÉCNICO EN LAS SEDES
+- Si la persona pregunta si hay soporte técnico, atención o personal de soporte en una sede (central, norte, sur o virtual) en una fecha, o en qué horario o por qué canal atienden ese día, esa pregunta SÍ está dentro de tu alcance aunque no nombre ninguno de los cuatro servicios: llama a consultar_disponibilidad_soporte con la sede y la fecha en formato AAAA-MM-DD (por ejemplo, «el lunes 12 de octubre de 2026» es 2026-10-12). Si falta la sede o el año de la fecha, pregúntalo en vez de suponerlo.
+- Responde SOLO con lo que devuelve la herramienta: si disponible es false, di que ese día no hay atención y explica el motivo (festivo: es festivo; fuera_de_horario: la sede no atiende ese día de la semana; cierre_programado: la sede tiene un cierre programado ese día), sin mencionar ningún horario. Si disponible es true, da las franjas y el canal tal como llegaron. Nunca inventes horarios, sedes ni canales.
+- Para esta pregunta no hace falta buscar políticas ni consultar el estado de los servicios, y no se propone ticket. En el objeto final usa clasificacion informativa, politicas_citadas vacía y diagnostico null, salvo que la persona también pregunte otra cosa de los cuatro servicios.`;
+
+const ANCLA_FUENTES = '\nQUÉ FUENTES CONSULTAR';
+
+/**
+ * Prompt del orquestador con la seccion de la sexta herramienta insertada antes
+ * de QUE FUENTES CONSULTAR. El resto del texto es el de `PROMPT_ORQUESTADOR`,
+ * palabra por palabra: B3 solo agrega, no reescribe.
+ */
+export function componerPromptOrquestadorConDisponibilidad(
+  prompt: string = PROMPT_ORQUESTADOR,
+): string {
+  if (!prompt.includes(ANCLA_FUENTES)) {
+    throw new Error('El prompt del orquestador ya no tiene la sección «QUÉ FUENTES CONSULTAR».');
+  }
+  return prompt.replace(ANCLA_FUENTES, `\n${SECCION_DISPONIBILIDAD_SOPORTE}\n${ANCLA_FUENTES}`);
+}

@@ -8,11 +8,18 @@ import {
 import { CapacidadesMcpModule, leerUrlServidorMcp } from '@unihelp/capacidades-mcp';
 import { ConocimientoModule } from '@unihelp/conocimiento';
 import type { IdentidadServicio } from '@unihelp/contratos';
-import { PUERTO_CAPACIDADES } from '@unihelp/herramientas';
+import { NOMBRE_DISPONIBILIDAD_SOPORTE, PUERTO_CAPACIDADES } from '@unihelp/herramientas';
 import { TicketsModule } from '@unihelp/tickets';
-import { PROMPT_ORQUESTADOR } from '../prompts/prompt-orquestador';
+import {
+  PROMPT_ORQUESTADOR,
+  componerPromptOrquestadorConDisponibilidad,
+} from '../prompts/prompt-orquestador';
 import { A2aOrquestadorController } from './a2a-orquestador.controller';
-import { CapacidadesOrquestador, PROTOCOLO_DELEGACION } from './capacidades-orquestador';
+import {
+  CapacidadesOrquestador,
+  HERRAMIENTAS_ADICIONALES_ORQUESTADOR,
+  PROTOCOLO_DELEGACION,
+} from './capacidades-orquestador';
 
 export interface OpcionesOrquestadorMultiagente {
   /** Identidad de salud de la app (B2 o el orquestador de B3); su `protocolo` firma las delegaciones. */
@@ -30,6 +37,12 @@ export interface OpcionesOrquestadorMultiagente {
   };
   /** B3: ademas del contrato REST, atiende `message/send` en `POST /a2a` (docs/03, 2.3). */
   readonly exponerA2a?: boolean;
+  /**
+   * Herramientas adicionales que ve el modelo del orquestador, ademas de las
+   * cinco (HU-43). Solo B3 habilita `consultar_disponibilidad_soporte`; con ella
+   * el prompt agrega su seccion. Por defecto ninguna: B2 queda igual.
+   */
+  readonly herramientasAdicionales?: readonly string[];
 }
 
 /** Modulo interno que arma el puerto compuesto del orquestador con el puerto de especialistas de la arquitectura. */
@@ -54,6 +67,10 @@ export class OrquestadorMultiagenteModule {
   static forRoot(opciones: OpcionesOrquestadorMultiagente): DynamicModule {
     const entorno = opciones.entorno ?? process.env;
     const configuracion = opciones.configuracion ?? leerConfiguracionAgente(entorno);
+    const adicionales = opciones.herramientasAdicionales ?? [];
+    const prompt = adicionales.includes(NOMBRE_DISPONIBILIDAD_SOPORTE)
+      ? componerPromptOrquestadorConDisponibilidad()
+      : PROMPT_ORQUESTADOR;
     const puerto: DynamicModule = {
       module: PuertoOrquestadorModule,
       imports: [
@@ -67,6 +84,7 @@ export class OrquestadorMultiagenteModule {
       providers: [
         opciones.especialistas.puerto,
         { provide: PROTOCOLO_DELEGACION, useValue: opciones.identidad.protocolo },
+        { provide: HERRAMIENTAS_ADICIONALES_ORQUESTADOR, useValue: adicionales },
         CapacidadesOrquestador,
       ],
       exports: [CapacidadesOrquestador],
@@ -79,7 +97,7 @@ export class OrquestadorMultiagenteModule {
           identidad: opciones.identidad,
           configuracion,
           entorno,
-          prompt: PROMPT_ORQUESTADOR,
+          prompt,
           agente: { nombre: 'orquestador' },
           imports: [ConocimientoModule.forRoot(), TicketsModule.forRoot(), puerto],
           puertoCapacidades: { provide: PUERTO_CAPACIDADES, useExisting: CapacidadesOrquestador },
