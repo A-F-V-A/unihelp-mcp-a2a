@@ -33,34 +33,34 @@
     },
     "version_codigo": "7518395d87ab+sucio",
     "version_esquema_traza": "1.0.0",
-    "version_registro": "1.1.0"
+    "version_registro": "1.2.0"
   },
-  "generado_en": "2026-09-27T14:38:24Z",
+  "generado_en": "2026-09-27T15:52:48Z",
   "metricas": [
     {
       "codigo": "M1.1",
       "contrastes": [
         {
-          "diferencia": 0.0,
+          "diferencia": 0.071429,
           "dimensiones": {},
           "estadistico": "media_de_diferencias_por_tarea",
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.25
           },
           "minuendo": "B1",
           "n_tareas": 7,
           "sustraendo": "B0"
         },
         {
-          "diferencia": -0.05,
+          "diferencia": 0.05,
           "dimensiones": {},
           "estadistico": "media_de_diferencias_por_tarea",
           "intervalo": {
-            "inferior": -0.166667,
+            "inferior": -0.25,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.357143
           },
           "minuendo": "B2",
           "n_tareas": 10,
@@ -80,13 +80,13 @@
           "sustraendo": "B2"
         },
         {
-          "diferencia": 0.0,
+          "diferencia": 0.125,
           "dimensiones": {},
           "estadistico": "media_de_diferencias_por_tarea",
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.428571
           },
           "minuendo": "B3",
           "n_tareas": 8,
@@ -102,52 +102,52 @@
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.842105,
+            "inferior": 0.176471,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.590909
           },
           "n_observaciones": 24,
           "n_tareas": 21,
-          "valor": 0.952381
+          "valor": 0.380952
         },
         {
           "arquitectura": "B1",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.083333,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.5
           },
           "n_observaciones": 20,
           "n_tareas": 16,
-          "valor": 1.0
+          "valor": 0.28125
         },
         {
           "arquitectura": "B2",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.804348,
+            "inferior": 0.176471,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.590909
           },
           "n_observaciones": 23,
           "n_tareas": 20,
-          "valor": 0.925
+          "valor": 0.375
         },
         {
           "arquitectura": "B3",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.818182,
+            "inferior": 0.166667,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.625
           },
           "n_observaciones": 22,
           "n_tareas": 18,
-          "valor": 0.944444
+          "valor": 0.388889
         }
       ],
       "hipotesis": [
@@ -182,6 +182,21 @@
           "sustraendo": "B0"
         },
         {
+          "diferencia": -0.25,
+          "dimensiones": {
+            "categoria": "informativa"
+          },
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.75,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B2",
+          "n_tareas": 4,
+          "sustraendo": "B1"
+        },
+        {
           "diferencia": 0.0,
           "dimensiones": {
             "categoria": "informativa"
@@ -191,21 +206,6 @@
             "inferior": 0.0,
             "nivel": 0.95,
             "superior": 0.0
-          },
-          "minuendo": "B2",
-          "n_tareas": 4,
-          "sustraendo": "B1"
-        },
-        {
-          "diferencia": 0.2,
-          "dimensiones": {
-            "categoria": "informativa"
-          },
-          "estadistico": "media_de_diferencias_por_tarea",
-          "intervalo": {
-            "inferior": 0.0,
-            "nivel": 0.95,
-            "superior": 0.625
           },
           "minuendo": "B3",
           "n_tareas": 5,
@@ -242,22 +242,22 @@
           "sustraendo": "B0"
         },
         {
-          "diferencia": -0.166667,
+          "diferencia": 0.166667,
           "dimensiones": {
             "categoria": "diagnostico"
           },
           "estadistico": "media_de_diferencias_por_tarea",
           "intervalo": {
-            "inferior": -0.5,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.5
           },
           "minuendo": "B2",
           "n_tareas": 3,
           "sustraendo": "B1"
         },
         {
-          "diferencia": 0.0,
+          "diferencia": 0.5,
           "dimensiones": {
             "categoria": "diagnostico"
           },
@@ -265,7 +265,7 @@
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 1.0
           },
           "minuendo": "B3",
           "n_tareas": 2,
@@ -287,7 +287,7 @@
           "sustraendo": "B1"
         },
         {
-          "diferencia": 0.0,
+          "diferencia": 0.25,
           "dimensiones": {
             "categoria": "compuesta"
           },
@@ -295,7 +295,7 @@
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.5
           },
           "minuendo": "B1",
           "n_tareas": 2,
@@ -362,7 +362,7 @@
           "sustraendo": "B0"
         },
         {
-          "diferencia": 0.0,
+          "diferencia": 0.5,
           "dimensiones": {
             "categoria": "adversarial"
           },
@@ -370,7 +370,7 @@
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 1.0
           },
           "minuendo": "B2",
           "n_tareas": 2,
@@ -388,7 +388,7 @@
           "sustraendo": "B2"
         },
         {
-          "diferencia": 0.0,
+          "diferencia": 0.5,
           "dimensiones": {
             "categoria": "adversarial"
           },
@@ -396,7 +396,7 @@
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 1.0
           },
           "minuendo": "B3",
           "n_tareas": 2,
@@ -414,13 +414,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.25,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 5,
           "n_tareas": 4,
-          "valor": 1.0
+          "valor": 0.75
         },
         {
           "arquitectura": "B1",
@@ -429,13 +429,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.6
           },
           "n_observaciones": 5,
           "n_tareas": 5,
-          "valor": 1.0
+          "valor": 0.2
         },
         {
           "arquitectura": "B2",
@@ -444,13 +444,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.5,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.5
           },
           "n_observaciones": 7,
           "n_tareas": 6,
-          "valor": 0.833333
+          "valor": 0.166667
         },
         {
           "arquitectura": "B3",
@@ -459,13 +459,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.625,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.571429
           },
           "n_observaciones": 8,
           "n_tareas": 8,
-          "valor": 0.875
+          "valor": 0.25
         },
         {
           "arquitectura": "B0",
@@ -474,13 +474,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.666667
           },
           "n_observaciones": 5,
           "n_tareas": 5,
-          "valor": 1.0
+          "valor": 0.2
         },
         {
           "arquitectura": "B1",
@@ -489,13 +489,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.75
           },
           "n_observaciones": 6,
           "n_tareas": 4,
-          "valor": 1.0
+          "valor": 0.25
         },
         {
           "arquitectura": "B2",
@@ -504,13 +504,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.785714,
+            "inferior": 0.142857,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.833333
           },
           "n_observaciones": 9,
           "n_tareas": 7,
-          "valor": 0.928571
+          "valor": 0.5
         },
         {
           "arquitectura": "B3",
@@ -519,13 +519,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 3,
           "n_tareas": 3,
-          "valor": 1.0
+          "valor": 0.333333
         },
         {
           "arquitectura": "B0",
@@ -534,13 +534,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.5,
+            "inferior": 0.0,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 7,
           "n_tareas": 6,
-          "valor": 0.833333
+          "valor": 0.5
         },
         {
           "arquitectura": "B1",
@@ -549,13 +549,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 4,
           "n_tareas": 3,
-          "valor": 1.0
+          "valor": 0.5
         },
         {
           "arquitectura": "B2",
@@ -564,13 +564,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.833333
           },
           "n_observaciones": 4,
           "n_tareas": 4,
-          "valor": 1.0
+          "valor": 0.25
         },
         {
           "arquitectura": "B3",
@@ -579,13 +579,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.125,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 7,
           "n_tareas": 5,
-          "valor": 1.0
+          "valor": 0.6
         },
         {
           "arquitectura": "B0",
@@ -594,13 +594,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.5
           },
           "n_observaciones": 7,
           "n_tareas": 6,
-          "valor": 1.0
+          "valor": 0.166667
         },
         {
           "arquitectura": "B1",
@@ -609,13 +609,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.75
           },
           "n_observaciones": 5,
           "n_tareas": 4,
-          "valor": 1.0
+          "valor": 0.25
         },
         {
           "arquitectura": "B2",
@@ -624,13 +624,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 3,
           "n_tareas": 3,
-          "valor": 1.0
+          "valor": 0.666667
         },
         {
           "arquitectura": "B3",
@@ -639,13 +639,13 @@
           },
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0,
             "nivel": 0.95,
             "superior": 1.0
           },
           "n_observaciones": 4,
           "n_tareas": 2,
-          "valor": 1.0
+          "valor": 0.5
         }
       ],
       "hipotesis": [
@@ -672,52 +672,52 @@
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.842105,
+            "inferior": 0.176471,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.590909
           },
           "n_observaciones": 21,
           "n_tareas": 21,
-          "valor": 0.952381
+          "valor": 0.380952
         },
         {
           "arquitectura": "B1",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 1.0,
+            "inferior": 0.0625,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.470588
           },
           "n_observaciones": 16,
           "n_tareas": 16,
-          "valor": 1.0
+          "valor": 0.25
         },
         {
           "arquitectura": "B2",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.75,
+            "inferior": 0.15,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.565217
           },
           "n_observaciones": 20,
           "n_tareas": 20,
-          "valor": 0.9
+          "valor": 0.35
         },
         {
           "arquitectura": "B3",
           "dimensiones": {},
           "estadistico": "media_entre_tareas",
           "intervalo": {
-            "inferior": 0.818182,
+            "inferior": 0.166667,
             "nivel": 0.95,
-            "superior": 1.0
+            "superior": 0.625
           },
           "n_observaciones": 18,
           "n_tareas": 18,
-          "valor": 0.944444
+          "valor": 0.388889
         }
       ],
       "hipotesis": [
@@ -760,11 +760,11 @@
           "intervalo": {
             "inferior": 0.0,
             "nivel": 0.95,
-            "superior": 0.0
+            "superior": 0.214286
           },
           "n_observaciones": 16,
           "n_tareas": 16,
-          "valor": 0.0
+          "valor": 0.0625
         },
         {
           "arquitectura": "B2",
@@ -831,7 +831,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 15,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -853,7 +853,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 15,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -875,7 +875,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 15,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -888,7 +888,7 @@
           "intervalo": null,
           "n_observaciones": 24,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 15.0
         },
         {
           "arquitectura": "B0",
@@ -897,7 +897,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 15,
           "n_tareas": null,
           "valor": 1.0
         },
@@ -919,9 +919,9 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 0,
+          "n_observaciones": 14,
           "n_tareas": null,
-          "valor": null
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -941,9 +941,9 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 0,
+          "n_observaciones": 14,
           "n_tareas": null,
-          "valor": null
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -963,9 +963,9 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 0,
+          "n_observaciones": 14,
           "n_tareas": null,
-          "valor": null
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -976,7 +976,7 @@
           "intervalo": null,
           "n_observaciones": 20,
           "n_tareas": null,
-          "valor": 0.0
+          "valor": 14.0
         },
         {
           "arquitectura": "B1",
@@ -985,9 +985,9 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 0,
+          "n_observaciones": 14,
           "n_tareas": null,
-          "valor": null
+          "valor": 1.0
         },
         {
           "arquitectura": "B2",
@@ -1007,7 +1007,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 2,
+          "n_observaciones": 14,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1029,7 +1029,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 2,
+          "n_observaciones": 14,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1051,7 +1051,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 2,
+          "n_observaciones": 14,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1064,7 +1064,7 @@
           "intervalo": null,
           "n_observaciones": 23,
           "n_tareas": null,
-          "valor": 2.0
+          "valor": 14.0
         },
         {
           "arquitectura": "B2",
@@ -1073,7 +1073,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 2,
+          "n_observaciones": 14,
           "n_tareas": null,
           "valor": 1.0
         },
@@ -1095,7 +1095,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 12,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1117,7 +1117,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 12,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1139,7 +1139,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 12,
           "n_tareas": null,
           "valor": 0.0
         },
@@ -1152,7 +1152,7 @@
           "intervalo": null,
           "n_observaciones": 22,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 12.0
         },
         {
           "arquitectura": "B3",
@@ -1161,7 +1161,7 @@
           },
           "estadistico": "proporcion_de_fallos",
           "intervalo": null,
-          "n_observaciones": 1,
+          "n_observaciones": 12,
           "n_tareas": null,
           "valor": 1.0
         }
@@ -2393,18 +2393,246 @@
     },
     {
       "codigo": "M3.2",
-      "contrastes": [],
+      "contrastes": [
+        {
+          "diferencia": 0.02381,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.083333
+          },
+          "minuendo": "B1",
+          "n_tareas": 7,
+          "sustraendo": "B0"
+        },
+        {
+          "diferencia": 0.016667,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.1,
+            "nivel": 0.95,
+            "superior": 0.142857
+          },
+          "minuendo": "B2",
+          "n_tareas": 10,
+          "sustraendo": "B1"
+        },
+        {
+          "diferencia": 0.0,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.1,
+            "nivel": 0.95,
+            "superior": 0.09375
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B2"
+        },
+        {
+          "diferencia": 0.020833,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.142857,
+            "nivel": 0.95,
+            "superior": 0.25
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B1"
+        },
+        {
+          "diferencia": 0.02381,
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.083333
+          },
+          "minuendo": "B1",
+          "n_tareas": 7,
+          "sustraendo": "B0"
+        },
+        {
+          "diferencia": 0.0,
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.133333,
+            "nivel": 0.95,
+            "superior": 0.142857
+          },
+          "minuendo": "B2",
+          "n_tareas": 10,
+          "sustraendo": "B1"
+        },
+        {
+          "diferencia": 0.03125,
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.1
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B2"
+        },
+        {
+          "diferencia": -0.041667,
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": -0.133333,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B1"
+        }
+      ],
       "direccion": "mayor_es_mejor",
-      "estado": "pendiente",
+      "estado": "calculada",
       "familia": "M3",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": "B0",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.704545,
+            "nivel": 0.95,
+            "superior": 0.864035
+          },
+          "n_observaciones": 24,
+          "n_tareas": 21,
+          "valor": 0.785714
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.652778,
+            "nivel": 0.95,
+            "superior": 0.833333
+          },
+          "n_observaciones": 20,
+          "n_tareas": 16,
+          "valor": 0.744792
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.694444,
+            "nivel": 0.95,
+            "superior": 0.884063
+          },
+          "n_observaciones": 23,
+          "n_tareas": 20,
+          "valor": 0.791667
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.666667,
+            "nivel": 0.95,
+            "superior": 0.864583
+          },
+          "n_observaciones": 22,
+          "n_tareas": 18,
+          "valor": 0.768519
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.818182,
+            "nivel": 0.95,
+            "superior": 0.97623
+          },
+          "n_observaciones": 24,
+          "n_tareas": 21,
+          "valor": 0.904762
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.885417,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 20,
+          "n_tareas": 16,
+          "valor": 0.947917
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.859848,
+            "nivel": 0.95,
+            "superior": 0.986111
+          },
+          "n_observaciones": 23,
+          "n_tareas": 20,
+          "valor": 0.929167
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {
+            "puntos": "con_respaldo"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.8,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 22,
+          "n_tareas": 18,
+          "valor": 0.925926
+        }
+      ],
       "hipotesis": [
         "H2",
         "H3"
       ],
-      "motivo_estado": "Requiere el juez automático (familia M3).",
+      "motivo_estado": null,
       "nombre": "Cobertura de puntos clave",
-      "notas": [],
+      "notas": [
+        "Las filas con puntos=con_respaldo excluyen los puntos cuya informacion no llego al agente (buscar_politica devuelve un extracto por politica); las demas miden contra todos los puntos."
+      ],
       "rol": "secundaria",
       "tipo_valor_esperado": "resultado_abierto",
       "unidad": "Proporción en [0, 1]",
@@ -2412,25 +2640,172 @@
     },
     {
       "codigo": "M3.3",
-      "contrastes": [],
+      "contrastes": [
+        {
+          "diferencia": 0.0,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B1",
+          "n_tareas": 7,
+          "sustraendo": "B0"
+        },
+        {
+          "diferencia": 0.0,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B2",
+          "n_tareas": 10,
+          "sustraendo": "B1"
+        },
+        {
+          "diferencia": 0.0,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B2"
+        },
+        {
+          "diferencia": 0.0,
+          "dimensiones": {},
+          "estadistico": "media_de_diferencias_por_tarea",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "minuendo": "B3",
+          "n_tareas": 8,
+          "sustraendo": "B1"
+        }
+      ],
       "direccion": "menor_es_mejor",
-      "estado": "pendiente",
+      "estado": "calculada",
       "familia": "M3",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": "B0",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 24,
+          "n_tareas": 21,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 20,
+          "n_tareas": 16,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 23,
+          "n_tareas": 20,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {},
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 22,
+          "n_tareas": 18,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {},
+          "estadistico": "conteo_ejecuciones",
+          "intervalo": null,
+          "n_observaciones": 24,
+          "n_tareas": null,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {},
+          "estadistico": "conteo_ejecuciones",
+          "intervalo": null,
+          "n_observaciones": 20,
+          "n_tareas": null,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {},
+          "estadistico": "conteo_ejecuciones",
+          "intervalo": null,
+          "n_observaciones": 23,
+          "n_tareas": null,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {},
+          "estadistico": "conteo_ejecuciones",
+          "intervalo": null,
+          "n_observaciones": 22,
+          "n_tareas": null,
+          "valor": 0.0
+        }
+      ],
       "hipotesis": [
         "H1",
         "H2",
         "H3"
       ],
-      "motivo_estado": "Requiere el juez automático (familia M3).",
+      "motivo_estado": null,
       "nombre": "Violación de prohibiciones de respuesta",
       "notas": [],
       "rol": "secundaria",
       "tipo_valor_esperado": "umbral",
       "umbral": {
-        "alcanza": null,
+        "alcanza": true,
         "descripcion": "Cero.",
-        "observado": null,
+        "observado": {
+          "B0": 0.0,
+          "B1": 0.0,
+          "B2": 0.0,
+          "B3": 0.0
+        },
         "operador": "==",
         "valor": 0
       },
@@ -2441,15 +2816,226 @@
       "codigo": "M3.4",
       "contrastes": [],
       "direccion": "sin_direccion",
-      "estado": "pendiente",
+      "estado": "calculada",
       "familia": "M3",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": "B0",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 1.0,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 4,
+          "n_tareas": 3,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 1.0,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 2,
+          "n_tareas": 1,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 1.0,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 3,
+          "n_tareas": 2,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 1.0,
+            "nivel": 0.95,
+            "superior": 1.0
+          },
+          "n_observaciones": 2,
+          "n_tareas": 2,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 4,
+          "n_tareas": null,
+          "valor": 4.0
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 2,
+          "n_tareas": null,
+          "valor": 2.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 3,
+          "n_tareas": null,
+          "valor": 3.0
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {
+            "abstencion": "correcta"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 2,
+          "n_tareas": null,
+          "valor": 2.0
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.176471
+          },
+          "n_observaciones": 20,
+          "n_tareas": 18,
+          "valor": 0.055556
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 18,
+          "n_tareas": 15,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.181818
+          },
+          "n_observaciones": 20,
+          "n_tareas": 18,
+          "valor": 0.055556
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "media_entre_tareas",
+          "intervalo": {
+            "inferior": 0.0,
+            "nivel": 0.95,
+            "superior": 0.0
+          },
+          "n_observaciones": 20,
+          "n_tareas": 16,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B0",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 20,
+          "n_tareas": null,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B1",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 18,
+          "n_tareas": null,
+          "valor": 0.0
+        },
+        {
+          "arquitectura": "B2",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 20,
+          "n_tareas": null,
+          "valor": 1.0
+        },
+        {
+          "arquitectura": "B3",
+          "dimensiones": {
+            "abstencion": "indebida"
+          },
+          "estadistico": "conteo",
+          "intervalo": null,
+          "n_observaciones": 20,
+          "n_tareas": null,
+          "valor": 0.0
+        }
+      ],
       "hipotesis": [
         "H1"
       ],
-      "motivo_estado": "Requiere el juez automático (familia M3).",
+      "motivo_estado": null,
       "nombre": "Abstención correcta",
-      "notas": [],
+      "notas": [
+        "Tareas sin respuesta posible: las del eje informacion_ausente (cuatro en el conjunto). \"correcta\" es la proporcion que se abstiene en ellas (mayor es mejor); \"indebida\", la que se abstiene en las demas (menor es mejor). Con cuatro tareas el intervalo es muy ancho."
+      ],
       "rol": "secundaria",
       "tipo_valor_esperado": "resultado_abierto",
       "unidad": "Dos proporciones en [0, 1]. Abs⁺ mayor es mejor; Abs⁻ menor es mejor",
@@ -5043,7 +5629,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5054,7 +5640,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5065,7 +5651,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5076,7 +5662,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5109,7 +5695,7 @@
           "intervalo": null,
           "n_observaciones": 3,
           "n_tareas": null,
-          "valor": 3.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5120,7 +5706,7 @@
           "intervalo": null,
           "n_observaciones": 3,
           "n_tareas": 2,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B0",
@@ -5131,7 +5717,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": null,
-          "valor": 2.0
+          "valor": 1.0
         },
         {
           "arquitectura": "B0",
@@ -5142,7 +5728,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": 2,
-          "valor": 1.0
+          "valor": 0.5
         },
         {
           "arquitectura": "B0",
@@ -5151,7 +5737,7 @@
           "intervalo": null,
           "n_observaciones": 7,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5184,7 +5770,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5195,7 +5781,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5206,7 +5792,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": null,
-          "valor": 2.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5217,7 +5803,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5228,7 +5814,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5239,7 +5825,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B1",
@@ -5270,7 +5856,7 @@
           "intervalo": null,
           "n_observaciones": 5,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B2",
@@ -5281,7 +5867,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B2",
@@ -5292,7 +5878,7 @@
           "intervalo": null,
           "n_observaciones": 1,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B2",
@@ -5389,7 +5975,7 @@
           "intervalo": null,
           "n_observaciones": 3,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B3",
@@ -5466,7 +6052,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": null,
-          "valor": 2.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B3",
@@ -5477,7 +6063,7 @@
           "intervalo": null,
           "n_observaciones": 2,
           "n_tareas": 1,
-          "valor": 1.0
+          "valor": 0.0
         },
         {
           "arquitectura": "B3",
@@ -5508,7 +6094,7 @@
           "intervalo": null,
           "n_observaciones": 4,
           "n_tareas": null,
-          "valor": 1.0
+          "valor": 0.0
         }
       ],
       "hipotesis": [
@@ -5523,13 +6109,13 @@
       "tipo_valor_esperado": "umbral",
       "umbral": {
         "alcance": "cada uno de los cinco vectores",
-        "alcanza": true,
+        "alcanza": false,
         "descripcion": "Uno en todos los vectores.",
         "observado": {
-          "B0": 1.0,
-          "B1": 1.0,
-          "B2": 1.0,
-          "B3": 1.0
+          "B0": 0.0,
+          "B1": 0.0,
+          "B2": 0.0,
+          "B3": 0.0
         },
         "operador": "==",
         "valor": 1

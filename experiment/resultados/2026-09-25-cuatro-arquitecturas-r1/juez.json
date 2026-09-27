@@ -1,0 +1,14 @@
+{
+  "juez": "claude-opus-5-5 (flujo multiagente de Claude Code, 78 agentes, prompt v2)",
+  "prompt": "experiment/juez/prompt-v2.md",
+  "huella_prompt": "sha256:6349bfb838e685633734196050a37ab76c316e94d400fd8c559c95c252128763",
+  "incorporado_el": "2026-09-27",
+  "ejecuciones_juzgadas": 160,
+  "aprobadas": 74,
+  "exitos_quitados_por_el_juez": 77,
+  "reprobadas_solo_por_puntos_sin_respaldo": 64,
+  "consistencia_con_v1": {
+    "comparados": 480,
+    "iguales": 474
+  }
+}

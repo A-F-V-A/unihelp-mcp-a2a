@@ -1,13 +1,13 @@
 {
   "resultados": {
     "archivo": "resultados.json",
-    "sha256_sin_marca_tiempo": "47285dea27d552863e0b3427a735b5a8940d0491e6f2759dec3bac622f17dacc"
+    "sha256_sin_marca_tiempo": "13456795e86c68c3bab890ad46abce4b701aec3f5c7990c54291f7dee88563e7"
   },
   "salidas": [
     {
       "archivo": "figura_1.svg",
       "etiqueta": "figura_1",
-      "sha256": "9d384d93539f4ab04dc53e05ffc2f235f65bd22039ff4ed99c1fe88a4e2fd7be"
+      "sha256": "4b716242c083c4b5a7f1a361f5f1c40f03367ec7cfa7f378ceb067dee7153412"
     },
     {
       "archivo": "figura_2.svg",
@@ -17,12 +17,12 @@
     {
       "archivo": "figura_3.svg",
       "etiqueta": "figura_3",
-      "sha256": "efd658482c51fb0ff4227e9340a174941c63b116ce1942a7c6db65a3eb9e6ec5"
+      "sha256": "6b4965c322107e5eff9efd221243c591001b3a7e436fc9a39856c8521d82e627"
     },
     {
       "archivo": "figura_4.svg",
       "etiqueta": "figura_4",
-      "sha256": "06db71e9f4bae6fa1f2bbb5bd4bf553a345a7be0ab71efb1d424597c70773b61"
+      "sha256": "6deb5cef6d6314b467f0b9d2b4cbb5b1e7db1ad6af3f3d1c4545888ce54835d2"
     },
     {
       "archivo": "tabla_1.csv",
@@ -32,7 +32,7 @@
     {
       "archivo": "tabla_2.csv",
       "etiqueta": "tabla_2",
-      "sha256": "6d301c1de25f8565fe15913a4ea033ca600e3f7dc9430c7896ee584ed3f8fc00"
+      "sha256": "beb0d28d27c236f4b5694f0abb5c9c99d05680651d86765baace7f2d50c0968d"
     },
     {
       "archivo": "tabla_4.csv",

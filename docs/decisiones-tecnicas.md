@@ -1620,3 +1620,23 @@ Consecuencias: la limitacion de un extracto por politica es un hallazgo sobre
 el sistema, no sobre las arquitecturas, y se reporta asi. Corregirla (devolver
 todos los extractos o agregar una herramienta de lectura de politica) exigiria
 volver a correr las campañas; no se hace sin una decision aparte (RM-17).
+
+## 54. El juez corre como un flujo multiagente de Claude Code
+
+> Tomada el 27 de septiembre de 2026 a pedido del responsable del proyecto, para
+> terminar el juicio mas rapido sin costo de API.
+
+Decision: los 167 lotes se reparten de a 3 entre agentes de Claude Code que
+corren en paralelo, cada uno con `prompt-v2.md`, a ciegas y escribiendo solo sus
+archivos de veredictos; pueden leer los veredictos ya escritos por los demas para
+mantener el criterio. `juez/incorporar.py` valida cada lote y solo aplica
+corridas completas.
+
+Consecuencias: el juicio de las 3 302 ejecuciones tomo unos 20 minutos de reloj.
+La consistencia con la pasada de una sola sesion (v1) sobre las 480 ejecuciones
+de gpt-5.5 fue de 98,8 % en el veredicto. Al ser varios jueces, los campos
+secundarios (`puntos_sin_respaldo` en los puntos de prioridad, `abstencion` en
+respuestas de fuera de alcance) no quedaron marcados igual por todos; el
+veredicto no depende de ellos. Varios agentes usaron comandos de solo lectura,
+fuera de la letra del prompt, sin tocar nada ajeno a sus carpetas. Resultados en
+`docs/resultados-2026-09-27-juez.md`.

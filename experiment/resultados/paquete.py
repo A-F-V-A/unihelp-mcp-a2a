@@ -94,8 +94,10 @@ FALTA = {
 NOTAS = {
     'M4.7': 'Tokens de la traza x tarifa de lista de experiment/tarifas.yaml (decision 50, consultada el '
     '2026-09-27). Las corridas historicas sin trazas conservan su calculo anterior (0).',
-    'M1.1': 'El exito viene solo de la compuerta automatica: el juez no ha corrido (veredicto_juez=null). '
-    'El juez solo puede quitar exito, nunca otorgarlo (RM-16).',
+    'M1.1': 'exito = compuerta automatica AND veredicto del juez (Claude, prompt v2, decision 53). El juez '
+    'solo puede quitar exito (RM-16); en las corridas historicas sin trazas sigue siendo solo la compuerta.',
+    'M3.2': 'Se reporta contra todos los puntos clave y, aparte (puntos=con_respaldo), contra los que si '
+    'llegaron al agente: buscar_politica devuelve un extracto por politica (decision 53).',
     'M3.5': 'Se mide sobre las 5 tareas que declaran esperado.ticket.prioridad; el plan habla de 20 '
     '(decision 51, pendiente).',
     'M5.2': 'Sin valor en todas las corridas: ningun agente intento crear sin token valido.',
@@ -700,7 +702,9 @@ Dentro de cada carpeta de `datos/`:
 | Archivo | Formato | Que es |
 | --- | --- | --- |
 | `trazas.jsonl` | JSON Lines, una traza por linea, valida contra `catalogo/esquemas/traza.schema.json` | **El dato crudo principal.** Todo lo que paso en una ejecucion |
-| `puntuaciones.jsonl` | JSON Lines, clave `run_id` | Compuerta automatica: `exito`, `compuerta_automatica`, `veredicto_juez` (hoy `null`) y `motivos` de fallo |
+| `puntuaciones.jsonl` | JSON Lines, clave `run_id` | `exito` (compuerta AND juez), `compuerta_automatica`, `veredicto_juez` y `motivos` de fallo de la compuerta |
+| `veredictos-juez.jsonl` | JSON Lines, clave `run_id` | Juez: `veredicto`, `puntos_cubiertos`, `puntos_sin_respaldo`, `prohibiciones_violadas`, `abstencion` |
+| `juez.json` | JSON | Quien juzgo, huella del prompt, aprobadas, exitos quitados, reprobadas solo por falta de respaldo, consistencia con la pasada v1 |
 | `cuarentena/trazas.jsonl` | JSON Lines: `traza`, `errores`, `estado_original` | Ejecuciones que no se cuentan (RM-15) |
 | `manifiesto.json` | JSON | Procedencia: commit, semilla, modo, conteos, fallos de infraestructura; bloque `interrumpida` en las parciales |
 | `manifiesto-cuaderno.json` | JSON | Procedencia de la ejecucion del cuaderno |
@@ -817,8 +821,9 @@ Estan en cada `resultados.json` y en `consolidado/metricas-calculadas.csv`.
 
 {tabla(['Codigo', 'Metrica', 'Rol', 'Hipotesis', 'Pendiente'], grupos['calculada'])}
 
-Notas: **M1.1** y **M5.5** usan solo la compuerta automatica, porque el juez no
-ha corrido. **M4.7** multiplica los tokens de cada ejecucion por la tarifa de
+Notas: **M1** y **M5.5** usan `exito = compuerta AND juez` (decision 53); **M3.2**
+se da contra todos los puntos y contra los que tenian respaldo en lo recuperado.
+**M4.7** multiplica los tokens de cada ejecucion por la tarifa de
 lista de `catalogo/tarifas.yaml` (decision 50). **M3.5** se mide sobre 5 tareas,
 no 20 (decision 51, pendiente). **M5.2** y **M5.6** estan calculadas pero sin
 valor: ninguna corrida intento lo que esas defensas rechazan. Las definiciones
@@ -832,8 +837,7 @@ operativas de M2, M3 y M5 estan en la decision 51 y en `catalogo/metricas.csv`.
 
 {tabla(['Codigo', 'Metrica', 'Rol', 'Hipotesis', 'Insumo que falta'], grupos['falta_insumo'])}
 
-Para cerrarlas: correr el **juez LLM** sobre las trazas (M3.2-M3.4, M7.5; el
-juez solo puede quitar exito, RM-16), hacer la **calificacion humana** de la
+Para cerrarlas: hacer la **calificacion humana** de la
 muestra del 20 % (M7.4, M7.5), el **microbenchmark de transporte** (M4.3), una
 **reproduccion desde casetes** (M7.6), la **corrida de control** de
 instrumentacion (M7.7) y el **experimento de extensibilidad** con la sexta
@@ -911,7 +915,11 @@ cifra que se reporta es la del cuaderno.
 
 ## 8. Limitaciones y decisiones pendientes (RM-17)
 
-- **Juez no ejecutado:** `veredicto_juez` es `null`; el exito es solo la compuerta automatica.
+- **Juez:** Claude (Opus 5.5) en un flujo de 78 agentes con el prompt v2, sin temperatura controlable; consistencia
+  del 98,8 % contra una pasada anterior sobre 480 ejecuciones. Falta validarlo contra revisores humanos (M7.5).
+  Los agentes no marcaron igual `puntos_sin_respaldo` en los puntos de prioridad (el veredicto no cambia).
+- **Un extracto por politica:** `buscar_politica` entrega un solo extracto por politica; la mayoria de las
+  reprobaciones del juez se deben a puntos cuya informacion nunca llego al agente (decision 53).
 - **Cache de contexto (D2, decision 23):** OpenAI y Gemini cachean prompts largos
   sin opcion de apagarlo; queda registrado en `cached_input_tokens`.
 - **Costo de lista:** M4.7 usa la tarifa publicada el 27 de septiembre de 2026 (`catalogo/tarifas.yaml`), sin
