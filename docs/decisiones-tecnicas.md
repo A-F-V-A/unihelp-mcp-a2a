@@ -1796,3 +1796,47 @@ reporta con su nueva definicion. Sin sobre sellado, la proteccion contra la
 preparacion previa es que ningun codigo existe antes de abrir la especificacion y
 que cada agente parte de cero. Desviacion frente a HU-43 (una persona,
 especificacion sellada).
+
+## 59. La limitacion de recuperacion se reporta como hallazgo del sistema, separado de la comparacion de arquitecturas
+
+> Tomada el 27 de septiembre de 2026 por el responsable del proyecto (RM-17),
+> despues de ver los resultados del juez (decisiones 52-54) y de la revision
+> humana (M7.4, M7.5).
+
+Contexto: con el juez, la efectividad cae a la mitad en todos los modelos (gpt-5.5:
+de ~92 % con la compuerta a 34-51 %). La causa principal es de diseño y no de
+las arquitecturas: `buscar_politica` entrega un solo extracto por politica y
+ninguna herramienta devuelve la politica completa, mientras que los puntos clave
+de las tareas piden datos de los otros extractos. En gpt-5.5, 166 de las 260
+respuestas reprobadas por el juez fallan solo por puntos cuya informacion nunca
+llego al agente; con los puntos que si tenian respaldo, gpt-5.5 cubre el
+91-95 % y gpt-5.4 y flash-lite el 83-92 % (M3.2 `puntos=con_respaldo`). La revision humana coincide con
+el juez en el 92,6 % (gpt-5.5) y el 92,3 % (gpt-5.4).
+
+Decision: la tesis presenta dos niveles.
+
+1. **Comparacion de arquitecturas** (la pregunta del estudio, H1-H4): se lee en
+   los contrastes pareados, que comparan arquitecturas bajo la MISMA capacidad de
+   recuperacion. Se reportan la efectividad de la compuerta automatica (M1 sin
+   juez), la efectividad con juez (M1 del plan) y la cobertura con respaldo
+   (M3.2 `con_respaldo`), cada una con lo que mide; ninguna cifra se omite. Las
+   familias que no dependen de la respuesta (M2, M4, M5, M7) se leen igual.
+2. **Evaluacion del sistema**: la limitacion de recuperacion se reporta aparte,
+   como hallazgo del diseño, con su evidencia y como trabajo futuro (devolver la
+   politica completa o todos sus extractos relevantes). No se corrige ni se
+   vuelve a correr en este estudio.
+
+Por que: la limitacion es simetrica (la capacidad de busqueda es compartida por
+diseño, decisiones 41 y 44), esta medida y no supuesta, y separa "el agente no lo
+dijo" de "el sistema nunca se lo dio", que es lo que responde una pregunta sobre
+integracion de agentes.
+
+Consecuencias: la definicion del plan (exito = compuerta Y juez) no cambia y se
+sigue reportando; lo que cambia es como se interpreta. Se declara que la
+separacion se decidio despues de ver los datos. Con el juez, los contrastes
+entre arquitecturas coinciden con los de la compuerta en la mayoria de los
+modelos, con excepciones que se reportan: en gpt-5.5, B2 - B1 = +14,2 [+5; +24] y
+B1 - B0 = -6,7 [-14; -1]; en Qwen2.5 7B, B2 - B1 = -6,7 [-14; -1] y B1 - B0 = +5,0
+[+1; +11]. En los modelos donde M7.5 no llega al 85 % (gpt-5.4-mini, gpt-4.1-mini,
+Qwen2.5 7B, flash-lite) las metricas del juez son exploratorias. Detalle en
+`docs/evaluacion-del-sistema-limitacion-de-recuperacion.md`.
