@@ -27,6 +27,10 @@ function describir(error: ErrorObject): string {
     case 'type':
       return `${campo} debe ser de tipo ${String(p['type'])}`;
     case 'format':
+      // Una fecha de calendario se explica en el formato que entiende la persona (RM-11).
+      if (p['format'] === 'date') {
+        return `${campo} debe ser una fecha que exista, con formato AAAA-MM-DD`;
+      }
       return `${campo} no tiene el formato ${String(p['format'])}`;
     default:
       return `${campo} no es válido (${error.keyword})`;

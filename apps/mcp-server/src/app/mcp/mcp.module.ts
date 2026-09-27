@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import type { DynamicModule } from '@nestjs/common';
 import { CapacidadesModule } from '@unihelp/capacidades';
 import { type ConfiguracionMcp, leerConfiguracionMcp } from './configuracion-mcp';
+import { HerramientasAdicionales } from './herramientas-adicionales';
 import { McpController } from './mcp.controller';
 import { ServidorHerramientasMcp } from './servidor-herramientas-mcp';
 import { SesionesMcp } from './sesiones-mcp';
@@ -9,7 +10,8 @@ import { SesionesMcp } from './sesiones-mcp';
 /**
  * Publica las capacidades compartidas como herramientas MCP. No contiene la
  * logica de ninguna: `@unihelp/capacidades` es el mismo codigo que ejecuta B0
- * en proceso, y aqui solo cambia el transporte (RNF-01).
+ * en proceso, y aqui solo cambia el transporte (RNF-01). Ademas agrega al
+ * registro la sexta herramienta, que solo existe aqui (HU-27, HU-43).
  */
 @Module({})
 export class McpModule {
@@ -18,7 +20,7 @@ export class McpModule {
       module: McpModule,
       imports: [CapacidadesModule.forRoot({ limiteLlamadas: configuracion.limiteLlamadas })],
       controllers: [McpController],
-      providers: [ServidorHerramientasMcp, SesionesMcp],
+      providers: [ServidorHerramientasMcp, SesionesMcp, HerramientasAdicionales],
     };
   }
 }

@@ -1,0 +1,75 @@
+{
+  "name": "consultar_disponibilidad_soporte",
+  "title": "Consultar disponibilidad de soporte técnico",
+  "description": "Dice si hay personal de soporte técnico atendiendo en una sede de la universidad (central, norte, sur o virtual) en una fecha, y en qué franjas horarias y por qué canal. Úsala SIEMPRE que la persona pregunte si hay soporte, atención, mesa de ayuda o personal técnico en una sede o en un día determinado: esa pregunta SÍ está dentro de tu alcance aunque no nombre ninguno de los cuatro servicios, y para ella no hace falta buscar política, consultar el estado de un servicio ni proponer ticket. Pasa la fecha como AAAA-MM-DD (el «lunes 12 de octubre de 2026» es 2026-10-12). Responde solo con lo que devuelva: si disponible es false, di que no hay atención ese día y explica el motivo (festivo, fuera_de_horario o cierre_programado) sin mencionar ningún horario; si es true, informa exactamente las franjas y el canal devueltos. Nunca inventes horarios.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "sede": {
+        "type": "string",
+        "enum": ["central", "norte", "sur", "virtual"],
+        "description": "Sede universitaria. «virtual» es la atención por chat."
+      },
+      "fecha": {
+        "type": "string",
+        "format": "date",
+        "description": "Fecha de calendario en formato AAAA-MM-DD, por ejemplo 2026-10-12."
+      }
+    },
+    "required": ["sede", "fecha"],
+    "additionalProperties": false
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "sede": {
+        "type": "string",
+        "enum": ["central", "norte", "sur", "virtual"]
+      },
+      "fecha": {
+        "type": "string",
+        "format": "date"
+      },
+      "dia_semana": {
+        "type": "string",
+        "enum": ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+      },
+      "disponible": {
+        "type": "boolean"
+      },
+      "franjas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "inicio": {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$"
+            },
+            "fin": {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$"
+            },
+            "canal": {
+              "type": "string",
+              "enum": ["presencial", "chat"]
+            }
+          },
+          "required": ["inicio", "fin", "canal"]
+        }
+      },
+      "motivo": {
+        "type": ["string", "null"],
+        "enum": ["festivo", "fuera_de_horario", "cierre_programado", null]
+      }
+    },
+    "required": ["sede", "fecha", "dia_semana", "disponible", "franjas", "motivo"]
+  },
+  "annotations": {
+    "title": "Consultar disponibilidad de soporte técnico",
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true,
+    "openWorldHint": false
+  }
+}

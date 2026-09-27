@@ -25,7 +25,12 @@ export interface AnotacionesHerramienta {
 }
 
 export interface DefinicionHerramienta {
-  readonly nombre: NombreHerramienta;
+  /**
+   * Una de las cinco del contrato o una herramienta adicional que solo se
+   * agrega al registro de `mcp-server` (HU-27, HU-43); ver
+   * `definicion-disponibilidad-soporte.ts`.
+   */
+  readonly nombre: NombreHerramienta | NombreHerramientaAdicional;
   readonly titulo: string;
   readonly descripcion: string;
   readonly esquemaEntrada: EsquemaJson;
@@ -48,6 +53,15 @@ export const NOMBRES_HERRAMIENTAS = [
 ] as const;
 
 export type NombreHerramienta = (typeof NOMBRES_HERRAMIENTAS)[number];
+
+/**
+ * Herramientas que NO forman parte de las cinco del contrato comun: no entran en
+ * `DEFINICIONES_HERRAMIENTAS` (lo que B0 envia al modelo) y solo se publican
+ * cuando alguien las agrega al registro de forma aditiva (HU-27, HU-43).
+ */
+export const NOMBRES_HERRAMIENTAS_ADICIONALES = ['consultar_disponibilidad_soporte'] as const;
+
+export type NombreHerramientaAdicional = (typeof NOMBRES_HERRAMIENTAS_ADICIONALES)[number];
 
 /** Codigos de servicio de la semilla y de docs/02. */
 export const SERVICIOS_HERRAMIENTAS = [

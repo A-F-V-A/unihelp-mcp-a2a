@@ -23,8 +23,11 @@ agentes que hablan MCP: B1 hoy, los especialistas de B3 despues.
   para prevenir ataques de diputado confundido (HU-20, RNF-04). Si la cabecera falta
   (B1 o inspector MCP), se omiten las restricciones.
 - `notifications/tools/list_changed` cuando `RegistroCapacidades` crece (HU-27).
-  La sexta herramienta sigue sellada; el mecanismo se prueba con una
-  herramienta que solo existe en los specs.
+- Sexta herramienta, `consultar_disponibilidad_soporte` (HU-43): el servidor la
+  agrega al registro al arrancar (`herramientas-adicionales.ts`), despues de las
+  cinco del contrato. B1 la descubre por `tools/list`; B0 no la tiene y los
+  agentes de B2/B3 la descartan por rol. Su forma publicada esta versionada en
+  [`contrato/consultar-disponibilidad-soporte.instantanea.json`](contrato/consultar-disponibilidad-soporte.instantanea.json).
 
 | Archivo                                                                                | Contenido                                                              |
 | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
@@ -32,6 +35,7 @@ agentes que hablan MCP: B1 hoy, los especialistas de B3 despues.
 | [`src/app/mcp/mcp.controller.ts`](src/app/mcp/mcp.controller.ts)                       | `POST`/`GET`/`DELETE /mcp` -> transporte del SDK.                      |
 | [`src/app/mcp/sesiones-mcp.ts`](src/app/mcp/sesiones-mcp.ts)                           | Una sesion por cliente; emite `list_changed` a todas.                  |
 | [`src/app/mcp/servidor-herramientas-mcp.ts`](src/app/mcp/servidor-herramientas-mcp.ts) | `tools/list`, `tools/call`, contexto de la llamada y `_meta`.          |
+| [`src/app/mcp/herramientas-adicionales.ts`](src/app/mcp/herramientas-adicionales.ts)   | Agrega la sexta herramienta al registro al iniciar el modulo (HU-43).  |
 | [`src/app/mcp/configuracion-mcp.ts`](src/app/mcp/configuracion-mcp.ts)                 | `UNIHELP_LIMITE_LLAMADAS_HERRAMIENTA` (20).                            |
 | [`src/app/mcp/contrato.spec.ts`](src/app/mcp/contrato.spec.ts)                         | Instantanea, equivalencia B0-B1, anotaciones, errores, `list_changed`. |
 | [`src/app/mcp/transporte-http.spec.ts`](src/app/mcp/transporte-http.spec.ts)           | Cabecera de traza, sesiones y SSE sobre HTTP real.                     |

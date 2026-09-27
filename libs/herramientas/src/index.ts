@@ -9,3 +9,4 @@ export * from './lib/puerto-capacidades';
 export * from './lib/reloj-monotono';
 export * from './lib/saneador-contenido';
 export * from './lib/validador-argumentos';
+export * from './lib/definicion-disponibilidad-soporte';

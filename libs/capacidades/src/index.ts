@@ -3,6 +3,7 @@ export * from './lib/capacidades-locales';
 export * from './lib/capacidades.module';
 export * from './lib/capacidades/buscar-politica.capacidad';
 export * from './lib/capacidades/confirmar-propuesta.capacidad';
+export * from './lib/capacidades/consultar-disponibilidad-soporte.capacidad';
 export * from './lib/capacidades/consultar-estado-servicio.capacidad';
 export * from './lib/capacidades/crear-ticket-simulado.capacidad';
 export * from './lib/capacidades/proponer-ticket.capacidad';

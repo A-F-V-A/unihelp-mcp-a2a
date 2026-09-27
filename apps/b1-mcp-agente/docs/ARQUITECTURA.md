@@ -70,14 +70,15 @@ flowchart LR
 
 Las de B0 (sección 2 del documento de B0) más las propias del protocolo:
 
-| HU    | Qué aporta B1                                                                                                                  | Dónde                                                                                                             |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| HU-25 | Las cinco herramientas con esquema de entrada y salida por `tools/list`; instantánea versionada; equivalencia con B0           | `mcp-server/src/app/mcp/servidor-herramientas-mcp.ts`, `contrato.spec.ts`, `contrato/tools-list.instantanea.json` |
-| HU-26 | Anotaciones: consultas de solo lectura e idempotentes; creación destructiva                                                    | `DEFINICIONES_HERRAMIENTAS.anotaciones`, publicadas tal cual                                                      |
-| HU-27 | Registro aditivo, `notifications/tools/list_changed`, el agente incorpora la herramienta sin reiniciar. La sexta sigue sellada | `RegistroCapacidades.agregar`, `SesionesMcp`, `CapacidadesMcp`                                                    |
-| HU-33 | `X-Trace-Id` viaja del ejecutor al agente y del agente al servidor MCP, y llega a la auditoría                                 | `CapacidadesMcp.fetchConCabeceras`, `contextoDeLlamada`                                                               |
-| HU-34 | El servidor reporta su duración; el agente calcula el transporte por resta                                                     | `aResultadoMcp` (`_meta`), `CapacidadesMcp.invocar`                                                               |
-| HU-16 | La garantía del token vive en `CrearTicketUseCase`, detrás del servidor; un intento sin token vuelve `CONFIRMACION_REQUERIDA`  | `@unihelp/tickets`, sin código nuevo                                                                              |
+| HU    | Qué aporta B1                                                                                                                 | Dónde                                                                                                                |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| HU-25 | Las cinco herramientas con esquema de entrada y salida por `tools/list`; instantánea versionada; equivalencia con B0          | `mcp-server/src/app/mcp/servidor-herramientas-mcp.ts`, `contrato.spec.ts`, `contrato/tools-list.instantanea.json`    |
+| HU-26 | Anotaciones: consultas de solo lectura e idempotentes; creación destructiva                                                   | `DEFINICIONES_HERRAMIENTAS.anotaciones`, publicadas tal cual                                                         |
+| HU-27 | Registro aditivo, `notifications/tools/list_changed`, el agente incorpora la herramienta sin reiniciar. Así llega la sexta    | `RegistroCapacidades.agregar`, `SesionesMcp`, `CapacidadesMcp`                                                       |
+| HU-43 | Sexta herramienta `consultar_disponibilidad_soporte`: `mcp-server` la agrega al registro y B1 la descubre por `tools/list`    | `herramientas-adicionales.ts`, `consultar-disponibilidad-soporte.capacidad.ts`, `disponibilidad-soporte.e2e-spec.ts` |
+| HU-33 | `X-Trace-Id` viaja del ejecutor al agente y del agente al servidor MCP, y llega a la auditoría                                | `CapacidadesMcp.fetchConCabeceras`, `contextoDeLlamada`                                                              |
+| HU-34 | El servidor reporta su duración; el agente calcula el transporte por resta                                                    | `aResultadoMcp` (`_meta`), `CapacidadesMcp.invocar`                                                                  |
+| HU-16 | La garantía del token vive en `CrearTicketUseCase`, detrás del servidor; un intento sin token vuelve `CONFIRMACION_REQUERIDA` | `@unihelp/tickets`, sin código nuevo                                                                                 |
 
 Fuera de la corrida oficial: HU-28 (recursos y plantillas de prompt). No se exponen; no
 aparecen en `tools/list` ni alteran la instantánea.
@@ -141,14 +142,14 @@ Solo las clases que no existen en B0. Rutas relativas a `apps/`.
 
 #### `CapacidadesMcp` [existe]
 
-| Campo           | Contenido                                                                                                                                                                                                 |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Campo           | Contenido                                                                                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Archivo         | `libs/capacidades-mcp/src/lib/capacidades-mcp.ts` (`@unihelp/capacidades-mcp`; vivió en `b1-mcp-agente/src/app/capacidades-mcp/` hasta la decisión 44, que lo compartió con B2 y B3 sin cambiar su comportamiento) |
-| Responsabilidad | Cumplir `PuertoCapacidades` con un cliente MCP: descubrir con `tools/list`, invocar con `tools/call`, propagar la traza, medir `rtt`, tomar `dur` del servidor y traducir `isError` a `ErrorHerramienta`. |
-| Recibe          | `ConfiguracionClienteMcp` (`MCP_SERVER_URL`, rol `agente: null` en B1, nombre del cliente) y, opcionalmente, una fábrica de transporte (las pruebas usan `InMemoryTransport`).                            |
-| Devuelve        | `DescripcionCapacidad[]` y `ResultadoInvocacion` (`ok`, `salida` o `error`, `durMs`, `rttMs`).                                                                                                            |
-| Depende de      | `@modelcontextprotocol/sdk` (`Client`, `StreamableHTTPClientTransport`), `@unihelp/contratos` (`mcp.contrato.ts`), `@unihelp/herramientas`.                                                               |
-| Sostiene        | HU-25, HU-27, HU-33, HU-34, D5, RM-05, RM-15 (`ErrorInfraestructuraMcp`).                                                                                                                                 |
+| Responsabilidad | Cumplir `PuertoCapacidades` con un cliente MCP: descubrir con `tools/list`, invocar con `tools/call`, propagar la traza, medir `rtt`, tomar `dur` del servidor y traducir `isError` a `ErrorHerramienta`.          |
+| Recibe          | `ConfiguracionClienteMcp` (`MCP_SERVER_URL`, rol `agente: null` en B1, nombre del cliente) y, opcionalmente, una fábrica de transporte (las pruebas usan `InMemoryTransport`).                                     |
+| Devuelve        | `DescripcionCapacidad[]` y `ResultadoInvocacion` (`ok`, `salida` o `error`, `durMs`, `rttMs`).                                                                                                                     |
+| Depende de      | `@modelcontextprotocol/sdk` (`Client`, `StreamableHTTPClientTransport`), `@unihelp/contratos` (`mcp.contrato.ts`), `@unihelp/herramientas`.                                                                        |
+| Sostiene        | HU-25, HU-27, HU-33, HU-34, D5, RM-05, RM-15 (`ErrorInfraestructuraMcp`).                                                                                                                                          |
 
 Detalles que importan para las cifras:
 
@@ -341,9 +342,10 @@ ya apunta a `:3001`. El resto del procedimiento es el de B0.
 Todo lo de la sección 12 de B0, más:
 
 - No expone recursos ni plantillas de prompt de MCP (HU-28, fuera de la corrida oficial).
-- No tiene una sexta herramienta: la especificación está sellada hasta la semana 8. El
-  mecanismo (registro aditivo + `list_changed` + redescubrimiento) existe y se prueba con
-  `herramienta_de_prueba`, que solo vive en los specs.
+- La sexta herramienta, `consultar_disponibilidad_soporte` (HU-43), solo existe en B1: la
+  agrega `mcp-server` a su registro al arrancar y el agente la descubre por `tools/list`, sin
+  cambiar su código ni el prompt base (la guía de uso va en la descripción de la herramienta).
+  B0 no la tiene, así que en las tareas que no la usan B1 recibe una herramienta más que B0.
 - No autentica al cliente MCP: el `actor` de `_meta` se toma como viene (docs/02, límite
   documentado). Sin él, el servidor audita como `cliente-mcp`.
 - No reintenta una invocación fallida: un `rtt` nunca mezcla dos peticiones (misma regla que el

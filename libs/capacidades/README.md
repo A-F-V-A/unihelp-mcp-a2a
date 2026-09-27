@@ -10,16 +10,17 @@ ni en `apps/mcp-server`: viven aqui, y cada uno las alcanza por su transporte. L
 libreria no sabe nada de MCP ni de function calling. Los esquemas de entrada y
 salida NO se redefinen aqui: son los de `@unihelp/herramientas`, fuente unica.
 
-| Archivo                                                              | Contenido                                                                                    |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [`capacidad.ts`](src/lib/capacidad.ts)                               | Interfaz `Capacidad`: nombre y `ejecutar(argumentos, contexto)`.                             |
-| [`capacidades/*.capacidad.ts`](src/lib/capacidades/)                 | Las cinco implementaciones sobre `@unihelp/conocimiento` y `@unihelp/tickets`.               |
-| [`capacidades/salidas.spec.ts`](src/lib/capacidades/salidas.spec.ts) | Cada salida cumple el `esquemaSalida` publicado (el cliente MCP de B1 lo valida).            |
-| [`registro-capacidades.ts`](src/lib/registro-capacidades.ts)         | Registro con las cinco del contrato; `agregar` aditivo y `alCambiar` para notificar (HU-27). |
-| [`invocador-capacidades.ts`](src/lib/invocador-capacidades.ts)       | Puerta del receptor: `EjecutorCapacidad` (limite, validacion, `dur`, auditoria) + registro.  |
-| [`capacidades-locales.ts`](src/lib/capacidades-locales.ts)           | `PuertoCapacidades` en proceso (B0): mide `rtt` y normaliza el resultado como si viajara.    |
-| [`traducir-fallo.ts`](src/lib/traducir-fallo.ts)                     | Fallo de un caso de uso -> `ErrorHerramienta` con los codigos de docs/02, 5.                 |
-| [`capacidades.module.ts`](src/lib/capacidades.module.ts)             | `CapacidadesModule.forRoot({ limiteLlamadas })`; reexporta conocimiento y tickets.           |
+| Archivo                                                                                                                          | Contenido                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [`capacidad.ts`](src/lib/capacidad.ts)                                                                                           | Interfaz `Capacidad`: nombre y `ejecutar(argumentos, contexto)`.                                                               |
+| [`capacidades/*.capacidad.ts`](src/lib/capacidades/)                                                                             | Las cinco implementaciones sobre `@unihelp/conocimiento` y `@unihelp/tickets`.                                                 |
+| [`capacidades/consultar-disponibilidad-soporte.capacidad.ts`](src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts) | Sexta herramienta (HU-43): calendario sintetico de soporte por sede; regla pura y determinista. Solo la registra `mcp-server`. |
+| [`capacidades/salidas.spec.ts`](src/lib/capacidades/salidas.spec.ts)                                                             | Cada salida cumple el `esquemaSalida` publicado (el cliente MCP de B1 lo valida).                                              |
+| [`registro-capacidades.ts`](src/lib/registro-capacidades.ts)                                                                     | Registro con las cinco del contrato; `agregar` aditivo y `alCambiar` para notificar (HU-27).                                   |
+| [`invocador-capacidades.ts`](src/lib/invocador-capacidades.ts)                                                                   | Puerta del receptor: `EjecutorCapacidad` (limite, validacion, `dur`, auditoria) + registro.                                    |
+| [`capacidades-locales.ts`](src/lib/capacidades-locales.ts)                                                                       | `PuertoCapacidades` en proceso (B0): mide `rtt` y normaliza el resultado como si viajara.                                      |
+| [`traducir-fallo.ts`](src/lib/traducir-fallo.ts)                                                                                 | Fallo de un caso de uso -> `ErrorHerramienta` con los codigos de docs/02, 5.                                                   |
+| [`capacidades.module.ts`](src/lib/capacidades.module.ts)                                                                         | `CapacidadesModule.forRoot({ limiteLlamadas })`; reexporta conocimiento y tickets.                                             |
 
 ## Quien la usa
 
@@ -34,9 +35,10 @@ salida NO se redefinen aqui: son los de `@unihelp/herramientas`, fuente unica.
 - Arranca con exactamente las cinco herramientas de `DEFINICIONES_HERRAMIENTAS`,
   en el orden del contrato.
 - `agregar` no toca las existentes, rechaza un nombre repetido y compila el
-  esquema nuevo en el validador. La **sexta herramienta no existe**: su
-  especificacion esta sellada hasta la semana 8; el mecanismo se prueba con
-  `herramienta_de_prueba`, que solo existe en `registro-capacidades.spec.ts`.
+  esquema nuevo en el validador. La **sexta herramienta**,
+  `consultar_disponibilidad_soporte` (HU-43), vive aqui pero NO entra en
+  `CapacidadesModule`: B0 sigue con cinco y solo `mcp-server` la agrega con
+  `agregar` al arrancar, para B1.
 
 ## Resultado "como si hubiera viajado"
 
