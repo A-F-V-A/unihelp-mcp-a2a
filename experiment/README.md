@@ -75,6 +75,11 @@ un panel con tokens, latencia y herramientas: [`visor/`](visor/README.md)
 de la compuerta a `python -m ejecutor puntuar-observacion` y sus observaciones se
 convierten en una corrida con `python -m ejecutor importar-visor`.
 
+El **piso de transporte** (M4.3) lo mide [`bench/`](bench/README.md) sin modelo:
+levanta `mcp-server`, `b0-directo` y un especialista de B3 en el entorno 9 y
+escribe `bench-transport.json`, que el cuaderno usa en toda corrida que no traiga
+el suyo (decision 55).
+
 Opciones de `correr` (tambien en `validar` y `salud`):
 
 ```bash

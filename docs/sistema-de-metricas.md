@@ -5,12 +5,11 @@ experimento: donde se valida una traza, donde se rechaza una ejecucion, como se
 calcula e infiere cada metrica y que forma tiene `resultados.json`. Sirve a quien
 instrumente un backend, a quien analice los datos y al equipo del panel web.
 
-> Estado (27 de septiembre de 2026): 35 de las 43 metricas implementadas, 30 con
-> valor sobre las corridas reales de `experiment/resultados/`: M1, M2, M3.1,
-> M3.5, M3.6, M4, M5 y M7 (decision 51). El costo M4.7 usa la tabla
-> `experiment/tarifas.yaml` (decision 50). Pendientes: M3.2-M3.4 y M7.5 (juez),
-> M7.4 (revisores), M4.3 (microbenchmark), M7.6 (reproduccion), M7.7 (control) y
-> M6 (sexta herramienta).
+> Estado (27 de septiembre de 2026): 38 de las 43 metricas implementadas y 34 con
+> valor sobre las corridas reales de `experiment/resultados/`, con el juez de
+> calidad incorporado (decisiones 52-54) y el microbenchmark de transporte (M4.3,
+> decision 55). Pendientes: M7.4 y M7.5 (revision humana en el panel, decision 56),
+> M7.6 (reproduccion), M7.7 (corrida de control) y M6 (sexta herramienta).
 
 La especificacion de cada metrica esta en [`09-plan-de-medicion.md`](09-plan-de-medicion.md);
 este documento no la repite.

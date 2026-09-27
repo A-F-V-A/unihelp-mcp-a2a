@@ -35,7 +35,7 @@
     "version_esquema_traza": "1.0.0",
     "version_registro": "1.2.0"
   },
-  "generado_en": "2026-09-27T15:53:16Z",
+  "generado_en": "2026-09-27T16:14:30Z",
   "metricas": [
     {
       "codigo": "M1.1",
@@ -4426,13 +4426,190 @@
       "codigo": "M4.3",
       "contrastes": [],
       "direccion": "menor_es_mejor",
-      "estado": "sin_datos",
+      "estado": "calculada",
       "familia": "M4",
-      "filas": [],
+      "filas": [
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "adaptador_local"
+          },
+          "estadistico": "p50",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.0009
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "adaptador_local"
+          },
+          "estadistico": "p95",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.0033
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "adaptador_local"
+          },
+          "estadistico": "p99",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.014002
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "adaptador_local"
+          },
+          "estadistico": "desviacion_estandar",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.002529
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "mcp_streamable_http"
+          },
+          "estadistico": "p50",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 13.11725
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "mcp_streamable_http"
+          },
+          "estadistico": "p95",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 16.688905
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "mcp_streamable_http"
+          },
+          "estadistico": "p99",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 21.608982
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "mcp_streamable_http"
+          },
+          "estadistico": "desviacion_estandar",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 5.694005
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "a2a_salto"
+          },
+          "estadistico": "p50",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 15.2165
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "a2a_salto"
+          },
+          "estadistico": "p95",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 16.747155
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "a2a_salto"
+          },
+          "estadistico": "p99",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 23.110186
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "a2a_salto"
+          },
+          "estadistico": "desviacion_estandar",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 5.176041
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "ruta_completa_http"
+          },
+          "estadistico": "p50",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.9362
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "ruta_completa_http"
+          },
+          "estadistico": "p95",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 1.165235
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "ruta_completa_http"
+          },
+          "estadistico": "p99",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 1.350135
+        },
+        {
+          "arquitectura": null,
+          "dimensiones": {
+            "transporte": "ruta_completa_http"
+          },
+          "estadistico": "desviacion_estandar",
+          "intervalo": null,
+          "n_observaciones": 1000,
+          "n_tareas": null,
+          "valor": 0.212445
+        }
+      ],
       "hipotesis": [
         "H3"
       ],
-      "motivo_estado": "La corrida no trae el microbenchmark de transporte.",
+      "motivo_estado": null,
       "nombre": "Piso de latencia del transporte",
       "notas": [],
       "rol": "primaria",

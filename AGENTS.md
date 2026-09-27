@@ -47,9 +47,10 @@ multiagente (orquestador con modelo que delega en dos especialistas con modelo,
 PostgreSQL y responden el mismo contrato al frontend y al ejecutor, incluidas las
 rutas de restablecimiento y traza. El sistema de metricas (`experiment/`,
 Python) implementa 38 de las 43 metricas (M1, M2, M3, M4, M5 y M7; decisiones 51
-y 52) y 30 tienen valor en las corridas reales (M3.2-M3.4 esperan al juez), con el costo sobre la tabla `experiment/tarifas.yaml` (decision
-50); faltan las que exigen juez, revisores, microbenchmark o la sexta
-herramienta. Las cuatro arquitecturas tienen corridas completas de las 40
+y 52) y 34 tienen valor en las corridas reales (juez incorporado; M4.3 del
+microbenchmark, decision 55), con el costo sobre la tabla `experiment/tarifas.yaml` (decision
+50) y el piso de transporte M4.3 sobre `experiment/bench-transport.json`
+(decision 55); faltan las que exigen revisores o la sexta herramienta. Las cuatro arquitecturas tienen corridas completas de las 40
 tareas con cinco modelos, y todos entran al analisis como factor (decision 49).
 
 El diseño completo del experimento esta especificado en `docs/00` a `docs/10`
@@ -159,6 +160,7 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   fixtures/ pruebas/     Generador de corrida sintetica y pytest
   ejecutor/              Corre las 40 tareas contra una arquitectura: trazas y compuerta automatica
   visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
+  bench/                 Microbenchmark de transporte sin modelo (M4.3): escribe bench-transport.json
   juez/                  Juez de calidad: prompt versionado, lotes ciegos y veredictos (decision 52)
   resultados/            Corridas archivadas con su procedencia: SI se versionan (decision 47)
   resultados-finales/    Zip con todos los datos clasificados, consolidados y el catalogo de metricas
@@ -488,7 +490,7 @@ hasta que se registre una decision, no las "arregles" por tu cuenta.
 | Nombres de campo de la traza | `docs/05`: `seed`, `provenance.git_sha`, `model.id`; esquema en `evaluation/schemas/trace.schema.json` | `experiment/schemas/traza.schema.json` con `provenance.semilla`, `provenance.version_codigo`, `provenance.modelo_id` y `version_esquema` (decision 21) |
 | Estado `estado_inicial_incorrecto` | `docs/09` seccion 13 lo lista como septimo estado final | La traza admite solo seis estados; la huella incorrecta es un motivo de rechazo de la carga (decision 21) |
 | Origen de `exito` (M1) | Compuerta automatica + juez en `scores.parquet` | Se lee de `puntuaciones.jsonl`, formato provisional; hoy solo lo produce el generador sintetico (decision 22) |
-| Insumos de M4.3, M7.2 y M7.4 a M7.7 | `bench-transport.json`, planillas humanas, juez, casetes, corrida de control, sin formato fijado | Formatos provisionales en `experiment/schemas/insumos.schema.json`; sin el insumo la metrica queda `sin_datos` (decision 22) |
+| Insumos de M7.2 y M7.4 a M7.7 | Planillas humanas, juez, casetes, corrida de control, sin formato fijado | Formatos provisionales en `experiment/schemas/insumos.schema.json`; sin el insumo la metrica queda `sin_datos` (decision 22) |
 | Numeracion de hipotesis | `docs/05` seccion 6.1: H1 no inferioridad, H2 compuestas, H3 confirmacion | `metricas.yaml` sigue `docs/09` seccion 14: H3 sobrecosto A2A, H4 confirmacion |
 | M7.3 reejecuciones | `reruns.md` y `outcome.status` | Solo `outcome.status` de los intentos; el cruce con `reruns.md` espera al ejecutor |
 | Validacion del residuo (HU-MET-07) | "Corre en cada ejecucion" | La corre la carga en Python, ejecucion por ejecucion, despues de la corrida; `libs/trazas` solo valida el esquema |

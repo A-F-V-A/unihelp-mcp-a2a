@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 import pytest
 
 from analisis.carga import consolidar
+from analisis.registro import RAIZ_EXPERIMENTO
 from analisis.familias import calcular
 from analisis.familias.comun import evaluar_umbral
 from analisis.salida import construir_resultados
@@ -161,7 +162,17 @@ def test_m7_sin_insumos_queda_sin_datos_y_no_en_cero(diminuta):
     assert r['M7.3'].observado_umbral == 0.0
     for codigo in ('M7.2', 'M7.4', 'M7.5', 'M7.6', 'M7.7'):
         assert r[codigo].estado == 'sin_datos', codigo
-    assert r['M4.3'].estado == 'sin_datos'
+
+
+def test_m4_3_sin_bench_propio_usa_el_del_experimento(diminuta):
+    # La corrida diminuta no trae bench-transport.json: el artefacto es de alcance
+    # experimento y se lee de experiment/bench-transport.json (decision 55).
+    contexto, _, r = diminuta
+    assert not (contexto.directorio_corrida / 'bench-transport.json').exists()
+    comun = json.loads((RAIZ_EXPERIMENTO / 'bench-transport.json').read_text(encoding='utf-8'))
+    assert r['M4.3'].estado == 'calculada'
+    transportes = {f.dimensiones['transporte'] for f in r['M4.3'].filas}
+    assert transportes == {t['nombre'] for t in comun['transportes']}
 
 
 def test_sin_puntuaciones_m1_queda_sin_datos(tmp_path, registro, diminuta):

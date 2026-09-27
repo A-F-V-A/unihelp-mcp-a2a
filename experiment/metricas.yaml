@@ -46,10 +46,11 @@ artefactos:
     esquema: 'schemas/insumos.schema.json#/$defs/huellasEsperadas'
     provisional: true
   bench_transporte:
-    descripcion: 'Microbenchmark de transporte sin modelo (D9).'
+    descripcion: 'Microbenchmark de transporte sin modelo (M4.3, D9, decision 55). Comun a todas las corridas de la misma maquina: si la corrida no trae el suyo, se usa experiment/bench-transport.json (lo produce experiment/bench/).'
     archivo: bench-transport.json
     esquema: 'schemas/insumos.schema.json#/$defs/benchTransporte'
     provisional: true
+    alcance: experimento
   calificacion_humana:
     descripcion: 'Planilla de los dos revisores humanos sobre la muestra estratificada del 20 %.'
     archivo: calificacion-humana.jsonl

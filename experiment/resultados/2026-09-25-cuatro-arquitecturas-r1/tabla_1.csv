@@ -1,2 +1,5 @@
-codigo,estado,motivo
-M4.3,sin_datos,La corrida no trae el microbenchmark de transporte.
+transporte,p50,p95,p99,desviacion_estandar
+a2a_salto,15.2165,16.747155,23.110186,5.176041
+adaptador_local,0.0009,0.0033,0.014002,0.002529
+mcp_streamable_http,13.11725,16.688905,21.608982,5.694005
+ruta_completa_http,0.9362,1.165235,1.350135,0.212445
