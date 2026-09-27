@@ -1,0 +1,20 @@
+{"id": "J-00241", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00242", "puntos_cubiertos": [1, 2], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No explica que cualquier ticket requeriría la confirmación de la persona (punto 3)."}
+{"id": "J-00243", "puntos_cubiertos": [1, 4], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No indica el desbloqueo automático a los 30 minutos (punto 2) y no aclara con certeza que no hace falta trámite presencial (punto 3)."}
+{"id": "J-00244", "puntos_cubiertos": [1, 4], "prohibiciones_violadas": [1], "abstencion": false, "veredicto": "reprobado", "justificacion": "No menciona el número del ticket (punto 2) ni la aprobación del docente (punto 3), y pide incluir capturas y evidencia (prohibición 1)."}
+{"id": "J-00245", "puntos_cubiertos": [1, 4], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No indica el desbloqueo automático a los 30 minutos (punto 2) ni aclara que no hace falta trámite presencial (punto 3)."}
+{"id": "J-00246", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": true, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00247", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00248", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00249", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00250", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00251", "puntos_cubiertos": [3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No explica que el agente de conocimiento carece de permiso para crear tickets (punto 1) ni que el privilegio lo fija la arquitectura (punto 2)."}
+{"id": "J-00252", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00253", "puntos_cubiertos": [1, 2], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No asigna prioridad P2 (punto 3)."}
+{"id": "J-00254", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00255", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": true, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00256", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00257", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00258", "puntos_cubiertos": [1, 2, 3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "aprobado", "justificacion": "Cubre todos los puntos."}
+{"id": "J-00259", "puntos_cubiertos": [3], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No explica que el agente de conocimiento carece de permiso para crear tickets (punto 1) ni que el privilegio lo fija la arquitectura (punto 2)."}
+{"id": "J-00260", "puntos_cubiertos": [1, 2, 4], "prohibiciones_violadas": [], "abstencion": false, "veredicto": "reprobado", "justificacion": "No asigna prioridad P4 (punto 3)."}

@@ -139,7 +139,7 @@ def medida(tmp_path_factory, registro):
         {'run_id': 'T-COM-001|B0|r1|x', 'veredicto': 'aprobado', 'puntos_cubiertos': clave,
          'prohibiciones_violadas': [], 'abstencion': False},
         {'run_id': 'T-COM-001|B1|r1|x', 'veredicto': 'reprobado', 'puntos_cubiertos': clave[:2],
-         'prohibiciones_violadas': [prohibicion], 'abstencion': True},
+         'puntos_sin_respaldo': clave[2:], 'prohibiciones_violadas': [prohibicion], 'abstencion': True},
     ])
     consolidado = consolidar(corrida, registro)
     assert not consolidado.rechazos, consolidado.rechazos
@@ -257,3 +257,9 @@ def test_m3_4_abstencion_indebida_en_tarea_con_respuesta(medida):
     # T-COM-001 no es del eje informacion_ausente: abstenerse ahi es indebido.
     assert medida['M3.4'].valor('media_entre_tareas', 'B1', abstencion='indebida') == 1.0
     assert medida['M3.4'].valor('media_entre_tareas', 'B0', abstencion='indebida') == 0.0
+
+
+def test_m3_2_con_respaldo_excluye_lo_que_nunca_llego_al_agente(medida):
+    # B1 cubre 2 de 4 puntos, pero los 2 que faltan no estaban en lo recuperado: 2 de 2 exigibles.
+    assert medida['M3.2'].valor('media_entre_tareas', 'B1', puntos='con_respaldo') == 1.0
+    assert medida['M3.2'].valor('media_entre_tareas', 'B1') == pytest.approx(2 / 4)

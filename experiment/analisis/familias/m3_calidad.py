@@ -188,7 +188,28 @@ def cobertura_puntos_clave(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
 
     datos[COLUMNA] = pd.Series([valor(f) for _, f in datos.iterrows()], index=datos.index, dtype=float)
     _, filas, contrastes = agregado_por_tarea(metrica, ctx, datos, COLUMNA, contrastes=metrica.con_contrastes)
-    return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes))
+    notas: tuple[str, ...] = ()
+    columna_respaldo = metrica.columna('puntos_sin_respaldo')
+    if columna_respaldo in datos.columns and datos[columna_respaldo].notna().any():
+        # Juez v2 (decision 53): la misma cobertura, pero solo sobre los puntos cuya informacion SI le
+        # llego al agente. Separa lo que el agente no dijo de lo que el sistema nunca le entrego.
+        def con_respaldo(fila: pd.Series) -> float:
+            sin = set(como_lista(fila[columna_respaldo]))
+            exigibles = [p for p in como_lista(fila[metrica.columna('puntos_clave')]) if p not in sin]
+            if not exigibles:
+                return np.nan
+            return len(set(como_lista(fila[metrica.columna('puntos_cubiertos')])) & set(exigibles)) / len(exigibles)
+
+        datos['_con_respaldo'] = pd.Series([con_respaldo(f) for _, f in datos.iterrows()], index=datos.index,
+                                           dtype=float)
+        _, filas_resp, pares_resp = agregado_por_tarea(metrica, ctx, datos, '_con_respaldo',
+                                                       dimensiones={'puntos': 'con_respaldo'},
+                                                       contrastes=metrica.con_contrastes)
+        filas += filas_resp
+        contrastes += pares_resp
+        notas = ('Las filas con puntos=con_respaldo excluyen los puntos cuya informacion no llego al agente '
+                 '(buscar_politica devuelve un extracto por politica); las demas miden contra todos los puntos.',)
+    return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes), notas=notas)
 
 
 @implementa('M3.3')

@@ -604,7 +604,7 @@ metricas:
     unidad_y_direccion: { unidad: 'Proporción en [0, 1]', direccion: mayor_es_mejor }
     fuente:
       - artefacto: veredictos_juez
-        campos: { puntos_cubiertos: puntos_cubiertos }
+        campos: { puntos_cubiertos: puntos_cubiertos, puntos_sin_respaldo: puntos_sin_respaldo }
       - artefacto: tareas
         campos: { puntos_clave: esperado.puntos_clave_respuesta }
       - artefacto: traza

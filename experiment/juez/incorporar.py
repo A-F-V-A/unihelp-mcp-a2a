@@ -1,6 +1,6 @@
 """Incorpora los veredictos del juez a las corridas archivadas (decision 52).
 
-    cd experiment && uv run python juez/incorporar.py --juez "claude-opus-5-5 (sesion Claude)"
+    cd experiment && uv run python juez/incorporar.py --juez "claude-opus-5-5 (sesion Claude)" --prompt prompt-v2.md
 
 1. Valida cada `juez/veredictos/lote-NNN.jsonl` contra su lote: mismos `id` en el
    mismo orden, numeros de punto y de prohibicion dentro de rango, `veredicto`
@@ -31,6 +31,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent
 RESULTADOS = RAIZ.parent / 'resultados'
 VEREDICTOS = ('aprobado', 'reprobado')
+PUNTOS: dict[str, list[str]] = {}
 
 
 def leer_jsonl(ruta: Path) -> list[dict]:
@@ -42,7 +43,7 @@ def sin_numero(texto: str) -> str:
     return texto.split('. ', 1)[1] if '. ' in texto and texto.split('. ', 1)[0].isdigit() else texto
 
 
-def validar_lote(lote: list[dict], veredictos: list[dict]) -> list[str]:
+def validar_lote(lote: list[dict], veredictos: list[dict], exigir_respaldo: bool) -> list[str]:
     errores = []
     if [v.get('id') for v in veredictos] != [i['id'] for i in lote]:
         return ['los id no coinciden con el lote (faltan, sobran o cambiaron de orden)']
@@ -51,7 +52,10 @@ def validar_lote(lote: list[dict], veredictos: list[dict]) -> list[str]:
             errores.append(f"{v['id']}: veredicto {v.get('veredicto')!r}")
         if not isinstance(v.get('abstencion'), bool):
             errores.append(f"{v['id']}: abstencion no es booleana")
-        for campo, lista in (('puntos_cubiertos', 'puntos_clave'), ('prohibiciones_violadas', 'prohibiciones')):
+        campos = [('puntos_cubiertos', 'puntos_clave'), ('prohibiciones_violadas', 'prohibiciones')]
+        if exigir_respaldo:
+            campos.append(('puntos_sin_respaldo', 'puntos_clave'))
+        for campo, lista in campos:
             numeros = v.get(campo)
             if not isinstance(numeros, list) or any(
                 not isinstance(n, int) or isinstance(n, bool) or not 1 <= n <= len(item[lista]) for n in numeros
@@ -68,10 +72,16 @@ def validar_lote(lote: list[dict], veredictos: list[dict]) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--juez', required=True, help='modelo o sesion que califico, tal como se reportara')
+    parser.add_argument('--prompt', default='prompt-v2.md', help='version del prompt con que se califico')
     args = parser.parse_args()
+    exigir_respaldo = args.prompt != 'prompt-v1.md'
 
     clave = json.loads((RAIZ / 'clave-ciega.json').read_text(encoding='utf-8'))
-    huella_prompt = 'sha256:' + hashlib.sha256((RAIZ / 'prompt-v1.md').read_bytes()).hexdigest()
+    huella_prompt = 'sha256:' + hashlib.sha256((RAIZ / args.prompt).read_bytes()).hexdigest()
+    anteriores = {}
+    for ruta in sorted((RAIZ / 'veredictos-v1').glob('lote-*.jsonl')):
+        anteriores.update({v['id']: v['veredicto'] for v in leer_jsonl(ruta)})
+    coinciden = comparados = 0
     por_corrida: dict[str, dict[str, dict]] = defaultdict(dict)
     lotes_ok = lotes_malos = 0
     for ruta_lote in sorted((RAIZ / 'lotes').glob('lote-*.jsonl')):
@@ -85,14 +95,18 @@ def main() -> None:
             print(f'{ruta_lote.name}: JSON mal formado ({error}); no se usa.')
             lotes_malos += 1
             continue
-        errores = validar_lote(lote, veredictos)
+        errores = validar_lote(lote, veredictos, exigir_respaldo)
         if errores:
             print(f'{ruta_lote.name}: {len(errores)} problemas; no se usa. Primero: {errores[0]}')
             lotes_malos += 1
             continue
         lotes_ok += 1
         for item, v in zip(lote, veredictos, strict=True):
+            if item['id'] in anteriores:
+                comparados += 1
+                coinciden += anteriores[item['id']] == v['veredicto']
             destino = clave[item['id']]
+            PUNTOS[destino['run_id']] = [sin_numero(p) for p in item['puntos_clave']]
             por_corrida[destino['carpeta']][destino['run_id']] = {
                 'run_id': destino['run_id'],
                 'veredicto': v['veredicto'],
@@ -101,8 +115,14 @@ def main() -> None:
                     sin_numero(item['prohibiciones'][n - 1]) for n in sorted(set(v['prohibiciones_violadas']))
                 ],
                 'abstencion': v['abstencion'],
+                **({'puntos_sin_respaldo': [sin_numero(item['puntos_clave'][n - 1])
+                                            for n in sorted(set(v['puntos_sin_respaldo']))]}
+                   if exigir_respaldo else {}),
             }
     print(f'Lotes validos: {lotes_ok}; descartados: {lotes_malos}.')
+    if comparados:
+        print(f'Consistencia con la calificacion v1: {coinciden}/{comparados} veredictos iguales '
+              f'({coinciden / comparados:.1%}).')
 
     total_por_corrida: dict[str, int] = defaultdict(int)
     for destino in clave.values():
@@ -135,12 +155,19 @@ def main() -> None:
                 archivo.write(json.dumps(juzgadas[run_id], ensure_ascii=False) + '\n')
         (ruta / 'juez.json').write_text(json.dumps({
             'juez': args.juez,
-            'prompt': 'experiment/juez/prompt-v1.md',
+            'prompt': f'experiment/juez/{args.prompt}',
             'huella_prompt': huella_prompt,
             'incorporado_el': date.today().isoformat(),
             'ejecuciones_juzgadas': len(juzgadas),
             'aprobadas': sum(v['veredicto'] == 'aprobado' for v in juzgadas.values()),
             'exitos_quitados_por_el_juez': int(quitados),
+            'reprobadas_solo_por_puntos_sin_respaldo': sum(
+                v['veredicto'] == 'reprobado' and not v['prohibiciones_violadas']
+                and set(v.get('puntos_sin_respaldo', [])) >= (set(PUNTOS[r]) - set(v['puntos_cubiertos']))
+                and bool(v.get('puntos_sin_respaldo'))
+                for r, v in juzgadas.items()
+            ) if exigir_respaldo else None,
+            'consistencia_con_v1': {'comparados': comparados, 'iguales': coinciden} if comparados else None,
         }, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         print(f'  {carpeta}: {total}/{total} incorporadas; el juez quito {quitados} exitos de la compuerta.')
 

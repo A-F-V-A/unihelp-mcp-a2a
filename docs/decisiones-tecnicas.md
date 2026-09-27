@@ -1582,3 +1582,41 @@ respuestas de T-ADV-007 el propio agente dice «el especialista» y delata el
 multiagente; es el texto calificado y no se altera. Los tokens del juez no son
 de ninguna arquitectura (D7) y no se miden. Mientras una corrida no este juzgada
 entera, su `exito` sigue siendo solo la compuerta.
+
+## 53. Juez v2: el mismo veredicto estricto, mas los puntos que el agente nunca recibio
+
+> Tomada el 27 de septiembre de 2026, tras la primera pasada del juez (v1) sobre
+> la corrida de gpt-5.5.
+
+Contexto: el juez v1 aprobo 218 de 480 ejecuciones y quito el exito a 237 que
+pasaban la compuerta. Revisadas, la mayoria de los fallos de las tareas
+informativas (0 de 12 aprobadas en casi todas) piden datos que el agente nunca
+recibio: `buscar_politica` devuelve un solo extracto por politica, el mejor
+puntuado, y ninguna de las cinco herramientas entrega la politica completa. En
+T-INF-007 el agente recibe "se bloquea tras 5 intentos" y responde con
+honestidad que no puede afirmar el resto; la rubrica exige ademas "desbloqueo
+automatico a los 30 minutos", que esta en la semilla pero no en lo recuperado.
+El limite es de la capacidad compartida, asi que es igual en B0-B3: no sesga los
+contrastes entre arquitecturas, pero si baja la efectividad absoluta de todas.
+
+Decision:
+
+- El veredicto sigue siendo el estricto del plan (todos los puntos, ninguna
+  prohibicion) y es el que entra a `exito` y a M1: cambiarlo seria redefinir
+  la metrica primaria despues de ver los datos.
+- El juez v2 (`experiment/juez/prompt-v2.md`) marca ademas
+  `puntos_sin_respaldo`: los puntos cuya informacion no estaba en lo
+  recuperado. M3.2 reporta la cobertura contra todos los puntos y, aparte
+  (`puntos=con_respaldo`), contra los que si tenian respaldo; `juez.json`
+  cuenta las reprobadas solo por falta de respaldo.
+- Se recalifican todos los lotes con v2, incluidos los 24 de gpt-5.5. La pasada
+  v1 queda en `experiment/juez/veredictos-v1/` y, al comparar ambas sobre las
+  mismas 480 ejecuciones, mide la consistencia del juez.
+- El v2 permite al juez buscar texto (solo lectura) en sus lotes y veredictos
+  para mantener el criterio entre respuestas casi identicas, como hizo por su
+  cuenta la sesion v1, y le pide trabajar hasta el final sin preguntar.
+
+Consecuencias: la limitacion de un extracto por politica es un hallazgo sobre
+el sistema, no sobre las arquitecturas, y se reporta asi. Corregirla (devolver
+todos los extractos o agregar una herramienta de lectura de politica) exigiria
+volver a correr las campañas; no se hace sin una decision aparte (RM-17).

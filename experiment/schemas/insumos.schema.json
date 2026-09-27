@@ -126,6 +126,11 @@
         "veredicto": { "$ref": "#/$defs/veredicto" },
         "puntos_cubiertos": { "type": "array", "items": { "type": "string" } },
         "prohibiciones_violadas": { "type": "array", "items": { "type": "string" } },
+        "puntos_sin_respaldo": {
+          "description": "Puntos clave cuya informacion no estaba en lo que recupero el agente (prompt v2, decision 53).",
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "abstencion": { "type": "boolean" }
       }
     },

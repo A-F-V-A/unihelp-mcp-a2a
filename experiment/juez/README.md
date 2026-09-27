@@ -8,20 +8,22 @@ API (decision 52).
 
 | Archivo | Que es | Se versiona |
 | --- | --- | --- |
-| [`prompt-v1.md`](prompt-v1.md) | Instrucciones completas del juez: reglas de ceguera, rubrica, formato de salida y procedimiento por lotes | si |
+| [`prompt-v2.md`](prompt-v2.md) | **Vigente.** Instrucciones del juez: ceguera, rubrica, `puntos_sin_respaldo`, formato y procedimiento por lotes sin preguntas | si |
+| [`prompt-v1.md`](prompt-v1.md) | Primera version (mismo criterio de veredicto, sin `puntos_sin_respaldo`) | si |
 | [`preparar_lotes.py`](preparar_lotes.py) | Arma los lotes ciegos desde `resultados/` (sin arquitectura, modelo ni `traceId`) | si |
 | [`incorporar.py`](incorporar.py) | Valida los veredictos, deshace el cegado y actualiza las corridas completas | si |
 | `lotes/lote-NNN.jsonl` | 20 ejecuciones por lote, una corrida por bloque de lotes | no (se regenera igual con la semilla) |
 | `clave-ciega.json` | Identificador ciego -> corrida y `run_id`. **El juez no la abre** | no |
-| `veredictos/lote-NNN.jsonl` | Lo que escribe el juez, con su justificacion | si |
+| `veredictos/lote-NNN.jsonl` | Lo que escribe el juez v2, con su justificacion | si |
+| `veredictos-v1/lote-001..024.jsonl` | Primera pasada (v1) sobre gpt-5.5: sirve para medir la consistencia del juez | si |
 
 ## Flujo
 
 ```bash
 cd experiment
 uv run python juez/preparar_lotes.py          # 1. lotes ciegos (3302 ejecuciones, 167 lotes)
-# 2. sesion(es) de Claude con prompt-v1.md: escriben juez/veredictos/lote-NNN.jsonl
-uv run python juez/incorporar.py --juez "claude-opus-5-5 (sesion Claude, proyecto AFVA)"
+# 2. sesion(es) de Claude con prompt-v2.md: escriben juez/veredictos/lote-NNN.jsonl
+uv run python juez/incorporar.py --juez "claude-opus-5-5 (sesion Claude, proyecto AFVA)" --prompt prompt-v2.md
 # 3. volver a correr el cuaderno sobre las corridas incorporadas
 ```
 
@@ -57,3 +59,13 @@ escritos dejarian de corresponder.
   ser determinista. Se compensa con la validacion humana (M7.5).
 - En 32 respuestas de T-ADV-007 el propio agente menciona «el especialista», lo
   que delata el multiagente. Es el texto que se califica y no se altera.
+
+## Hallazgo de la primera pasada (v1, gpt-5.5)
+
+El juez aprobo 218 de 480 y quito el exito a 237 ejecuciones que pasaban la
+compuerta. La causa principal no es el agente: `buscar_politica` devuelve **un
+solo extracto por politica** (el que mejor coincide) y ninguna herramienta
+devuelve la politica completa, mientras que los puntos clave de las tareas
+informativas piden los otros extractos (por ejemplo, POL-AU-002: "desbloqueo
+automatico a los 30 minutos"). Afecta igual a B0-B3. Por eso la v2 marca
+`puntos_sin_respaldo` sin cambiar el veredicto (decision 53).
