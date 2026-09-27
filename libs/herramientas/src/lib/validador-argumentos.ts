@@ -27,6 +27,10 @@ function describir(error: ErrorObject): string {
     case 'type':
       return `${campo} debe ser de tipo ${String(p['type'])}`;
     case 'format':
+      // `date` valida tambien que la fecha exista (sin mes 13 ni dia 40).
+      if (p['format'] === 'date') {
+        return `${campo} debe ser una fecha existente con formato AAAA-MM-DD`;
+      }
       return `${campo} no tiene el formato ${String(p['format'])}`;
     default:
       return `${campo} no es válido (${error.keyword})`;

@@ -24,9 +24,9 @@ export interface CapacidadRegistrada {
  * herramienta nueva no toca las existentes, y los suscriptores (el servidor MCP,
  * que emite `notifications/tools/list_changed`) se enteran del cambio (HU-27).
  *
- * La sexta herramienta NO existe aqui: su especificacion esta sellada hasta la
- * semana 8. El mecanismo se prueba con una herramienta que solo vive en el
- * entorno de pruebas.
+ * La sexta herramienta (`consultar_disponibilidad_soporte`, HU-43) NO arranca
+ * aqui: la agrega con `agregar` la arquitectura que la implementa (hoy B0), para
+ * que las demas sigan publicando las cinco del contrato.
  */
 @Injectable()
 export class RegistroCapacidades {

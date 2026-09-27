@@ -1003,6 +1003,27 @@ Salida propuesta:
 
 ---
 
+### 5.7 `consultar_disponibilidad_soporte` (sexta herramienta, HU-43)
+
+Abierta en la semana 8 e implementada solo en B0. Responde si hay personal de soporte técnico
+en una sede (`central`, `norte`, `sur`, `virtual`) en una fecha `AAAA-MM-DD`, con sus franjas y
+canal, o el motivo por el que no lo hay (`festivo`, `fuera_de_horario`, `cierre_programado`).
+Es de solo lectura y determinista: horario, festivos y cierres son datos sintéticos del sistema,
+no de la base.
+
+| Pieza                                                                    | Dónde                                                                                |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| Definición, sedes y sección de prompt                                    | `libs/herramientas/src/lib/disponibilidad-soporte.ts`                                |
+| Regla y datos                                                            | `libs/capacidades/src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts` |
+| Registro aditivo (`RegistroCapacidades.agregar`) y prompt con la sección | `apps/b0-directo/src/app/app.module.ts`                                              |
+| Punta a punta con el modelo (`pnpm nx e2e b0-directo`)                   | `apps/b0-directo/src/e2e/disponibilidad-soporte.e2e-spec.ts`                         |
+
+No entra en `DEFINICIONES_HERRAMIENTAS`: las cinco del contrato, la instantánea de `tools/list`
+y B1, B2 y B3 no cambian. El prompt de B0 es el base más la sección «DISPONIBILIDAD DEL SOPORTE
+TÉCNICO» tras ALCANCE, porque la regla de alcance manda no invocar herramientas fuera de los
+cuatro servicios; por eso `prompt_hash` de B0 ya no coincide con el de B1 mientras B1 no adopte
+la herramienta.
+
 ## 6. Diagrama de secuencia: tarea compuesta con creación de ticket
 
 Recorrido de una tarea como T-COM-004 (cancelación extemporánea con el formulario fuera de

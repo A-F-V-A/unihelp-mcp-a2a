@@ -15,5 +15,12 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["jest.config.ts", "jest.config.cts", "src/**/*.spec.ts", "src/**/*.test.ts"]
+  "exclude": [
+    "jest.config.ts",
+    "jest.config.cts",
+    "jest.e2e.config.cts",
+    "src/**/*.spec.ts",
+    "src/**/*.e2e-spec.ts",
+    "src/**/*.test.ts"
+  ]
 }

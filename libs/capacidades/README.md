@@ -14,6 +14,7 @@ salida NO se redefinen aqui: son los de `@unihelp/herramientas`, fuente unica.
 | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | [`capacidad.ts`](src/lib/capacidad.ts)                               | Interfaz `Capacidad`: nombre y `ejecutar(argumentos, contexto)`.                             |
 | [`capacidades/*.capacidad.ts`](src/lib/capacidades/)                 | Las cinco implementaciones sobre `@unihelp/conocimiento` y `@unihelp/tickets`.               |
+| [`capacidades/consultar-disponibilidad-soporte.capacidad.ts`](src/lib/capacidades/consultar-disponibilidad-soporte.capacidad.ts) | Sexta herramienta (HU-43): horario, festivos y cierres sinteticos; no entra al registro por defecto, B0 la agrega. |
 | [`capacidades/salidas.spec.ts`](src/lib/capacidades/salidas.spec.ts) | Cada salida cumple el `esquemaSalida` publicado (el cliente MCP de B1 lo valida).            |
 | [`registro-capacidades.ts`](src/lib/registro-capacidades.ts)         | Registro con las cinco del contrato; `agregar` aditivo y `alCambiar` para notificar (HU-27). |
 | [`invocador-capacidades.ts`](src/lib/invocador-capacidades.ts)       | Puerta del receptor: `EjecutorCapacidad` (limite, validacion, `dur`, auditoria) + registro.  |
@@ -34,9 +35,12 @@ salida NO se redefinen aqui: son los de `@unihelp/herramientas`, fuente unica.
 - Arranca con exactamente las cinco herramientas de `DEFINICIONES_HERRAMIENTAS`,
   en el orden del contrato.
 - `agregar` no toca las existentes, rechaza un nombre repetido y compila el
-  esquema nuevo en el validador. La **sexta herramienta no existe**: su
-  especificacion esta sellada hasta la semana 8; el mecanismo se prueba con
+  esquema nuevo en el validador. El mecanismo se prueba con
   `herramienta_de_prueba`, que solo existe en `registro-capacidades.spec.ts`.
+- La **sexta herramienta**, `consultar_disponibilidad_soporte` (HU-43, abierta en
+  la semana 8), NO entra al registro por defecto: cada arquitectura la agrega con
+  `agregar` cuando la implementa. Hoy solo B0 lo hace (`apps/b0-directo/src/app/app.module.ts`),
+  asi que `mcp-server`, B1, B2 y B3 siguen publicando las cinco.
 
 ## Resultado "como si hubiera viajado"
 
