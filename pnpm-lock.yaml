@@ -65,6 +65,9 @@ importers:
       typeorm:
         specifier: ^0.3.31
         version: 0.3.31(babel-plugin-macros@3.1.0)(pg@8.23.0)(ts-node@10.9.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.4)(typescript@6.0.3))
+      yaml:
+        specifier: 2.9.0
+        version: 2.9.0
       zod:
         specifier: ^4.6.2
         version: 4.6.2
@@ -219,9 +222,6 @@ importers:
       webpack-dev-server:
         specifier: ^5.2.1
         version: 5.2.6(webpack-cli@7.2.3)(webpack@5.110.3)
-      yaml:
-        specifier: 2.9.0
-        version: 2.9.0
 
 packages:
 
