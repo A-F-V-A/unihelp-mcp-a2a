@@ -164,7 +164,11 @@
         "archivo": { "type": ["string", "null"] },
         "esquema": { "type": ["string", "null"] },
         "clave": { "type": ["string", "null"] },
-        "provisional": { "type": "boolean" }
+        "provisional": { "type": "boolean" },
+        "alcance": {
+          "description": "corrida (por defecto): el archivo vive en el directorio de la corrida. experimento: si la corrida no lo trae, se usa el de experiment/ (una tabla comun a todas las corridas, como las tarifas).",
+          "enum": ["corrida", "experimento"]
+        }
       }
     },
     "fuente": {

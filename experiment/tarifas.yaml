@@ -1,0 +1,83 @@
+# Tarifas de la API por modelo, en USD por millon de tokens (decision 50).
+#
+# Las usa M4.7 (costo estimado por ejecucion), que se calcula en el cuaderno con
+#   costo = (entrada - entrada_cacheada_tokens) x entrada
+#         + entrada_cacheada_tokens x entrada_cacheada
+#         + salida_tokens x salida
+# porque `usage.input_tokens` de la traza YA incluye los tokens servidos desde cache.
+# El `usage.cost_usd_est` que escribe el ejecutor no se usa: las corridas se
+# lanzaron sin tarifa configurada y vale 0.
+#
+# Precio de lista del nivel estandar (no batch, flex ni prioridad), sin recargos
+# regionales, para prompts de menos de 272K (OpenAI) o 200K (Gemini) tokens: ninguna
+# ejecucion del experimento se acerca a ese tamaño. Un modelo que no este aqui deja
+# M4.7 `sin_datos` para esa corrida; nunca se inventa una tarifa.
+#
+# Para actualizar: cambiar las cifras, `consultado_el` y `fuente`, y volver a correr
+# el cuaderno. Una corrida puede traer su propio `tarifas.yaml` y entonces manda ese.
+
+version: '1.0.0'
+moneda: USD
+unidad: por_millon_de_tokens
+consultado_el: '2026-09-27'
+
+modelos:
+  # --- OpenAI ------------------------------------------------------------------
+  gpt-5.5-2026-04-23:
+    entrada: 5.00
+    entrada_cacheada: 0.50
+    salida: 30.00
+    fuente: https://developers.openai.com/api/docs/pricing
+    nota: Standard, prompts de menos de 272K tokens.
+  gpt-5.4-2026-03-05:
+    entrada: 2.50
+    entrada_cacheada: 0.25
+    salida: 15.00
+    fuente: https://developers.openai.com/api/docs/pricing
+    nota: Standard, prompts de menos de 272K tokens.
+  gpt-5.4-mini-2026-03-17:
+    entrada: 0.75
+    entrada_cacheada: 0.075
+    salida: 4.50
+    fuente: https://developers.openai.com/api/docs/pricing
+    nota: Standard.
+  gpt-4.1-mini-2025-04-14:
+    entrada: 0.40
+    entrada_cacheada: 0.10
+    salida: 1.60
+    fuente: https://developers.openai.com/api/docs/pricing
+    nota: Standard.
+
+  # --- Google Gemini (Developer API, nivel de pago; pagina actualizada el 2026-09-24) ---
+  gemini-3.8-flash:
+    entrada: 0.75
+    entrada_cacheada: 0.075
+    salida: 3.75
+    fuente: https://ai.google.dev/gemini-api/docs/pricing
+    nota: Precio vigente hasta el 2026-12-31; desde 2027 se duplica. La salida incluye el pensamiento (las corridas usaron reasoning_effort none).
+  gemini-3.5-flash:
+    entrada: 1.50
+    entrada_cacheada: 0.15
+    salida: 9.00
+    fuente: https://ai.google.dev/gemini-api/docs/pricing
+    nota: La salida incluye el pensamiento (las corridas usaron reasoning_effort none).
+  gemini-3.1-flash-lite:
+    entrada: 0.25
+    entrada_cacheada: 0.025
+    salida: 1.50
+    fuente: https://ai.google.dev/gemini-api/docs/pricing
+    nota: Texto. La salida incluye el pensamiento (las corridas usaron reasoning_effort none).
+  gemini-3.1-pro-preview:
+    entrada: 2.00
+    entrada_cacheada: 0.20
+    salida: 12.00
+    fuente: https://ai.google.dev/gemini-api/docs/pricing
+    nota: Prompts de hasta 200K. Corrio con reasoning_effort low; sus ~450 tokens de pensamiento por llamada se cobran como salida pero no estan en usage.output_tokens, asi que su costo queda subestimado.
+
+  # --- Modelo local (Ollama, decision 46) ---------------------------------------
+  unihelp-qwen2.5:7b-instruct-q4_K_M-ctx16k:
+    entrada: 0.0
+    entrada_cacheada: 0.0
+    salida: 0.0
+    fuente: local
+    nota: Corre en la maquina del equipo; no hay costo de API. La energia y el hardware no se miden.

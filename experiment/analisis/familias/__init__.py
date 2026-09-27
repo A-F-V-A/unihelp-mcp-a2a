@@ -8,7 +8,14 @@ el analisis (HU-MET-02).
 from __future__ import annotations
 
 from ..registro import ErrorRegistro
-from . import m1_efectividad, m4_eficiencia, m7_fiabilidad  # noqa: F401  (registran sus metricas)
+from . import (  # noqa: F401  (registran sus metricas)
+    m1_efectividad,
+    m2_herramientas,
+    m3_calidad,
+    m4_eficiencia,
+    m5_seguridad,
+    m7_fiabilidad,
+)
 from .comun import Contexto, ResultadoMetrica, implementaciones
 
 __all__ = ['Contexto', 'ResultadoMetrica', 'calcular', 'diferencias_con_registro', 'implementaciones']

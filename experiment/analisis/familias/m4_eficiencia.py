@@ -192,12 +192,32 @@ def tokens_por_ejecucion(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
 
 @implementa('M4.7')
 def costo_estimado(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
+    """Costo por ejecucion = tokens de la traza x tarifa de lista del modelo (decision 50).
+
+    `usage.input_tokens` ya incluye los servidos desde cache, que se cobran a su propia tarifa.
+    """
     datos = poblacion(metrica, ctx)
     if datos.empty:
         return sin_datos(metrica, 'No hay ejecuciones que entren al calculo de costo.')
+    tarifas = ctx.insumos.get('tarifas')
+    if tarifas is None:
+        return sin_datos(metrica, 'No hay tabla de tarifas (experiment/tarifas.yaml).')
+    tabla = tarifas[metrica.campo('modelos', 'tarifas')]
+    modelos = datos[metrica.columna('modelo')].astype(str)
+    sin_tarifa = sorted(set(modelos) - set(tabla))
+    datos = datos[modelos.isin(tabla)].copy()
+    if datos.empty:
+        return sin_datos(metrica, f'La tabla de tarifas no tiene el modelo {", ".join(sin_tarifa)}.')
+    entrada = datos[metrica.columna('entrada')].astype(float)
+    cacheados = datos[metrica.columna('cacheados')].fillna(0).astype(float).clip(upper=entrada)
+    salida = datos[metrica.columna('salida')].astype(float)
+    precio = {campo: datos[metrica.columna('modelo')].map(lambda m, c=campo: float(tabla[m][c]))
+              for campo in metrica.parametro('campos_tarifa')}
+    entrada_p, cache_p, salida_p = (precio[c] for c in metrica.parametro('campos_tarifa'))
+    datos['_costo_usd'] = ((entrada - cacheados) * entrada_p + cacheados * cache_p + salida * salida_p) / 1e6
     solicitudes = int(metrica.parametro('proyeccion_solicitudes'))
-    estimaciones, filas, _ = _mediana_por_tarea(
-        metrica, ctx, metrica.columna('costo'), datos, contrastes=False
+    estimaciones, filas, contrastes = _mediana_por_tarea(
+        metrica, ctx, '_costo_usd', datos, contrastes=metrica.con_contrastes
     )
     filas += filas_desde_estimaciones(
         estimaciones,
@@ -205,9 +225,18 @@ def costo_estimado(metrica: Metrica, ctx: Contexto) -> ResultadoMetrica:
         n_observaciones=conteo_por_arquitectura(ctx, datos),
         escala=float(solicitudes),
     )
-    return ResultadoMetrica(
-        metrica.codigo,
-        'calculada',
-        tuple(filas),
-        notas=('El costo depende de la tarifa congelada en la configuracion; el dato robusto es M4.6.',),
+    for arquitectura, n in conteo_por_arquitectura(ctx, datos).items():
+        suma = datos.loc[datos[ctx.col_arquitectura] == arquitectura, '_costo_usd'].sum()
+        filas.append(Fila(arquitectura, 'suma_corrida', float(suma), n_observaciones=n))
+    filas.append(Fila(None, 'suma_corrida', float(datos['_costo_usd'].sum()), n_observaciones=len(datos)))
+    usadas = '; '.join(
+        f'{m}: {tabla[m][entrada_c]} / {tabla[m][cache_c]} / {tabla[m][salida_c]} USD por millon '
+        f'(entrada / entrada en cache / salida), fuente {tabla[m].get("fuente", "?")}'
+        for m in sorted(set(datos[metrica.columna('modelo')].astype(str)))
+        for entrada_c, cache_c, salida_c in [tuple(metrica.parametro('campos_tarifa'))]
     )
+    notas = [f'Tarifa de lista consultada el {tarifas.get("consultado_el")}: {usadas}.',
+             'El costo depende de la tarifa vigente; el dato robusto es M4.6.']
+    if sin_tarifa:
+        notas.append(f'Sin tarifa, excluidas del costo: {", ".join(sin_tarifa)}.')
+    return ResultadoMetrica(metrica.codigo, 'calculada', tuple(filas), tuple(contrastes), notas=tuple(notas))

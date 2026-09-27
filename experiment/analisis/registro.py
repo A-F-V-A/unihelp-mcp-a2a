@@ -275,8 +275,15 @@ class Registro:
         return tuple(e for e, t in self.tratamiento().items() if t['reejecutar'])
 
     def ruta_artefacto(self, nombre: str, directorio_corrida: Path) -> Path | None:
-        archivo = self.artefactos[nombre].get('archivo')
-        return None if archivo is None else directorio_corrida / archivo
+        """Ruta del artefacto. Uno de alcance `experimento` que la corrida no trae se lee de experiment/."""
+        artefacto = self.artefactos[nombre]
+        archivo = artefacto.get('archivo')
+        if archivo is None:
+            return None
+        propia = directorio_corrida / archivo
+        if artefacto.get('alcance') == 'experimento' and not propia.exists():
+            return RAIZ_EXPERIMENTO / archivo
+        return propia
 
     def esquema_artefacto(self, nombre: str) -> dict[str, Any] | None:
         relativa = self.artefactos[nombre].get('esquema')
@@ -286,7 +293,10 @@ class Registro:
         return self.artefactos[nombre].get('esquema') == self.artefactos[ARTEFACTO_TRAZA]['esquema']
 
     def campos_traza_requeridos(self) -> tuple[str, ...]:
-        """Campos escalares de la traza que la carga debe extraer, en orden estable."""
+        """Campos de la traza que la carga debe extraer, en orden estable.
+
+        Los que recorren un arreglo (`tool_calls[].nombre`) llegan como lista JSON alineada.
+        """
         campos: set[str] = set(self.datos['identidad'].values())
         campos.update(self.datos['procedencia'].values())
         campos.add(self.campo_estado_final)
@@ -297,7 +307,7 @@ class Registro:
         for metrica in self.implementadas():
             for fuente in metrica.fuentes:
                 if fuente.artefacto == ARTEFACTO_TRAZA:
-                    campos.update(c for c in fuente.campos.values() if MARCA_ARREGLO not in c)
+                    campos.update(fuente.campos.values())
         return tuple(sorted(campos))
 
     def campos_de_artefacto(self, artefacto: str) -> tuple[str, ...]:

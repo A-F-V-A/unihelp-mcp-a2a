@@ -46,8 +46,11 @@ multiagente (orquestador con modelo que delega en dos especialistas con modelo,
 (decisiones 44 y 45). Todas consumen `libs/conocimiento` y `libs/tickets` sobre
 PostgreSQL y responden el mismo contrato al frontend y al ejecutor, incluidas las
 rutas de restablecimiento y traza. El sistema de metricas (`experiment/`,
-Python) calcula M1, M4 y M7 de extremo a extremo; B0 y B1 tienen corridas
-completas de las 40 tareas (36/40 cada una); B2 y B3 aun no tienen corrida.
+Python) implementa 35 de las 43 metricas (M1, M2, M3.1, M3.5, M3.6, M4, M5 y M7;
+decision 51) y 30 tienen valor en las corridas reales, con el costo sobre la tabla `experiment/tarifas.yaml` (decision
+50); faltan las que exigen juez, revisores, microbenchmark o la sexta
+herramienta. Las cuatro arquitecturas tienen corridas completas de las 40
+tareas con cinco modelos, y todos entran al analisis como factor (decision 49).
 
 El diseño completo del experimento esta especificado en `docs/00` a `docs/10`
 (anexo tecnico del seminario): historias de usuario, contrato MCP, agentes A2A,
@@ -149,6 +152,7 @@ libs/
   trazas/                @unihelp/trazas: valida trazas con AJV antes de persistir (solo backends)
 experiment/              Sistema de metricas en Python (uv). UNICO lugar donde se calcula una metrica
   metricas.yaml          Registro de las 43 metricas (fuente de todo nombre de campo)
+  tarifas.yaml           Tarifa de lista por modelo para el costo M4.7, con fuente y fecha (decision 50)
   schemas/               JSON Schema de traza, registro, insumos y resultados
   analisis/              registro, carga, inferencia, familias/, salida
   analisis.ipynb         Cuaderno unico (papermill); escribe salidas/resultados.json
@@ -490,6 +494,7 @@ hasta que se registre una decision, no las "arregles" por tu cuenta.
 | Validacion del residuo (HU-MET-07) | "Corre en cada ejecucion" | La corre la carga en Python, ejecucion por ejecucion, despues de la corrida; `libs/trazas` solo valida el esquema |
 | Contrato de las herramientas | `docs/02`: `max_resultados` hasta 5, `incluir_historial`, `solicitante` obligatorio, estados en mayusculas | `libs/herramientas`: `max_resultados` hasta 3 (HU-05), sin `incluir_historial` ni `solicitante`; salidas con `motivo_sin_resultados` y `ventana_estimada` (decision 24) |
 | Cache de contexto (D2) | Deshabilitada en la corrida oficial | OpenAI cachea prompts largos sin opcion de desactivarlo; B0 registra `cached_input_tokens` (decision 23, pendiente) |
+| Poblacion de M3.5 | `docs/09`: veinte tareas aplicables (diagnostico y compuestas) | Solo 5 tareas declaran `esperado.ticket.prioridad`; M3.5 se mide sobre esas 5 hasta que se agregue la prioridad esperada a las de diagnostico (decision 51, pendiente) |
 
 Cuando una se resuelva: registrar la decision, actualizar el documento que
 quede desactualizado y quitar la fila de esta tabla.

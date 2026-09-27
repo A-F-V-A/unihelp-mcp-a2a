@@ -124,12 +124,13 @@ uv run papermill analisis.ipynb salidas/analisis.ejecutado.ipynb --cwd . \
 
 | Ruta                                                     | Contenido                                                                                                 |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [`metricas.yaml`](metricas.yaml)                         | Registro unico de las 43 metricas: ficha del plan, campo fuente, rol, umbral o resultado abierto.         |
+| [`metricas.yaml`](metricas.yaml)                         | Registro unico de las 43 metricas (35 implementadas): ficha del plan, campo fuente, rol, umbral o resultado abierto. |
 | [`schemas/`](schemas)                                    | `traza`, `metricas`, `insumos` y `resultados` (JSON Schema 2020-12) y ejemplos compartidos con AJV.       |
 | [`analisis/registro.py`](analisis/registro.py)           | Carga y valida el registro; unica fuente de nombres de campo.                                             |
 | [`analisis/carga.py`](analisis/carga.py)                 | Lee trazas JSONL y cuarentena, valida, rechaza y consolida a Parquet.                                     |
 | [`analisis/inferencia.py`](analisis/inferencia.py)       | Bootstrap pareado por conglomerados: remuestrea tareas, nunca ejecuciones.                                |
-| [`analisis/familias/`](analisis/familias)                | `m1_efectividad.py`, `m4_eficiencia.py`, `m7_fiabilidad.py` y piezas comunes.                             |
+| [`analisis/familias/`](analisis/familias)                | `m1_efectividad.py`, `m2_herramientas.py`, `m3_calidad.py`, `m4_eficiencia.py`, `m5_seguridad.py`, `m7_fiabilidad.py` y `comun.py`. |
+| [`tarifas.yaml`](tarifas.yaml)                           | Tarifa de lista por modelo (USD por millon de tokens) con fuente y fecha; la usa M4.7 (decision 50).      |
 | [`analisis/salida.py`](analisis/salida.py)               | `resultados.json`, tablas y figuras etiquetadas, manifiesto.                                              |
 | [`analisis.ipynb`](analisis.ipynb)                       | El cuaderno unico: corre de principio a fin con papermill.                                                |
 | [`fixtures/generador.py`](fixtures/generador.py)         | Corrida sintetica con casos borde deliberados.                                                            |

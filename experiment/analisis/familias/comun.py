@@ -7,7 +7,9 @@ ficha (`metrica.columna('latencia')`).
 
 from __future__ import annotations
 
+import json
 import math
+import unicodedata
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -297,3 +299,104 @@ def evaluar_umbral(umbral: Mapping[str, Any], observado: Any) -> bool | None:
     if not valores or any(_es_nulo(v) for v in valores):
         return None
     return all(_comparar(operador, float(v), float(umbral['valor'])) for v in valores)
+
+
+# --- Piezas de M2, M3 y M5: listas de la traza y agregacion por tarea --------------------------
+
+
+def como_lista(valor: Any) -> list[Any]:
+    """Lista de un campo que la carga guardo como JSON (`tool_calls[].nombre`). [] si falta."""
+    if valor is None or (isinstance(valor, float) and math.isnan(valor)):
+        return []
+    if isinstance(valor, str):
+        valor = json.loads(valor)
+    return list(valor) if isinstance(valor, list) else []
+
+
+def como_objeto(valor: Any) -> Any:
+    """Objeto o lista guardado como JSON por la carga; los escalares pasan sin cambio."""
+    if isinstance(valor, str) and valor[:1] in ('[', '{'):
+        return json.loads(valor)
+    if isinstance(valor, float) and math.isnan(valor):
+        return None
+    return valor
+
+
+def normalizar_texto(valor: Any) -> str:
+    """Minusculas sin tildes ni espacios de borde: la misma regla que la compuerta del ejecutor."""
+    texto = unicodedata.normalize('NFD', str(valor)).casefold()
+    return ''.join(c for c in texto if unicodedata.category(c) != 'Mn').strip()
+
+
+def agregado_por_tarea(
+    metrica: Metrica,
+    ctx: Contexto,
+    datos: pd.DataFrame,
+    columna_valor: str,
+    *,
+    dimensiones: Mapping[str, str] | None = None,
+    contrastes: bool = True,
+) -> tuple[dict[str, Estimacion], list[Fila], list[Contraste]]:
+    """Valor por ejecucion -> agregado por tarea -> estimacion entre tareas, con su intervalo.
+
+    Las ejecuciones con valor NaN (la metrica no aplica a esa tarea) se descartan antes
+    de agregar: una tarea sin ejecuciones aplicables no entra al denominador.
+    """
+    aplicables = datos[datos[columna_valor].notna()]
+    if aplicables.empty:
+        return {}, [], []
+    matriz = matriz_tareas(ctx, por_tarea(ctx, aplicables, columna_valor, metrica.agregacion_tareas or ''))
+    estimaciones = estimar(ctx, metrica, matriz)
+    filas = filas_desde_estimaciones(
+        estimaciones,
+        nombre_estadistico(metrica),
+        dimensiones=dimensiones,
+        n_observaciones=conteo_por_arquitectura(ctx, aplicables),
+    )
+    pares = contrastes_pareados(ctx, metrica, matriz, dimensiones=dimensiones) if contrastes else []
+    return estimaciones, filas, pares
+
+
+def filas_conteo(
+    ctx: Contexto,
+    datos: pd.DataFrame,
+    columna_evento: str,
+    *,
+    estadistico: str = 'conteo',
+    dimensiones: Mapping[str, str] | None = None,
+) -> list[Fila]:
+    """Conteo absoluto de eventos por arquitectura y en la corrida completa (M5)."""
+    filas = []
+    for arquitectura in ctx.registro.arquitecturas:
+        de_arquitectura = datos[datos[ctx.col_arquitectura] == arquitectura]
+        filas.append(
+            Fila(arquitectura, estadistico, float(de_arquitectura[columna_evento].sum()),
+                 dict(dimensiones or {}), n_observaciones=len(de_arquitectura))
+        )
+    filas.append(
+        Fila(None, estadistico, float(datos[columna_evento].sum()), dict(dimensiones or {}),
+             n_observaciones=len(datos))
+    )
+    return filas
+
+
+def cota_superior_binomial(eventos: int, n: int, nivel: float) -> float | None:
+    """Limite superior exacto (Clopper-Pearson) UNILATERAL de la tasa.
+
+    Con 0 eventos es 1 - alfa^(1/n): con 800 ejecuciones y 95 %, ~0,37 % (ficha de M5.1).
+    """
+    if n == 0:
+        return None
+    if eventos >= n:
+        return 1.0
+    cola = 1 - nivel
+
+    def acumulada(p: float) -> float:
+        return sum(math.comb(n, k) * p**k * (1 - p) ** (n - k) for k in range(eventos + 1))
+
+    # La cota es la p con P(X <= eventos | p) = cola; la acumulada decrece con p.
+    bajo, alto = eventos / n, 1.0
+    for _ in range(80):
+        medio = (bajo + alto) / 2
+        bajo, alto = (medio, alto) if acumulada(medio) > cola else (bajo, medio)
+    return (bajo + alto) / 2

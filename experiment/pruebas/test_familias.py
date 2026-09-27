@@ -27,6 +27,19 @@ PLAN = {
 }
 
 
+TARIFAS = f"""version: '1.0.0'
+moneda: USD
+unidad: por_millon_de_tokens
+consultado_el: '2026-09-27'
+modelos:
+  {leer_traza_valida()['provenance']['modelo_id']}:
+    entrada: 2.0
+    entrada_cacheada: 0.5
+    salida: 10.0
+    fuente: prueba
+"""
+
+
 def _traza(tarea: str, arquitectura: str, repeticion: int, estado: str, latencia: int) -> dict:
     traza = copy.deepcopy(leer_traza_valida())
     traza.update(task_id=tarea, condition=arquitectura, repetition=repeticion)
@@ -36,7 +49,9 @@ def _traza(tarea: str, arquitectura: str, repeticion: int, estado: str, latencia
         'llm_ms': latencia - 300, 'tool_exec_ms': 200, 'transport_ms': 50, 'orchestration_ms': 50,
     }
     traza['a2a']['mensajes_totales'] = 0 if arquitectura in ('B0', 'B1') else 4
-    traza['usage'].update(input_tokens=1000 * repeticion, output_tokens=100, llm_calls=repeticion)
+    traza['usage'].update(
+        input_tokens=1000 * repeticion, output_tokens=100, cached_input_tokens=200, llm_calls=repeticion
+    )
     traza['outcome']['status'] = estado
     return traza
 
@@ -52,6 +67,8 @@ def diminuta(tmp_path_factory, registro):
             puntuaciones.append({'run_id': traza['run_id'], 'exito': exito})
     escribir_jsonl(corrida / 'trazas.jsonl', trazas)
     escribir_jsonl(corrida / 'puntuaciones.jsonl', puntuaciones)
+    # Tarifa propia de la corrida: manda sobre experiment/tarifas.yaml (alcance experimento).
+    (corrida / 'tarifas.yaml').write_text(TARIFAS, encoding='utf-8')
     consolidado = consolidar(corrida, registro)
     assert not consolidado.rechazos
     contexto = construir_contexto(registro, consolidado, corrida, tmp_path_factory.mktemp('intermedios'))
@@ -116,9 +133,26 @@ def test_m4_6_y_m4_7_incluyen_lo_consumido_por_ejecuciones_fallidas(diminuta):
     _, _, r = diminuta
     # B3 en T-COM-001 fallo dos veces, pero su consumo cuenta: mediana de 1100 y 2100.
     assert r['M4.6'].valor('suma_corrida', 'B3', tokens='total') == 1100 + 2100 + 1100 + 2100
+    # Costo = (entrada - cache) x 2 + cache x 0,5 + salida x 10, por millon. r1: 1000 de entrada, r2: 2000.
+    r1 = (800 * 2.0 + 200 * 0.5 + 100 * 10.0) / 1e6
+    r2 = (1800 * 2.0 + 200 * 0.5 + 100 * 10.0) / 1e6
+    assert r['M4.7'].valor('mediana_entre_tareas', 'B0') == pytest.approx((r1 + r2) / 2)
+    assert r['M4.7'].valor('suma_corrida', 'B0') == pytest.approx(2 * (r1 + r2))
     assert r['M4.7'].valor('proyeccion_1000_solicitudes', 'B0') == pytest.approx(
         r['M4.7'].valor('mediana_entre_tareas', 'B0') * 1000
     )
+
+
+def test_m4_7_sin_tarifa_del_modelo_queda_sin_datos(tmp_path, registro, diminuta):
+    contexto, _, _ = diminuta
+    (tmp_path / 'trazas.jsonl').write_text(
+        (contexto.directorio_corrida / 'trazas.jsonl').read_text(encoding='utf-8'), encoding='utf-8'
+    )
+    (tmp_path / 'tarifas.yaml').write_text(TARIFAS.replace('modelo-', 'otro-modelo-'), encoding='utf-8')
+    sin_tarifa = consolidar(tmp_path, registro)
+    r = calcular(construir_contexto(registro, sin_tarifa, tmp_path, tmp_path / 'intermedios'))
+    assert r['M4.7'].estado == 'sin_datos'
+    assert 'no tiene el modelo' in (r['M4.7'].motivo_estado or '')
 
 
 def test_m7_sin_insumos_queda_sin_datos_y_no_en_cero(diminuta):

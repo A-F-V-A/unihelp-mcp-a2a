@@ -32,7 +32,7 @@ import pandas as pd
 import yaml
 from jsonschema import Draft202012Validator, FormatChecker
 
-from .registro import ARTEFACTO_TRAZA, DIRECTORIO_TAREAS, Registro, columna
+from .registro import ARTEFACTO_TRAZA, DIRECTORIO_TAREAS, MARCA_ARREGLO, Registro, columna
 
 ARTEFACTO_VALIDACION = 'validacion'
 ARTEFACTO_TAREAS = 'tareas'
@@ -47,6 +47,7 @@ INSUMOS = (
     'veredictos_juez',
     'reproduccion',
     'control_instrumentacion',
+    'tarifas',
 )
 
 COLUMNA_VALIDA = columna(ARTEFACTO_VALIDACION, 'valida')
@@ -99,7 +100,18 @@ class Consolidado:
 
 
 def extraer(documento: Any, ruta: str) -> Any:
-    """Valor en `ruta` (puntos; indices numericos en arreglos) o None si no existe."""
+    """Valor en `ruta` (puntos; indices numericos en arreglos) o None si no existe.
+
+    `a[].b` recorre el arreglo `a` y devuelve la lista de sus `b`, con None donde un
+    elemento no lo trae: asi las listas de dos campos del mismo arreglo quedan alineadas.
+    """
+    if MARCA_ARREGLO in ruta:
+        cabeza, _, resto = ruta.partition(MARCA_ARREGLO)
+        arreglo = extraer(documento, cabeza)
+        if not isinstance(arreglo, list):
+            return None
+        resto = resto.removeprefix('.')
+        return [extraer(e, resto) if resto else e for e in arreglo]
     actual = documento
     for segmento in ruta.split('.'):
         if isinstance(actual, Mapping) and segmento in actual:
@@ -117,6 +129,16 @@ def _es_numero(valor: Any) -> bool:
 
 def _texto(valor: Any) -> str | None:
     return None if valor is None else str(valor)
+
+
+def _plano(valor: Any) -> Any:
+    """Listas y objetos se guardan como JSON: Parquet no admite columnas de forma libre.
+
+    Las familias los leen con `comun.como_lista` / `comun.como_objeto`.
+    """
+    if isinstance(valor, list | dict):
+        return json.dumps(valor, ensure_ascii=False, sort_keys=True)
+    return valor
 
 
 def validador_de(esquema: Mapping[str, Any]) -> Draft202012Validator:
@@ -200,7 +222,9 @@ def cargar_insumo(registro: Registro, nombre: str, directorio_corrida: Path) -> 
                 raise ErrorInsumo(f'{nombre} ({origen}): JSON malformado: {error}')
             documentos.append((origen, documento))
     else:
-        documentos = [(ruta.name, json.loads(ruta.read_text(encoding='utf-8')))]
+        texto = ruta.read_text(encoding='utf-8')
+        documento = yaml.safe_load(texto) if ruta.suffix in ('.yaml', '.yml') else json.loads(texto)
+        documentos = [(ruta.name, documento)]
     if validador is not None:
         for origen, documento in documentos:
             errores = errores_esquema(validador, documento)
@@ -226,7 +250,7 @@ class _LectorTareas:
             else:
                 documento = yaml.safe_load(ruta.read_text(encoding='utf-8'))
                 self._cache[tarea] = {
-                    columna(ARTEFACTO_TAREAS, c): extraer(documento, c) for c in self._campos
+                    columna(ARTEFACTO_TAREAS, c): _plano(extraer(documento, c)) for c in self._campos
                 }
         return self._cache[tarea]
 
@@ -338,7 +362,7 @@ def consolidar(
             rechazos.append(Rechazo(origen, _texto(run_id), tuple(motivos), tuple(detalle)))
             return
         assert es_objeto and campos_de_tarea is not None
-        fila = {columna(ARTEFACTO_TRAZA, c): extraer(traza, c) for c in campos_traza}
+        fila = {columna(ARTEFACTO_TRAZA, c): _plano(extraer(traza, c)) for c in campos_traza}
         fila.update(campos_de_tarea)
         fila[COLUMNA_ORIGEN] = origen
         fila[COLUMNA_HUELLA_COINCIDE] = huella_coincide

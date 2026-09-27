@@ -27,8 +27,10 @@ integran los agentes, para medir el efecto de esa decision arquitectonica.
 > B0 y B1 tienen corridas completas de las 40 tareas; B2 y B3 aun no. Ninguna
 > arquitectura corre todavia en Docker con el agente real (ver
 > [B0 con el agente real](#b0-con-el-agente-real)).
-> El sistema de metricas ([`experiment/`](experiment/README.md)) calcula las
-> familias M1, M4 y M7 de extremo a extremo sobre una corrida **sintetica**.
+> El sistema de metricas ([`experiment/`](experiment/README.md)) implementa 35
+> de las 43 metricas (M1, M2, M3.1, M3.5, M3.6, M4, M5 y M7) y 30 tienen valor
+> sobre las corridas reales archivadas en `experiment/resultados/`, con cinco
+> modelos; las otras 5 (M4.3, M7.4-M7.7) esperan su insumo.
 
 ---
 

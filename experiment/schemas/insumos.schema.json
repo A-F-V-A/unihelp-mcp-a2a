@@ -27,6 +27,33 @@
         }
       }
     },
+    "tarifas": {
+      "description": "tarifas.yaml: precio de lista por modelo, en USD por millon de tokens (M4.7, decision 50).",
+      "type": "object",
+      "required": ["version", "moneda", "unidad", "consultado_el", "modelos"],
+      "properties": {
+        "version": { "type": "string" },
+        "moneda": { "const": "USD" },
+        "unidad": { "const": "por_millon_de_tokens" },
+        "consultado_el": { "type": "string", "format": "date" },
+        "modelos": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["entrada", "entrada_cacheada", "salida", "fuente"],
+            "properties": {
+              "entrada": { "type": "number", "minimum": 0 },
+              "entrada_cacheada": { "type": "number", "minimum": 0 },
+              "salida": { "type": "number", "minimum": 0 },
+              "fuente": { "type": "string", "minLength": 1 },
+              "nota": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
     "huellasEsperadas": {
       "description": "huellas-esperadas.json: huella de estado inicial esperada por tarea.",
       "type": "object",
