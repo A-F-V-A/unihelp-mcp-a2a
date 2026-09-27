@@ -14,6 +14,17 @@ pena conservar se copia aqui con el nombre `<fecha>-<nombre de la corrida>`
 El indice de carpetas, con el modelo y los conteos de cada una, esta en
 [`indice.md`](indice.md) (se regenera con `uv run python resultados/indice.py`).
 
+## Paquete final de datos
+
+`uv run python resultados/paquete.py --fecha <AAAA-MM-DD>` junta todas estas
+carpetas en `experiment/resultados-finales/unihelp-datos-experimento-<fecha>.zip`
+(versionado; la carpeta descomprimida no): corridas clasificadas por cobertura
+(A principal, B parcial, C historico), tablas planas en `consolidado/`
+(ejecuciones, llamadas a herramientas, saltos A2A, cuarentena, metricas y
+contrastes del cuaderno), catalogo de las 43 metricas con los campos fuente
+verificados contra las trazas, tareas, informes, un README completo y
+`SHA256SUMS.txt`. No calcula metricas (RM-02): copia, aplana y transcribe.
+
 ## Que hay en cada carpeta
 
 | Archivo                                                        | Origen   | Contenido                                                                                                                                                                                                |

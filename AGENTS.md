@@ -157,6 +157,8 @@ experiment/              Sistema de metricas en Python (uv). UNICO lugar donde s
   visor/                 Playwright: las tareas en vivo en el navegador, con panel de tokens y latencia
   juez/                  Fuente del juez LLM (futuro)
   resultados/            Corridas archivadas con su procedencia: SI se versionan (decision 47)
+  resultados-finales/    Zip con todos los datos clasificados, consolidados y el catalogo de metricas
+                         (resultados/paquete.py); se versiona solo el .zip
   trazas/ salidas/ corridas/ casetes/  Area de trabajo: NO se versiona
 infra/docker/            Un Dockerfile.<app> por app + compose con profiles b0..b3
 infra/ollama/            Modelfile del modelo local (proveedor `ollama`, decision 46)

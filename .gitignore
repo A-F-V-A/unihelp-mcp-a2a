@@ -72,6 +72,9 @@ experiment/fixtures/sinteticas/
 # fuente y pueden traer texto de las conversaciones (regla 9 de AGENTS.md).
 experiment/corridas/
 experiment/casetes/
+# Paquete final de datos: se versiona solo el .zip; la carpeta descomprimida
+# repite lo que ya esta en experiment/resultados/ (resultados/paquete.py la rehace).
+experiment/resultados-finales/*/
 # Corridas del visor en vivo: observaciones, reporte HTML, videos y trazas de Playwright.
 experiment/visor/salidas/
 
