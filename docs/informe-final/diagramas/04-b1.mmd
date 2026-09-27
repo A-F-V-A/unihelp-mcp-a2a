@@ -1,0 +1,7 @@
+flowchart LR
+  web["web :4200"] -->|REST| b1["b1-mcp-agente :3001<br/>AgenteNucleoModule<br/>+ CapacidadesMcp (sin rol)"]
+  b1 -->|"MCP Streamable HTTP<br/>tools/list, tools/call"| mcp["mcp-server :3010<br/>InvocadorCapacidades"]
+  mcp --> cap["libs/capacidades"]
+  cap --> pg[("PostgreSQL")]
+  b1 -->|HTTPS| llm["Modelo"]
+  b1 -.->|"turno literal, botones, rutas del ejecutor"| pg

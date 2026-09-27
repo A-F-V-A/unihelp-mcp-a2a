@@ -1,0 +1,49 @@
+flowchart LR
+  subgraph apps["apps/ (NestJS y Angular)"]
+    web["web<br/>Angular :4200"]
+    b0["b0-directo :3000"]
+    b1["b1-mcp-agente :3001"]
+    b2["b2-multiagente-local :3002"]
+    b3o["b3-a2a-orquestador :3003"]
+    b3c["b3-a2a-conocimiento :3004"]
+    b3d["b3-a2a-diagnostico :3005"]
+    mcp["mcp-server :3010"]
+    con["consola-experimento :3030"]
+    sim["simulador-servicios :3020"]
+  end
+  subgraph libs["libs/ (compartido)"]
+    nuc["agente-nucleo"]
+    cap["capacidades"]
+    capm["capacidades-mcp"]
+    multi["multiagente-nucleo"]
+    her["herramientas"]
+    kb["conocimiento"]
+    tk["tickets"]
+    ctr["contratos"]
+    dom["dominio"]
+    tr["trazas"]
+  end
+  subgraph exp["experiment/ (Python, uv)"]
+    ej["ejecutor"]
+    an["analisis + cuaderno"]
+    juez["juez"]
+    res["resultados/"]
+  end
+  pg[("PostgreSQL")]
+  b0 --> nuc & cap
+  b1 --> nuc & capm
+  b2 --> multi & capm
+  b3o --> multi & capm
+  b3c --> multi
+  b3d --> multi
+  mcp --> cap
+  multi --> nuc
+  nuc --> her & tr & ctr
+  cap --> her & kb & tk
+  kb --> pg
+  tk --> pg
+  web --> ctr & dom
+  con --> ctr
+  ej -->|HTTP| b0 & b1 & b2 & b3o
+  ej --> an --> res
+  juez --> res

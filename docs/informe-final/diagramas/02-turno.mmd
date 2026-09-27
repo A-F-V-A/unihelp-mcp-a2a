@@ -1,0 +1,27 @@
+sequenceDiagram
+  autonumber
+  participant P as Persona (web)
+  participant C as ConversacionController
+  participant U as AtenderTurnoUseCase
+  participant B as BucleAgente
+  participant M as Modelo (OpenAI / Ollama / Gemini)
+  participant K as PuertoCapacidades
+  participant D as PostgreSQL
+  participant I as InstrumentadorTrazas
+  P->>C: POST /api/conversaciones/mensajes (x-trace-id)
+  C->>U: texto, conversacionId
+  U->>D: guarda el turno literal
+  U->>B: ejecutar(historial)
+  loop hasta respuesta final o límite
+    B->>K: listar() herramientas
+    B->>M: mensajes + herramientas (reloj monótono)
+    M-->>B: tool_calls o texto
+    B->>K: invocar(nombre, argumentos)
+    K->>D: consulta / escritura con auditoría
+    K-->>B: resultado o ErrorHerramienta
+    B->>I: llm_ms, tool_exec_ms, transport_ms, tokens
+  end
+  B-->>U: texto + objeto final JSON
+  U-->>C: RespuestaMensajeDto
+  C-->>P: bloques de respuesta
+  Note over I: la traza se lee en GET /experimento/trazas/:traceId

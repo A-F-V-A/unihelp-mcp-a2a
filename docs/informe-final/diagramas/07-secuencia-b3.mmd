@@ -1,0 +1,19 @@
+sequenceDiagram
+  autonumber
+  participant O as Orquestador :3003
+  participant R as RegistroA2a
+  participant K as Conocimiento :3004
+  participant S as mcp-server :3010
+  participant M as Modelo
+  O->>R: resolver("knowledge_lookup")
+  R-->>O: URL de la Agent Card
+  O->>K: POST /a2a message/send {habilidad, entrada}, metadata{traceId, hop, t_emision}
+  Note over O: tarea del orquestador: submitted → working
+  K->>M: bucle del especialista
+  M-->>K: tool_call buscar_politica
+  K->>S: tools/call (X-Agent-Id: conocimiento, x-trace-id)
+  S-->>K: resultado + _meta.unihelp/duracion_ms
+  K-->>O: tarea completed + artefacto politica_aplicable + medición del receptor
+  Note over O: transport_ms = rtt − duracion_ms del receptor (RM-05)
+  O->>S: tools/call proponer_ticket (X-Agent-Id: orquestador)
+  Note over O: estado input-required: la persona debe confirmar

@@ -1,0 +1,5 @@
+flowchart LR
+  web["web :4200"] -->|REST| b0["b0-directo :3000<br/>AgenteNucleoModule<br/>+ CapacidadesLocales"]
+  b0 -->|llamada a método| cap["libs/capacidades<br/>5 herramientas"]
+  cap --> pg[("PostgreSQL<br/>conocimiento + tickets")]
+  b0 -->|HTTPS| llm["Modelo"]

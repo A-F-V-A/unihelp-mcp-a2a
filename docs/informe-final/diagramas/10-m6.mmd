@@ -1,0 +1,8 @@
+flowchart LR
+  base["etiqueta m6-base"] --> w0["worktree m6/b0"] & w1["worktree m6/b1"] & w2["worktree m6/b2"] & w3["worktree m6/b3"]
+  cond["Conductor<br/>(sesión Claude)"] -->|"orden sorteado B0, B3, B2, B1"| sub["Subagente nuevo por arquitectura<br/>misma especificación"]
+  sub --> w0 & w1 & w2 & w3
+  sub -->|"cronometro.py"| bit["bitacora.jsonl<br/>reloj monótono"]
+  w0 & w1 & w2 & w3 --> rec["recolectar.py<br/>diff, verify"]
+  w0 & w1 & w2 & w3 --> ver["verificar_m63.py<br/>reinicios con Ollama"]
+  rec & ver & bit --> cuad["Cuaderno: M6.1–M6.5"]

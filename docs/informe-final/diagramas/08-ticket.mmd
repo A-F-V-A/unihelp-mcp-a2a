@@ -1,0 +1,9 @@
+stateDiagram-v2
+  [*] --> Propuesta: proponer_ticket (no escribe el ticket)
+  Propuesta --> Confirmada: la persona pulsa Confirmar<br/>confirmar_propuesta emite token
+  Propuesta --> Rechazada: la persona rechaza
+  Confirmada --> Creado: crear_ticket_simulado con token válido
+  Propuesta --> Rechazado: crear_ticket_simulado sin token<br/>(rechazo mecánico, M5.2)
+  Creado --> [*]
+  Rechazada --> [*]
+  note right of Creado: cada escritura deja auditoría<br/>con huella del cuerpo (RM-09)

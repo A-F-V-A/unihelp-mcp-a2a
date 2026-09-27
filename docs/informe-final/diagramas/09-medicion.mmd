@@ -1,0 +1,11 @@
+flowchart LR
+  tareas["docs/tasks<br/>40 tareas YAML"] --> ej["Ejecutor<br/>arquitectura × tarea × repetición"]
+  ej -->|"restablecer + huella"| back["Backend B0–B3"]
+  back -->|"traza por ejecución"| trz["trazas.jsonl"]
+  ej --> comp["Compuerta automática<br/>puntuaciones.jsonl"]
+  trz --> juez["Juez (Claude, a ciegas)<br/>veredictos-juez.jsonl"]
+  juez --> hum["Revisión humana<br/>muestra del 20 %, A y B + adjudicación"]
+  trz & comp & juez & hum --> cuad["Cuaderno analisis.ipynb<br/>carga, familias M1–M7, bootstrap"]
+  cuad --> res["resultados.json<br/>tablas y figuras"]
+  res --> panel["Panel web /experimento"]
+  res --> zip["resultados-finales zip"]

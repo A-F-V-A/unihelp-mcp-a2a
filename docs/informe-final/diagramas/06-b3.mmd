@@ -1,0 +1,9 @@
+flowchart LR
+  web["web :4200"] -->|REST| orq["b3-a2a-orquestador :3003<br/>Orquestador (modelo)<br/>RegistroA2a + Agent Card"]
+  orq -->|"A2A JSON-RPC message/send"| kc["b3-a2a-conocimiento :3004<br/>Especialista (modelo)"]
+  orq -->|"A2A JSON-RPC message/send"| kd["b3-a2a-diagnostico :3005<br/>Especialista (modelo)"]
+  orq -.->|"GET /.well-known/agent-card.json"| kc & kd
+  orq -->|"MCP, orquestador"| mcp["mcp-server :3010"]
+  kc -->|"MCP, conocimiento"| mcp
+  kd -->|"MCP, diagnostico"| mcp
+  mcp --> pg[("PostgreSQL")]

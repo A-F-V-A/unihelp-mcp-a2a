@@ -1,0 +1,13 @@
+flowchart LR
+  web["web :4200"] -->|REST| b2
+  subgraph b2["b2-multiagente-local :3002 (un proceso)"]
+    orq["Orquestador<br/>(modelo)"]
+    kc["Especialista de conocimiento<br/>(modelo)"]
+    kd["Especialista de diagnóstico<br/>(modelo)"]
+    orq -->|"EspecialistasEnProceso<br/>knowledge_lookup"| kc
+    orq -->|"incident_diagnosis"| kd
+  end
+  orq -->|"MCP, X-Agent-Id: orquestador<br/>tickets"| mcp["mcp-server :3010"]
+  kc -->|"MCP, X-Agent-Id: conocimiento<br/>buscar_politica"| mcp
+  kd -->|"MCP, X-Agent-Id: diagnostico<br/>consultar_estado_servicio"| mcp
+  mcp --> pg[("PostgreSQL")]
