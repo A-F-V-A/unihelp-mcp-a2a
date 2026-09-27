@@ -1762,3 +1762,37 @@ de la primera persona que califica con ellos, asi que el enlace se comparte
 solo con los dos revisores. Las calificaciones se escriben en el PC del
 responsable. Verificado por el tunel: la pagina carga, `/revision/muestra` y
 `/revision/revisores/A` responden 200 y `/consola/corridas` no esta expuesta.
+
+## 58. M6 mide el desarrollo asistido por agentes de IA, no el de una persona sola
+
+> Tomada el 27 de septiembre de 2026 por el responsable del proyecto (RM-17):
+> "en la practica el equipo no desarrolla a mano; desarrolla dirigiendo un agente
+> de IA con arquitectura. Eso es lo que hay que medir".
+
+Contexto: HU-43 y la ficha de M6.4 piden que una persona sola implemente la
+sexta herramienta, cronometrada, a partir de una especificacion sellada. El
+sobre sellado nunca se creo y el equipo trabaja con agentes de IA.
+
+Decision:
+
+- La sexta herramienta (`consultar_disponibilidad_soporte`, docs/00 I-4) la
+  implementa, en cada arquitectura, un agente de IA (Claude Code) que recibe SOLO
+  la especificacion y el nombre de la arquitectura, en un worktree propio creado
+  desde el mismo commit base, sin ver las otras implementaciones. Un agente
+  conductor aparte orquesta, cronometra y mide.
+- Mismo modelo y misma configuracion en las cuatro arquitecturas; se registran el
+  modelo exacto, la ventana de contexto y el esfuerzo.
+- M6.1, M6.2, M6.3 y M6.5 se miden como dice el plan. M6.4 pasa a ser el tiempo
+  de reloj hasta la suite en verde de ese desarrollo asistido, desglosado en fases
+  (preparacion, planificacion y eleccion de contexto, lectura de contexto,
+  implementacion, pruebas hasta verde, verificacion), junto con los tokens, las
+  llamadas a herramientas, los archivos leidos y las iteraciones de prueba.
+- Las ramas de la sexta herramienta NO se integran a `main`: cambiarian el
+  sistema bajo prueba de las corridas ya hechas (RM-13). Se conservan como
+  evidencia.
+
+Consecuencias: M6.4 no es comparable con el "tiempo de una persona" del plan; se
+reporta con su nueva definicion. Sin sobre sellado, la proteccion contra la
+preparacion previa es que ningun codigo existe antes de abrir la especificacion y
+que cada agente parte de cero. Desviacion frente a HU-43 (una persona,
+especificacion sellada).
