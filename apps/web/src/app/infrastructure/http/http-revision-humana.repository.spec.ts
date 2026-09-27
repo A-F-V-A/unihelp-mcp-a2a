@@ -47,10 +47,10 @@ describe('HttpRevisionHumanaRepository: contrato con la consola', () => {
 
   afterEach(() => http.verify());
 
-  it('lee la muestra de la consola, sin /api', async () => {
+  it('lee la muestra por el mismo origen, sin /api (el servidor web la reenvia a la consola)', async () => {
     const promesa = TestBed.inject(REVISION_HUMANA_REPOSITORY).muestra();
     await microtareas();
-    http.expectOne(`${CONSOLA}/revision/muestra`).flush(MUESTRA);
+    http.expectOne('/revision/muestra').flush(MUESTRA);
     const muestra = await promesa;
     expect(muestra.items[0].puntosClave).toEqual(['Bloqueo tras 5 intentos.']);
   });
@@ -65,7 +65,7 @@ describe('HttpRevisionHumanaRepository: contrato con la consola', () => {
       null,
     );
     await microtareas();
-    const peticion = http.expectOne(`${CONSOLA}/revision/calificaciones`);
+    const peticion = http.expectOne('/revision/calificaciones');
     expect(peticion.request.method).toBe('POST');
     expect(peticion.request.body).toEqual({
       rol: 'A',
@@ -91,9 +91,7 @@ describe('HttpRevisionHumanaRepository: contrato con la consola', () => {
       codigo: 'conflicto',
       mensaje: 'El rol B ya lo tomó otra persona.',
     };
-    http
-      .expectOne(`${CONSOLA}/revision/revisores/B`)
-      .flush(error, { status: 409, statusText: 'Conflict' });
+    http.expectOne('/revision/revisores/B').flush(error, { status: 409, statusText: 'Conflict' });
     await expect(promesa).rejects.toBeInstanceOf(ErrorBackend);
   });
 });

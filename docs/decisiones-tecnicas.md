@@ -1739,3 +1739,26 @@ aparte sobre como agregarlas. En R-074 y R-114 la respuesta dice "el
 especialista" y delata el multiagente (es el texto calificado, no se altera).
 Validado en navegador: inicio sin nombre, calificacion y avance, rol tomado por
 otra persona, retomar, adjudicacion no disponible, consola apagada y ancho 400 px.
+
+## 57. La revision humana viaja por el mismo origen de la web (proxy inverso)
+
+> Tomada el 27 de septiembre de 2026: el responsable expone el panel por un
+> tunel de Cloudflare (`https://localhost.afva.com.co`) para que revisores de
+> afuera califiquen, mientras la consola y los datos siguen en su PC.
+
+Contexto: la pantalla de revision llamaba a la consola en `consolaUrl`
+(`http://localhost:3030`). Desde otro equipo, ese `localhost` es el del propio
+revisor, y ademas una pagina `https` no puede llamar a `http`: "No fue posible
+comunicarse con el servidor".
+
+Decision: el repositorio HTTP de la revision usa rutas relativas (mismo origen)
+y el servidor web reenvia SOLO `/revision` a la consola local
+(`apps/web/proxy.conf.json`, destino `127.0.0.1:3030`). Las rutas `/consola`,
+que lanzan corridas, NO se reenvian: por el tunel devuelven la pagina de la app
+y un `POST` da 404.
+
+Consecuencias: cualquiera con el enlace puede calificar; los roles A y B quedan
+de la primera persona que califica con ellos, asi que el enlace se comparte
+solo con los dos revisores. Las calificaciones se escriben en el PC del
+responsable. Verificado por el tunel: la pagina carga, `/revision/muestra` y
+`/revision/revisores/A` responden 200 y `/consola/corridas` no esta expuesta.

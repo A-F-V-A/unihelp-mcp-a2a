@@ -22,7 +22,6 @@ import type {
   VeredictoRevision,
 } from '../../domain/models/experimento/revision-humana';
 import type { RevisionHumanaRepository } from '../../domain/ports/revision-humana.repository';
-import { CONFIGURACION_APP } from '../../nucleo/configuracion';
 import {
   mapearAdjudicacion,
   mapearCalificacion,
@@ -35,13 +34,14 @@ import { mapearFalloHttp } from './http-error.mapper';
 const TIEMPO_ESPERA_MS = 15_000;
 
 /**
- * Revision humana contra `apps/consola-experimento` en `consolaUrl`
- * (decisiones 39 y 56): mismo origen y misma forma que la consola, sin `/api`.
+ * Revision humana contra `apps/consola-experimento` por el MISMO ORIGEN de la
+ * web (decisiones 56 y 57): el servidor web reenvia `/revision` a la consola de
+ * la maquina del equipo. Asi los revisores pueden abrir el panel desde otro
+ * equipo (por un tunel HTTPS) sin que su navegador busque un `localhost` propio.
  */
 @Injectable()
 export class HttpRevisionHumanaRepository implements RevisionHumanaRepository {
   private readonly http = inject(HttpClient);
-  private readonly consolaUrl = inject(CONFIGURACION_APP).consolaUrl;
 
   async muestra(): Promise<MuestraRevision> {
     return mapearMuestraRevision(
@@ -103,7 +103,7 @@ export class HttpRevisionHumanaRepository implements RevisionHumanaRepository {
   }
 
   private url(ruta: string): string {
-    return `${this.consolaUrl}${ruta}`;
+    return ruta;
   }
 
   private async ejecutar<T>(peticion: Observable<T>): Promise<T> {
